@@ -8,6 +8,7 @@ import Entrer from './pages/Entrer';
 import Reseau from './pages/Reseau';
 import FicheReseau from './pages/FicheReseau';
 import Boutique from './pages/Boutique';
+import Musique from './pages/Musique';
 import { APlus, Introuvable } from './pages/Simples';
 import { aller } from './lib/router';
 
@@ -20,6 +21,7 @@ const PAGES: Record<string, [() => React.JSX.Element, string]> = {
   '/entrer': [Entrer, 'LE MONDE AIME — Entrer'],
   '/a-plus': [APlus, 'LE MONDE AIME — A+'],
   '/boutique': [Boutique, 'LE MONDE AIME — Boutique'],
+  '/musique': [Musique, 'LE MONDE AIME — La journée en musique'],
 };
 /* anciennes adresses : elles mènent toutes à l'accueil LE MONDE AIME (rien ne casse pour qui les a gardées) */
 const ANCIENNES: Record<string, string> = { '/charte': '/', '/monde': '/', '/aime-wedding': '/' };

@@ -4,6 +4,8 @@ import { ecrireDates, ecrireMonProfil, lireMonProfil, marquerLue, type Demande, 
 import { changerPhoto, reduirePhoto, useSession } from '../lib/session';
 import { CarteReseau } from '../charte/CartePersonne';
 import { DOMAINES, domaine } from '../lib/reseau-exemples';
+import { ChoisirMorceau, ListeMorceaux } from '../charte/Morceaux';
+import { mesMusiques, type Musique } from '../lib/musique';
 
 const ETATS: [Etat, string][] = [['libre', 'Libre'], ['option', 'En option'], ['prise', 'Prise']];
 const SUIVANT: Record<string, Etat | null> = { '': 'libre', libre: 'option', option: 'prise', prise: null };
@@ -57,6 +59,8 @@ export default function MonProfil() {
   const [questions, setQuestions] = useState<{ question: string; cree_le: string }[]>([]);
   const [msg, setMsg] = useState('');
   const [msgPhoto, setMsgPhoto] = useState('');
+  const [musiques, setMusiques] = useState<Musique[]>([]);
+  useEffect(() => { mesMusiques().then(r => { if (r.ok) setMusiques(r.musiques || []); }); }, []);
   const [envoi, setEnvoi] = useState(false);
   useEffect(() => { lireMonProfil().then(r => {
     setP(r.profil || { nom: r.suggestion?.nom || '', domaine: '', metier: '', ville: '', bio: '', site: '', visible: false });
@@ -138,10 +142,17 @@ export default function MonProfil() {
           <p className="surtitre">Aperçu{p.visible ? '' : ' · caché'}</p>
           <div style={{ maxWidth: 300 }}><CarteReseau c={{ href: p.ref && p.visible ? '/reseau/' + p.ref : '/reseau', nom: p.nom || 'Votre nom', photo: session?.image || undefined, alt: 'Ma photo',
             etiquette: [domaine(p.domaine)?.label, p.metier].filter(Boolean).join(' · ') || 'Votre domaine · votre métier',
-            fiche: { nom: p.nom || 'Vous', metier: p.metier, ville: p.ville, zone: p.zone, langues: p.langues, tarif: p.tarif, bio: p.bio, prestations: prest.filter(x => x.titre.trim()) } }} /></div>
+            musiques, fiche: { nom: p.nom || 'Vous', metier: p.metier, ville: p.ville, zone: p.zone, langues: p.langues, tarif: p.tarif, bio: p.bio, prestations: prest.filter(x => x.titre.trim()) } }} /></div>
           <p className="profil-note" style={{ maxWidth: 300, marginTop: 12 }}>Touchez l’orbe de la carte : c’est ce que votre assistant saura répondre avec votre fiche.</p>
         </div>
       </div>
+
+      <section aria-labelledby="titre-musique" className="profil-bloc">
+        <h2 id="titre-musique">Ma musique</h2>
+        <p className="profil-note">Vos morceaux, rangés par moment du Jour J. On les écoute au dos de votre carte (Play) et dans le dock du bas. Pour un DJ ou un musicien, c’est votre vitrine.</p>
+        <ListeMorceaux musiques={musiques} setMusiques={setMusiques} modifiable vide="Aucun morceau pour l’instant." />
+        <ChoisirMorceau ajoute={m => setMusiques([...musiques, m])} />
+      </section>
 
       <MesDates dates={dates} setDates={setDates} />
 

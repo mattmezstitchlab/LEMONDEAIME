@@ -2,13 +2,16 @@ import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { Lien } from '../lib/router';
 import { Orbe } from './Charte';
 import { demanderOrbe, initiales, type Etat, type Prestation } from '../lib/reseau';
+import { musiquesDe, type Musique } from '../lib/musique';
+import { jouerListe, basculer, useLecteur } from '../lib/lecteur';
+import { enPiste } from './Morceaux';
 import { dateLisible, repondreLocal } from '../../api/_orbe-local.mjs';
 
 /* Une carte du Réseau. Face avant : la photo, le métier, le nom (et « libre le … » quand on cherche une date).
    Le petit bouton orbe la retourne : au dos, l'assistant de la personne, qui ne répond qu'avec sa fiche. */
 export type FicheOrbe = { nom: string; metier?: string; ville?: string; zone?: string; langues?: string; tarif?: string; bio?: string; prestations?: Prestation[] };
 export type Carte = { href: string; nom: string; etiquette: string; photo?: string; alt?: string; exemple?: boolean; credit?: string | null;
-  ref?: string; fiche?: FicheOrbe; etat?: Etat | null; date?: string | null; idees?: string[] };
+  ref?: string; fiche?: FicheOrbe; etat?: Etat | null; date?: string | null; idees?: string[]; musiques?: Musique[] };
 /* « de la fleuriste », « du chef », « des témoins », « de Camille » ; « à la fleuriste », « au chef », « aux témoins », « à Camille » */
 const article = (nom: string) => /^les\s/i.test(nom) ? ['des ', 'aux ', nom.slice(4)] : /^le\s/i.test(nom) ? ['du ', 'au ', nom.slice(3)] : /^la\s/i.test(nom) ? ['de la ', 'à la ', nom.slice(3)] : /^l[’']/i.test(nom) ? ['de l’', 'à l’', nom.slice(2)] : null;
 export function deNom(nom: string) { const a = article(nom); return a ? a[0] + a[2] : 'de ' + nom.split(' ')[0]; }
@@ -24,6 +27,12 @@ function Dos({ c, retourner, ouvert }: { c: Carte; retourner: () => void; ouvert
   const [envoi, setEnvoi] = useState(false);
   const champ = useRef<HTMLInputElement>(null), bas = useRef<HTMLDivElement>(null);
   useEffect(() => { if (ouvert) champ.current?.focus({ preventScroll: true }); }, [ouvert]);
+  const [sons, setSons] = useState<Musique[]>(c.musiques || []);
+  useEffect(() => { if (c.musiques) setSons(c.musiques); }, [c.musiques]);
+  useEffect(() => { if (ouvert && c.ref && !c.musiques) musiquesDe(c.ref).then(r => { if (r.ok) setSons(r.musiques || []); }); }, [ouvert, c.ref, c.musiques]);
+  const lect = useLecteur();
+  const jouables = sons.filter(m => m.deezer);
+  const sienne = lect.pistes.length > 0 && jouables.some(m => m.deezer === lect.pistes[lect.i]?.deezer);
   useEffect(() => { bas.current?.scrollTo({ top: bas.current.scrollHeight }); }, [fil]);
   const idees = c.idees || [c.date ? 'Libre le ' + court(c.date) + ' ?' : 'Libre le 12 juin ?', 'Quelles prestations ?', 'Où intervenez-vous ?'];
   const demander = async (question: string) => {
@@ -39,6 +48,11 @@ function Dos({ c, retourner, ouvert }: { c: Carte; retourner: () => void; ouvert
     <div className="face dos" aria-hidden={!ouvert} inert={!ouvert}>
       <div className="dos-haut">
         <span className="dos-titre">L’assistant {deNom(c.nom)}</span>
+        {jouables.length > 0 && <button type="button" className="dos-play" onClick={() => sienne ? basculer() : jouerListe(jouables.map(enPiste))}
+          aria-label={(sienne && lect.joue ? 'Pause : ' : 'Écouter la musique ') + deNom(c.nom) + ' (' + jouables.length + ' extrait' + (jouables.length > 1 ? 's' : '') + ')'}>
+          {sienne && lect.joue ? <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg> : <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5l11 7-11 7z" /></svg>}
+          <span>{jouables.length}</span>
+        </button>}
         <button type="button" className="dos-retour" onClick={retourner} aria-label={'Retourner la carte de ' + c.nom}>
           {PICTO_RETOURNER}
         </button>
