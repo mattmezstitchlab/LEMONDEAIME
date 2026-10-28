@@ -8,11 +8,14 @@ import { entrees, compter } from '../cartographie/outils.mjs';
 
 function json(res, code, o) { res.statusCode = code; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.setHeader('Cache-Control', 'no-store, private'); res.end(JSON.stringify(o)); }
 const fichier = n => JSON.parse(readFileSync(new URL('../cartographie/' + n, import.meta.url), 'utf8'));
+/* lus au chargement : si la carte manquait au déploiement, la fonction échouerait tout de suite (500),
+   même sans session ; une réponse 401 en déploiement prouve donc aussi que la carte est bien embarquée */
+const RESEAU = fichier('reseau.json'), INVENTAIRE = fichier('inventaire.json');
 export const autorise = (email, liste = process.env.AIME_INSPECTION || '') =>
   !!email && liste.split(',').map(x => x.trim().toLowerCase()).filter(x => x.includes('@')).includes(String(email).trim().toLowerCase());
 
 export function lectureInspection() {
-  const reseau = fichier('reseau.json'), inventaire = fichier('inventaire.json');
+  const reseau = RESEAU, inventaire = INVENTAIRE;
   let preuves = {}; try { preuves = fichier('preuves.json'); } catch { /* aucun parcours enregistré */ }
   // la présence d'une configuration serveur ne sort pas, même sans nom ni valeur
   const serveur = inventaire.serveur.map(({ configuration, ...s }) => s); // eslint-disable-line no-unused-vars

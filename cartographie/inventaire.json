@@ -2049,7 +2049,20 @@
      "inspection : points d’entrée et preuves des parcours",
      "mobile : pas de défilement horizontal",
      "mobile : la fiche s’ouvre au-dessus du dock du bas",
+     "diagnostic seulement : la page n’envoie aucune écriture",
      "aucune erreur dans la console"
+    ]
+   }
+  ],
+  "deploiement": [
+   {
+    "fichier": "tests/deploiement/inspection.mjs",
+    "tests": [
+     "déploiement : sans session, /api/systeme refuse (401) sans rien montrer",
+     "déploiement : la réponse d’inspection n’est jamais mise en cache",
+     "déploiement : une fausse session est refusée (401)",
+     "déploiement : /api/systeme ne fait que lire (405 pour une écriture)",
+     "déploiement : le code public ne contient rien de l’inspection"
     ]
    }
   ],

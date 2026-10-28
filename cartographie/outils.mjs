@@ -51,7 +51,7 @@ export function valider(r, { lire, inventaire, preuves }) {
   const ids = new Set(r.noeuds.map(n => n.id));
   const familles = new Set(r.familles.map(f => f.id));
   const routes = new Set([...inventaire.routes.pages.map(p => p.route), '/systeme-nerveux', '/studio/*', '*']);
-  const testsConnus = new Set([...inventaire.tests.serveur, ...inventaire.tests.e2e].flatMap(f => f.tests.map(t => f.fichier + '#' + t)));
+  const testsConnus = new Set([...inventaire.tests.serveur, ...inventaire.tests.e2e, ...(inventaire.tests.deploiement || [])].flatMap(f => f.tests.map(t => f.fichier + '#' + t)));
   const prouve = preuvesParTest(preuves);
   if (ids.size !== r.noeuds.length) err.push('identifiant de nœud en double');
   for (const n of r.noeuds) {

@@ -124,7 +124,8 @@ function tests() {
   const serveurs = fichiers('tests/server', ['.mjs']).map(f => ({ fichier: f, tests: [...lire(f).matchAll(/^test\('((?:[^'\\]|\\.)+)'/gm)].map(m => m[1].replace(/\\'/g, "'")) }));
   const e2e = fichiers('tests/e2e', ['.py']).map(f => ({ fichier: f, tests: [...lire(f).matchAll(/\bok\((?:[^()']|'(?:[^'\\]|\\.)*'|\((?:[^()]|\([^()]*\))*\))*?,\s*'((?:[^'\\]|\\.)+)'(?:\s*%[^)]*)?\)/g)].map(m => m[1]).filter(n => !/^\(|^%/.test(n)) }));
   const studio = fichiers('studio/src', ['.test.ts', '.test.tsx']).map(f => ({ fichier: f, nombre: (lire(f).match(/^\s*(it|test)\(/gm) || []).length }));
-  return { serveur: serveurs, e2e, studio };
+  const deploiement = fichiers('tests/deploiement', ['.mjs']).map(f => ({ fichier: f, tests: [...lire(f).matchAll(/\bok\([^;]*?,\s*'((?:[^'\\]|\\.)+)'\)/g)].map(m => m[1]) }));
+  return { serveur: serveurs, e2e, deploiement, studio };
 }
 
 export function scanner() {

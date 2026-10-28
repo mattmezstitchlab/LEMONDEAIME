@@ -396,7 +396,7 @@
    "pages": [
     "/systeme-nerveux"
    ],
-   "etat": "verifie"
+   "etat": "a-verifier"
   },
   {
    "id": "evt-confort",
@@ -678,7 +678,7 @@
    "de": "inspection",
    "vers": "page-systeme",
    "nature": "autorise",
-   "etat": "verifie"
+   "etat": "a-verifier"
   },
   {
    "de": "routeur",

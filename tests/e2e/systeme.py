@@ -11,7 +11,7 @@ RACINE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file_
 OUT = tempfile.mkdtemp(prefix='aime-sn-') + '/'
 INSPECTION = subprocess.run(['node', '-e', "import('./api/systeme.mjs').then(S=>process.stdout.write(JSON.stringify({ok:true,...S.lectureInspection()})))"], capture_output=True, text=True, cwd=RACINE).stdout
 RESEAU = json.load(open(os.path.join(RACINE, 'cartographie', 'reseau.json')))
-resultats, erreurs = [], []
+resultats, erreurs, ecritures = [], [], []
 def ok(c, nom):
     print(('OK ' if c else 'ÉCHEC ') + nom, flush=True); resultats.append({'test': nom, 'ok': bool(c)})
 def voisins(i): return [l for l in RESEAU['liens'] if l['de'] == i or l['vers'] == i]
@@ -27,7 +27,9 @@ def page(b, statut=None, w=1440, h=1000):
             return route.fulfill(status=statut or 401, content_type='application/json', body=json.dumps({'ok': False, 'raison': 'La lecture d’inspection est réservée aux personnes autorisées.'}))
         if '/api/auth/get-session' in u: return route.fulfill(status=200, content_type='application/json', body='null')
         return route.fulfill(status=200, content_type='application/json', body=json.dumps({'ok': False}))
-    pg.route('**/api/**', api); return pg
+    pg.route('**/api/**', api)
+    pg.on('request', lambda r: ecritures.append(r.method + ' ' + r.url) if r.method not in ('GET', 'HEAD', 'OPTIONS') else None)
+    return pg
 
 with sync_playwright() as p:
     b = p.chromium.launch()
@@ -80,6 +82,7 @@ with sync_playwright() as p:
     pg.screenshot(path=OUT + 'mobile.png')
     pg.close(); b.close()
 
+ok(not ecritures, 'diagnostic seulement : la page n’envoie aucune écriture')
 ok(not erreurs, 'aucune erreur dans la console')
 enregistrer_preuve('tests/e2e/systeme.py', resultats, 'aperçu local (vite preview), autorisation simulée')
 print('ERREURS', erreurs); print('Captures :', OUT)
