@@ -49,7 +49,7 @@ describe("L'orbe qui guide", () => {
 
   it("s'ouvre dès la première ouverture de l'atelier et parcourt les deux docks de bout en bout", async () => {
     await ouvrirAtelier();
-    expect(titre()).toBe("Bonjour, je suis l’orbe");
+    expect(titre()).toBe("Bonjour, je suis Le Point");
     expect(bulle()?.textContent).toContain(`1 / ${ETAPES.length}`);
     for (const e of ETAPES) expect(container?.querySelector(`[data-guide="${e.cible}"]`), e.cible).toBeTruthy();
     const vus: string[] = [titre()!];
@@ -89,11 +89,11 @@ describe("L'orbe qui guide", () => {
     await cliquer(bouton("Passer la visite"));
     expect(bulle()).toBeFalsy();
     await cliquer(container?.querySelector("#pzs-brand"));
-    await cliquer(bouton("Revoir la visite des docks"));
-    expect(titre()).toBe("Bonjour, je suis l’orbe");
+    await cliquer(bouton("Revoir la visite avec Le Point"));
+    expect(titre()).toBe("Bonjour, je suis Le Point");
   });
 
-  it("ne passe pas devant l'accueil, la boutique ni le BurO", async () => {
+  it("ne passe pas devant l'accueil ni le BurO", async () => {
     for (const chemin of ["/", "/boutique", "/buro"]) {
       window.history.replaceState(null, "", chemin);
       container = document.createElement("div"); document.body.appendChild(container); root = createRoot(container);

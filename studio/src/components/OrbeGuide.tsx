@@ -3,7 +3,7 @@ import type { DockPath } from "./StudioDocks";
 import "./OrbeGuide.css";
 
 /**
- * L'orbe qui guide : à la première ouverture de l'atelier, elle se promène sur chaque outil du dock du haut puis du dock du bas
+ * Le Point, l'orbe qui guide : à la première ouverture de l'atelier, elle se promène sur chaque outil du dock du haut puis du dock du bas
  * et les présente, un par un, de bout en bout. Elle ouvre elle-même les sous-docks (Dessiner, Broder) pour montrer leurs outils.
  * On avance au clavier (→, Entrée), on recule (←), on quitte (Échap) ; « Revoir la visite » la relance depuis le menu de l'orbe.
  * Le mouvement est coupé quand l'appareil demande moins d'animations.
@@ -21,7 +21,7 @@ export interface Etape {
 }
 
 export const ETAPES: Etape[] = [
-  { dock: "haut", cible: "orbe", titre: "Bonjour, je suis l’orbe", texte: "Je vous fais faire le tour du studio : en haut, le dock pour travailler ; en bas, celui pour vous repérer. Mon carré ouvre le menu : le BurO, l’accueil, les éditions de patrons, les réglages et l’affichage (débutante, confirmée, experte)." },
+  { dock: "haut", cible: "orbe", titre: "Bonjour, je suis Le Point", texte: "Je vous fais faire le tour du studio : en haut, le dock pour travailler ; en bas, celui pour vous repérer. Mon carré ouvre le menu : le BurO, l’accueil, les réglages et l’affichage (débutante, confirmée, experte)." },
   { dock: "haut", cible: "dessiner", titre: "Dessiner", texte: "Pour composer votre patron case par case, ou retoucher un patron importé. Un clic déploie ses outils dans le dock." },
   { dock: "haut", cible: "outils", chemin: "dessiner", titre: "Les outils du dessin", texte: "D’abord le fil actif, puis la main pour vous déplacer, la croix, la gomme, le remplissage, la pipette et la sélection. « Plus d’outils » garde les demi-points, quarts, perles, points arrière et nœuds. La flèche à gauche remonte d’un niveau." },
   { dock: "haut", cible: "broder", titre: "Broder", texte: "Pour suivre le patron pendant que vous brodez : la grille passe en lecture Patron et le fil actif ressort." },
@@ -36,7 +36,7 @@ export const ETAPES: Etape[] = [
   { dock: "bas", cible: "lectures", titre: "Trois lectures de la grille", texte: "Réaliste : comme une fois brodé. À plat : les couleurs franches. Patron : la grille à suivre, case par case." },
   { dock: "bas", cible: "symboles", titre: "Symboles", texte: "Les symboles par-dessus les couleurs, comme sur un patron papier : utile pour les teintes proches." },
   { dock: "bas", cible: "zoom", titre: "Zoomer", texte: "La loupe double le zoom de la zone visible ; − et + règlent le reste. Sur tablette, pincez la grille." },
-  { dock: "bas", cible: "tout-voir", titre: "Tout voir", texte: "Le patron entier revient à l’écran. C’est tout : bonne broderie ! Vous me retrouverez dans le menu de l’orbe, « Revoir la visite »." },
+  { dock: "bas", cible: "tout-voir", titre: "Tout voir", texte: "Le patron entier revient à l’écran. C’est tout : bonne broderie ! Vous me retrouverez dans le menu de l’orbe : « Revoir la visite avec Le Point »." },
 ];
 
 type Boite = { x: number; y: number; w: number; h: number };
@@ -119,7 +119,7 @@ export default function OrbeGuide({ ouverte, onFermer, onChemin }: { ouverte: bo
     <div className="og-orbe" aria-hidden="true" style={{ transform: `translate(${orbe.x - 15}px, ${orbe.y - 15}px)` }}><span /></div>
     <div ref={carteRef} className={"og-carte " + (enHaut ? "og-sous" : "og-sur")} role="dialog" aria-modal="false" aria-labelledby="og-titre" aria-describedby="og-texte"
       style={{ transform: `translate(${carteX}px, ${Math.max(MARGE, Math.min(carteY, H - hCarte - MARGE))}px)`, width: largeur }}>
-      <p className="og-rang"><span>{etape.dock === "haut" ? "Dock du haut" : "Dock du bas"}</span><span aria-label={`Étape ${rang} sur ${total}`}>{rang} / {total}</span></p>
+      <p className="og-rang"><span><b className="og-nom">Le Point</b> · {etape.dock === "haut" ? "dock du haut" : "dock du bas"}</span><span aria-label={`Étape ${rang} sur ${total}`}>{rang} / {total}</span></p>
       <h2 id="og-titre" className="og-titre">{etape.titre}</h2>
       <p id="og-texte" className="og-texte" aria-live="polite">{etape.texte}</p>
       <div className="og-barre" aria-hidden="true"><span style={{ width: `${(rang / total) * 100}%` }} /></div>

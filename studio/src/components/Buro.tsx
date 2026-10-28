@@ -8,7 +8,7 @@ import VisibilityOrb from "./VisibilityOrb";
 
 /**
  * Le BurO : l'entrée du studio (charte UniO).
- * En haut, des verbes : Créer, Rejoindre, Échanger, Modèles. Un projet choisi déplie ses propres gestes.
+ * En haut, des verbes : Créer, Rejoindre, Échanger. Un projet choisi déplie ses propres gestes.
  * En bas, des lieux : Projets, Partagés avec moi, Archives.
  */
 type Place = "projets" | "partages" | "archives";
@@ -22,7 +22,6 @@ interface Props {
   onNew: () => void;
   onImport: (file: File) => void;
   onGenerate: () => void;
-  onModels: () => void;
   onWatch: () => void;
   onInvite: (p: Pattern) => void;
   onHome: () => void;
@@ -143,7 +142,6 @@ export default function Buro(p: Props) {
     <Tool haspopup count={3} onClick={() => setPath("creer")}>Créer</Tool>
     <Tool haspopup count={3} onClick={() => setPath("rejoindre")}>Rejoindre</Tool>
     <Tool haspopup count={3} onClick={() => setPath("echanger")}>Échanger</Tool>
-    <Tool onClick={p.onModels}>Modèles</Tool>
   </>;
 
   const crumbs = ["Point Zéro", "BurO", place === "projets" ? "Projets" : place === "partages" ? "Partagés avec moi" : "Archives"];
@@ -162,7 +160,6 @@ export default function Buro(p: Props) {
           {menu && <><div className="pzs-veil" aria-hidden="true" onClick={() => setMenu(false)} />
             <div id="buro-menu" className="pzs-menu"><ul>
               <li><button type="button" onClick={() => { setMenu(false); p.onHome(); }}>Accueil Point Zéro</button></li>
-              <li><button type="button" onClick={() => { setMenu(false); p.onModels(); }}>Boutique de patrons</button></li>
               <li><button type="button" onClick={() => { setMenu(false); p.onContinue(); }}>Le studio</button></li>
             </ul></div></>}
         </div>

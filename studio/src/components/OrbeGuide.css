@@ -25,3 +25,4 @@
 }
 /* pendant la visite, le fil d'Ariane du dock s'efface : l'orbe passe dessous */
 body:has(.og-couche) .pzs-crumbs { visibility: hidden; }
+.og-nom { color: #fff; font-weight: 700; letter-spacing: .04em; }

@@ -22,7 +22,7 @@ def parcours(b, largeur, hauteur, nom):
     pg = ctx.new_page(); pg.set_default_timeout(8000)
     pg.on('pageerror', lambda e: erreurs.append(str(e)))
     pg.goto(B + '/atelier'); pg.wait_for_selector('#og-titre')
-    ok(pg.locator('#og-titre').inner_text() == 'Bonjour, je suis l’orbe', f'{nom} : l’orbe s’ouvre dès l’arrivée dans l’atelier')
+    ok(pg.locator('#og-titre').inner_text() == 'Bonjour, je suis Le Point', f'{nom} : l’orbe s’ouvre dès l’arrivée dans l’atelier')
     titres, horsCadre, horsEcran, loin = [], [], [], []
     for k in range(30):
         pg.wait_for_timeout(120)
@@ -51,8 +51,8 @@ def parcours(b, largeur, hauteur, nom):
     ok(pg.locator('#og-titre').count() == 0, f'{nom} : « Commencer à broder » ferme la visite')
     pg.reload(); pg.wait_for_timeout(800)
     ok(pg.locator('#og-titre').count() == 0, f'{nom} : la visite ne revient pas à la réouverture')
-    pg.locator('#pzs-brand').click(); pg.get_by_role('button', name='Revoir la visite des docks').click()
-    ok(pg.locator('#og-titre').inner_text() == 'Bonjour, je suis l’orbe', f'{nom} : le menu de l’orbe relance la visite')
+    pg.locator('#pzs-brand').click(); pg.get_by_role('button', name='Revoir la visite avec Le Point').click()
+    ok(pg.locator('#og-titre').inner_text() == 'Bonjour, je suis Le Point', f'{nom} : le menu de l’orbe relance la visite')
     pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
     ok(pg.locator('#og-titre').count() == 0, f'{nom} : Échap ferme la visite')
     ctx.close()
@@ -67,8 +67,23 @@ def mouvement(b):
     ok(avant['x'] != apres['x'] and pendant['x'] not in (avant['x'], apres['x']), 'ordinateur : l’orbe glisse d’un outil au suivant')
     ctx.close()
 
+def depuis_accueil(b):
+    """L'accueil met Le Point en avant : « Faire la visite » ouvre l'atelier avec la visite, même déjà vue."""
+    ctx = b.new_context(viewport={'width': 1440, 'height': 900})
+    pg = ctx.new_page(); pg.on('pageerror', lambda e: erreurs.append(str(e)))
+    pg.add_init_script("localStorage.setItem('pointzero:visite-docks:v1','vue')")
+    pg.goto(B + '/'); pg.wait_for_timeout(800)
+    ok(pg.locator('#le-point h2').inner_text().strip().lower() == 'le point' and pg.locator('#fonctionnalites .pzh-bento > li').count() == 10, 'accueil : les docks, Le Point et la grande grille des fonctionnalités')
+    ok(pg.locator('#editions').count() == 0 and 'Boutique' not in pg.locator('body').inner_text(), 'accueil : plus de page ni de lien vers les éditions')
+    pg.get_by_role('button', name='Faire la visite avec Le Point').first.click(); pg.wait_for_selector('#og-titre')
+    ok(pg.url.endswith('/atelier') and pg.locator('#og-titre').inner_text() == 'Bonjour, je suis Le Point', 'accueil → « Faire la visite » : Le Point démarre dans l’atelier')
+    pg.goto(B + '/boutique'); pg.wait_for_timeout(600)
+    ok(pg.locator('#csh-title').count() == 1, 'l’ancienne adresse /boutique mène à l’accueil')
+    ctx.close()
+
 with sync_playwright() as p:
     b = p.chromium.launch()
+    depuis_accueil(b)
     parcours(b, 1440, 900, 'ordinateur')
     parcours(b, 390, 844, 'telephone')
     mouvement(b)

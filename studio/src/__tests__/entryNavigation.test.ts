@@ -2,13 +2,13 @@ import { describe, expect, it } from "vitest";
 import { avecBase, entryStudio, isStudioRoute, publicPathFor, sansBase, STUDIO_ROUTES } from "../lib/entryNavigation";
 
 describe("Studio de broderie — navigation",()=>{
- it("quatre écrans, chacun à son adresse",()=>{
-  expect([...STUDIO_ROUTES]).toEqual(["stitch-home","embroidery","pattern-boutique","buro"]);
+ it("trois écrans, chacun à son adresse",()=>{
+  expect([...STUDIO_ROUTES]).toEqual(["stitch-home","embroidery","buro"]);
   expect(entryStudio("","")).toBe("stitch-home");
   expect(entryStudio("?utm_source=share","")).toBe("stitch-home");
   expect(entryStudio("","","/atelier")).toBe("embroidery");
   expect(entryStudio("?ouvrage=abc","","/atelier")).toBe("embroidery");
-  expect(entryStudio("","","/boutique")).toBe("pattern-boutique");
+  expect(entryStudio("","","/boutique")).toBe("stitch-home"); // les éditions sont retirées
   expect(entryStudio("","","/buro")).toBe("buro");
   for(const r of STUDIO_ROUTES)expect(entryStudio("","",publicPathFor(r))).toBe(r);
  });

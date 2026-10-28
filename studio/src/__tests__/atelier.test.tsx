@@ -240,7 +240,7 @@ describe("POINTZERO : atelier unique sans assistant", () => {
 
   it("ouvre directement la préparation depuis l’accueil spécialisé", async () => {
     await mount(true);
-    const prepare = [...(container?.querySelectorAll("button") ?? [])].find(b => b.textContent?.includes("Préparer mon ouvrage"));
+    const prepare = [...(container?.querySelectorAll("button") ?? [])].find(b => b.textContent?.includes("Préparer mes fils"));
     await click(prepare);
     expect(inspector()?.hasAttribute("hidden")).toBe(false);
     expect(inspector()?.textContent).toContain("Fils & toile");
@@ -319,7 +319,7 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     expect(container?.querySelector("h1")?.textContent).toBe("BurO");
     const top = () => container?.querySelector('nav[aria-label="Dock des actions du BurO"]');
     const inTop = (name: string) => [...(top()?.querySelectorAll("button") ?? [])].find(b => b.textContent?.replace(/\d+$/, "") === name);
-    expect(["Créer","Rejoindre","Échanger","Modèles"].every(name => inTop(name))).toBe(true);
+    expect(["Créer","Rejoindre","Échanger"].every(name => inTop(name))).toBe(true);
     const places = [...(container?.querySelectorAll('nav[aria-label="Lieux du BurO"] button') ?? [])].map(b => b.textContent?.replace(/\s*\d+$/, ""));
     expect(places).toEqual(["Projets","Partagés avec moi","Archives"]);
     await click(inTop("Créer"));

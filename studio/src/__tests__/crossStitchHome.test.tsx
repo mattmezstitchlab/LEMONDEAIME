@@ -14,7 +14,7 @@ afterEach(() => {
   localStorage.clear();
   vi.restoreAllMocks();
 });
-function mount(extra: { onBuro?: () => void; onShop?: () => void; onShare?: () => void } = {}) {
+function mount(extra: { onBuro?: () => void; onShare?: () => void; onVisite?: () => void } = {}) {
   const onOpen = vi.fn(), onImport = vi.fn();
   host = document.createElement("div");
   document.body.append(host);
@@ -51,7 +51,7 @@ describe("Point Zéro spécialisé", () => {
     const { view, onOpen } = mount();
     const actions = [
       ["Mes ouvrages", "library"], ["Créer mon patron", "create"],
-      ["Préparer mon ouvrage", "prepare"], ["Continuer à broder", "stitch"],
+      ["Préparer mes fils", "prepare"], ["Continuer à broder", "stitch"],
     ];
     for (const [label, intent] of actions) {
       const button = [...view.querySelectorAll("button")].find(b => b.textContent?.includes(label))!;
@@ -77,31 +77,52 @@ describe("Point Zéro spécialisé", () => {
     expect(onImport).toHaveBeenCalledTimes(1);
   });
   it("suit la charte AIME : dock du haut, « + Entrer » vers le BurO, dock du bas des sections", () => {
-    const onBuro = vi.fn(), onShop = vi.fn(), onShare = vi.fn();
-    const { view, onOpen } = mount({ onBuro, onShop, onShare });
-    const top = view.querySelector('nav[aria-label="Navigation point de croix"]')!;
-    expect(top).toBeTruthy();
-    expect(view.querySelectorAll("svg")).toHaveLength(view.querySelectorAll(".pzd svg").length);
+    const onBuro = vi.fn(), onShare = vi.fn(), onVisite = vi.fn();
+    const { view, onOpen } = mount({ onBuro, onShare, onVisite });
+    expect(view.querySelector('nav[aria-label="Navigation point de croix"]')).toBeTruthy();
     const enter = view.querySelector<HTMLButtonElement>('button[aria-label="Entrer dans Point Zéro"]')!;
-    expect(enter.textContent).toContain("Entrer");
     act(() => enter.click());
     expect(onBuro).toHaveBeenCalledTimes(1);
     expect(onOpen).not.toHaveBeenCalled();
     const bottom = view.querySelector('nav[aria-label="Sections de la page"]')!;
-    expect([...bottom.querySelectorAll("a")].map(a => a.textContent)).toEqual(["Le studio", "Les éditions", "Ensemble", "Commencer"]);
-    expect([...bottom.querySelectorAll("a")].map(a => a.getAttribute("href"))).toEqual(["#studio", "#editions", "#ensemble", "#commencer"]);
-    for (const id of ["studio", "editions", "ensemble", "commencer"]) expect(view.querySelector("#" + id)).toBeTruthy();
+    expect([...bottom.querySelectorAll("a")].map(a => a.textContent)).toEqual(["Les docks", "Le Point", "Fonctionnalités", "Commencer"]);
+    expect([...bottom.querySelectorAll("a")].map(a => a.getAttribute("href"))).toEqual(["#docks", "#le-point", "#fonctionnalites", "#commencer"]);
+    for (const id of ["docks", "le-point", "fonctionnalites", "commencer"]) expect(view.querySelector("#" + id)).toBeTruthy();
+    act(() => bottom.querySelector<HTMLButtonElement>('button[aria-label^="Le Point"]')!.click());
+    expect(onVisite).toHaveBeenCalledTimes(1);
     const brand = view.querySelector<HTMLButtonElement>("#pzh-brand")!;
     act(() => brand.click());
     expect(brand.getAttribute("aria-expanded")).toBe("true");
-    const shop = [...view.querySelectorAll<HTMLButtonElement>("#pzh-menu button")].find(b => b.textContent === "Boutique de patrons")!;
-    act(() => shop.click());
-    expect(onShop).toHaveBeenCalledTimes(1);
+    expect([...view.querySelectorAll("#pzh-menu button")].map(b => b.textContent)).not.toContain("Boutique de patrons");
+    act(() => [...view.querySelectorAll<HTMLButtonElement>("#pzh-menu button")].find(b => b.textContent === "Faire la visite avec Le Point")!.click());
+    expect(onVisite).toHaveBeenCalledTimes(2);
     expect(view.querySelector("#pzh-menu")).toBeNull();
     const invite = [...view.querySelectorAll<HTMLButtonElement>("button")].find(b => b.textContent?.includes("Inviter à regarder"))!;
     act(() => invite.click());
     expect(onShare).toHaveBeenCalled();
     expect(view.textContent).toContain("Bientôt");
+  });
+  it("met en avant les deux docks, Le Point et toutes les fonctionnalités dans une grande grille", () => {
+    const { view, onOpen } = mount();
+    expect(view.querySelector("#editions")).toBeNull();
+    expect(view.textContent).not.toContain("Les éditions");
+    const docks = view.querySelector("#docks")!;
+    expect(docks.querySelectorAll(".pzh-dock")).toHaveLength(2);
+    for (const t of ["Dessiner", "Broder", "Fils", "Partager", "Chercher", "Mes ouvrages", "Le cercle", "Tout voir", "Repères", "Progression"]) expect(docks.textContent).toContain(t);
+    const point = view.querySelector("#le-point")!;
+    expect(point.querySelector("h2")?.textContent).toBe("Le Point");
+    expect(point.querySelectorAll(".pzh-parcours li").length).toBeGreaterThanOrEqual(14);
+    const tuiles = view.querySelectorAll("#fonctionnalites .pzh-bento > li");
+    expect(tuiles).toHaveLength(10);
+    expect([...tuiles].map(t => t.querySelector("h3")?.textContent).every(Boolean)).toBe(true);
+    for (const t of ["Demi-point", "Point arrière", "Puzzle PDF", "Perles Miyuki Delica", "Parking des fils", "PDF paginé", "Contraste élevé"]) expect(view.querySelector("#fonctionnalites")!.textContent).toContain(t);
+    act(() => [...view.querySelectorAll<HTMLButtonElement>("#fonctionnalites button")].find(b => b.textContent?.includes("Passer en mode Broder"))!.click());
+    expect(onOpen).toHaveBeenLastCalledWith("stitch");
+  });
+  it("sans visite branchée, « Faire la visite » ouvre l’atelier", () => {
+    const { view, onOpen } = mount();
+    act(() => [...view.querySelectorAll<HTMLButtonElement>("button")].find(b => b.textContent === "Faire la visite avec Le Point")!.click());
+    expect(onOpen).toHaveBeenCalledWith("create");
   });
   it("sans BurO, « + Entrer » ouvre mes ouvrages", () => {
     const { view, onOpen } = mount();

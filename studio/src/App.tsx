@@ -3,7 +3,6 @@ import Buro from "./components/Buro";
 import { VISIBILITY, visibilityOf, writeVisibility } from "./lib/visibility";
 import { readInterfaceLevel, INTERFACE_LEVEL_KEY, type InterfaceLevel } from "./lib/interfaceLevel";
 import CrossStitchHome, { type StitchEntry } from "./components/CrossStitchHome";
-import PatternBoutique from "./components/PatternBoutique";
 import {writeStoredJSON} from "./lib/storageSafety";
 import { useCallback, useDeferredValue, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { BASE_FLOSS, FLOSS, flossIndex } from "./lib/dmc";
@@ -39,7 +38,7 @@ import AutomaticImageImport from "./components/AutomaticImageImport";
 import ExportStudio from "./components/ExportStudio";
 import ErrorBoundary from "./components/ErrorBoundary";
 import PeerShare from "./components/PeerShare";
-import OrbeGuide, { visiteVue } from "./components/OrbeGuide";
+import OrbeGuide, { VISITE_CLE, visiteVue } from "./components/OrbeGuide";
 
 type Panel = "palette" | "library" | "share" | "export" | null;
 type RightSection = "properties" | "motifs" | "edit" | "prepare" | "follow" | "settings";
@@ -75,8 +74,7 @@ export default function App() {
     catch { return "stitch-home"; }
   });
   useEffect(()=>{
-    if(studioMode==="pattern-boutique")document.title="Point Zéro — Éditions de patrons";
-    else if(studioMode==="stitch-home")document.title="Point Zéro — Studio de point de croix";
+    if(studioMode==="stitch-home")document.title="Point Zéro — Studio de point de croix";
     else if(studioMode==="buro")document.title="BurO — Point Zéro";
   },[studioMode]);
   // Public pages are addressable and reversible with browser back/forward.
@@ -508,18 +506,15 @@ export default function App() {
         onNew={() => { panelActions.new(80, 80); setShowWelcome(false); setActiveCategory("compose"); setDockPath("dessiner"); switchStudio("embroidery"); }}
         onImport={f => { importAnyFile(f); switchStudio("embroidery"); }}
         onGenerate={() => { setShowWelcome(false); switchStudio("embroidery"); setPromptOpen(true); }}
-        onModels={() => switchStudio("pattern-boutique")}
         onWatch={() => { setShowWelcome(false); switchStudio("embroidery"); setPanel("share"); }}
         onInvite={p => { void loadPattern(p).then(ok => { if (ok) { setShowWelcome(false); switchStudio("embroidery"); setPanel("share"); } }); }}
         onHome={() => switchStudio("stitch-home")} />
-    : studioMode === "pattern-boutique"
-    ? <PatternBoutique onBack={() => switchStudio("stitch-home")} onCreate={() => { switchStudio("embroidery"); setShowWelcome(true); }} onGenerate={() => { switchStudio("embroidery"); setShowWelcome(false); setPromptOpen(true); }} onOpenPattern={p => { void loadPattern(p).then(ok => { if (ok) { switchStudio("embroidery"); setTool("hand"); } }); }} />
     : studioMode === "stitch-home"
     ? <CrossStitchHome projectName={P.name} onOpen={enterStitchStudio}
-        onShop={() => switchStudio("pattern-boutique")}
         onBuro={() => switchStudio("buro")}
         onShare={() => { switchStudio("embroidery"); setPanel("share"); }}
-        onImport={chosen => { switchStudio("embroidery"); importAnyFile(chosen); }}/>
+        onImport={chosen => { switchStudio("embroidery"); importAnyFile(chosen); }}
+        onVisite={() => { try { localStorage.removeItem(VISITE_CLE); } catch { /* la visite s'ouvrira quand même */ } setPanel(null); setDockPath(null); setShowWelcome(false); setVisite(true); switchStudio("embroidery"); }}/>
     : <div data-interface-level={interfaceLevel} className={`pz-atelier pz-embroidery-studio fixed inset-0 h-[100dvh] w-full overflow-hidden bg-[#faf9f7] ${prefs.largeText ? "large-text" : ""} ${prefs.highContrast ? "high-contrast" : ""}`}>
     <input
       ref={imageInputRef}
@@ -575,7 +570,6 @@ export default function App() {
       actions={{
         buro: () => switchStudio("buro"),
         home: () => switchStudio("stitch-home"),
-        shop: () => switchStudio("pattern-boutique"),
         settings: () => openRightPanel("settings"),
         share: () => setPanel("share"),
         motifs: () => openRightPanel("motifs"),

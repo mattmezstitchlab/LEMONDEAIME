@@ -20,7 +20,7 @@ import VisibilityOrb from "./VisibilityOrb";
 export type DockPath = null | "dessiner" | "dessiner-plus" | "fils" | "broder" | "partager" | "visibilite";
 
 export interface DockActions {
-  buro: () => void; home: () => void; shop: () => void; settings: () => void; share: () => void;
+  buro: () => void; home: () => void; settings: () => void; share: () => void;
   motifs: () => void; exportPanel: () => void; save: () => void; palette: () => void;
   threadsSettings: () => void; follow: () => void; layers: () => void; drawSettings: () => void;
   /** relancer la visite de l'orbe */
@@ -147,7 +147,6 @@ export default function StudioDocks(p: Props) {
     <Tool_ onClick={p.actions.exportPanel}>Exporter</Tool_>
     <Tool_ onClick={p.actions.save}>Enregistrer</Tool_>
     <Tool_ disabled soon>Lancer un SAL</Tool_>
-    <Tool_ disabled soon>Publier en Boutique</Tool_>
   </>;
   else if (p.path === "visibilite") items = <>
     {VISIBILITY_ORDER.map(v => <Tool_ key={v} pressed={p.visibility === v} onClick={() => p.onVisibility(v)}><VisibilityOrb value={v} size={20} />{VISIBILITY[v].label}</Tool_>)}
@@ -165,7 +164,7 @@ export default function StudioDocks(p: Props) {
       p.onWorkspace(broder ? "stitch" : "create"); p.onPath(broder ? "broder" : DRAW_MORE.some(x => x[0] === id) ? "dessiner-plus" : "dessiner"); p.onTool(id); } })),
     ...(p.progression?.couleurs ?? []).map((c): Resultat => ({ id: "f-" + c.idx, genre: "fils", label: "DMC " + c.code, meta: (FLOSS[c.idx]?.name ?? "") + " · dans le motif" + (c.cells ? " · " + Math.round(c.done / c.cells * 100) + " % brodé" : ""), hex: c.hex, faire: () => p.onCouleur?.(c.idx) })),
     ...(ql ? FLOSS.map((f, idx): Resultat => ({ id: "d-" + idx, genre: "fils", label: "DMC " + f.code, meta: f.name + " · nuancier", hex: f.hex, faire: () => p.onCouleur?.(idx) })).filter(r => !(p.progression?.couleurs ?? []).some(c => "f-" + c.idx === r.id.replace("d-", "f-"))) : []),
-    ...([["motifs", "Motifs", p.actions.motifs], ["calques", "Calques", p.actions.layers], ["reglages-dessin", "Réglages du dessin", p.actions.drawSettings], ["palette", "Palette DMC", p.actions.palette], ["fils-toile", "Fils et toile", p.actions.threadsSettings], ["suivi", "Suivi de broderie", p.actions.follow], ["inviter", "Inviter à regarder", p.actions.share], ["exporter", "Exporter", p.actions.exportPanel], ["enregistrer", "Enregistrer", p.actions.save], ["tout-voir", "Tout voir", p.zoom.fit], ["symboles", "Symboles", p.onSymbols], ["reglages", "Réglages et aide", p.actions.settings], ...(p.actions.visite ? [["visite", "Revoir la visite des docks", p.actions.visite]] : [])] as [string, string, () => void][])
+    ...([["motifs", "Motifs", p.actions.motifs], ["calques", "Calques", p.actions.layers], ["reglages-dessin", "Réglages du dessin", p.actions.drawSettings], ["palette", "Palette DMC", p.actions.palette], ["fils-toile", "Fils et toile", p.actions.threadsSettings], ["suivi", "Suivi de broderie", p.actions.follow], ["inviter", "Inviter à regarder", p.actions.share], ["exporter", "Exporter", p.actions.exportPanel], ["enregistrer", "Enregistrer", p.actions.save], ["tout-voir", "Tout voir", p.zoom.fit], ["symboles", "Symboles", p.onSymbols], ["reglages", "Réglages et aide", p.actions.settings], ...(p.actions.visite ? [["visite", "Revoir la visite avec Le Point", p.actions.visite]] : [])] as [string, string, () => void][])
       .map(([id, label, f]): Resultat => ({ id: "x-" + id, genre: "fonctions", label, meta: "Fonction de la grille", faire: f })),
   ];
   const trouves = resultats.filter(r => (genre === "tout" || r.genre === genre) && (!ql || correspond(r.label + " " + r.meta, ql))).slice(0, ql ? 40 : 24);
@@ -215,9 +214,8 @@ export default function StudioDocks(p: Props) {
                 {aime && <li><a href="/">Le Monde AIME</a></li>}
                 <li><button type="button" onClick={() => { setBloc(null); p.actions.buro(); }}>BurO</button></li>
                 <li><button type="button" onClick={() => { setBloc(null); p.actions.home(); }}>Accueil Point Zéro</button></li>
-                <li><button type="button" onClick={() => { setBloc(null); p.actions.shop(); }}>Boutique de patrons</button></li>
                 <li><button type="button" onClick={() => { setBloc(null); p.actions.settings(); }}>Réglages et aide</button></li>
-                {p.actions.visite && <li><button type="button" onClick={() => { setBloc(null); p.actions.visite!(); }}>Revoir la visite des docks</button></li>}
+                {p.actions.visite && <li><button type="button" onClick={() => { setBloc(null); p.actions.visite!(); }}>Revoir la visite avec Le Point</button></li>}
               </ul>
             </div>
             <div className="pzs-mini pzs-levels" role="group" aria-label="Affichage du studio">
