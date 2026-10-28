@@ -1,7 +1,7 @@
 {
  "studio/src/__tests__/aimeSync.test.ts": {
   "date": "2026-10-28",
-  "commit": "0fc1da7",
+  "commit": "da817ca",
   "code_modifie_depuis_le_commit": false,
   "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
   "resultats": [
@@ -21,7 +21,7 @@
  },
  "studio/src/__tests__/anciensPartages.test.ts": {
   "date": "2026-10-28",
-  "commit": "0fc1da7",
+  "commit": "da817ca",
   "code_modifie_depuis_le_commit": false,
   "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
   "resultats": [
@@ -57,7 +57,7 @@
  },
  "studio/src/__tests__/cloisonnement.test.ts": {
   "date": "2026-10-28",
-  "commit": "0fc1da7",
+  "commit": "da817ca",
   "code_modifie_depuis_le_commit": false,
   "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
   "resultats": [
@@ -93,7 +93,7 @@
  },
  "studio/src/__tests__/cloisonnementBibliotheque.test.ts": {
   "date": "2026-10-28",
-  "commit": "0fc1da7",
+  "commit": "da817ca",
   "code_modifie_depuis_le_commit": false,
   "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
   "resultats": [
@@ -113,7 +113,7 @@
  },
  "tests/base/securite.mjs": {
   "date": "2026-10-28",
-  "commit": "0fc1da7",
+  "commit": "da817ca",
   "code_modifie_depuis_le_commit": false,
   "environnement": "base réelle : branche Neon de test isolée « test/unions-2026-10-28 » (jamais la production), connexion WebSocket Neon ; Claude et le stockage de fichiers simulés",
   "resultats": [
@@ -142,7 +142,7 @@
     "ok": true
    },
    {
-    "test": "S1 : son texte libre perd ses adresses, téléphones, liens et son nom ; la date et le nombre d’invités restent",
+    "test": "S1 : son texte libre est nettoyé (adresses, téléphones, liens, son nom) ; la date et le nombre d’invités restent",
     "ok": true
    },
    {
@@ -158,7 +158,7 @@
     "ok": true
    },
    {
-    "test": "S1 : conservation : une demande anonymisée de plus de 12 mois est effacée, une récente reste",
+    "test": "S1 : conservation : une demande d’un compte supprimé de plus de 12 mois est effacée, une récente reste",
     "ok": true
    },
    {
@@ -221,7 +221,7 @@
  },
  "tests/e2e/securite.py": {
   "date": "2026-10-28",
-  "commit": "0fc1da7",
+  "commit": "da817ca",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API SIMULÉES : interface seulement",
   "resultats": [
@@ -273,7 +273,7 @@
  },
  "tests/server/analyse.test.mjs": {
   "date": "2026-10-28",
-  "commit": "0fc1da7",
+  "commit": "da817ca",
   "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -289,7 +289,7 @@
  },
  "tests/server/securite.test.mjs": {
   "date": "2026-10-28",
-  "commit": "0fc1da7",
+  "commit": "da817ca",
   "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -318,11 +318,11 @@
     "ok": true
    },
    {
-    "test": "S1 : le texte libre d’une demande perd ce qui identifie son auteur, garde ce qui sert au destinataire",
+    "test": "S1 : le nettoyage automatique du texte libre retire ce qui se reconnaît à coup sûr, garde ce qui sert au destinataire",
     "ok": true
    },
    {
-    "test": "S1 : la conservation des demandes anonymisées se règle (12 mois par défaut, de 1 à 120)",
+    "test": "S1 : la conservation des demandes d’un compte supprimé se règle (12 mois par défaut, de 1 à 120)",
     "ok": true
    },
    {

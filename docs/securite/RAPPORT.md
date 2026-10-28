@@ -153,24 +153,58 @@ Les preuves datées (commit, environnement) sont dans `docs/securite/preuves.jso
 - La table `quotas` existe déjà en production.
 - État en production (lecture seule) : 1 ouvrage, aucun identifiant d'ouvrage partagé entre deux comptes.
 
-## Procédure de déploiement (après accord de Matt)
+## Prérequis de production, vérifiés le 28 octobre (lecture seule, aucune valeur secrète lue ni affichée)
 
-1. **Neon** : créer une branche de sauvegarde `sauvegarde-avant-securite-<date>` depuis la production. C'est la convention déjà en place.
-2. **Neon** : appliquer la migration sur la production :
-   `MIGRATION_URL=<production> node db/appliquer.mjs db/migrations/2026-10-28-01-effacements-fichiers.sql` (essai à blanc), puis la même commande avec `--oui`.
-   Vérifier que la table `effacements_fichiers` existe.
-3. **Vercel** : créer `CRON_SECRET` (Production, Sensitive). Ne pas publier avant.
-4. **GitHub** : fusionner la PR #19. Vercel déploie la production.
-5. **Contrôles après déploiement** :
-   - `/api/maintenance` sans secret répond 401 ;
-   - `vercel crons run /api/maintenance` (ou le tableau de bord) répond 200 avec un bilan ;
-   - sans compte, le Point Zéro dit « Moteur local · entrez dans AIME » ;
-   - la fiche publique d'un profil n'affiche aucun événement.
-6. Ensuite seulement : reporter `main` dans la #14, puis reprendre #14 → #18, chacune revérifiée.
+| Prérequis | État | Comment c'est vérifié |
+|---|---|---|
+| Le domaine `www.lemondeaime.com` est servi par le projet Vercel `lemondeaime` | Oui, configuration DNS correcte | Configuration du domaine |
+| Production actuelle | `fe23e7b` (`main`, PR #13), déploiement `dpl_2MZvytfA87af1jEzwGG2qq5bqdGc`, **candidat au retour arrière** | Liste des déploiements |
+| Risque S3 aujourd'hui en production | `/api/analyse` répond `{"ready":true}` et accepte des analyses sans compte | Requête publique `GET` |
+| `/api/maintenance` | Absent (404), normal avant fusion | Requête publique `GET` |
+| `CRON_SECRET` (Production) | **Absent : à créer** | Noms des variables seulement |
+| `BLOB_READ_WRITE_TOKEN`, `ANTHROPIC_API_KEY`, `DATABASE_URL`, `BETTER_AUTH_SECRET` (Production) | Présents | Noms des variables seulement |
+| Tâches planifiées | Compatibles avec le plan Hobby : une par jour | Documentation Vercel, et prévisualisation construite avec la tâche |
+| Neon : `effacements_fichiers` | Absente : la migration est à appliquer | `to_regclass` en lecture |
+| Neon : `quotas`, `musiques`, `reseau_demandes`, `ouvrages` | Présentes | `to_regclass` en lecture |
+| Neon : données concernées aujourd'hui | 0 demande, 0 fichier audio envoyé, 1 ouvrage, aucun identifiant d'ouvrage partagé | Comptes agrégés |
+| Neon : PostgreSQL | 18.6 ; branche `main` protégée, convention `sauvegarde-avant-…` déjà en place | Projet `le-monde-aime` |
+
+**Non vérifiable sans lire un secret** : que la variable `DATABASE_URL` de Production pointe bien vers la branche Neon `main`. Son commentaire dans Vercel le dit (« la même qu'aimestudio »). Le contrôle C3 ci-dessous le confirmera sans rien lire : si la migration a été appliquée sur la bonne base, la tâche quotidienne répond `"table"` présente, sans `table: false`.
+
+## Ordre exact des opérations
+
+Chaque opération attend l'accord explicite de Matt quand elle écrit dans la base de production ou fusionne.
+
+| # | Opération | Qui | Écrit en production ? |
+|---|---|---|---|
+| 1 | Créer `CRON_SECRET` dans Vercel : Production, type Sensitive, au moins 16 caractères aléatoires. Personne ne l'affiche ni ne le copie ailleurs. | Matt, dans le tableau de bord Vercel | Configuration Vercel seulement |
+| 2 | Vérifier sa présence, par le nom seulement | Claude | Non |
+| 3 | Créer la branche Neon `sauvegarde-avant-securite-<date>` depuis `main` | Claude, **sur accord** | Non : une copie, la production n'est pas modifiée |
+| 4 | Appliquer la migration : essai à blanc, puis `--oui` (`db/appliquer.mjs`) | Claude ou Matt, **sur accord** | **Oui** : création d'une table, ajout pur |
+| 5 | Vérifier en lecture : la table et son index existent, la file est vide | Claude | Non |
+| 6 | Fusionner la PR #19 sur `main` ; Vercel déploie la production | Matt, ou Claude **sur accord** | Déploiement |
+| 7 | Contrôles après déploiement (ci-dessous) | Claude | Non : lectures et refus attendus seulement |
+
+L'ordre compte. Sans la table (étape 4), le nouveau code refuserait toute suppression de compte. Sans `CRON_SECRET` (étape 1), la reprise quotidienne resterait fermée.
+
+## Contrôles après déploiement
+
+Aucun ne crée de compte ni n'écrit de donnée personnelle.
+
+- **C1** : la production sert le commit fusionné (liste des déploiements).
+- **C2** : `/api/maintenance` sans secret répond **401**, et un `POST` répond **405**.
+- **C3** : la tâche quotidienne, déclenchée une fois depuis le tableau de bord Vercel (Cron Jobs → Run), répond **200**. Son bilan donne une table présente, 0 restant et 0 bloqué. Cela confirme aussi que la migration est sur la base utilisée.
+- **C4** : `/api/analyse` sans compte répond **401** (`code: compte`), une requête d'un autre site **403**. Aucun appel à Claude.
+- **C5** : le Point Zéro sans compte affiche « Moteur local · entrez dans AIME pour l'analyse par Claude ».
+- **C6** : la fiche publique d'un profil du Réseau n'affiche aucun événement (lecture de `/api/reseau?ref=…`).
+- **C7** : le StudiO s'ouvre ; la bibliothèque répond ; aucune erreur dans la console.
+- **C8** : les journaux Vercel de la première heure ne montrent aucune erreur 500 nouvelle.
+
+Si un contrôle échoue : retour arrière du code (ci-dessous), puis diagnostic sur la branche de test.
 
 ## Retour arrière
 
-- **Code** : dans Vercel, remettre en production le déploiement précédent (« Instant Rollback »), ou annuler la fusion par un `revert` de la PR. L'ancien code n'utilise pas la table : la laisser en place ne gêne rien.
+- **Code** : dans Vercel, remettre en production le déploiement précédent, `dpl_2MZvytfA87af1jEzwGG2qq5bqdGc` (« Instant Rollback »), ou annuler la fusion par un `revert` de la PR. L'ancien code n'utilise pas la table : la laisser en place ne gêne rien.
 - **Base** : `db/migrations/2026-10-28-01-effacements-fichiers.retour.sql`, **seulement avec une file vide** ; le script refuse sinon. En dernier recours, la branche de sauvegarde de l'étape 1.
 - **Les données déjà effacées** par une suppression de compte ne reviennent pas avec un retour arrière. C'est le but de la suppression. Seule la branche de sauvegarde les garde, jusqu'à son effacement.
 - **StudiO** : les nouveaux états des ouvrages sont de simples champs ajoutés sur l'appareil. L'ancien code les ignore, et rien n'a été effacé.
