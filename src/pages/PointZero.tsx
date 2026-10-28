@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { Tete, DockBas, VerbesSite, Pied, Visuel } from '../charte/Charte';
 import { Lien } from '../lib/router';
-import { useSession } from '../lib/session';
+import { useSession, lireSession } from '../lib/session';
 import { ecrireBuro } from '../lib/buro';
 import { MEDIAS } from '../lib/medias';
 import Moteur from '../lib/moteur.js';
@@ -35,14 +35,23 @@ export default function PointZero() {
     setAn(a); setSource(texte); setNote(n); setSel(a.chemin[0] || null); setMsg(''); setUnionRangee(null); setVus(reduit() ? a.chemin.length : 0);
     setTimeout(() => { titre.current?.focus({ preventScroll: true }); titre.current?.scrollIntoView({ behavior: reduit() ? 'auto' : 'smooth', block: 'start' }); }, 60);
   };
+  /* l'analyse par Claude est réservée aux personnes connectées ; sinon, refusée, au quota ou indisponible : le moteur local, et on dit pourquoi */
+  const NOTES: Record<string, string> = {
+    compte: 'Moteur local · entrez dans AIME pour l’analyse par Claude',
+    quota: 'Moteur local · beaucoup d’analyses à la suite, réessayez plus tard',
+    plafond: 'Moteur local · l’analyse par Claude a atteint sa limite pour l’heure',
+    indisponible: 'Moteur local · analyse par Claude indisponible',
+  };
   const lancer = async (texte: string) => {
     setAttente(true);
+    const local = (n: string) => montrer(Moteur.analyse(texte, { feeds: FEEDS }) as unknown as Analyse, texte, n);
     try {
-      const r = await fetch('/api/analyse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ texte, mode: 'decrire' }) });
-      const j = await r.json();
+      if (!(await lireSession())) { local(NOTES.compte); return; }   /* sans compte : aucun appel au serveur */
+      const r = await fetch('/api/analyse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ texte, mode: 'decrire' }) });
+      const j = await r.json().catch(() => ({}));
       if (r.ok && Array.isArray(j.chemin) && j.chemin.length) { montrer(j, texte, 'Analysé par Claude'); return; }
-      montrer(Moteur.analyse(texte, { feeds: FEEDS }) as unknown as Analyse, texte, 'Moteur local' + (j && j.error ? ' · ' + j.error : ''));
-    } catch { montrer(Moteur.analyse(texte, { feeds: FEEDS }) as unknown as Analyse, texte, 'Moteur local'); }
+      local(NOTES[j && j.code] || 'Moteur local · analyse par Claude indisponible');
+    } catch { local('Moteur local'); }
     finally { setAttente(false); }
   };
   useEffect(() => {

@@ -1,7 +1,13 @@
 // Moteur d'analyse de Point Zéro, second étage : Claude lit une intention (texte, image ou PDF)
 // et renvoie les briques de la Grille 44 à allumer, dans l'ordre, avec leurs raisons.
 // Même forme de réponse que le moteur local (moteur.js) : la grille n'a rien à changer.
+// Réservé aux personnes connectées (session vérifiée côté serveur) : la clé Anthropic ne sert qu'à elles, sous quotas partagés
+// (par personne, et un plafond global par heure). Le contrôle d'origine (garde commune) n'est PAS une authentification.
+// Sans compte, refusée, au quota ou indisponible : le Point Zéro garde son moteur local.
 import { BRIQUES, IDS } from './_briques.mjs';
+import { auth, personne, _pool } from './_auth/auth.mjs';
+import R from './_auth/requete.cjs';
+import Q from './_auth/quotas.cjs';
 
 const DOMAINES = {
   union: { label: 'Union', studio: 'AIME Wedding' },
@@ -14,9 +20,8 @@ const DOMAINES = {
   vente: { label: 'Vente', studio: 'Le Monde AIME' },
   projet: { label: 'Projet', studio: 'Le Monde AIME' },
 };
-const MAX_TEXTE = 8000, MAX_FICHIER = 3 * 1024 * 1024, FENETRE = 60000, PAR_FENETRE = 20;
+const MAX_TEXTE = 8000, MAX_FICHIER = 3 * 1024 * 1024;
 const TYPES = { 'image/jpeg': 'image', 'image/png': 'image', 'image/webp': 'image', 'image/gif': 'image', 'application/pdf': 'document' };
-const appels = new Map();
 
 const OUTIL = {
   name: 'allumer_la_grille',
@@ -64,20 +69,6 @@ Règles :
 Catalogue (id · nom · famille · rôle · nourrit) :
 ${BRIQUES.map(b => `${b.id} · ${b.nom} · ${b.famille} · ${b.role} · ${b.nourrit.join(', ') || '—'}`).join('\n')}`;
 
-function origineAutorisee(req) {
-  const origin = req.headers.origin;
-  if (!origin) return true; // appel serveur à serveur ou même origine sans en-tête
-  if (origin === `https://${req.headers.host}`) return origin;
-  const liste = String(process.env.ANALYSE_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
-  return liste.some(o => o === origin || (o.startsWith('*.') && origin.startsWith('https://') && origin.endsWith(o.slice(1)))) ? origin : false;
-}
-function limite(ip) {
-  const now = Date.now(), l = (appels.get(ip) || []).filter(t => now - t < FENETRE);
-  if (l.length >= PAR_FENETRE) return false;
-  l.push(now); appels.set(ip, l);
-  if (appels.size > 5000) appels.clear();
-  return true;
-}
 // Retrouve chaque citation dans le texte pour pouvoir la surligner.
 function placer(texte, q) {
   if (!q || !texte) return {};
@@ -114,18 +105,14 @@ export function nettoyer(entree, texte) {
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  const origine = origineAutorisee(req);
-  if (typeof origine === 'string') { res.setHeader('Access-Control-Allow-Origin', origine); res.setHeader('Vary', 'Origin'); }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(origine ? 204 : 403).send('');
   const pret = !!process.env.ANTHROPIC_API_KEY;
-  if (req.method === 'GET') return res.status(200).json({ ready: pret });
+  if (req.method === 'GET') return res.status(200).json({ ready: pret, compte: true });
   if (req.method !== 'POST') return res.status(405).json({ error: 'Méthode non autorisée.' });
-  if (!origine) return res.status(403).json({ error: 'Origine non autorisée.' });
-  if (!pret) return res.status(503).json({ error: 'Analyse par Claude non configurée : la clé ANTHROPIC_API_KEY manque côté serveur. Le moteur local reste disponible.' });
-  const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'inconnu';
-  if (!limite(ip)) { res.setHeader('Retry-After', '60'); return res.status(429).json({ error: 'Trop d’analyses à la suite. Réessayez dans une minute.' }); }
+  const refus = R.ecriture(req);   /* même site et corps JSON : une garde, pas une identité */
+  if (refus) return res.status(refus[0]).json({ error: refus[1].raison, code: 'origine' });
+  if (!pret || !auth()) return res.status(503).json({ error: 'Analyse par Claude indisponible. Le moteur local prend le relais.', code: 'indisponible' });
+  const moi = await personne(req).catch(() => null);
+  if (!moi) return res.status(401).json({ error: 'Entrez dans AIME pour l’analyse par Claude. Le moteur local prend le relais.', code: 'compte' });
 
   const { texte = '', mode = 'decrire', fichier } = req.body || {};
   if (typeof texte !== 'string' || texte.length > MAX_TEXTE) return res.status(400).json({ error: `Le texte doit faire moins de ${MAX_TEXTE} caractères.` });
@@ -138,6 +125,15 @@ export default async function handler(req, res) {
   }
   const nom = fichier && typeof fichier.nom === 'string' ? fichier.nom.slice(0, 120) : '';
   if (!texte.trim() && !contenu.length) return res.status(400).json({ error: 'Écrivez quelques mots ou joignez un fichier.' });
+  /* les quotas, partagés en base : par personne, puis le plafond global. Sans base pour les compter, on ne dépense rien. */
+  try {
+    const db = _pool() || undefined;
+    const p = await Q.quota('analyse:personne', moi.id, { db });
+    if (!p.ok) { res.setHeader('Retry-After', String(p.attente)); return res.status(429).json({ error: 'Beaucoup d’analyses à la suite : réessayez plus tard. Le moteur local prend le relais.', code: 'quota' }); }
+    const g = await Q.quota('analyse:tous', 'tous', { db });
+    if (!g.partage) return res.status(503).json({ error: 'Analyse par Claude momentanément indisponible. Le moteur local prend le relais.', code: 'indisponible' });
+    if (!g.ok) { res.setHeader('Retry-After', String(g.attente)); return res.status(429).json({ error: 'L’analyse par Claude a atteint sa limite pour l’heure. Le moteur local prend le relais.', code: 'plafond' }); }
+  } catch { return res.status(503).json({ error: 'Analyse par Claude momentanément indisponible. Le moteur local prend le relais.', code: 'indisponible' }); }
   contenu.push({ type: 'text', text: `Mode : ${['decrire', 'importer', 'annoncer'].includes(mode) ? mode : 'decrire'}.${nom ? ` Fichier : « ${nom} ».` : ''}\nCe que la personne a écrit :\n${texte.trim() || '(rien, seulement le fichier)'}` });
 
   try {
