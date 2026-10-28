@@ -74,7 +74,7 @@ test('les doublons résolus le sont dans le code, et les accès utiles restent',
   const studio = E.find(e => e.cible === '/studio/atelier');
   assert.equal(studio.points.filter(x => x.fichier === 'src/charte/Recherche.tsx').length, 1, 'la loupe propose le Studio une seule fois');
   assert.ok(studio.points.filter(x => x.fichier !== 'src/charte/Recherche.tsx').length >= 3, 'les autres accès au Studio restent');
-  assert.equal((lire('src/charte/Charte.tsx').match(/seDeconnecter\(\)/g) || []).length, 1, 'une seule « Déconnexion » dans le dock du haut');
+  assert.equal((lire('src/charte/Charte.tsx').match(/seDeconnecter\(/g) || []).length, 1, 'une seule « Déconnexion » dans le dock du haut');
   assert.ok(!E.some(e => e.libelles.includes('Votre espace')), 'l’espace porte un seul nom : « Mon espace »');
   assert.ok(E.find(e => e.cible === '/buro').libelles.includes('Ouvrir mon espace'));
   assert.equal(E.find(e => e.cible.startsWith('/buro?lieu=')).total >= 1, true, 'les dossiers de l’espace restent des raccourcis');

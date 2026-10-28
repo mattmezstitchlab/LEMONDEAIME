@@ -80,7 +80,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 38,
+   "ligne": 39,
    "composant": "Tete"
   },
   {
@@ -88,7 +88,7 @@
    "route": "/",
    "libelle": "AIME, accueil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 63,
+   "ligne": 64,
    "composant": "Tete"
   },
   {
@@ -96,7 +96,7 @@
    "route": "/",
    "libelle": "AIME, accueil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 63,
+   "ligne": 64,
    "composant": "Tete"
   },
   {
@@ -104,7 +104,7 @@
    "route": "/buro",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 71,
+   "ligne": 72,
    "composant": "Tete"
   },
   {
@@ -112,7 +112,7 @@
    "route": "/entrer",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 71,
+   "ligne": 72,
    "composant": "Tete"
   },
   {
@@ -120,7 +120,7 @@
    "route": "/",
    "libelle": "Accueil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 81,
+   "ligne": 82,
    "composant": "Tete"
   },
   {
@@ -128,7 +128,7 @@
    "route": "/a-propos",
    "libelle": "À propos d’AIME",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 81,
+   "ligne": 82,
    "composant": "Tete"
   },
   {
@@ -136,7 +136,7 @@
    "route": "/buro",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 92,
+   "ligne": 93,
    "composant": "Tete"
   },
   {
@@ -144,7 +144,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 100,
+   "ligne": 101,
    "composant": "Tete"
   },
   {
@@ -152,7 +152,7 @@
    "route": "/buro",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 100,
+   "ligne": 101,
    "composant": "Tete"
   },
   {
@@ -160,7 +160,7 @@
    "route": "/buro",
    "libelle": "Ouvrir mon espace",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 116,
+   "ligne": 117,
    "composant": "Tete"
   },
   {
@@ -168,7 +168,7 @@
    "route": "/point-zero",
    "libelle": "Point Zéro",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 116,
+   "ligne": 117,
    "composant": "Tete"
   },
   {
@@ -176,7 +176,7 @@
    "route": "/a-plus",
    "libelle": "A+",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 116,
+   "ligne": 117,
    "composant": "Tete"
   },
   {
@@ -184,7 +184,7 @@
    "route": "/a-propos",
    "libelle": "Pourquoi un compte ?",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 117,
+   "ligne": 118,
    "composant": "Tete"
   },
   {
@@ -192,7 +192,7 @@
    "route": "/a-plus",
    "libelle": "A+ pour les pros",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 117,
+   "ligne": 118,
    "composant": "Tete"
   },
   {
@@ -200,7 +200,7 @@
    "route": "/",
    "libelle": "Unions",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 133,
+   "ligne": 134,
    "composant": "VerbesSite"
   },
   {
@@ -208,7 +208,7 @@
    "route": "/reseau",
    "libelle": "Prestataires",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 134,
+   "ligne": 135,
    "composant": "VerbesSite"
   },
   {
@@ -216,7 +216,7 @@
    "route": "/studio",
    "libelle": "Studio",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 135,
+   "ligne": 136,
    "composant": "VerbesSite"
   },
   {
@@ -224,16 +224,8 @@
    "route": "/boutique",
    "libelle": "Boutique",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 136,
+   "ligne": 137,
    "composant": "VerbesSite"
-  },
-  {
-   "cible": "/musique",
-   "route": "/musique",
-   "libelle": "Mes morceaux",
-   "fichier": "src/charte/Charte.tsx",
-   "ligne": 235,
-   "composant": "Musique"
   },
   {
    "cible": "/musique",
@@ -244,11 +236,19 @@
    "composant": "Musique"
   },
   {
+   "cible": "/musique",
+   "route": "/musique",
+   "libelle": "Mes morceaux",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 237,
+   "composant": "Musique"
+  },
+  {
    "cible": "/",
    "route": "/",
    "libelle": "AIME, accueil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 299,
+   "ligne": 300,
    "composant": "Pied"
   },
   {
@@ -256,7 +256,7 @@
    "route": "/",
    "libelle": "Les unions",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 301,
+   "ligne": 302,
    "composant": "Pied"
   },
   {
@@ -264,7 +264,7 @@
    "route": "/reseau",
    "libelle": "Prestataires",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 301,
+   "ligne": 302,
    "composant": "Pied"
   },
   {
@@ -272,7 +272,7 @@
    "route": "/",
    "libelle": "Invités",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 301,
+   "ligne": 302,
    "composant": "Pied"
   },
   {
@@ -280,7 +280,7 @@
    "route": "/",
    "libelle": "Collections",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 301,
+   "ligne": 302,
    "composant": "Pied"
   },
   {
@@ -288,7 +288,7 @@
    "route": "/studio",
    "libelle": "Studio",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 302,
+   "ligne": 303,
    "composant": "Pied"
   },
   {
@@ -296,7 +296,7 @@
    "route": "/",
    "libelle": "Brodez votre mariage",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 302,
+   "ligne": 303,
    "composant": "Pied"
   },
   {
@@ -304,7 +304,7 @@
    "route": "/moments",
    "libelle": "Les 200 moments",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 302,
+   "ligne": 303,
    "composant": "Pied"
   },
   {
@@ -312,7 +312,7 @@
    "route": "/musique",
    "libelle": "La journée en musique",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 302,
+   "ligne": 303,
    "composant": "Pied"
   },
   {
@@ -320,7 +320,7 @@
    "route": "/point-zero",
    "libelle": "Point Zéro",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 302,
+   "ligne": 303,
    "composant": "Pied"
   },
   {
@@ -328,7 +328,7 @@
    "route": "/boutique",
    "libelle": "Boutique",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 302,
+   "ligne": 303,
    "composant": "Pied"
   },
   {
@@ -336,7 +336,7 @@
    "route": "/entrer",
    "libelle": "Entrer",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 303,
+   "ligne": 304,
    "composant": "Pied"
   },
   {
@@ -344,7 +344,7 @@
    "route": "/buro",
    "libelle": "Ouvrir mon espace",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 303,
+   "ligne": 304,
    "composant": "Pied"
   },
   {
@@ -352,7 +352,7 @@
    "route": "/buro",
    "libelle": "Mon profil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 303,
+   "ligne": 304,
    "composant": "Pied"
   },
   {
@@ -360,7 +360,7 @@
    "route": "/a-plus",
    "libelle": "A+",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 303,
+   "ligne": 304,
    "composant": "Pied"
   },
   {
@@ -368,7 +368,7 @@
    "route": "/a-propos",
    "libelle": "À propos d’AIME",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 304,
+   "ligne": 305,
    "composant": "Pied"
   },
   {
@@ -376,7 +376,7 @@
    "route": "/reseau",
    "libelle": "Le fondateur",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 304,
+   "ligne": 305,
    "composant": "Pied"
   },
   {
@@ -1160,7 +1160,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 86,
+   "ligne": 95,
    "composant": "PointZero"
   },
   {
@@ -1168,7 +1168,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 86,
+   "ligne": 95,
    "composant": "PointZero"
   },
   {
@@ -1176,7 +1176,7 @@
    "route": "/point-zero",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 91,
+   "ligne": 100,
    "composant": "PointZero"
   },
   {
@@ -1184,7 +1184,7 @@
    "route": "/studio",
    "libelle": "Point Zéro : importer une image ou un PDF dans le Studio",
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 118,
+   "ligne": 127,
    "composant": "PointZero"
   },
   {
@@ -1192,7 +1192,7 @@
    "route": "/buro",
    "libelle": "Compléter notre union",
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 164,
+   "ligne": 173,
    "composant": "PointZero"
   },
   {
@@ -1200,7 +1200,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 166,
+   "ligne": 175,
    "composant": "PointZero"
   },
   {
@@ -1208,7 +1208,7 @@
    "route": "/studio",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 166,
+   "ligne": 175,
    "composant": "PointZero"
   },
   {
@@ -1216,7 +1216,7 @@
    "route": "/entrer",
    "libelle": "+ Entrer",
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 168,
+   "ligne": 177,
    "composant": "PointZero"
   },
   {
@@ -1566,6 +1566,11 @@
    "ligne": 38
   },
   {
+   "api": "/api/ouvrages",
+   "fichier": "src/lib/ouvragesAppareil.ts",
+   "ligne": 32
+  },
+  {
    "api": "/api/reseau",
    "fichier": "src/lib/reseau.ts",
    "ligne": 14
@@ -1623,27 +1628,27 @@
   {
    "api": "/api/auth",
    "fichier": "src/lib/session.ts",
-   "ligne": 49
+   "ligne": 55
   },
   {
    "api": "/api/auth",
    "fichier": "src/lib/session.ts",
-   "ligne": 54
+   "ligne": 61
   },
   {
    "api": "/api/fournisseurs",
    "fichier": "src/lib/session.ts",
-   "ligne": 63
+   "ligne": 70
   },
   {
    "api": "/api/auth",
    "fichier": "src/lib/session.ts",
-   "ligne": 69
+   "ligne": 76
   },
   {
    "api": "/api/analyse",
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 41
+   "ligne": 50
   },
   {
    "api": "/api/systeme",
@@ -1662,14 +1667,22 @@
     "token"
    ],
    "tables": [
+    "musiques",
     "ouvrages",
     "profils",
+    "reseau_dates",
+    "reseau_demandes",
+    "reseau_questions",
     "space_members",
     "spaces"
    ],
    "ecrit": [
+    "musiques",
     "ouvrages",
     "profils",
+    "reseau_dates",
+    "reseau_demandes",
+    "reseau_questions",
     "space_members",
     "spaces"
    ],
@@ -1682,15 +1695,17 @@
    "route": "/api/analyse",
    "methodes": [
     "GET",
-    "OPTIONS",
     "POST"
    ],
    "actions": [],
    "parametres": [],
    "tables": [],
    "ecrit": [],
-   "session": false,
-   "quotas": [],
+   "session": true,
+   "quotas": [
+    "analyse:personne",
+    "analyse:tous"
+   ],
    "configuration": true
   },
   {
@@ -1749,6 +1764,24 @@
    "session": false,
    "quotas": [],
    "configuration": false
+  },
+  {
+   "fichier": "api/maintenance.mjs",
+   "route": "/api/maintenance",
+   "methodes": [
+    "GET"
+   ],
+   "actions": [],
+   "parametres": [],
+   "tables": [
+    "reseau_demandes"
+   ],
+   "ecrit": [
+    "reseau_demandes"
+   ],
+   "session": false,
+   "quotas": [],
+   "configuration": true
   },
   {
    "fichier": "api/musique.mjs",
@@ -1811,7 +1844,8 @@
     "POST"
    ],
    "actions": [
-    "supprimer"
+    "supprimer",
+    "verifier"
    ],
    "parametres": [],
    "tables": [
@@ -1941,7 +1975,7 @@
    {
     "fichier": "tests/server/analyse.test.mjs",
     "tests": [
-     "analyse : fermée sans clé, origine contrôlée, réponse nettoyée",
+     "analyse : la garde commune d’abord (même site, JSON), puis fermée sans clé ni comptes ; jamais la clé dans une réponse",
      "nettoyer : domaine inconnu devient projet, sujet identique ignoré"
     ]
    },
@@ -2029,6 +2063,21 @@
      "nettoyerProfil : nom et métier requis, caché par défaut, site en https",
      "reseau : fermé sans base (503), écriture d’un autre site refusée (403)",
      "exemples du Réseau : chaque brique existe, chaque « travaille avec » mène à un exemple, chaque photo existe"
+    ]
+   },
+   {
+    "fichier": "tests/server/securite.test.mjs",
+    "tests": [
+     "S1 : la suppression de compte couvre la musique, le Réseau, et inscrit les fichiers pour effacement",
+     "S1 : la reprise est fermée sans secret, refuse un mauvais secret, et la tâche est planifiée",
+     "S1 : la file ne perd rien quand le stockage échoue, et se vide quand il répond",
+     "S2 : à la déconnexion, seuls les ouvrages du compte déjà rangés (version au moins aussi récente) sont effacés",
+     "S3 : /api/analyse exige une session, la garde commune et les quotas partagés",
+     "S4 : la lecture publique du Réseau exclut tout événement",
+     "S1 : le nettoyage automatique du texte libre retire ce qui se reconnaît à coup sûr, garde ce qui sert au destinataire",
+     "S1 : la conservation des demandes d’un compte supprimé se règle (12 mois par défaut, de 1 à 120)",
+     "S1 : la file vient d’une migration explicite, idempotente, avec son retour arrière",
+     "S3 : les quotas de l’analyse se règlent par l’environnement (20 et 300 par défaut)"
     ]
    },
    {
@@ -2166,6 +2215,18 @@
     "tests": []
    },
    {
+    "fichier": "tests/e2e/securite.py",
+    "tests": [
+     "S3 · sans compte : aucun appel à l’analyse, le moteur local le dit",
+     "S3 · sans compte : le Point Zéro allume quand même ses briques (moteur local)",
+     "S3 · connecté, réponse « %s » : %s",
+     "S2 · à la déconnexion, « Effacer les ouvrages de cet appareil » est proposé, jamais coché",
+     "S2 · sans cocher : la déconnexion n’efface rien sur l’appareil",
+     "S2 · coché : seul l’ouvrage du compte déjà rangé dans son espace est effacé (%s restent)",
+     "aucune erreur dans la page"
+    ]
+   },
+   {
     "fichier": "tests/e2e/systeme.py",
     "tests": [
      "carte : six familles sur une branche",
@@ -2236,6 +2297,36 @@
    }
   ],
   "base": [
+   {
+    "fichier": "tests/base/securite.mjs",
+    "tests": [
+     "base : trois comptes de test, connectés par le vrai lien de connexion",
+     "S1 : sans la migration de la file d’effacement, la suppression est refusée et rien n’est effacé",
+     "S1 : inscrire deux fois ne double rien ; deux reprises simultanées et un fichier déjà absent ne font aucune erreur",
+     "S1 : le compte est supprimé par le vrai flux de suppression (200)",
+     "S1 : aucune ligne du compte ne reste (musique, Réseau, profil, adhésions, sessions)",
+     "S1 : une demande envoyée reste chez son destinataire, sans le nom, l’adresse ni le compte de son auteur",
+     "S1 : son texte libre est nettoyé (adresses, téléphones, liens, son nom) ; la date et le nombre d’invités restent",
+     "S1 : les données des autres comptes et l’espace partagé sont intacts",
+     "S1 : stockage en panne, les fichiers restent inscrits dans la file d’effacement, avec l’erreur",
+     "S1 : la reprise (tâche quotidienne protégée) efface le fichier et les envois jamais rattachés, puis vide la file",
+     "S1 : conservation : une demande d’un compte supprimé de plus de 12 mois est effacée, une récente reste",
+     "S1 : propriétaire d’un espace où d’autres sont membres : suppression refusée, rien n’est effacé",
+     "S3 : sans compte, refusé (401) et rien n’est dépensé",
+     "S3 : même connecté, une requête sans origine ou d’un autre site est refusée",
+     "S3 : connecté, l’analyse passe (Claude simulé, un appel)",
+     "S3 : une demande invalide est refusée avant tout : ni appel à Claude, ni quota consommé",
+     "S3 : Claude en erreur : une seule tentative, pas de nouvel essai automatique, le moteur local prend le relais",
+     "S3 : les quotas se règlent par l’environnement (ANALYSE_QUOTA_PERSONNE=1 : la 2e analyse de l’heure est refusée)",
+     "S3 : au quota de la personne, refusé (429) sans appel à Claude",
+     "S3 : plafond global atteint, refusé pour tous (429) sans appel à Claude",
+     "S3 : la clé n’apparaît jamais dans une réponse",
+     "S4 : la fiche publique ne montre jamais une union ni un événement, même marqués « public »",
+     "S4 : la liste publique du Réseau ne montre aucun espace",
+     "S2 : un ouvrage déjà rangé dans un autre compte est refusé (409) : aucune copie d’un compte à l’autre",
+     "S2 : vérifier des anciens ne rend que des identifiants : « à un autre compte » pour l’un, « à moi » pour son propriétaire, jamais de nom ni de contenu"
+    ]
+   },
    {
     "fichier": "tests/base/unions.mjs",
     "tests": [
