@@ -720,7 +720,7 @@
    "route": "/reseau",
    "libelle": null,
    "fichier": "src/pages/FicheReseau.tsx",
-   "ligne": 98,
+   "ligne": 99,
    "composant": "FicheExemple"
   },
   {
@@ -728,21 +728,13 @@
    "route": "/point-zero",
    "libelle": "Commencer au Point Zéro",
    "fichier": "src/pages/FicheReseau.tsx",
-   "ligne": 103,
+   "ligne": 104,
    "composant": "FicheExemple"
   },
   {
    "cible": "/reseau",
    "route": "/reseau",
    "libelle": "Tout le Réseau",
-   "fichier": "src/pages/FicheReseau.tsx",
-   "ligne": 111,
-   "composant": "FicheExemple"
-  },
-  {
-   "cible": "/reseau/",
-   "route": "/reseau",
-   "libelle": null,
    "fichier": "src/pages/FicheReseau.tsx",
    "ligne": 112,
    "composant": "FicheExemple"
@@ -752,7 +744,15 @@
    "route": "/reseau",
    "libelle": null,
    "fichier": "src/pages/FicheReseau.tsx",
-   "ligne": 137,
+   "ligne": 113,
+   "composant": "FicheExemple"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/FicheReseau.tsx",
+   "ligne": 138,
    "composant": "Demander"
   },
   {
@@ -776,7 +776,7 @@
    "route": "/reseau",
    "libelle": "Réseau",
    "fichier": "src/pages/FicheReseau.tsx",
-   "ligne": 204,
+   "ligne": 205,
    "composant": "FicheReseau"
   },
   {
@@ -784,7 +784,7 @@
    "route": "/reseau",
    "libelle": "Réseau",
    "fichier": "src/pages/FicheReseau.tsx",
-   "ligne": 206,
+   "ligne": 207,
    "composant": "FicheReseau"
   },
   {
@@ -792,7 +792,7 @@
    "route": "/reseau",
    "libelle": "Retour au Réseau",
    "fichier": "src/pages/FicheReseau.tsx",
-   "ligne": 207,
+   "ligne": 208,
    "composant": "FicheReseau"
   },
   {
@@ -800,7 +800,7 @@
    "route": "/moments",
    "libelle": null,
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 180,
+   "ligne": 181,
    "composant": "LeMondeAime"
   },
   {
@@ -808,7 +808,7 @@
    "route": "/point-zero",
    "libelle": "Créer la page de notre union",
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 184,
+   "ligne": 185,
    "composant": "LeMondeAime"
   },
   {
@@ -816,7 +816,7 @@
    "route": "/reseau",
    "libelle": "Tous les prestataires",
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 188,
+   "ligne": 189,
    "composant": "LeMondeAime"
   },
   {
@@ -824,7 +824,7 @@
    "route": "/reseau",
    "libelle": null,
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 194,
+   "ligne": 195,
    "composant": "LeMondeAime"
   },
   {
@@ -832,7 +832,7 @@
    "route": "/studio",
    "libelle": "Ouvrir le Studio",
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 200,
+   "ligne": 201,
    "composant": "LeMondeAime"
   },
   {
@@ -840,7 +840,7 @@
    "route": "/studio",
    "libelle": "Les patrons à broder",
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 200,
+   "ligne": 201,
    "composant": "LeMondeAime"
   },
   {
@@ -848,7 +848,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 216,
+   "ligne": 217,
    "composant": "LeMondeAime"
   },
   {
@@ -856,7 +856,7 @@
    "route": "/boutique",
    "libelle": "Toute la boutique",
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 223,
+   "ligne": 224,
    "composant": "LeMondeAime"
   },
   {
@@ -864,7 +864,7 @@
    "route": "/buro",
    "libelle": "Ouvrir mon espace",
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 237,
+   "ligne": 238,
    "composant": "LeMondeAime"
   },
   {
@@ -872,7 +872,7 @@
    "route": "/studio",
    "libelle": "Ouvrir le Studio",
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 237,
+   "ligne": 238,
    "composant": "LeMondeAime"
   },
   {
@@ -880,7 +880,7 @@
    "route": "/a-plus",
    "libelle": "Découvrir A+",
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 244,
+   "ligne": 245,
    "composant": "LeMondeAime"
   },
   {
@@ -888,7 +888,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 251,
+   "ligne": 252,
    "composant": "LeMondeAime"
   },
   {
@@ -896,7 +896,7 @@
    "route": "/moments",
    "libelle": null,
    "fichier": "src/pages/LeMondeAime.tsx",
-   "ligne": 272,
+   "ligne": 273,
    "composant": "LeMondeAime"
   },
   {
@@ -1921,6 +1921,18 @@
     ]
    },
    {
+    "fichier": "tests/server/metamorphose.test.mjs",
+    "tests": [
+     "critère de date : sans paramètre, la date vient de la Métamorphose",
+     "critère de date : une date choisie dans le Réseau passe avant, la phrase reste intacte",
+     "critère de date : « aucune » efface le critère sans effacer la Métamorphose",
+     "critère de date : une phrase sans date, ou un paramètre mal formé, n’impose rien",
+     "critère de date : le Réseau ne modifie jamais la Métamorphose",
+     "Fragments : l’analyse d’une page reste fermée et non déployée",
+     "Fragments : les points d’entrée du Studio passent par le préfixe /studio"
+    ]
+   },
+   {
     "fichier": "tests/server/musique.test.mjs",
     "tests": [
      "lireLien : Deezer reconnu, autres plateformes gardées comme liens, http refusé",
@@ -2000,6 +2012,38 @@
      "téléphone : le bloc de l’espace tient dans l’écran",
      "Studio : un lien ramène au Monde AIME",
      "Studio : ses docks sont les siens (pas ceux du site)",
+     "aucune erreur dans la console"
+    ]
+   },
+   {
+    "fichier": "tests/e2e/metamorphose.py",
+    "tests": [
+     "Métamorphose : le bouton ouvre le panneau",
+     "Métamorphose : le focus va au titre du panneau",
+     "Métamorphose : Échap ferme et rend le focus au bouton",
+     "Métamorphose : le panneau dit que le Réseau reprend la date",
+     "Métamorphose : le titre devient les noms",
+     "Métamorphose : une section cachée peut être montrée",
+     "Métamorphose : l’ordre des sections suit le choix (%s)",
+     "Métamorphose : tout est gardé sur l’appareil après rechargement",
+     "Métamorphose : le bouton dit que la page est transformée",
+     "Réseau : la date reprise de la Métamorphose est expliquée",
+     "Réseau : la recherche utilise cette date (%s)",
+     "Réseau : changer la date ne touche pas la Métamorphose",
+     "Réseau : on peut chercher sans date",
+     "Réseau : on peut reprendre la date de la Métamorphose",
+     "Métamorphose : « Revenir à la page de tous » efface tout",
+     "Réseau : sans Métamorphose, aucune date imposée",
+     "téléphone : le panneau tient dans l’écran",
+     "téléphone : le Réseau et sa date ne débordent pas",
+     "Fragments : les liens portent la vraie adresse (%d)",
+     "Fragments : les points d’entrée disent « Fragments »",
+     "Fragments : le lien ouvre l’outil dans le Studio",
+     "Fragments : l’analyse est annoncée indisponible, le bouton désactivé",
+     "Fragments : aucune requête vers l’analyse non déployée",
+     "Fragments : aucun nom de variable serveur affiché",
+     "Fragments : l’outil du Studio Design s’appelle « Fragments · Grille »",
+     "téléphone : Fragments s’ouvre et dit que l’analyse est indisponible",
      "aucune erreur dans la console"
     ]
    },

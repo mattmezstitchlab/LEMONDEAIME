@@ -202,7 +202,7 @@ export default function GameStudio({onBack,onMetamorphose,onCircle}:{onBack:()=>
    <h3 className="mb-2 text-xs font-semibold">Trois actions</h3>
    <p className="text-[11px] leading-relaxed text-white/60">1. Tap : retirer un groupe. 2. Swipe : enchaîner les zones. 3. Pincer ou molette : explorer la grille.</p>
   </div>
-  <button className={studioButton+" w-full"} onClick={onMetamorphose}>Métamorphose →</button>
+  <button className={studioButton+" w-full"} onClick={onMetamorphose}>Fragments →</button>
   <button className={studioButton+" w-full"} onClick={onCircle}>RippleCircle →</button>
  </div>;
  const right=<div className="space-y-4 text-white">

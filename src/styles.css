@@ -245,6 +245,7 @@ img.avatar { background: var(--doux); }
 .meta-bloc { margin: 18px 0 0; padding: 16px 0 0; border: 0; border-top: 1px solid #E6E6E2; min-width: 0; }
 .meta-bloc legend { padding: 0; margin-bottom: 10px; font-size: 16px; font-weight: 700; float: left; width: 100%; }
 .meta-bloc legend + * { clear: both; }
+.meta-note { margin: 8px 0 0; font-size: 13px; line-height: 1.45; color: #55555A; }
 .meta-univers { display: flex; flex-direction: column; gap: 6px; padding: 0; border: 0; background: transparent; text-align: left; font-size: 14px; font-weight: 500; color: var(--encre); }
 .meta-univers img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; }
 .meta-univers[aria-pressed="true"] img { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--encre); }
@@ -662,3 +663,9 @@ html.calme .sn-liens .trait { animation: none; stroke-dashoffset: 0; }
   .sn-fiche { position: fixed; left: 8px; right: 8px; bottom: 86px; top: auto; z-index: 25; max-height: 58vh; box-shadow: 0 -10px 40px rgba(11,11,12,.18); }
   .sn-liens { display: none; }
 }
+
+/* la date de recherche du Réseau : d'où elle vient, et comment la changer */
+.critere-date { margin: 0 0 20px; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--trait); background: var(--carte); display: grid; gap: 10px; max-width: 760px; }
+.critere-date-texte { margin: 0; font-size: 15px; line-height: 1.5; color: var(--encre-2); }
+.critere-date-texte b { color: var(--encre); font-weight: 600; }
+.critere-date-actions, .critere-date-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: end; }

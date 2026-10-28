@@ -1,5 +1,6 @@
 import {useState,type FormEvent,type MouseEvent,type ReactNode} from "react";
 import {ArrowRight,ArrowUpRight,CheckCircle2,ChevronDown,ExternalLink,Grid3X3,Layers3,Link2,ShieldCheck,Sparkles} from "lucide-react";
+import {avecBase} from "../lib/entryNavigation";
 import {INTEGRATION_POINTS} from "../lib/atelierCompositionContract";
 import "./AimeUnifiedHome.css";
 
@@ -7,8 +8,8 @@ import "./AimeUnifiedHome.css";
 type StudioId="metamorphose"|"design"|"mini-site"|"embroidery"|"accessibility";
 interface StudioItem{id:StudioId;label:string;description:string;status:string}
 const STUDIOS:readonly StudioItem[]=[
- {id:"metamorphose",label:"MÉTAMORPHOSE",description:"Explorateur, fragments, grille responsive et inspection Zoom Code des fragments.",status:"Atelier intégré · fonctions locales"},
- {id:"design",label:"Design",description:"Créations vectorielles et composition que MÉTAMORPHOSE peut référencer.",status:"Studio existant"},
+ {id:"metamorphose",label:"Fragments",description:"Explorateur, fragments, grille responsive et inspection Zoom Code des fragments.",status:"Atelier intégré · fonctions locales"},
+ {id:"design",label:"Design",description:"Créations vectorielles et composition que Fragments peut référencer.",status:"Studio existant"},
  {id:"mini-site",label:"Mini-site",description:"Un moteur spécialisé qui conserve ses propres pages et sections.",status:"Studio existant"},
  {id:"embroidery",label:"Broderie",description:"Patrons, cellules et fils : le moteur métier reste distinct.",status:"Studio existant"},
  {id:"accessibility",label:"Accessibilité",description:"Outils d'exploration ; aucun audit certifié ni conformité automatique.",status:"Studio expérimental"}
@@ -25,7 +26,8 @@ function LocalLink({href,onNavigate,children,className=""}:{href:string;onNaviga
   if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
   event.preventDefault();onNavigate(href);
  };
- return <a href={href} onClick={click} className={className}>{children}</a>;
+ /* l'adresse affichée est l'adresse réelle : avec la base du Studio */
+ return <a href={avecBase(href)} onClick={click} className={className}>{children}</a>;
 }
 export default function AimeUnifiedHome({onNavigate}:{onNavigate:(path:string,intention?:string)=>void}){
  const [intent,setIntent]=useState("");
@@ -48,7 +50,7 @@ export default function AimeUnifiedHome({onNavigate}:{onNavigate:(path:string,in
       <h1 id="au-hero-title">Une intention.<br/><em>Toutes ses</em><br/>possibilités.</h1>
       <p className="au-lead">Une seule entrée pour comprendre, composer et transformer. Des moteurs différents, des fragments reliés et la liberté de ne pas tout recommencer.</p>
       <div className="au-hero-actions">
-       <LocalLink href="/atelier?studio=metamorphose" onNavigate={onNavigate} className="au-button au-button-light">Explorer MÉTAMORPHOSE <ArrowUpRight size={18}/></LocalLink>
+       <LocalLink href="/atelier?studio=metamorphose" onNavigate={onNavigate} className="au-button au-button-light">Explorer Fragments <ArrowUpRight size={18}/></LocalLink>
        <a href="#interfaces" className="au-quiet-link">Voir les véritables interfaces <ArrowRight size={16}/></a>
       </div>
       <p className="au-hero-note">Première architecture opérationnelle par étapes · Pas d'automatisation universelle annoncée.</p>
@@ -87,7 +89,7 @@ export default function AimeUnifiedHome({onNavigate}:{onNavigate:(path:string,in
      <div className="au-live-window">
       <div className="au-window-top"><div className="au-window-dots" aria-hidden="true"><i/><i/><i/></div><span>POINTZERO / ATELIER / {active.label}</span><span className="au-window-status">Interface réelle</span></div>
       <div className="au-live-meta"><div><h3>{active.label}</h3><p>{active.description}</p><small>{active.status}</small></div><LocalLink href={studioPath} onNavigate={onNavigate} className="au-window-open">Ouvrir en plein écran <ExternalLink size={16}/></LocalLink></div>
-      {showPreview?<div className="au-live-frame-wrap"><iframe key={studioId} src={studioPath} title={"Interface interactive réelle : "+active.label} loading="lazy" referrerPolicy="same-origin"/></div>
+      {showPreview?<div className="au-live-frame-wrap"><iframe key={studioId} src={avecBase(studioPath)} title={"Interface interactive réelle : "+active.label} loading="lazy" referrerPolicy="same-origin"/></div>
        :<div className="au-live-placeholder"><div className="au-live-mark" aria-hidden="true"><Grid3X3 size={42} strokeWidth={1}/></div>
         <p>Chargez le véritable Studio pour inspecter son interface et l'essayer.</p>
         <button type="button" className="au-button au-button-dark" onClick={()=>setShowPreview(true)}>Afficher l'interface réelle <ArrowRight size={17}/></button>
@@ -140,7 +142,7 @@ export default function AimeUnifiedHome({onNavigate}:{onNavigate:(path:string,in
    </div></section>
 
    <section className="au-final" aria-labelledby="au-final-title"><div className="au-max"><Sparkles size={26}/><p>AIME® × POINTZERO</p><h2 id="au-final-title">Un même projet.<br/>Plusieurs expressions.<br/><em>Une seule continuité.</em></h2>
-    <div className="au-final-actions"><LocalLink href="/atelier?studio=metamorphose" onNavigate={onNavigate} className="au-button au-button-light">Ouvrir MÉTAMORPHOSE <ArrowRight size={17}/></LocalLink><LocalLink href="/espace" onNavigate={onNavigate} className="au-button au-button-outline">Commencer par une intention <ArrowUpRight size={17}/></LocalLink></div>
+    <div className="au-final-actions"><LocalLink href="/atelier?studio=metamorphose" onNavigate={onNavigate} className="au-button au-button-light">Ouvrir Fragments <ArrowRight size={17}/></LocalLink><LocalLink href="/espace" onNavigate={onNavigate} className="au-button au-button-outline">Commencer par une intention <ArrowUpRight size={17}/></LocalLink></div>
    </div></section>
  </main>;
 }

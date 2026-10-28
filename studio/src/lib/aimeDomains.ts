@@ -11,7 +11,7 @@ export const AIME_DOMAINS:{id:string;title:string;intent:string;tools:DomainTool
  {label:'Atelier artistique',route:'art-world',state:'local',limit:'Créations et galerie locales'}]},
  {id:'web',title:'Web et interfaces',intent:'Créer et recomposer un site',tools:[
  {label:'Mini-site',route:'mini-site',state:'local',limit:'HTML exportable ; hébergement non intégré'},
- {label:'Métamorphose',route:'metamorphose',state:'experimental',limit:'Scanner privé à configurer ; HTML statique seulement'},
+ {label:'Fragments',route:'metamorphose',state:'experimental',limit:'Analyse d’une page indisponible (audit de sécurité à faire) ; fragments et compositions locaux'},
  {label:'Génération',route:'generation',state:'experimental',limit:'Images via service tiers ; pas génération autonome universelle'},
  {label:'Academy',route:'academy',state:'local',limit:'Support pédagogique local, pas LMS partagé'}]},
  {id:'music',title:'Musique',intent:'Composer et préparer une prestation',tools:[

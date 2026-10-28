@@ -6,8 +6,9 @@ import { envoyerDemande, lireProfil, photoProfil, type Profil, type ProjetPublic
 import { CarteReseau, type Carte } from '../charte/CartePersonne';
 import { EntrerBloc } from '../charte/EntrerBloc';
 import { useSession } from '../lib/session';
-import { useMeta } from '../lib/metamorphose';
-import { dateLisible, lireDate } from '../../api/_orbe-local.mjs';
+import { useCritereDate } from '../lib/critereDate';
+import { CritereDate } from '../charte/CritereDate';
+import { dateLisible } from '../../api/_orbe-local.mjs';
 import { EXEMPLES, FICHES, UNION_EXEMPLE, domaine, exemple, type Exemple } from '../lib/reseau-exemples';
 
 type Brique = { n: string; name: string; fam: string; does: string; w: string; b: string; c: string; cl: string };
@@ -154,8 +155,7 @@ function Demander({ p, dateCherchee }: { p: Profil; dateCherchee: string | null 
 }
 
 function FicheProfil({ refPublique }: { refPublique: string }) {
-  const [meta] = useMeta();
-  const date = lireDate(meta.date);
+  const date = useCritereDate().date;
   const [p, setP] = useState<Profil | null | undefined>(undefined);
   const [projets, setProjets] = useState<ProjetPublic[]>([]);
   useEffect(() => { lireProfil(refPublique, date).then(r => { setP(r.ok ? r.profil || null : null); setProjets(r.projets || []); if (r.profil) document.title = 'AIME — Réseau · ' + r.profil.nom; }); }, [refPublique, date]);
@@ -173,6 +173,7 @@ function FicheProfil({ refPublique }: { refPublique: string }) {
           <p className="surtitre">{[d?.label, p.metier, p.ville].filter(Boolean).join(' · ')}</p>
           <h1 className="titre" style={{ fontSize: 'clamp(48px, 7vw, 112px)', lineHeight: .9 }}>{p.nom}</h1>
           {p.bio && <p className="chapeau" style={{ whiteSpace: 'pre-line' }}>{p.bio}</p>}
+          <CritereDate />
           {p.etat && date && <p className={'pastille-fiche ' + p.etat}>{{ libre: 'Libre', option: 'En option', prise: 'Pas libre' }[p.etat]} le {dateLisible(date)}</p>}
           <dl className="fiche-faits">
             {p.zone && <><dt>Intervient</dt><dd>{p.zone}</dd></>}

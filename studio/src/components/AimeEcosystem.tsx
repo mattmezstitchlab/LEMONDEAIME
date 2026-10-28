@@ -4,6 +4,7 @@ import "../design/components.css";
 import AimeUnifiedHome from "./AimeUnifiedHome";
 import {useEffect,useRef,useState,type MouseEvent,type ReactNode} from "react";
 import {ArrowLeft,ArrowRight,ArrowUpRight,BookOpen,Clock3,Heart,Layers3} from "lucide-react";
+import {avecBase} from "../lib/entryNavigation";
 import {AIME_EDITORIAL_VERSION,UNIVERSES,UNIVERSE_BY_SLUG,STUDIO_STORIES,STORY_BY_ID, MOTORS,VISION_MILESTONES} from "../lib/aimeEditorial";
 import {DEFAULT_LAUNCH,STATUS_LABELS,canEnter,canPreview,validLaunch,type LaunchConfig} from "../lib/launchManifest";
 import "./AimeEcosystem.css";
@@ -14,7 +15,8 @@ function Jump({href,onNavigate,children,className=""}:{href:string;onNavigate:(p
   if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
   e.preventDefault();onNavigate(href);
  }
- return <a href={href} onClick={click} className={className}>{children}</a>;
+ /* l'adresse affichée est l'adresse réelle (ouverture dans un nouvel onglet, copie du lien) : avec la base du Studio */
+ return <a href={avecBase(href)} onClick={click} className={className}>{children}</a>;
 }
 function SiteHeader({onNavigate}:{onNavigate:(path:string)=>void}){
  return <header className="ae-header">
@@ -24,7 +26,7 @@ function SiteHeader({onNavigate}:{onNavigate:(path:string)=>void}){
     <Jump href="/univers" onNavigate={onNavigate}>Univers</Jump>
     <Jump href="/vision" onNavigate={onNavigate}>La méthode</Jump>
    </nav>
-   <Jump href="/atelier?studio=metamorphose" onNavigate={onNavigate} className="ae-header-cta">MÉTAMORPHOSE <ArrowUpRight size={14}/></Jump>
+   <Jump href="/atelier?studio=metamorphose" onNavigate={onNavigate} className="ae-header-cta">FRAGMENTS <ArrowUpRight size={14}/></Jump>
   </header>;
 }
 function PublicLayout({title,kicker,lead,children}:{title:string;kicker:string;lead:string;children:ReactNode}){

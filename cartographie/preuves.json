@@ -28,8 +28,8 @@
  },
  "tests/e2e/docks.py": {
   "date": "2026-10-28",
-  "commit": "948cf8f",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
    {
@@ -158,10 +158,126 @@
    }
   ]
  },
+ "tests/e2e/metamorphose.py": {
+  "date": "2026-10-28",
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "aperçu local (vite preview), API simulées",
+  "resultats": [
+   {
+    "test": "Métamorphose : le bouton ouvre le panneau",
+    "ok": true
+   },
+   {
+    "test": "Métamorphose : le focus va au titre du panneau",
+    "ok": true
+   },
+   {
+    "test": "Métamorphose : Échap ferme et rend le focus au bouton",
+    "ok": true
+   },
+   {
+    "test": "Métamorphose : le panneau dit que le Réseau reprend la date",
+    "ok": true
+   },
+   {
+    "test": "Métamorphose : le titre devient les noms",
+    "ok": true
+   },
+   {
+    "test": "Métamorphose : une section cachée peut être montrée",
+    "ok": true
+   },
+   {
+    "test": "Métamorphose : l’ordre des sections suit le choix (unions,moments)",
+    "ok": true
+   },
+   {
+    "test": "Métamorphose : tout est gardé sur l’appareil après rechargement",
+    "ok": true
+   },
+   {
+    "test": "Métamorphose : le bouton dit que la page est transformée",
+    "ok": true
+   },
+   {
+    "test": "Réseau : la date reprise de la Métamorphose est expliquée",
+    "ok": true
+   },
+   {
+    "test": "Réseau : la recherche utilise cette date (2027-06-12)",
+    "ok": true
+   },
+   {
+    "test": "Réseau : changer la date ne touche pas la Métamorphose",
+    "ok": true
+   },
+   {
+    "test": "Réseau : on peut chercher sans date",
+    "ok": true
+   },
+   {
+    "test": "Réseau : on peut reprendre la date de la Métamorphose",
+    "ok": true
+   },
+   {
+    "test": "Métamorphose : « Revenir à la page de tous » efface tout",
+    "ok": true
+   },
+   {
+    "test": "Réseau : sans Métamorphose, aucune date imposée",
+    "ok": true
+   },
+   {
+    "test": "téléphone : le panneau tient dans l’écran",
+    "ok": true
+   },
+   {
+    "test": "téléphone : le Réseau et sa date ne débordent pas",
+    "ok": true
+   },
+   {
+    "test": "Fragments : les liens portent la vraie adresse (5)",
+    "ok": true
+   },
+   {
+    "test": "Fragments : les points d’entrée disent « Fragments »",
+    "ok": true
+   },
+   {
+    "test": "Fragments : le lien ouvre l’outil dans le Studio",
+    "ok": true
+   },
+   {
+    "test": "Fragments : l’analyse est annoncée indisponible, le bouton désactivé",
+    "ok": true
+   },
+   {
+    "test": "Fragments : aucune requête vers l’analyse non déployée",
+    "ok": true
+   },
+   {
+    "test": "Fragments : aucun nom de variable serveur affiché",
+    "ok": true
+   },
+   {
+    "test": "Fragments : l’outil du Studio Design s’appelle « Fragments · Grille »",
+    "ok": true
+   },
+   {
+    "test": "téléphone : Fragments s’ouvre et dit que l’analyse est indisponible",
+    "ok": true
+   },
+   {
+    "test": "aucune erreur dans la console",
+    "ok": true
+   }
+  ]
+ },
  "tests/e2e/moments.py": {
   "date": "2026-10-28",
-  "commit": "948cf8f",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
    {
@@ -336,8 +452,8 @@
  },
  "tests/e2e/navigation.py": {
   "date": "2026-10-28",
-  "commit": "948cf8f",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
    {
@@ -404,8 +520,8 @@
  },
  "tests/e2e/systeme.py": {
   "date": "2026-10-28",
-  "commit": "948cf8f",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "aperçu local (vite preview), autorisation simulée",
   "resultats": [
    {
@@ -496,8 +612,8 @@
  },
  "tests/server/analyse.test.mjs": {
   "date": "2026-10-28",
-  "commit": "948cf8f",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -512,8 +628,8 @@
  },
  "tests/server/buro.test.mjs": {
   "date": "2026-10-28",
-  "commit": "948cf8f",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -552,8 +668,8 @@
  },
  "tests/server/cartographie.test.mjs": {
   "date": "2026-10-28",
-  "commit": "948cf8f",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -586,10 +702,46 @@
    }
   ]
  },
+ "tests/server/metamorphose.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "critère de date : sans paramètre, la date vient de la Métamorphose",
+    "ok": true
+   },
+   {
+    "test": "critère de date : une date choisie dans le Réseau passe avant, la phrase reste intacte",
+    "ok": true
+   },
+   {
+    "test": "critère de date : « aucune » efface le critère sans effacer la Métamorphose",
+    "ok": true
+   },
+   {
+    "test": "critère de date : une phrase sans date, ou un paramètre mal formé, n’impose rien",
+    "ok": true
+   },
+   {
+    "test": "critère de date : le Réseau ne modifie jamais la Métamorphose",
+    "ok": true
+   },
+   {
+    "test": "Fragments : l’analyse d’une page reste fermée et non déployée",
+    "ok": true
+   },
+   {
+    "test": "Fragments : les points d’entrée du Studio passent par le préfixe /studio",
+    "ok": true
+   }
+  ]
+ },
  "tests/server/musique.test.mjs": {
   "date": "2026-10-28",
-  "commit": "948cf8f",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -612,8 +764,8 @@
  },
  "tests/server/orbe.test.mjs": {
   "date": "2026-10-28",
-  "commit": "948cf8f",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -640,8 +792,8 @@
  },
  "tests/server/programme.test.mjs": {
   "date": "2026-10-28",
-  "commit": "948cf8f",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -716,8 +868,8 @@
  },
  "tests/server/reseau.test.mjs": {
   "date": "2026-10-28",
-  "commit": "948cf8f",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "f010257",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {

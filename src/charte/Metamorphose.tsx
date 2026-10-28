@@ -33,7 +33,8 @@ export function Metamorphose({ m, set, univers, fermer }: { m: Meta; set: (m: Me
           <input id="meta-b" className="champ" placeholder="Gabriel" value={m.b} onChange={e => maj({ b: e.target.value })} autoComplete="off" />
         </div>
         <label htmlFor="meta-date" style={{ display: 'block', margin: '10px 0 6px', fontSize: 14, color: '#55555A' }}>Une date, un lieu (facultatif)</label>
-        <input id="meta-date" className="champ" placeholder="Le 12 juin, au bord de la mer" value={m.date} onChange={e => maj({ date: e.target.value })} autoComplete="off" />
+        <input id="meta-date" className="champ" placeholder="Le 12 juin, au bord de la mer" value={m.date} onChange={e => maj({ date: e.target.value })} autoComplete="off" aria-describedby="meta-date-note" />
+        <p id="meta-date-note" className="meta-note">Si cette phrase contient une date, le Réseau la reprend pour montrer qui est libre ce jour-là ; vous pourrez l’y changer ou l’effacer. Ce n’est pas la date officielle d’une union.</p>
       </fieldset>
 
       <fieldset className="meta-bloc">
