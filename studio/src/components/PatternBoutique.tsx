@@ -20,18 +20,25 @@ function MotifVisual({item,large=false}:{item:Product;large?:boolean}){
   const ref=useRef<HTMLCanvasElement>(null);
   useEffect(()=>{
     const el=ref.current;const ctx=el?.getContext?.("2d");if(!el||!ctx)return;
-    const p=patternOf(item.id),step=large?6:4;
-    el.width=p.w*step;el.height=p.h*step;
-    ctx.fillStyle="#f4f0e6";ctx.fillRect(0,0,el.width,el.height);
-    ctx.fillStyle="rgba(120,104,80,.07)";
-    for(let y=0;y<p.h;y++)for(let x=0;x<p.w;x++)ctx.fillRect(x*step+step/2-.5,y*step+step/2-.5,1,1);
-    ctx.lineCap="round";ctx.lineWidth=step*.34;
-    for(let y=0;y<p.h;y++)for(let x=0;x<p.w;x++){
-      const idx=p.cross[y*p.w+x];if(idx<0)continue;
-      ctx.strokeStyle=FLOSS[idx]?.hex??"#555";
-      const l=x*step+step*.18,t=y*step+step*.18,r=x*step+step*.82,b=y*step+step*.82;
-      ctx.beginPath();ctx.moveTo(l,t);ctx.lineTo(r,b);ctx.moveTo(r,t);ctx.lineTo(l,b);ctx.stroke();
-    }
+    /* dessiné seulement quand l'aperçu approche de l'écran ; les croix d'un même fil en un seul tracé */
+    const dessiner=()=>{
+      const p=patternOf(item.id),step=large?6:4;
+      el.width=p.w*step;el.height=p.h*step;
+      ctx.fillStyle="#f4f0e6";ctx.fillRect(0,0,el.width,el.height);
+      ctx.fillStyle="rgba(120,104,80,.07)";
+      for(let y=0;y<p.h;y++)for(let x=0;x<p.w;x++)ctx.fillRect(x*step+step/2-.5,y*step+step/2-.5,1,1);
+      ctx.lineCap="round";ctx.lineWidth=step*.34;
+      const parFil=new Map<number,number[]>();
+      p.cross.forEach((idx,i)=>{if(idx<0)return;let l=parFil.get(idx);if(!l)parFil.set(idx,l=[]);l.push(i)});
+      for(const [idx,cases] of parFil){
+        ctx.strokeStyle=FLOSS[idx]?.hex??"#555";ctx.beginPath();
+        for(const i of cases){const x=i%p.w,y=(i-x)/p.w;const l=x*step+step*.18,t=y*step+step*.18,r=x*step+step*.82,b=y*step+step*.82;ctx.moveTo(l,t);ctx.lineTo(r,b);ctx.moveTo(r,t);ctx.lineTo(l,b)}
+        ctx.stroke();
+      }
+    };
+    if(typeof IntersectionObserver==="undefined"){dessiner();return}
+    const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();dessiner()}},{rootMargin:"300px"});
+    io.observe(el);return()=>io.disconnect();
   },[item.id,large]);
   return <div className="pb-motif" aria-hidden="true"><canvas ref={ref}/></div>;
 }

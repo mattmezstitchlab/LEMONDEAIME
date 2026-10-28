@@ -5,7 +5,6 @@
  * Dessins originaux, générés de façon déterministe (même identifiant, mêmes cases), 150 × 150 points.
  */
 import { Toile, bezier, circle, diff, ellipse, hash, inter, lit, path, pickRamp, poly, union, type Code, type Shape } from "../kit";
-import { leaf } from "./elements";
 
 type Pt = [number, number];
 type Ramp = Code[];
@@ -37,26 +36,47 @@ interface Oiseau {
 }
 interface Formes { corps: Shape; tete: Shape; oiseau: Shape; aile: Shape; queue: Shape }
 
+/** Comme Toile.fill, mais seulement dans le carré autour de (cx, cy) de demi-côté r : même résultat, bien plus rapide pour les petites formes. */
+function remplir(t: Toile, forme: Shape, peinture: Code | ((x: number, y: number) => Code | null), cx: number, cy: number, r: number) {
+  const x0 = Math.max(0, Math.floor(cx - r - 1)), x1 = Math.min(t.w - 1, Math.ceil(cx + r + 1)), y0 = Math.max(0, Math.floor(cy - r - 1)), y1 = Math.min(t.h - 1, Math.ceil(cy + r + 1));
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+    if (!forme(x + .5, y + .5)) continue;
+    const c = typeof peinture === "string" ? peinture : peinture(x + .5, y + .5);
+    if (c !== null) t.set(x, y, c);
+  }
+}
+/** Une forme lue une fois pour toutes, case par case : la même réponse au centre de chaque case, sans recalcul. */
+function masque(t: Toile, forme: Shape): Shape {
+  const m = new Uint8Array(t.w * t.h);
+  for (let y = 0; y < t.h; y++) for (let x = 0; x < t.w; x++) m[y * t.w + x] = forme(x + .5, y + .5) ? 1 : 0;
+  return (x, y) => { const i = Math.floor(x), j = Math.floor(y); return i >= 0 && j >= 0 && i < t.w && j < t.h && m[j * t.w + i] === 1; };
+}
+/** Une feuille en amande et sa nervure (comme leaf() de elements.ts, dessinée seulement autour d'elle). */
+function feuille(t: Toile, x: number, y: number, angle: number, len: number, ramp: Ramp, nervure?: Code) {
+  const cx = x + Math.cos(angle) * len / 2, cy = y + Math.sin(angle) * len / 2;
+  remplir(t, ellipse(cx, cy, len / 2, Math.max(1.3, len / 4.2), angle), lit(cx, cy, len / 1.6, ramp, -.6, -.7), cx, cy, len / 2 + 1);
+  if (nervure && len >= 7) remplir(t, path([[x + Math.cos(angle) * 1.5, y + Math.sin(angle) * 1.5], [x + Math.cos(angle) * (len - 2), y + Math.sin(angle) * (len - 2)]], .9), nervure, cx, cy, len / 2 + 1);
+}
 /** Une fleur à n pétales, découpée par la zone, modelée par la lumière du corps (biais). */
 function fleur(t: Toile, x: number, y: number, r: number, petales: Ramp, coeur: Code, n: number, rot: number, dans: Shape, biais: number) {
   if (r >= 5) {   /* une grande fleur : une couronne de pétales plus sombres, une seconde plus claire, un cœur */
     for (let i = 0; i < n + 2; i++) {
       const a = rot + i * 2 * Math.PI / (n + 2), px = x + Math.cos(a) * r * .64, py = y + Math.sin(a) * r * .64;
-      t.fill(inter(circle(px, py, r * .42), dans), lit(px, py, r * .5, petales, -.6, -.7, biais + .3));
+      remplir(t, inter(circle(px, py, r * .42), dans), lit(px, py, r * .5, petales, -.6, -.7, biais + .3), px, py, r * .42);
     }
     for (let i = 0; i < n; i++) {
       const a = rot + .4 + i * 2 * Math.PI / n, px = x + Math.cos(a) * r * .3, py = y + Math.sin(a) * r * .3;
-      t.fill(inter(circle(px, py, r * .34), dans), lit(px, py, r * .4, petales, -.6, -.7, biais - .1));
+      remplir(t, inter(circle(px, py, r * .34), dans), lit(px, py, r * .4, petales, -.6, -.7, biais - .1), px, py, r * .34);
     }
-    t.fill(inter(circle(x, y, r * .2), dans), coeur);
+    remplir(t, inter(circle(x, y, r * .2), dans), coeur, x, y, r * .2);
     return;
   }
   for (let i = 0; i < n; i++) {
     const a = rot + i * 2 * Math.PI / n;
     const px = x + Math.cos(a) * r * .58, py = y + Math.sin(a) * r * .58;
-    t.fill(inter(circle(px, py, r * .5), dans), lit(px, py, r * .62, petales, -.6, -.7, biais));
+    remplir(t, inter(circle(px, py, r * .5), dans), lit(px, py, r * .62, petales, -.6, -.7, biais), px, py, r * .5);
   }
-  t.fill(inter(circle(x, y, Math.max(.9, r * .3)), dans), coeur);
+  remplir(t, inter(circle(x, y, Math.max(.9, r * .3)), dans), coeur, x, y, Math.max(.9, r * .3));
 }
 /** La lumière du corps en (x, y) : 0 en haut à gauche (éclairé), 1 en bas à droite (ombre). */
 const ombre = (cx: number, cy: number, r: number) => (x: number, y: number) => {
@@ -68,6 +88,7 @@ const ombre = (cx: number, cy: number, r: number) => (x: number, y: number) => {
 
 /** Remplit une zone : fond modelé, puis une jonchée de fleurs, de feuilles et de points, sans se chevaucher. */
 function jonchee(t: Toile, z: Zone, graine: number, lumiere: (x: number, y: number) => number) {
+  z = { ...z, forme: masque(t, z.forme) };
   t.fill(z.forme, (x, y) => pickRamp(z.fond, lumiere(x, y) * .95, x, y));
   if (!z.fleurs || !z.fleurs.length) return;
   const [rmin, rmax] = z.taille ?? [2.4, 4.2];
@@ -97,7 +118,7 @@ function jonchee(t: Toile, z: Zone, graine: number, lumiere: (x: number, y: numb
   /* entre les fleurs : de petites feuilles et quelques points de couleur */
   if (z.feuilles) for (const [x, y, r] of posees) if (hash(x, y, graine + 23) < .55) {
     const a = hash(y, x, graine + 29) * Math.PI * 2, lx = x + Math.cos(a) * r * 1.05, ly = y + Math.sin(a) * r * 1.05;
-    if (z.forme(lx, ly)) t.fill(inter(ellipse(lx + Math.cos(a) * 1.3, ly + Math.sin(a) * 1.3, 2.1, 1, a), z.forme), lit(lx, ly, 2.5, z.feuilles));
+    if (z.forme(lx, ly)) remplir(t, inter(ellipse(lx + Math.cos(a) * 1.3, ly + Math.sin(a) * 1.3, 2.1, 1, a), z.forme), lit(lx, ly, 2.5, z.feuilles), lx, ly, 4);
   }
   if (z.points) for (let y = 0; y < t.h; y++) for (let x = 0; x < t.w; x++) {
     if (!z.forme(x + .5, y + .5) || hash(x, y, graine + 31) > .035) continue;
@@ -122,8 +143,8 @@ function dessiner(t: Toile, o: Oiseau) {
   const [bx, by, brx, bry, brot] = o.corps, [hx, hy, hr] = o.tete, [ax, ay, arx, ary, arot] = o.aile;
   const corps = ellipse(bx, by, brx, bry, brot), tete = circle(hx, hy, hr), cou = ellipse((bx + hx) / 2 + 2, (by + hy) / 2, hr * .95, hr * 1.1, -.5);
   const queue = poly(o.queue), aile = ellipse(ax, ay, arx, ary, arot);
-  const oiseau = union(corps, tete, cou, queue);
-  const F: Formes = { corps: union(corps, cou), tete, oiseau, aile, queue };
+  const oiseau = masque(t, union(corps, tete, cou, queue));
+  const F: Formes = { corps: masque(t, union(corps, cou)), tete: masque(t, tete), oiseau, aile: masque(t, aile), queue: masque(t, queue) };
   const lumiere = ombre(bx + 6, by - 8, Math.max(brx, bry) * 1.25);
 
   /* la branche, derrière les pattes mais devant la queue */
@@ -132,7 +153,7 @@ function dessiner(t: Toile, o: Oiseau) {
   /* la queue, puis le corps et ses zones */
   plumes(t, queue, o.queue[0][0], o.queue[0][1], Math.atan2(o.queue[2][1] - o.queue[0][1], o.queue[2][0] - o.queue[0][0]), o.plumesQueue, 2.4, 1.3);
   t.fill(diff(union(corps, tete, cou), queue), (x, y) => pickRamp(o.fondCorps, lumiere(x, y), x, y));
-  const dedans = diff(union(corps, tete, cou), queue);
+  const dedans = masque(t, diff(union(corps, tete, cou), queue));
   if (o.dos) jonchee(t, { forme: dedans, fond: o.fondCorps, densite: .95, ...o.dos }, o.graine * 100 + 90, lumiere);
   o.zones(F).forEach((z, i) => jonchee(t, { ...z, forme: inter(z.forme, dedans) }, o.graine * 100 + i, lumiere));
   /* l'aile : rangs de plumes, et ses couvertures fleuries en haut */
@@ -160,10 +181,10 @@ function dessiner(t: Toile, o: Oiseau) {
     const rameau: Pt[] = bezier([x0, y0], [x0 + Math.cos(dir) * 6, y0 + Math.sin(dir) * 6], [x0 + Math.cos(dir) * 10, y0 + Math.sin(dir) * 11], [x0 + Math.cos(dir) * 15, y0 + Math.sin(dir) * 14], 12);
     const [lx, ly] = rameau[rameau.length - 1];
     if (rameau.some(([x, y]) => oiseau(x, y))) continue;   /* pas de rameau devant l'oiseau */
-    t.fill(path(rameau, 1.6), o.ecorce[2]);
-    leaf(t, lx, ly, dir - .5, 9, o.feuillage, o.feuillage[o.feuillage.length - 1]);
-    leaf(t, rameau[6][0], rameau[6][1], dir + .9, 7, o.feuillage);
-    if (o.bourgeons) t.fill(circle(lx + Math.cos(dir) * 2, ly + Math.sin(dir) * 2, 1.6), lit(lx, ly, 2, o.bourgeons[0]));
+    remplir(t, path(rameau, 1.6), o.ecorce[2], (x0 + lx) / 2, (y0 + ly) / 2, 12);
+    feuille(t, lx, ly, dir - .5, 9, o.feuillage, o.feuillage[o.feuillage.length - 1]);
+    feuille(t, rameau[6][0], rameau[6][1], dir + .9, 7, o.feuillage);
+    if (o.bourgeons) remplir(t, circle(lx + Math.cos(dir) * 2, ly + Math.sin(dir) * 2, 1.6), lit(lx, ly, 2, o.bourgeons[0]), lx + Math.cos(dir) * 2, ly + Math.sin(dir) * 2, 2);
   }
   const pied = (x: number) => { const k = tronc.reduce((m, p, i) => (Math.abs(p[0] - x) < Math.abs(tronc[m][0] - x) ? i : m), 0); return tronc[k][1] - 2; };
   for (const dx of [-5, 6]) {
