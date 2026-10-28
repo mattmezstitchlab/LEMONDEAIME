@@ -1,7 +1,7 @@
 {
  "tests/e2e/brodeway.py": {
   "date": "2026-10-28",
-  "commit": "ddcf746",
+  "commit": "13532d3",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), sans serveur",
   "resultats": [
@@ -18,11 +18,11 @@
     "ok": true
    },
    {
-    "test": "la broderie se termine : 130 × 124 points, 24 fils",
+    "test": "la broderie se termine : le rouge-gorge fleuri, 150 × 150 points",
     "ok": true
    },
    {
-    "test": "la toile est réellement brodée (103225 pixels peints)",
+    "test": "la toile est réellement brodée (114410 pixels peints)",
     "ok": true
    },
    {
@@ -50,15 +50,23 @@
     "ok": true
    },
    {
+    "test": "la volière : huit oiseaux botaniques brodés (26976, 26895, 27021, 26910, 26911, 27827, 24878, 27036)",
+    "ok": true
+   },
+   {
+    "test": "chaque oiseau mène aux patrons",
+    "ok": true
+   },
+   {
     "test": "le nuancier : les 489 fils DMC",
     "ok": true
    },
    {
-    "test": "le nuancier met en avant les 24 fils de la mésange",
+    "test": "le nuancier met en avant les 50 fils du rouge-gorge",
     "ok": true
    },
    {
-    "test": "mouvement réduit : la mésange est brodée d’emblée, sans animation",
+    "test": "mouvement réduit : le rouge-gorge est brodé d’emblée, sans animation",
     "ok": true
    },
    {
