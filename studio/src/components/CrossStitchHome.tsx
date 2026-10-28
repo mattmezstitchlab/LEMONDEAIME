@@ -61,16 +61,16 @@ interface Tuile { id: string; num: string; cat: string; titre: string; texte: st
 const TUILES: Tuile[] = [
   { id: "dessiner", num: "01", cat: "Dessiner", titre: "Tous les points du point de croix", taille: "l", ouvrir: ["Dessiner un patron", "create"],
     texte: "Chaque point a son outil, posé case par case ou en formes, avec la symétrie si l’on veut.",
-    points: ["Croix", "Demi-point", "Quart", "Trois quarts", "Petite croix", "Point arrière", "Point lancé", "Nœud", "Perle", "Ligne", "Rectangle", "Ellipse", "Remplir", "Pipette", "Gomme", "Sélection", "Lasso", "Déplacer", "Symétrie sur un ou deux axes", "Sens du demi-point"] },
+    points: ["Grille rétractable dans le dock", "Croix", "Demi-point", "Quart", "Trois quarts", "Petite croix", "Point arrière", "Point lancé", "Nœud", "Perle", "Ligne", "Rectangle", "Ellipse", "Remplir", "Pipette", "Gomme", "Sélection", "Lasso", "Déplacer", "Symétrie sur un ou deux axes", "Sens du demi-point"] },
   { id: "composer", num: "02", cat: "Composer", titre: "Un patron qui se construit", taille: "m",
     texte: "Des motifs prêts à glisser sur la grille, des calques, des sujets que l’on déplace.",
     points: [`${MOTIF_PRESETS.length} motifs à glisser`, "Calques", "Sujets déplaçables", "Lettres en croix (A–Z, 0–9)", "Redimensionner la grille", "Nettoyer les points isolés"] },
   { id: "importer", num: "03", cat: "Importer", titre: "Partir de ce que l’on aime", taille: "s",
     texte: "Une photo devient un patron en fils DMC ; un PDF de plusieurs pages se recompose.",
-    points: ["Photo → couleurs DMC", "Puzzle PDF sur plateau magnétique", "Projet JSON ou OXS", "Glisser-déposer sur la grille", "Calage manuel"] },
+    points: ["Le point zéro : importer au centre de la grille", "Photo → couleurs DMC", "Puzzle PDF sur plateau magnétique", "Projet JSON ou OXS", "Glisser-déposer sur la grille", "Calage manuel"] },
   { id: "fils", num: "04", cat: "Fils", titre: "Le nuancier DMC complet", taille: "s", ouvrir: ["Préparer mes fils", "prepare"],
     texte: `${BASE_FLOSS.length} références, cherchées par code ou en français : « rouge », « vert foncé », « doré ».`,
-    points: ["Fil actif", "Remplacer par le plus proche", "Fils mélangés", "Perles Miyuki Delica", "Toile et brins", "Marge de fil estimée"] },
+    points: ["Nuancier dans le dock", "Pixels qui scintillent : où chaque fil est brodé", "Fil actif", "Remplacer par le plus proche", "Fils mélangés", "Perles Miyuki Delica", "Toile et brins", "Marge de fil estimée"] },
   { id: "stock", num: "05", cat: "Stock", titre: "Ce qu’il vous faut, ce que vous avez", taille: "s",
     texte: "Le stock de fils de la brodeuse, rapproché du patron avant la première croix.",
     points: ["Mon stock de fils", "Fils manquants", "Liste de courses", "Quantités estimées"] },
@@ -79,7 +79,7 @@ const TUILES: Tuile[] = [
     points: ["Marquer une case", "Un bloc de 10 × 10", "Une ligne entière", "Uniquement le fil actif", "Parking des fils", "Notes sur la grille", "Cases à défaire", "Journal des séances", "Écran gardé éveillé"] },
   { id: "reperer", num: "07", cat: "Se repérer", titre: "Toujours savoir où l’on en est", taille: "m",
     texte: "Le cercle, la timeline et trois lectures pour ne jamais perdre le fil.",
-    points: ["Pourcentage brodé", "Timeline fil par fil", "Réaliste · À plat · Patron", "Symboles", "Loupe et zoom", "Tout voir"] },
+    points: ["La loupe sous le pointeur", "Pourcentage brodé", "Timeline fil par fil", "Réaliste · À plat · Patron", "Symboles", "Tout voir"] },
   { id: "partager", num: "08", cat: "Partager", titre: "Montrer l’ouvrage", taille: "m",
     texte: "Quelqu’un regarde en direct, depuis son appareil, pendant que vous brodez.",
     points: ["Inviter à regarder", "Privé · Restreint · Par lien · Public", "PDF paginé", "SVG · PNG · JSON", <>SAL à plusieurs <Bientot /></>, <>Commenter sur la grille <Bientot /></>] },
@@ -196,6 +196,12 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
             </div>
           </article>
         </div>
+        <ul className="pzh-plis" aria-label="Ce qui se déplie dans les docks">
+          <li><span className="pzh-pli-vue pzh-pli-zero" aria-hidden="true"><i>+</i></span><strong>Le point zéro</strong><span>Sur une grille vide, l’import est au centre : une image, un patron PDF, un projet.</span></li>
+          <li><span className="pzh-pli-vue pzh-pli-grille" aria-hidden="true">{Array.from({ length: 9 }, (_, n) => <i key={n} data-on={n === 0 ? "1" : undefined} />)}</span><strong>La grille qui se replie</strong><span>Dessiner et Broder déplient tous les points et outils ; choisir replie le dock.</span></li>
+          <li><span className="pzh-pli-vue pzh-pli-fils" aria-hidden="true">{["#BC4365", "#5F7A3A", "#E48E9F", "#8C1D3F"].map((c, n) => <i key={c} style={{ background: c }}><b className={"dg-scintille dg-scintille-" + (n % 3)} /><b className={"dg-scintille dg-scintille-" + ((n + 1) % 3)} /></i>)}</span><strong>Les fils qui scintillent</strong><span>Dans le nuancier, de petits pixels scintillent là où chaque fil est brodé sur la grille.</span></li>
+          <li><span className="pzh-pli-vue pzh-pli-loupe" aria-hidden="true"><i /></span><strong>La loupe</strong><span>Un dock sombre se déplie : la grille agrandie case par case, sous le pointeur ou le doigt.</span></li>
+        </ul>
       </section>
 
       <section className="pzh-section pzh-dark pzh-point" id="le-point" aria-labelledby="pzh-point-title">
@@ -208,7 +214,8 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
             <ul className="pzh-chips">
               <li>Dès la première ouverture</li>
               <li>Outil par outil, en haut puis en bas</li>
-              <li>Ouvre lui-même Dessiner et Broder</li>
+              <li>Imite le geste de chaque point</li>
+              <li>Ouvre lui-même les grilles du dock</li>
               <li>Au clavier : → ← Échap</li>
               <li>Respecte « moins d’animations »</li>
               <li>Se relance depuis le menu</li>

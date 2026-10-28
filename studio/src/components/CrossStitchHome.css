@@ -11,7 +11,12 @@
   --pzh-night: #1b1b1a;
   --pzh-nacre: radial-gradient(circle at 32% 30%, #ffffff 0%, #d9e8ff 22%, #c9b8ff 48%, #ffd6ec 72%, #b9f0e4 100%);
   min-height: 100dvh;
-  background: var(--pzh-paper);
+  /* le fond est une grille de broderie, gris clair, comme la toile du studio : une case fine, une ligne forte toutes les dix */
+  background-color: #f3f3f1;
+  background-image:
+    linear-gradient(rgba(28,28,32,.10) 1px, transparent 1px), linear-gradient(90deg, rgba(28,28,32,.10) 1px, transparent 1px),
+    linear-gradient(rgba(28,28,32,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(28,28,32,.045) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 12px 12px, 12px 12px;
   color: var(--pzh-ink);
   font-family: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   line-height: 1.55;
@@ -138,7 +143,7 @@ html:has(.cross-stitch-home) { scroll-padding-top: 110px; scroll-padding-bottom:
 
 /* ===== Réplique du studio, avec Le Point ===== */
 .sdemo-zone { display: grid; gap: 14px; }
-.sdemo { position: relative; overflow: hidden; aspect-ratio: 16 / 10; border-radius: 22px; background: #faf9f7; border: 1px solid #e2e2de; box-shadow: 0 30px 80px rgba(11,11,12,.12);
+.sdemo { position: relative; overflow: hidden; aspect-ratio: 16 / 10; border-radius: 22px; background: #f3f3f1; border: 1px solid #e2e2de; box-shadow: 0 30px 80px rgba(11,11,12,.12);
   background-image: linear-gradient(rgba(11,11,12,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(11,11,12,.05) 1px, transparent 1px); background-size: 12px 12px; }
 .sdemo-grid { position: absolute; left: 50%; top: 52%; width: min(54%, 520px); height: auto; transform: translate(-50%, -50%); }
 .sdemo-head { position: absolute; top: 3.5%; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -281,3 +286,35 @@ html:has(.cross-stitch-home) { scroll-padding-top: 110px; scroll-padding-bottom:
 .pzh-bottom-orb:hover::after { transform: scale(1.1); }
 .pzh-bottom-orb:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .cross-stitch-home .pzs-bloc-menu button { font-size: 19px; font-weight: 600; letter-spacing: -0.02em; }
+
+/* La réplique déplie ses docks, comme le studio : la grille des points (avec le geste du Point), le nuancier qui scintille, la loupe */
+.sdemo-bloc { position: absolute; top: 15%; left: 50%; transform: translateX(-50%); width: min(70%, 640px); padding: .9em; border-radius: 1.1em; background: #fff; border: 1px solid #e2e2de; box-shadow: 0 18px 40px rgba(11,11,12,.16); font-size: clamp(7px, 1vw, 13px); z-index: 2; }
+.sdemo-bloc > p { margin: 0 0 .6em; font-size: .85em; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: #55555a; }
+.sdemo-cases { display: grid; grid-template-columns: repeat(6, 1fr); gap: .4em; }
+.sdemo-case { position: relative; display: flex; flex-direction: column; align-items: center; gap: .3em; padding: .55em .2em; border-radius: .7em; border: 1px solid #e2e2de; color: #0b0b0c; }
+.sdemo-case svg:not(.sdemo-geste) { width: 1.7em; height: 1.7em; }
+.sdemo-case small { font-size: .8em; white-space: nowrap; }
+.sdemo-case-on { background: #0b0b0c; color: #fff; border-color: #0b0b0c; }
+.sdemo-geste { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); width: 4.4em; height: 4.4em; }
+.sdemo-pastilles { display: grid; grid-template-columns: repeat(6, 1fr); gap: .45em; }
+.sdemo-pastilles > span { position: relative; aspect-ratio: 1; border-radius: .6em; box-shadow: inset 0 0 0 1px rgba(0,0,0,.15); }
+.sdemo-pixels { position: absolute; inset: 8%; width: 84%; height: 84%; }
+.sdemo-loupe-vue { position: absolute; right: 3%; bottom: 17%; width: 24%; aspect-ratio: 1; padding: .6em; border-radius: 1em; background: #1b1b1a; border: 1px solid #3a3a38; box-shadow: 0 14px 34px rgba(0,0,0,.3); color: #fff; font-size: clamp(7px, .9vw, 12px); display: flex; flex-direction: column; gap: .4em; z-index: 2; }
+.sdemo-loupe-vue span { flex: 1; border-radius: .6em; background-size: 520%; background-position: 46% 38%; image-rendering: pixelated; box-shadow: inset 0 0 0 2px rgba(255,255,255,.08); }
+@media (max-width: 720px) { .sdemo-cases, .sdemo-pastilles { grid-template-columns: repeat(4, 1fr); } .sdemo-bloc { width: 86%; } .sdemo-loupe-vue { width: 40%; } }
+/* Ce qui se déplie : quatre cartes sous les deux docks */
+.pzh-plis { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 14px; }
+.pzh-plis > li { display: flex; flex-direction: column; gap: 8px; padding: 22px; border-radius: 22px; background: #fff; border: 1px solid var(--pzh-line); }
+.pzh-plis strong { font-size: 19px; letter-spacing: -.02em; }
+.pzh-plis > li > span:last-child { font-size: 15px; color: #3a3a3f; line-height: 1.45; }
+.pzh-pli-vue { display: grid; place-items: center; height: 120px; margin-bottom: 8px; border-radius: 14px; background-color: #f3f3f1;
+  background-image: linear-gradient(rgba(28,28,32,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(28,28,32,.08) 1px, transparent 1px); background-size: 10px 10px; }
+.pzh-pli-zero i { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: #0b0b0c; color: #fff; font-style: normal; font-size: 28px; font-weight: 300; box-shadow: 0 0 0 6px #f3f3f1, 0 0 0 7px #c4416b; }
+.pzh-pli-grille { grid-template-columns: repeat(3, 34px); gap: 5px; align-content: center; justify-content: center; }
+.pzh-pli-grille i { width: 34px; height: 26px; border-radius: 7px; background: #fff; border: 1px solid #e2e2de; }
+.pzh-pli-grille i[data-on] { background: #0b0b0c; border-color: #0b0b0c; }
+.pzh-pli-fils { grid-template-columns: repeat(4, 40px); gap: 6px; justify-content: center; align-content: center; }
+.pzh-pli-fils i { position: relative; width: 40px; height: 40px; border-radius: 9px; }
+.pzh-pli-fils b { position: absolute; width: 3px; height: 3px; background: #fff; }
+.pzh-pli-fils b:first-child { left: 12px; top: 14px; } .pzh-pli-fils b:last-child { left: 24px; top: 22px; }
+.pzh-pli-loupe i { width: 76px; height: 76px; border-radius: 12px; background: #1b1b1a; box-shadow: inset 0 0 0 6px #1b1b1a; background-image: linear-gradient(rgba(255,255,255,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.18) 1px, transparent 1px), linear-gradient(#bc4365, #bc4365); background-size: 12px 12px, 12px 12px, 24px 24px; background-position: 0 0, 0 0, 26px 26px; background-repeat: repeat, repeat, no-repeat; }

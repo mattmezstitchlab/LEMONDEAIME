@@ -506,7 +506,7 @@ export default function App() {
         onShare={() => { switchStudio("embroidery"); setPanel("share"); }}
         onImport={chosen => { switchStudio("embroidery"); importAnyFile(chosen); }}
         onVisite={() => { try { localStorage.removeItem(VISITE_CLE); } catch { /* la visite s'ouvrira quand même */ } setPanel(null); setDockPath(null); setShowWelcome(false); setVisite(true); switchStudio("embroidery"); }}/>
-    : <div data-interface-level={interfaceLevel} className={`pz-atelier pz-embroidery-studio fixed inset-0 h-[100dvh] w-full overflow-hidden bg-[#faf9f7] ${prefs.largeText ? "large-text" : ""} ${prefs.highContrast ? "high-contrast" : ""}`}>
+    : <div data-interface-level={interfaceLevel} className={`pz-atelier pz-embroidery-studio fixed inset-0 h-[100dvh] w-full overflow-hidden bg-[#f3f3f1] ${prefs.largeText ? "large-text" : ""} ${prefs.highContrast ? "high-contrast" : ""}`}>
     <input
       ref={imageInputRef}
       type="file"
@@ -591,7 +591,12 @@ export default function App() {
       progression={progression} onCouleur={pickColor} pattern={P} couleur={color} blocDemande={blocDemande}
       ouvrages={{ courant: P.id, ouvrir: id => { void ouvrirOuvrage(id); }, importer: importAnyFile }}
       fils={<FlossRail dock pattern={P} active={color} onActive={pickColor} onPattern={(p) => setPattern(p)} onSupply={updateSupply} onBrowse={() => ouvrirNuancier()} stitching={workspace === "stitch"} hidden={showWelcome || !!file} />} />}
-    {atelierLibre && <OrbeGuide ouverte={visite} onFermer={() => setVisite(false)} onChemin={p => setDockPath(p as DockPath)} />}
+    {atelierLibre && <OrbeGuide ouverte={visite} onFermer={() => setVisite(false)} onChemin={c => {
+      /* « dessiner:grille » : Le Point ouvre aussi la grille des points, pour y imiter les gestes */
+      const [chemin, grille] = (c ?? "").split(":");
+      setDockPath((chemin || null) as DockPath);
+      setBlocDemande(d => ({ bloc: grille ? "outils" : "aucun", n: (d?.n ?? 0) + 1 }));
+    }} />}
     <aside aria-label="Inspecteur de broderie"
       hidden={!mobileInspectorOpen}
       className="pz-embroidery-right pzs-panel thin-scroll fixed bottom-[96px] right-3 top-[112px] z-30 w-[min(300px,calc(100vw-24px))] overflow-y-auto rounded-[18px] border border-white/15 bg-[#09090b] text-white shadow-2xl">

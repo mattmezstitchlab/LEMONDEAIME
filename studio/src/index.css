@@ -2410,3 +2410,11 @@ html[data-pz-motion="reduce"] .pz-guided-lens { transition: none; }
 /* sur ordinateur, la loupe se range à droite : le centre de la grille reste libre */
 @media (min-width: 900px) { .pzs-loupe-dock { left: auto; right: 20px; transform: none; bottom: 20px; } }
 @media (max-width: 720px) { .pzs-mini > span { display: none; } }
+/* Les pixels qui scintillent : la carte d'un fil dans sa pastille */
+.dg-carte { position: absolute; inset: 7%; display: block; }
+.dg-carte canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.dg-scintille { animation: dg-scintille 1.8s ease-in-out infinite; }
+.dg-scintille-1 { animation-delay: .6s; }
+.dg-scintille-2 { animation-delay: 1.2s; }
+@keyframes dg-scintille { 0%, 100% { opacity: 1; } 50% { opacity: .15; } }
+@media (prefers-reduced-motion: reduce) { .dg-scintille { animation: none; } }

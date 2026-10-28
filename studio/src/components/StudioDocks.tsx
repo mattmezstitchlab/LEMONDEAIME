@@ -21,7 +21,7 @@ import VisibilityOrb from "./VisibilityOrb";
  */
 export type DockPath = null | "dessiner" | "fils" | "broder" | "partager" | "visibilite";
 /** les blocs qu'on peut demander d'ailleurs : Mes ouvrages, le nuancier, la grille des outils */
-export type BlocDemande = "inviter" | "nuancier" | "outils";
+export type BlocDemande = "inviter" | "nuancier" | "outils" | "aucun";
 type Bloc = null | "menu" | "chercher" | "inviter" | "outils" | "nuancier";
 
 export interface DockActions {
@@ -110,7 +110,7 @@ export default function StudioDocks(p: Props) {
     fetch("/api/auth/get-session", { credentials: "same-origin" }).then(r => r.ok ? r.json() : null).then(j => { if (vivant && j && j.user) setMoi({ name: j.user.name, email: j.user.email, image: j.user.image }); }).catch(() => {});
     return () => { vivant = false; }; }, [aime]);
   const ouvrir = (b: Exclude<Bloc, null>) => setBloc(x => x === b ? null : b);
-  useEffect(() => { if (p.blocDemande) setBloc(p.blocDemande.bloc); }, [p.blocDemande]);
+  useEffect(() => { if (p.blocDemande) setBloc(p.blocDemande.bloc === "aucun" ? null : p.blocDemande.bloc); }, [p.blocDemande]);
   const fermer = () => setBloc(null);
   const retourSite = () => { try { if (document.referrer && new URL(document.referrer).origin === window.location.origin && !new URL(document.referrer).pathname.startsWith("/studio")) { window.history.back(); return; } } catch { /* adresse illisible */ } window.location.href = "/"; };
   useEffect(() => { if (bloc === "chercher") document.getElementById("pzs-cherche")?.focus(); else if (bloc === "nuancier") document.getElementById("dg-cherche-fil")?.focus(); else if (bloc) blocRef.current?.querySelector<HTMLElement>("[aria-pressed=\"true\"], a, button")?.focus(); }, [bloc]);

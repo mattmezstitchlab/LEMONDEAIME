@@ -26,3 +26,10 @@
 /* pendant la visite, le fil d'Ariane du dock s'efface : l'orbe passe dessous */
 body:has(.og-couche) .pzs-crumbs { visibility: hidden; }
 .og-nom { color: #fff; font-weight: 700; letter-spacing: .04em; }
+/* Le geste : Le Point brode le point sur sa case, le fil reste derrière lui */
+.og-geste { position: absolute; top: 0; left: 0; overflow: visible; pointer-events: none; }
+.og-geste-fil { fill: none; stroke: #c4416b; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; animation: og-fil 2.4s ease-in-out infinite; filter: drop-shadow(0 0 3px rgba(255,255,255,.9)); }
+.og-geste-aiguille { fill: #d9c9ff; stroke: #fff; stroke-width: 2.5; offset-distance: 0%; animation: og-aiguille 2.4s ease-in-out infinite; filter: drop-shadow(0 0 6px rgba(155,120,255,.9)); }
+@keyframes og-fil { 0% { stroke-dashoffset: 100; opacity: 1; } 70% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes og-aiguille { 0% { offset-distance: 0%; opacity: 1; } 70% { offset-distance: 100%; opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .og-geste-fil { animation: none; stroke-dashoffset: 0; } .og-geste-aiguille { animation: none; offset-distance: 100%; } }

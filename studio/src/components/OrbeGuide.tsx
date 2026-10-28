@@ -18,13 +18,34 @@ export interface Etape {
   chemin?: string;
   /** où se trouve la cible : le dock du haut, celui du bas, ou la page elle-même */
   dock: "haut" | "bas" | "page";
+  /** le geste que Le Point imite sur la cible : il trace le point comme l'aiguille (croix, demi-point, point arrière…) */
+  geste?: keyof typeof GESTES;
 }
+/* Les gestes, dans un carré de 56 : l'orbe suit le tracé, le fil reste derrière elle. */
+export const GESTES = {
+  cross: "M10 10 L46 46 M46 10 L10 46",
+  half: "M10 46 L46 10",
+  quarter: "M10 46 L28 28",
+  threeQuarter: "M10 46 L46 10 M10 10 L28 28",
+  petite: "M10 30 L26 46 M26 30 L10 46",
+  back: "M8 48 L8 28 L28 28 L28 8 L48 8",
+  long: "M8 48 L48 8",
+  knot: "M28 16 A12 12 0 1 1 27.9 16",
+  fill: "M10 12 L46 12 L10 22 L46 22 L10 32 L46 32 L10 42 L46 42",
+  mark: "M10 30 L22 42 L46 14",
+  block: "M10 10 L46 10 L46 46 L10 46 Z",
+  row: "M6 28 L50 28",
+} as const;
 
 export const ETAPES: Etape[] = [
   { dock: "haut", cible: "orbe", titre: "Bonjour, je suis Le Point", texte: "Je vous fais faire le tour du studio : en haut, le dock pour travailler ; en bas, celui pour vous repérer. Mon carré ouvre le menu : l’accueil, les réglages et l’affichage (débutante, confirmée, experte)." },
   { dock: "page", cible: "point-zero", titre: "Le point zéro", texte: "Sur une grille vide, tout commence au centre : importez une image, un patron PDF ou un projet, ou glissez-le sur la grille." },
   { dock: "haut", cible: "dessiner", titre: "Dessiner", texte: "Pour composer votre patron case par case. Un clic déplie, sous le dock, la grille de tous les points et de tous les outils." },
   { dock: "haut", cible: "outils", chemin: "dessiner", titre: "Les outils du dessin", texte: "Le fil actif, puis les six outils les plus utilisés. « Tous les points » déplie la grille complète : points, outils, formes, motifs et calques. Choisir replie le dock ; la flèche à gauche remonte d’un niveau." },
+  { dock: "haut", cible: "outil-cross", chemin: "dessiner:grille", geste: "cross", titre: "La croix", texte: "Le point de base : deux diagonales dans une case. Touchez la grille, la croix se pose au fil actif. Regardez, je la brode." },
+  { dock: "haut", cible: "outil-half", chemin: "dessiner:grille", geste: "half", titre: "Le demi-point", texte: "Une seule diagonale. Son sens se règle dans « Réglages du dessin »." },
+  { dock: "haut", cible: "outil-back", chemin: "dessiner:grille", geste: "back", titre: "Le point arrière", texte: "Il suit les lignes de la grille, d’un coin de case à l’autre : pour les contours et les lettres." },
+  { dock: "haut", cible: "outil-fill", chemin: "dessiner:grille", geste: "fill", titre: "Remplir", texte: "Un clic remplit toute une zone de la même couleur, aller-retour, comme une rangée de croix." },
   { dock: "haut", cible: "broder", titre: "Broder", texte: "Pour suivre le patron pendant que vous brodez : la grille passe en lecture Patron et le fil actif ressort." },
   { dock: "haut", cible: "outils", chemin: "broder", titre: "Les gestes de la brodeuse", texte: "Main, Marquer, Bloc 10 × 10, Ligne. « Tous les gestes » déplie le reste : détails, pipette, parking, à défaire, note, et le suivi." },
   { dock: "haut", cible: "fils", titre: "Fils", texte: "Fils déplie le nuancier DMC dans le dock : cherchez « 310 », « rouge » ou « vert foncé », touchez une pastille, le dock se replie." },
@@ -99,10 +120,12 @@ export default function OrbeGuide({ ouverte, onFermer, onChemin, etapes = ETAPES
       setSautees(s => new Set(s).add(i));
       setI(n => n < ETAPES_.length - 1 ? n + 1 : n);
     };
-    requestAnimationFrame(mesurer);
+    /* deux images d'attente : le dock se redessine (un bloc se replie, un sous-dock s'ouvre) avant qu'on mesure ; puis une vérification */
+    requestAnimationFrame(() => requestAnimationFrame(mesurer));
+    const verif = window.setTimeout(() => { if (vivant) { const b = boiteDe(etape.cible); if (b && b !== "absente") setBoite(b); suivantRef.current?.focus({ preventScroll: true }); } }, 320);
     const remesurer = () => { const b = boiteDe(etape.cible); if (b && b !== "absente") setBoite(b); setVue({ w: window.innerWidth, h: window.innerHeight }); };
     window.addEventListener("resize", remesurer);
-    return () => { vivant = false; window.removeEventListener("resize", remesurer); };
+    return () => { vivant = false; window.clearTimeout(verif); window.removeEventListener("resize", remesurer); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ouverte, i]);
   useEffect(() => { if (ouverte) suivantRef.current?.focus({ preventScroll: true }); }, [ouverte, i]);
@@ -136,6 +159,10 @@ export default function OrbeGuide({ ouverte, onFermer, onChemin, etapes = ETAPES
   return <div className="og-couche" onKeyDown={onKey}>
     <div className="og-cadre" aria-hidden="true" style={{ transform: `translate(${b.x - 6}px, ${b.y - 6}px)`, width: b.w + 12, height: b.h + 12 }} />
     <div className="og-orbe" aria-hidden="true" style={{ transform: `translate(${orbe.x - 15}px, ${orbe.y - 15}px)` }}><span /></div>
+    {etape.geste && <svg key={i} className="og-geste" aria-hidden="true" width="84" height="84" viewBox="0 0 56 56" style={{ transform: `translate(${b.x + b.w / 2 - 42}px, ${b.y + b.h / 2 - 42}px)` }}>
+      <path className="og-geste-fil" d={GESTES[etape.geste]} pathLength={100} />
+      <circle className="og-geste-aiguille" r="6" style={{ offsetPath: `path("${GESTES[etape.geste]}")` }} />
+    </svg>}
     <div ref={carteRef} className={"og-carte " + (enHaut ? "og-sous" : "og-sur")} role="dialog" aria-modal="false" aria-labelledby="og-titre" aria-describedby="og-texte"
       style={{ transform: `translate(${carteX}px, ${Math.max(haut, Math.min(carteY, H - hCarte - bas))}px)`, width: largeur }}>
       <p className="og-rang"><span><b className="og-nom">Le Point</b> · {LIEUX[etape.dock]}</span><span aria-label={`Étape ${rang} sur ${total}`}>{rang} / {total}</span></p>

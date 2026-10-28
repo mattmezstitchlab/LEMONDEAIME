@@ -20,7 +20,12 @@ describe("Réplique du studio sur l’accueil, avec Le Point", () => {
     expect(demo.getAttribute("aria-hidden")).toBe("true");
     for (const label of ["Dessiner", "Broder", "Fils", "Partager", "Réaliste", "À plat", "Patron", "Symboles", "Tout voir", "Point Zéro"]) expect(demo.textContent).toContain(label);
     expect(demo.querySelectorAll("button, input, a")).toHaveLength(0);
-    for (const a of ARRETS) expect(demo.querySelector(`[data-k="${a.k}"]`), a.k).toBeTruthy();
+    for (const a of ARRETS) if (!a.geste) expect(demo.querySelector(`[data-k="${a.k}"]`), a.k).toBeTruthy();
+    // les arrêts du geste vivent dans la grille dépliée : Le Point y brode le point
+    const croix = ARRETS.findIndex(a => a.geste === "cross");
+    for (let n = 0; n < croix; n++) act(() => host.querySelector<HTMLButtonElement>('button[aria-label="Outil suivant"]')!.click());
+    expect(demo.querySelector(".sdemo-outils")).toBeTruthy();
+    expect(demo.querySelector('[data-k="cross"] .og-geste path')?.getAttribute("d")).toBeTruthy();
     act(() => root.unmount());
   });
   it("Le Point passe d’un outil au suivant tout seul, et s’arrête sur Pause", () => {

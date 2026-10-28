@@ -36,7 +36,7 @@ export function GrilleOutils({ groupes, outil, onOutil, filtre, desactive, plus 
       return <section key={g.titre} className="dg-groupe" aria-label={g.titre}>
         <p className="dg-titre">{g.titre}</p>
         <ul className="dg-grille">
-          {liste.map(([id, nom]) => <li key={id}><button type="button" className="dg-case" aria-pressed={outil === id} disabled={desactive?.(id)} onClick={() => onOutil(id)}>
+          {liste.map(([id, nom]) => <li key={id}><button type="button" className="dg-case" data-guide={"outil-" + id} aria-pressed={outil === id} disabled={desactive?.(id)} onClick={() => onOutil(id)}>
             <ToolIcon tool={id} /><span>{nom}</span>
           </button></li>)}
         </ul>
@@ -48,6 +48,44 @@ export function GrilleOutils({ groupes, outil, onOutil, filtre, desactive, plus 
   </div>;
 }
 
+/** Où se trouve chaque fil dans la grille : pour chaque index DMC, les cases (croix pleines) qu'il occupe ;
+ *  et le cadre de tout ce qui est brodé, pour que la carte de chaque pastille montre le motif en entier, à la même échelle. */
+export interface Cadre { x0: number; y0: number; x1: number; y1: number }
+export function casesParFil(pattern: Pattern): { parFil: Map<number, number[]>; cadre: Cadre | null } {
+  const parFil = new Map<number, number[]>();
+  const c = pattern.cross, w = pattern.w;
+  let x0 = Infinity, y0 = Infinity, x1 = -1, y1 = -1;
+  for (let i = 0; i < c.length; i++) {
+    const idx = c[i]; if (idx < 0) continue;
+    let l = parFil.get(idx); if (!l) parFil.set(idx, l = []); l.push(i);
+    const x = i % w, y = (i - x) / w;
+    if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+  }
+  return { parFil, cadre: x1 < 0 ? null : { x0, y0, x1, y1 } };
+}
+/**
+ * La carte d'un fil, dans sa pastille : le motif réduit, et des pixels qui scintillent là où ce fil est brodé.
+ * Trois calques décalés dans le temps font scintiller les pixels ; immobiles si l'appareil demande moins d'animations.
+ */
+export function CarteFil({ pattern, cases, cadre, encre }: { pattern: Pattern; cases: number[]; cadre: Cadre; encre: string }) {
+  const refs = [useRef<HTMLCanvasElement>(null), useRef<HTMLCanvasElement>(null), useRef<HTMLCanvasElement>(null)];
+  const N = 22;
+  useEffect(() => {
+    const cw = cadre.x1 - cadre.x0 + 1, ch = cadre.y1 - cadre.y0 + 1, k = (N - 2) / Math.max(cw, ch), t = Math.max(1, Math.floor(k * .8));
+    const ox = Math.floor((N - cw * k) / 2), oy = Math.floor((N - ch * k) / 2);
+    const ctxs = refs.map(r => { const c = r.current; if (!c) return null; c.width = N; c.height = N; const x = c.getContext?.("2d"); if (x) { x.clearRect(0, 0, N, N); x.fillStyle = encre; } return x; });
+    const vus = new Set<number>();
+    for (const i of cases) {
+      const x = i % pattern.w, y = (i - x) / pattern.w;
+      const px = ox + Math.floor((x - cadre.x0) * k), py = oy + Math.floor((y - cadre.y0) * k), cle = py * N + px;
+      if (vus.has(cle)) continue; vus.add(cle);
+      ctxs[(px * 7 + py * 13) % 3]?.fillRect(px, py, t, t);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pattern, cases, cadre, encre]);
+  return <span className="dg-carte" aria-hidden="true">{refs.map((r, n) => <canvas key={n} ref={r} className={"dg-scintille dg-scintille-" + n} />)}</span>;
+}
+
 /** Le nuancier DMC dans le dock : recherche en français, filtre « dans le motif », une grille de pastilles. */
 export function Nuancier({ pattern, couleur, onCouleur }: { pattern: Pattern; couleur: number; onCouleur: (idx: number) => void }) {
   const [q, setQ] = useState("");
@@ -55,6 +93,7 @@ export function Nuancier({ pattern, couleur, onCouleur }: { pattern: Pattern; co
   const champ = useRef<HTMLInputElement>(null);
   useEffect(() => { champ.current?.focus(); }, []);
   const usage = useMemo(() => { const m = new Map<number, number>(); for (const r of computeStats(pattern).rows) m.set(r.idx, r.cross + r.half + r.quarter + r.knots); return m; }, [pattern]);
+  const { parFil, cadre } = useMemo(() => casesParFil(pattern), [pattern]);
   const liste = useMemo(() => FLOSS.map((f, idx) => ({ f, idx })).filter(({ f, idx }) => (!motif || usage.has(idx)) && filCorrespond(f, q)), [q, motif, usage]);
   const actif = FLOSS[couleur];
   return <div className="dg-nuancier">
@@ -67,13 +106,13 @@ export function Nuancier({ pattern, couleur, onCouleur }: { pattern: Pattern; co
         <button type="button" aria-pressed={motif} onClick={() => setMotif(true)}>Dans le motif · {usage.size}</button>
       </div>
     </div>
-    <p className="pzs-note" role="status">{q.trim() || motif ? liste.length + " fil" + (liste.length > 1 ? "s" : "") : "Touchez une pastille : le fil devient actif et le dock se replie."}</p>
+    <p className="pzs-note" role="status">{q.trim() || motif ? liste.length + " fil" + (liste.length > 1 ? "s" : "") : parFil.size ? "Les pixels qui scintillent dans une pastille montrent où ce fil est brodé sur la grille. Touchez-la : le fil devient actif." : "Touchez une pastille : le fil devient actif et le dock se replie."}</p>
     {liste.length === 0 ? <p className="dg-vide">Aucun fil trouvé : essayez un code (310) ou une couleur (rouge, bleu clair).</p>
       : <ul className="dg-pastilles">
         {liste.map(({ f, idx }) => { const pos = pattern.palette.includes(idx) ? assignedSymbol(pattern, idx) : -1, n = usage.get(idx);
           return <li key={f.code}><button type="button" className="dg-pastille" aria-pressed={idx === couleur} title={`DMC ${f.code} · ${f.name}`}
             aria-label={`DMC ${f.code}, ${f.name}${n ? `, ${n} points dans le motif` : ""}`} onClick={() => onCouleur(idx)}>
-            <span className="dg-teinte" style={{ background: f.hex }}>{pos >= 0 && <SymbolIcon sym={pos} size={13} color={contrastOn(f.hex)} />}{n ? <i aria-hidden="true" /> : null}</span>
+            <span className="dg-teinte" style={{ background: f.hex }}>{parFil.has(idx) && cadre ? <CarteFil pattern={pattern} cases={parFil.get(idx)!} cadre={cadre} encre={contrastOn(f.hex)} /> : pos >= 0 && <SymbolIcon sym={pos} size={13} color={contrastOn(f.hex)} />}{n ? <i aria-hidden="true" /> : null}</span>
             <span className="dg-code">{f.code}</span>
           </button></li>; })}
       </ul>}

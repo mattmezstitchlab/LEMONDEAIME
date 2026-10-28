@@ -42,7 +42,7 @@ export default function WorkspacePanel({ open, onClose, pattern: p, onSet, actio
     return () => window.removeEventListener("pointzero:inventory-changed", refresh);
   }, []);
   const tab = section;
-  const f = p.fabric ?? { type: "aida", over: 1, color: "#f7f2e8", margin: 7.5, units: "cm" };
+  const f = p.fabric ?? { type: "aida", over: 1, color: "#f3f3f1", margin: 7.5, units: "cm" };
   const fab = fabricInfo(p), dim = (v: number) => (f.units === "in" ? v / 2.54 : v).toFixed(2) + (f.units === "in" ? " in" : " cm");
   // Le panneau reste monté pendant qu'on brode : `sessionSummary` recompte
   // toutes les cases pour l'estimation de fin, autant ne le faire que quand le
