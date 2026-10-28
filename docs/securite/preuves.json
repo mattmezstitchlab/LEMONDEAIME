@@ -1,0 +1,126 @@
+{
+ "studio/src/__tests__/aimeSync.test.ts": {
+  "date": "2026-10-28",
+  "commit": "fe23e7b",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
+  "resultats": [
+   {
+    "test": "hors d'AIME (à la racine), rien ne part ni ne revient",
+    "ok": true
+   },
+   {
+    "test": "dans AIME et connecté : ramène l'ouvrage du compte plus récent, garde celui de l'appareil plus récent",
+    "ok": true
+   },
+   {
+    "test": "un ouvrage trop lourd reste sur l'appareil et le dit",
+    "ok": true
+   }
+  ]
+ },
+ "studio/src/__tests__/cloisonnement.test.ts": {
+  "date": "2026-10-28",
+  "commit": "fe23e7b",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
+  "resultats": [
+   {
+    "test": "B connecté sur l'appareil de A : rien de A ni de l'appareil ne part dans le compte de B",
+    "ok": true
+   },
+   {
+    "test": "les ouvrages ramenés du compte portent ce compte ; ceux du compte plus récents sur l'appareil repartent",
+    "ok": true
+   },
+   {
+    "test": "un ouvrage sans propriétaire déjà présent dans le compte lui est rattaché (c'est le sien), sans rien envoyer d'autre",
+    "ok": true
+   },
+   {
+    "test": "envoyer refuse l'ouvrage d'un autre compte, ou sans propriétaire",
+    "ok": true
+   },
+   {
+    "test": "l'affichage : chacun voit les siens et ceux sans propriétaire ; personne ne voit ceux d'un autre",
+    "ok": true
+   },
+   {
+    "test": "rattacher un ouvrage sans propriétaire : seulement par un geste, au compte connecté",
+    "ok": true
+   },
+   {
+    "test": "effacer à la déconnexion : seulement les ouvrages de ce compte, jamais ceux sans propriétaire ni d'un autre",
+    "ok": true
+   }
+  ]
+ },
+ "studio/src/__tests__/cloisonnementBibliotheque.test.ts": {
+  "date": "2026-10-28",
+  "commit": "fe23e7b",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
+  "resultats": [
+   {
+    "test": "B ne voit que ses ouvrages et ceux sans propriétaire ; sans compte, seulement ceux sans propriétaire",
+    "ok": true
+   },
+   {
+    "test": "B ne peut pas supprimer l'ouvrage de A, ni sur l'appareil ni dans un compte",
+    "ok": true
+   },
+   {
+    "test": "rattacher un ouvrage sans propriétaire : au compte connecté, envoyé une fois, jamais celui d'un autre",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/analyse.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "fe23e7b",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "analyse : la garde commune d’abord (même site, JSON), puis fermée sans clé ni comptes ; jamais la clé dans une réponse",
+    "ok": true
+   },
+   {
+    "test": "nettoyer : domaine inconnu devient projet, sujet identique ignoré",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/securite.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "fe23e7b",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "S1 : la suppression de compte couvre la musique, le Réseau, et inscrit les fichiers pour effacement",
+    "ok": true
+   },
+   {
+    "test": "S1 : la reprise est fermée sans secret, refuse un mauvais secret, et la tâche est planifiée",
+    "ok": true
+   },
+   {
+    "test": "S1 : la file ne perd rien quand le stockage échoue, et se vide quand il répond",
+    "ok": true
+   },
+   {
+    "test": "S2 : à la déconnexion, seuls les ouvrages du compte déjà rangés (version au moins aussi récente) sont effacés",
+    "ok": true
+   },
+   {
+    "test": "S3 : /api/analyse exige une session, la garde commune et les quotas partagés",
+    "ok": true
+   },
+   {
+    "test": "S4 : la lecture publique du Réseau exclut tout événement",
+    "ok": true
+   }
+  ]
+ }
+}

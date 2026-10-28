@@ -1,9 +1,10 @@
 import { computeStats, fromObject, makeId, toObject, type Pattern, type Supply } from "./pattern";
 import { FLOSS, flossIndex } from "./dmc";
 import { loadBrodeuseProfile, saveBrodeuseProfile } from "./brodeuseProfile";
-import { apresEnregistrement, apresSuppression, tirer } from "./aimeSync";
+import { apresEnregistrement, apresSuppression, compteCourant, rattacher, tirer, visibles } from "./aimeSync";
 
-export interface ProjectRecord { id: string; name: string; folder: string; updated: number; w: number; h: number; progress: number; data: string; versions: { date: number; data: string }[] }
+/* compte : le compte AIME propriétaire de l'ouvrage sur cet appareil ; absent = sans propriétaire (créé sans compte), reste local */
+export interface ProjectRecord { id: string; name: string; folder: string; updated: number; w: number; h: number; progress: number; data: string; versions: { date: number; data: string }[]; compte?: string }
 const DB = "point-zero-library";
 function db(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -24,23 +25,42 @@ async function request<T>(mode: IDBTransactionMode, fn: (s: IDBObjectStore) => I
     transaction.onabort = failed;
   });
 }
-export const listProjects = () => request<ProjectRecord[]>("readonly", (s) => s.getAll());
-export const deleteProject = async (id: string) => { const r = await request("readwrite", (s) => s.delete(id)); void apresSuppression(id); return r; };
+const tousLesProjets = () => request<ProjectRecord[]>("readonly", (s) => s.getAll());
+/** Les ouvrages que cet appareil montre : ceux du compte connecté et ceux sans propriétaire ; jamais ceux d'un autre compte. */
+export const listProjects = async () => visibles(await tousLesProjets(), await compteCourant());
+export const deleteProject = async (id: string) => {
+  const old = await request<ProjectRecord | undefined>("readonly", (s) => s.get(id));
+  if (!old || (old.compte && old.compte !== await compteCourant())) return;   /* l'ouvrage d'un autre compte : intouchable ici */
+  const r = await request("readwrite", (s) => s.delete(id)); void apresSuppression(id, old.compte); return r;
+};
+/** Rattacher à son compte un ouvrage sans propriétaire : un geste explicite, jamais automatique. */
+export async function rattacherProjet(id: string): Promise<boolean> {
+  const old = await request<ProjectRecord | undefined>("readonly", (s) => s.get(id));
+  if (!old || old.compte) return false;
+  const x = await rattacher(old);
+  if (!x) return false;
+  await request("readwrite", (s) => s.put({ ...old, compte: x.compte } satisfies ProjectRecord));
+  return true;
+}
 export const getProject = (record: ProjectRecord) => fromObject(JSON.parse(record.data));
 export async function saveLibrary(p: Pattern, checkpoint = false): Promise<void> {
+  const compte = await compteCourant();
   const id = p.id ?? makeId();
   const old = await request<ProjectRecord | undefined>("readonly", (s) => s.get(id));
+  if (old && old.compte && old.compte !== compte) throw Error("Cet ouvrage appartient à un autre compte sur cet appareil : il n’est pas modifié.");   /* jamais d'écriture sur l'ouvrage d'un autre compte */
   if(old){try{if(!fromObject(JSON.parse(old.data)))throw Error();}catch{throw Error("Projet enregistré illisible : remplacement bloqué, original conservé.");}}
   const { totals } = computeStats(p), now = Date.now(), data = JSON.stringify(toObject({ ...p, id }));
   const versions = [...(old?.versions ?? [])];
   if (old && (checkpoint || now - (versions[0]?.date ?? 0) > 180000) && old.data !== data) versions.unshift({ date: old.updated, data: old.data });
-  const record = { id, name: p.name, folder: p.folder ?? "", updated: now, w: p.w, h: p.h, progress: totals.units ? totals.doneUnits / totals.units : 0, data, versions: versions.slice(0, 8) } satisfies ProjectRecord;
+  /* le propriétaire ne change jamais à l'enregistrement : un nouvel ouvrage prend le compte connecté, un ouvrage sans propriétaire le reste */
+  const proprietaire = old ? old.compte : (compte ?? undefined);
+  const record = { id, name: p.name, folder: p.folder ?? "", updated: now, w: p.w, h: p.h, progress: totals.units ? totals.doneUnits / totals.units : 0, data, versions: versions.slice(0, 8), ...(proprietaire ? { compte: proprietaire } : {}) } satisfies ProjectRecord;
   await request("readwrite", (s) => s.put(record));
   if (totals.units > 0) apresEnregistrement(record); // dans AIME et connecté : rangé aussi dans Votre espace (une grille vide reste sur l'appareil)
 }
 /** Dans AIME et connecté : ramène sur l'appareil les ouvrages du compte plus récents. L'ancienne version locale reste dans l'historique. */
 export async function tirerDuCompte(): Promise<string[]> {
-  return tirer(listProjects, async (r) => {
+  return tirer(tousLesProjets, async (r) => {
     if (!fromObject(JSON.parse(r.data))) return;
     const old = await request<ProjectRecord | undefined>("readonly", (s) => s.get(r.id));
     const versions = old ? [{ date: old.updated, data: old.data }, ...old.versions].slice(0, 8) : [];

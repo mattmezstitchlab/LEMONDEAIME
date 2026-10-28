@@ -25,7 +25,7 @@ describe("AIME — Votre espace pour les ouvrages", () => {
     const locaux = [{ id: "neuf", name: "Roses", folder: "", updated: 1500, w: 10, h: 10, progress: 0, data: "{}" }, { id: "vieux", name: "Chat", folder: "", updated: 1000, w: 5, h: 5, progress: 0, data: "{}" }];
     const r = await m.tirer(async () => locaux, async (x) => { ecrits.push(x.id); });
     expect(r).toEqual(["neuf"]);
-    expect(ecrits).toEqual(["neuf"]);
+    expect(ecrits).toEqual(["neuf", "vieux"]); // « vieux », sans propriétaire mais déjà dans ce compte, lui est rattaché (S2), sans être téléchargé
     expect(fetch).not.toHaveBeenCalledWith("/api/ouvrages?id=vieux", expect.anything());
   });
   it("un ouvrage trop lourd reste sur l'appareil et le dit", async () => {
@@ -33,7 +33,7 @@ describe("AIME — Votre espace pour les ouvrages", () => {
     vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ user: { id: "u1" } }) })));
     const m = await import("../lib/aimeSync");
     const vus: string[] = []; window.addEventListener("pointzero:aime-espace", (e) => vus.push((e as CustomEvent).detail.etat));
-    const ok = await m.envoyer({ id: "lourd", name: "Lourd", folder: "", updated: 1, w: 1, h: 1, progress: 0, data: "x".repeat(m.TAILLE_MAX + 1) });
+    const ok = await m.envoyer({ id: "lourd", name: "Lourd", folder: "", updated: 1, w: 1, h: 1, progress: 0, data: "x".repeat(m.TAILLE_MAX + 1), compte: "u1" });
     expect(ok).toBe(false); expect(vus).toContain("trop-gros");
   });
 });

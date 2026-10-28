@@ -72,7 +72,9 @@ const QUOTAS = {
   'envoi:personne': { max: 30, fenetre: 3600 },      /* fichiers audio envoyés : 30 par personne et par heure */
   'musique:ip': { max: 60, fenetre: 600 },          /* recherches de morceaux : 60 par adresse IP et par 10 minutes */
   'orbe:ip': { max: 20, fenetre: 600 },             /* questions à l'orbe d'une carte : 20 par adresse IP et par 10 minutes */
-  'orbe:tous': { max: 600, fenetre: 3600 },         /* … et 600 par heure pour tout le site (le coût des appels à Claude) */
+  'orbe:tous': { max: 600, fenetre: 3600 },
+  'analyse:personne': { max: 20, fenetre: 3600 },   /* l'analyse par Claude du Point Zéro : 20 par personne connectée et par heure */
+  'analyse:tous': { max: 300, fenetre: 3600 },      /* … et 300 par heure pour tout le site (le coût des appels à Claude) */         /* … et 600 par heure pour tout le site (le coût des appels à Claude) */
   'carte:demande:ip': { max: 3, fenetre: 600 },     /* écrire à une Carte : 3 demandes par adresse IP et par 10 minutes (comme Contact) */
   'carte:demande:boite': { max: 20, fenetre: 86400 },/* … et 20 demandes par Carte et par jour, pour qu'aucune personne ne soit submergée */
   'live:act': { max: 30, fenetre: 60 },             /* le direct : 30 actions par adresse IP et par minute */
