@@ -74,7 +74,7 @@ test('les doublons signalés sont tirés du code, et rien n’est retiré', () =
   assert.ok(studio.libelles.includes('Studio') && studio.libelles.includes('Atelier de broderie'));
   assert.ok(studio.points.filter(x => x.fichier === 'src/charte/Recherche.tsx').length === 2, 'la loupe propose deux fois le Studio');
   assert.ok(O.entrees(inventaire).find(e => e.cible === '/buro').doublonDock);
-  assert.equal((lire('src/charte/Charte.tsx').match(/seDeconnecter\(\)/g) || []).length, 2, 'les deux « Déconnexion » sont bien dans le dock du haut');
+  assert.equal((lire('src/charte/Charte.tsx').match(/seDeconnecter\(/g) || []).length, 2, 'les deux « Déconnexion » sont bien dans le dock du haut');
   for (const a of reseau.audit) assert.ok(O.STATUTS[a.statut] && a.raison.length > 40, a.id);
 });
 

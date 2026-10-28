@@ -80,7 +80,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 34,
+   "ligne": 35,
    "composant": "Tete"
   },
   {
@@ -88,7 +88,7 @@
    "route": "/",
    "libelle": "AIME, accueil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 59,
+   "ligne": 60,
    "composant": "Tete"
   },
   {
@@ -96,7 +96,7 @@
    "route": "/",
    "libelle": "AIME, accueil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 59,
+   "ligne": 60,
    "composant": "Tete"
   },
   {
@@ -104,7 +104,7 @@
    "route": "/buro",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 67,
+   "ligne": 68,
    "composant": "Tete"
   },
   {
@@ -112,7 +112,7 @@
    "route": "/entrer",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 67,
+   "ligne": 68,
    "composant": "Tete"
   },
   {
@@ -120,7 +120,7 @@
    "route": "/",
    "libelle": "Accueil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 77,
+   "ligne": 78,
    "composant": "Tete"
   },
   {
@@ -128,7 +128,7 @@
    "route": "/a-propos",
    "libelle": "À propos d’AIME",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 77,
+   "ligne": 78,
    "composant": "Tete"
   },
   {
@@ -136,7 +136,7 @@
    "route": "/buro",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 89,
+   "ligne": 90,
    "composant": "Tete"
   },
   {
@@ -144,7 +144,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 97,
+   "ligne": 98,
    "composant": "Tete"
   },
   {
@@ -152,7 +152,7 @@
    "route": "/buro",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 97,
+   "ligne": 98,
    "composant": "Tete"
   },
   {
@@ -160,7 +160,7 @@
    "route": "/buro",
    "libelle": "Ouvrir mon espace",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 113,
+   "ligne": 114,
    "composant": "Tete"
   },
   {
@@ -168,7 +168,7 @@
    "route": "/point-zero",
    "libelle": "Point Zéro",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 113,
+   "ligne": 114,
    "composant": "Tete"
   },
   {
@@ -176,7 +176,7 @@
    "route": "/a-plus",
    "libelle": "A+",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 113,
+   "ligne": 114,
    "composant": "Tete"
   },
   {
@@ -184,7 +184,7 @@
    "route": "/a-propos",
    "libelle": "Pourquoi un compte ?",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 114,
+   "ligne": 115,
    "composant": "Tete"
   },
   {
@@ -192,7 +192,7 @@
    "route": "/a-plus",
    "libelle": "A+ pour les pros",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 114,
+   "ligne": 115,
    "composant": "Tete"
   },
   {
@@ -200,7 +200,7 @@
    "route": "/",
    "libelle": "Unions",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 130,
+   "ligne": 131,
    "composant": "VerbesSite"
   },
   {
@@ -208,7 +208,7 @@
    "route": "/reseau",
    "libelle": "Prestataires",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 131,
+   "ligne": 132,
    "composant": "VerbesSite"
   },
   {
@@ -216,7 +216,7 @@
    "route": "/studio",
    "libelle": "Studio",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 132,
+   "ligne": 133,
    "composant": "VerbesSite"
   },
   {
@@ -224,16 +224,8 @@
    "route": "/boutique",
    "libelle": "Boutique",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 133,
+   "ligne": 134,
    "composant": "VerbesSite"
-  },
-  {
-   "cible": "/musique",
-   "route": "/musique",
-   "libelle": "La journée en musique",
-   "fichier": "src/charte/Charte.tsx",
-   "ligne": 230,
-   "composant": "Musique"
   },
   {
    "cible": "/musique",
@@ -244,11 +236,19 @@
    "composant": "Musique"
   },
   {
+   "cible": "/musique",
+   "route": "/musique",
+   "libelle": "La journée en musique",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 232,
+   "composant": "Musique"
+  },
+  {
    "cible": "/",
    "route": "/",
    "libelle": "AIME, accueil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 294,
+   "ligne": 295,
    "composant": "Pied"
   },
   {
@@ -256,7 +256,7 @@
    "route": "/",
    "libelle": "Les unions",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 296,
+   "ligne": 297,
    "composant": "Pied"
   },
   {
@@ -264,7 +264,7 @@
    "route": "/reseau",
    "libelle": "Prestataires",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 296,
+   "ligne": 297,
    "composant": "Pied"
   },
   {
@@ -272,7 +272,7 @@
    "route": "/",
    "libelle": "Invités",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 296,
+   "ligne": 297,
    "composant": "Pied"
   },
   {
@@ -280,7 +280,7 @@
    "route": "/",
    "libelle": "Collections",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 296,
+   "ligne": 297,
    "composant": "Pied"
   },
   {
@@ -288,7 +288,7 @@
    "route": "/studio",
    "libelle": "Studio",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 297,
+   "ligne": 298,
    "composant": "Pied"
   },
   {
@@ -296,7 +296,7 @@
    "route": "/",
    "libelle": "Brodez votre mariage",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 297,
+   "ligne": 298,
    "composant": "Pied"
   },
   {
@@ -304,7 +304,7 @@
    "route": "/moments",
    "libelle": "Les 200 moments",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 297,
+   "ligne": 298,
    "composant": "Pied"
   },
   {
@@ -312,7 +312,7 @@
    "route": "/musique",
    "libelle": "La journée en musique",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 297,
+   "ligne": 298,
    "composant": "Pied"
   },
   {
@@ -320,7 +320,7 @@
    "route": "/point-zero",
    "libelle": "Point Zéro",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 297,
+   "ligne": 298,
    "composant": "Pied"
   },
   {
@@ -328,7 +328,7 @@
    "route": "/boutique",
    "libelle": "Boutique",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 297,
+   "ligne": 298,
    "composant": "Pied"
   },
   {
@@ -336,7 +336,7 @@
    "route": "/entrer",
    "libelle": "Entrer",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 298,
+   "ligne": 299,
    "composant": "Pied"
   },
   {
@@ -344,7 +344,7 @@
    "route": "/buro",
    "libelle": "Mon espace",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 298,
+   "ligne": 299,
    "composant": "Pied"
   },
   {
@@ -352,7 +352,7 @@
    "route": "/buro",
    "libelle": "Mon profil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 298,
+   "ligne": 299,
    "composant": "Pied"
   },
   {
@@ -360,7 +360,7 @@
    "route": "/a-plus",
    "libelle": "A+",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 298,
+   "ligne": 299,
    "composant": "Pied"
   },
   {
@@ -368,7 +368,7 @@
    "route": "/a-propos",
    "libelle": "À propos d’AIME",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 299,
+   "ligne": 300,
    "composant": "Pied"
   },
   {
@@ -376,7 +376,7 @@
    "route": "/reseau",
    "libelle": "Le fondateur",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 299,
+   "ligne": 300,
    "composant": "Pied"
   },
   {
@@ -1128,7 +1128,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 79,
+   "ligne": 88,
    "composant": "PointZero"
   },
   {
@@ -1136,7 +1136,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 79,
+   "ligne": 88,
    "composant": "PointZero"
   },
   {
@@ -1144,7 +1144,7 @@
    "route": "/point-zero",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 84,
+   "ligne": 93,
    "composant": "PointZero"
   },
   {
@@ -1152,7 +1152,7 @@
    "route": "/studio",
    "libelle": "Point Zéro : importer une image ou un PDF dans le Studio",
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 111,
+   "ligne": 120,
    "composant": "PointZero"
   },
   {
@@ -1160,7 +1160,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 157,
+   "ligne": 166,
    "composant": "PointZero"
   },
   {
@@ -1168,7 +1168,7 @@
    "route": "/studio",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 157,
+   "ligne": 166,
    "composant": "PointZero"
   },
   {
@@ -1176,7 +1176,7 @@
    "route": "/entrer",
    "libelle": "+ Entrer",
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 159,
+   "ligne": 168,
    "composant": "PointZero"
   },
   {
@@ -1518,6 +1518,11 @@
    "ligne": 38
   },
   {
+   "api": "/api/ouvrages",
+   "fichier": "src/lib/ouvragesAppareil.ts",
+   "ligne": 32
+  },
+  {
    "api": "/api/reseau",
    "fichier": "src/lib/reseau.ts",
    "ligne": 14
@@ -1575,27 +1580,27 @@
   {
    "api": "/api/auth",
    "fichier": "src/lib/session.ts",
-   "ligne": 49
+   "ligne": 55
   },
   {
    "api": "/api/auth",
    "fichier": "src/lib/session.ts",
-   "ligne": 54
+   "ligne": 61
   },
   {
    "api": "/api/fournisseurs",
    "fichier": "src/lib/session.ts",
-   "ligne": 63
+   "ligne": 70
   },
   {
    "api": "/api/auth",
    "fichier": "src/lib/session.ts",
-   "ligne": 69
+   "ligne": 76
   },
   {
    "api": "/api/analyse",
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 40
+   "ligne": 49
   },
   {
    "api": "/api/systeme",
@@ -1614,14 +1619,22 @@
     "token"
    ],
    "tables": [
+    "musiques",
     "ouvrages",
     "profils",
+    "reseau_dates",
+    "reseau_demandes",
+    "reseau_questions",
     "space_members",
     "spaces"
    ],
    "ecrit": [
+    "musiques",
     "ouvrages",
     "profils",
+    "reseau_dates",
+    "reseau_demandes",
+    "reseau_questions",
     "space_members",
     "spaces"
    ],
@@ -1634,15 +1647,17 @@
    "route": "/api/analyse",
    "methodes": [
     "GET",
-    "OPTIONS",
     "POST"
    ],
    "actions": [],
    "parametres": [],
    "tables": [],
    "ecrit": [],
-   "session": false,
-   "quotas": [],
+   "session": true,
+   "quotas": [
+    "analyse:personne",
+    "analyse:tous"
+   ],
    "configuration": true
   },
   {
@@ -1699,6 +1714,24 @@
    "session": false,
    "quotas": [],
    "configuration": false
+  },
+  {
+   "fichier": "api/maintenance.mjs",
+   "route": "/api/maintenance",
+   "methodes": [
+    "GET"
+   ],
+   "actions": [],
+   "parametres": [],
+   "tables": [
+    "reseau_demandes"
+   ],
+   "ecrit": [
+    "reseau_demandes"
+   ],
+   "session": false,
+   "quotas": [],
+   "configuration": true
   },
   {
    "fichier": "api/musique.mjs",
@@ -1761,7 +1794,8 @@
     "POST"
    ],
    "actions": [
-    "supprimer"
+    "supprimer",
+    "verifier"
    ],
    "parametres": [],
    "tables": [
@@ -1891,7 +1925,7 @@
    {
     "fichier": "tests/server/analyse.test.mjs",
     "tests": [
-     "analyse : fermée sans clé, origine contrôlée, réponse nettoyée",
+     "analyse : la garde commune d’abord (même site, JSON), puis fermée sans clé ni comptes ; jamais la clé dans une réponse",
      "nettoyer : domaine inconnu devient projet, sujet identique ignoré"
     ]
    },
@@ -1968,6 +2002,21 @@
      "reseau : fermé sans base (503), écriture d’un autre site refusée (403)",
      "exemples du Réseau : chaque brique existe, chaque « travaille avec » mène à un exemple, chaque photo existe"
     ]
+   },
+   {
+    "fichier": "tests/server/securite.test.mjs",
+    "tests": [
+     "S1 : la suppression de compte couvre la musique, le Réseau, et inscrit les fichiers pour effacement",
+     "S1 : la reprise est fermée sans secret, refuse un mauvais secret, et la tâche est planifiée",
+     "S1 : la file ne perd rien quand le stockage échoue, et se vide quand il répond",
+     "S2 : à la déconnexion, seuls les ouvrages du compte déjà rangés (version au moins aussi récente) sont effacés",
+     "S3 : /api/analyse exige une session, la garde commune et les quotas partagés",
+     "S4 : la lecture publique du Réseau exclut tout événement",
+     "S1 : le nettoyage automatique du texte libre retire ce qui se reconnaît à coup sûr, garde ce qui sert au destinataire",
+     "S1 : la conservation des demandes d’un compte supprimé se règle (12 mois par défaut, de 1 à 120)",
+     "S1 : la file vient d’une migration explicite, idempotente, avec son retour arrière",
+     "S3 : les quotas de l’analyse se règlent par l’environnement (20 et 300 par défaut)"
+    ]
    }
   ],
   "e2e": [
@@ -2026,6 +2075,18 @@
    {
     "fichier": "tests/e2e/preuves.py",
     "tests": []
+   },
+   {
+    "fichier": "tests/e2e/securite.py",
+    "tests": [
+     "S3 · sans compte : aucun appel à l’analyse, le moteur local le dit",
+     "S3 · sans compte : le Point Zéro allume quand même ses briques (moteur local)",
+     "S3 · connecté, réponse « %s » : %s",
+     "S2 · à la déconnexion, « Effacer les ouvrages de cet appareil » est proposé, jamais coché",
+     "S2 · sans cocher : la déconnexion n’efface rien sur l’appareil",
+     "S2 · coché : seul l’ouvrage du compte déjà rangé dans son espace est effacé (%s restent)",
+     "aucune erreur dans la page"
+    ]
    },
    {
     "fichier": "tests/e2e/systeme.py",
