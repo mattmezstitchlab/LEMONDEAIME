@@ -53,7 +53,9 @@ Ce point avait été renvoyé ici par le sujet n° 1 (point 9).
   - L'onglet « Partagés » de Mon espace lit les autres rôles.
 - `invitations` : lue et nettoyée à la suppression d'un compte (`api/_auth/auth.mjs`). **Aucune fonction de ce dépôt n'en crée** : à vérifier si une autre application l'alimente.
 - `live_journal`, `matiere`, `identite` : nettoyées à la suppression d'un compte. Leur lien avec une union est à vérifier.
-- `visibilite` (privé → …, quatre états, bouton « Partager » de Mon espace) : **aucune page publique ne la lit** dans ce dépôt. Elle est à vérifier.
+- `visibilite` (privé → …, quatre états, bouton « Partager » de Mon espace) : **le Réseau la lit**. *Correction du 28 octobre 2026 : la première version de cet inventaire disait, à tort, qu'aucune page publique ne la lisait.*
+  - `api/reseau.mjs` (fiche publique d'un profil, `?ref=…`) montre le titre et les briques des espaces de son propriétaire marqués `public` et non archivés.
+  - Elle ne filtre pas le genre d'espace : un mariage (`evenement` + `mariage`) passé en `public` y apparaîtrait. Or « Partager » de Mon espace peut le faire sur tout espace dont on est propriétaire.
 
 Aucune requête n'a été faite sur la base de production pour cet inventaire : ce qui précède se lit dans le code. Le nombre réel de projets « union » rangés n'est pas connu.
 
