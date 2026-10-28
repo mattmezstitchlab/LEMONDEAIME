@@ -5,6 +5,7 @@ import { useSession } from '../lib/session';
 import { lireBuro, ecrireBuro, type Projet } from '../lib/buro';
 import { MEDIAS } from '../lib/medias';
 import data from '../lib/briques.json';
+import { clesPossibles, creerCle, nombreDeCles } from '../lib/cles';
 
 const VIS: Record<string, string> = { prive: 'Privé', restreint: 'Restreint', lien: 'Par lien', public: 'Public' };
 const ORDRE = ['prive', 'restreint', 'lien', 'public'];
@@ -18,6 +19,12 @@ export default function Buro() {
   const [lieu, setLieu] = useState<Lieu>('projets');
   const [choisi, setChoisi] = useState<string | null>(null);
   const [msg, setMsg] = useState('');
+  const [proposerCle, setProposerCle] = useState(false);
+  useEffect(() => {
+    if (!session || !clesPossibles()) return;
+    let refus = false; try { refus = localStorage.getItem('aime-cle-plus-tard') === '1'; } catch { /* rien */ }
+    if (!refus) nombreDeCles().then(n => setProposerCle(n === 0));
+  }, [session]);
   const charger = () => lireBuro().then(r => { if (r.ok) setProjets(r.projets || []); else { setProjets([]); setRaison(r.raison || ''); } });
   useEffect(() => { if (session) charger(); }, [session]);
   const dans = (p: Projet, l: Lieu) => l === 'archives' ? p.archive : l === 'partages' ? (p.role !== 'owner' && !p.archive) : (p.role === 'owner' && !p.archive);
@@ -41,6 +48,13 @@ export default function Buro() {
         <div style={{ marginTop: 32 }}><Visuel m={MEDIAS['buro-hero']} hauteur="clamp(14rem, 28vw, 24rem)" /></div>
         {session === null && <p className="chapeau">Entrez dans AIME pour retrouver vos projets, sur tous vos appareils. <Lien href="/entrer">+ Entrer</Lien></p>}
         {session === undefined && <p className="chapeau">Ouverture du BurO…</p>}
+        {session && proposerCle && <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', padding: '16px 18px', borderRadius: 16, background: '#fff', border: '1px solid #E2E2DE' }}>
+          <p style={{ margin: 0, fontSize: 17, lineHeight: 1.5, maxWidth: '52ch' }}><b style={{ fontWeight: 600 }}>Se souvenir de cet appareil.</b> La prochaine fois, votre visage ou votre empreinte suffiront pour entrer.</p>
+          <span style={{ display: 'flex', gap: 8 }}>
+            <button className="bouton noir" type="button" style={{ height: 46 }} onClick={async () => { const r = await creerCle(); setMsg(r.ok ? 'Clé d’accès enregistrée sur cet appareil.' : (r.raison || '')); if (r.ok) setProposerCle(false); }}>Créer ma clé d’accès</button>
+            <button className="bouton" type="button" style={{ height: 46 }} onClick={() => { try { localStorage.setItem('aime-cle-plus-tard', '1'); } catch { /* rien */ } setProposerCle(false); }}>Plus tard</button>
+          </span>
+        </div>}
         {session && <>
           <p role="status" aria-live="polite" style={{ margin: '20px 0 0', minHeight: 24, fontSize: 16, fontWeight: 600 }}>{msg || raison}</p>
           <ul style={{ listStyle: 'none', margin: '20px 0 0', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20 }}>
