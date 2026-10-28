@@ -113,7 +113,7 @@
  },
  "tests/base/securite.mjs": {
   "date": "2026-10-28",
-  "commit": "da817ca",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": false,
   "environnement": "base réelle : branche Neon de test isolée « test/unions-2026-10-28 » (jamais la production), connexion WebSocket Neon ; Claude et le stockage de fichiers simulés",
   "resultats": [
@@ -221,8 +221,8 @@
  },
  "tests/e2e/securite.py": {
   "date": "2026-10-28",
-  "commit": "da817ca",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "ca60e0a",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "aperçu local (vite preview), API SIMULÉES : interface seulement",
   "resultats": [
    {

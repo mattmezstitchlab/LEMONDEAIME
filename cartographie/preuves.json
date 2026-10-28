@@ -1,7 +1,7 @@
 {
  "tests/base/unions.mjs": {
   "date": "2026-10-28",
-  "commit": "fc7575b",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": false,
   "environnement": "base réelle : branche Neon de test isolée « test/unions-2026-10-28 » (jamais la production), connexion WebSocket Neon",
   "resultats": [
@@ -116,7 +116,7 @@
  },
  "tests/e2e/docks.py": {
   "date": "2026-10-28",
-  "commit": "fc7575b",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
@@ -248,7 +248,7 @@
  },
  "tests/e2e/metamorphose.py": {
   "date": "2026-10-28",
-  "commit": "fc7575b",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
@@ -364,7 +364,7 @@
  },
  "tests/e2e/moments.py": {
   "date": "2026-10-28",
-  "commit": "fc7575b",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
@@ -540,7 +540,7 @@
  },
  "tests/e2e/navigation.py": {
   "date": "2026-10-28",
-  "commit": "fc7575b",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
@@ -608,7 +608,7 @@
  },
  "tests/e2e/systeme.py": {
   "date": "2026-10-28",
-  "commit": "fc7575b",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), autorisation simulée",
   "resultats": [
@@ -704,7 +704,7 @@
  },
  "tests/e2e/unions.py": {
   "date": "2026-10-28",
-  "commit": "fc7575b",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API SIMULÉES : interface seulement",
   "resultats": [
@@ -812,7 +812,7 @@
  },
  "tests/server/analyse.test.mjs": {
   "date": "2026-10-28",
-  "commit": "160a0a3",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -828,7 +828,7 @@
  },
  "tests/server/buro.test.mjs": {
   "date": "2026-10-28",
-  "commit": "160a0a3",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -868,7 +868,7 @@
  },
  "tests/server/cartographie.test.mjs": {
   "date": "2026-10-28",
-  "commit": "160a0a3",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -904,7 +904,7 @@
  },
  "tests/server/metamorphose.test.mjs": {
   "date": "2026-10-28",
-  "commit": "160a0a3",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -940,7 +940,7 @@
  },
  "tests/server/musique.test.mjs": {
   "date": "2026-10-28",
-  "commit": "160a0a3",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -964,7 +964,7 @@
  },
  "tests/server/orbe.test.mjs": {
   "date": "2026-10-28",
-  "commit": "160a0a3",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -992,7 +992,7 @@
  },
  "tests/server/programme.test.mjs": {
   "date": "2026-10-28",
-  "commit": "160a0a3",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -1068,7 +1068,7 @@
  },
  "tests/server/reseau.test.mjs": {
   "date": "2026-10-28",
-  "commit": "160a0a3",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -1088,7 +1088,7 @@
  },
  "tests/server/securite.test.mjs": {
   "date": "2026-10-28",
-  "commit": "160a0a3",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -1136,7 +1136,7 @@
  },
  "tests/server/unions.test.mjs": {
   "date": "2026-10-28",
-  "commit": "160a0a3",
+  "commit": "ca60e0a",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
