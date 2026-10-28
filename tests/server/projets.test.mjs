@@ -138,9 +138,10 @@ test('projets · API : sans la table, l’administration le dit (503) et n’éc
   finally { if (avant !== undefined) process.env.BLOB_READ_WRITE_TOKEN = avant; }
 });
 
-test('projets : l’accueil est Brode Way, le portfolio est sur /projets, AIME Wedding a sa propre adresse, l’administration est une page', () => {
+test('projets : l’accueil est le studio, le portfolio est sur /projets, AIME Wedding a sa propre adresse, l’administration est une page', () => {
   const a = lire('src/App.tsx');
-  assert.match(a, /'\/': \[BrodeWay,/, 'l’accueil est Brode Way');
+  assert.match(a, /if \(chemin === '\/'\) window\.location\.replace\(STUDIO\)/, 'l’accueil mène au studio');
+  assert.deepEqual(JSON.parse(lire('vercel.json')).redirects[0], { source: '/', destination: '/studio/', permanent: false }, 'le serveur aussi');
   assert.match(a, /'\/projets': \[Portfolio,/, 'le portfolio reste sur /projets');
   assert.match(a, /'\/aime-wedding': \[AimeWedding,/);
   assert.match(a, /'\/admin': \[Admin,/);
