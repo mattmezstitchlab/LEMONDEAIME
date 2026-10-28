@@ -105,7 +105,9 @@ export default async function reseau(req, res) {
         const r = await db.query(`select ${COLS}${etat} from ${JOINT} where p.visible and p.ref = $1`, jour ? [ref, jour] : [ref]);
         if (!r.rows[0]) return json(res, 404, { ok: false, raison: 'Ce profil n’existe pas ou n’est plus visible.' });
         /* son module : les briques de ses projets publics, et leurs noms (jamais les projets privés) */
-        const p = await db.query(`select title, data from spaces where owner_id = $1 and coalesce(data->>'visibilite','prive') = 'public' and coalesce((data->>'archive')::boolean, false) = false order by updated_at desc limit 50`, [r.rows[0].user_id]);
+        /* jamais un événement (une union, un mariage, un séminaire d'AIMESTUDIO) : ils restent privés, même si une autre application
+           ou une écriture directe leur a donné une visibilité « public » ; seuls les projets et ouvrages publiés par leur auteur */
+        const p = await db.query(`select title, data from spaces where owner_id = $1 and kind <> 'evenement' and coalesce(data->>'visibilite','prive') = 'public' and coalesce((data->>'archive')::boolean, false) = false order by updated_at desc limit 50`, [r.rows[0].user_id]);
         const projets = p.rows.map(x => ({ titre: x.title, briques: ((x.data && x.data.briques) || []).filter(b => IDS.includes(b)) }));
         return json(res, 200, { ok: true, profil: PUBLIC(r.rows[0]), projets });
       }

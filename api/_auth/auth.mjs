@@ -6,6 +6,8 @@ import { magicLink } from 'better-auth/plugins/magic-link';
 import { passkey } from '@better-auth/passkey';
 import pg from 'pg';
 import { APIError } from 'better-auth/api';
+import { masquer } from './nettoyer-texte.mjs';
+import { inscrire as inscrireEffacements, reprendre as reprendreEffacements, FileAbsente } from './effacements.mjs';
 
 /* l'adresse publique : fixée par l'environnement, sinon l'adresse de la branche Vercel, sinon le local */
 export function adresse(env = process.env) {
@@ -78,7 +80,7 @@ export function auth(env = process.env) {
     advanced: { cookiePrefix: 'aime', useSecureCookies: base.startsWith('https://'), ipAddress: { ipAddressHeaders: ['x-forwarded-for', 'x-real-ip'] } },
     session: { expiresIn: 60 * 60 * 24 * 30, updateAge: 60 * 60 * 24, freshAge: 60 * 60 * 24 },
     /* supprimer son compte : session de moins de 24 h exigée ; ses espaces, ses adhésions et ses invitations partent avec */
-    user: { deleteUser: { enabled: true, beforeDelete: u => effacerTraces(pool, u) } },
+    user: { deleteUser: { enabled: true, beforeDelete: u => effacerTraces(pool, u), afterDelete: () => reprendreEffacements(pool).catch(() => {}) } },
     rateLimit: { enabled: true, window: 60, max: 30, storage: 'memory' },
     databaseHooks: { user: {
       create: { before: async u => ({ data: propre(u) }) },
@@ -96,7 +98,8 @@ export function auth(env = process.env) {
    Rien n'est donc jamais effacé de ce que d'autres ont mis dans un espace partagé. */
 export const PARTAGES = `select s.id::text as id, s.title from spaces s where s.owner_id = $1 and exists (select 1 from space_members m where m.space_id = s.id and m.user_id <> $1)`;
 export class EspacesPartages extends Error { constructor(titres) { super('espaces partagés'); this.titres = titres; } }
-/* ce que la personne laisse hors des tables de Better Auth : ses espaces (et leur direct), ses adhésions, les invitations à son adresse, sa matière du Point Zéro */
+/* ce que la personne laisse hors des tables de Better Auth : ses espaces (et leur direct), ses adhésions, les invitations à son adresse, sa matière du Point Zéro,
+   ses ouvrages, son profil et ses traces du Réseau, sa musique et ses fichiers (cartes, activités, sessions et engagements partent par cascade) */
 export async function effacerTraces(db, u) {
   const c = await db.connect();
   try {
@@ -119,9 +122,25 @@ export async function effacerTraces(db, u) {
     if (ou.rows[0] && ou.rows[0].t) await c.query('delete from ouvrages where user_id = $1', [u.id]);
     const pr = await c.query("select to_regclass('public.profils') as t");   /* le profil du Réseau part avec le compte */
     if (pr.rows[0] && pr.rows[0].t) await c.query('delete from profils where user_id = $1', [u.id]);
+    /* le Réseau : son calendrier, les questions posées à son orbe et les demandes qu'elle a reçues partent avec elle ;
+       celles qu'elle a envoyées restent chez leur destinataire (c'est sa boîte), mais sans son nom, son adresse ni son compte */
+    const rd = await c.query("select to_regclass('public.reseau_dates') as t");
+    if (rd.rows[0] && rd.rows[0].t) {
+      await c.query('delete from reseau_dates where user_id = $1', [u.id]);
+      await c.query('delete from reseau_questions where user_id = $1', [u.id]);
+      await c.query('delete from reseau_demandes where a_user = $1', [u.id]);
+      /* son texte libre : nettoyé automatiquement (adresses, téléphones, liens, son nom) ; ce n'est pas une anonymisation garantie (voir nettoyer-texte.mjs) */
+      const envoyees = (await c.query('select id, message, de_nom, de_email from reseau_demandes where de_user = $1', [u.id])).rows;
+      for (const d of envoyees) await c.query("update reseau_demandes set de_user = '', de_nom = 'Compte supprimé', de_email = '', message = $2 where id = $1", [d.id, masquer(d.message, { nom: [d.de_nom, u.name].filter(Boolean).join(' '), email: d.de_email || u.email })]);
+    }
+    /* sa musique : les morceaux, et les fichiers envoyés (même jamais rattachés à un morceau), inscrits pour effacement avec reprise */
+    const mu = await c.query("select to_regclass('public.musiques') as t");
+    const urls = mu.rows[0] && mu.rows[0].t ? (await c.query("delete from musiques where user_id = $1 returning source, lien", [u.id])).rows.filter(r => r.source === 'fichier' && r.lien).map(r => r.lien) : [];
+    await inscrireEffacements(c, { urls, prefixes: ['musique/' + u.id + '/'] });
     await c.query('commit');
   } catch (e) {
     await c.query('rollback').catch(() => {});
+    if (e instanceof FileAbsente) throw new APIError('INTERNAL_SERVER_ERROR', { code: 'SUPPRESSION_INDISPONIBLE', message: 'La suppression de compte est momentanément indisponible : rien n\'a été effacé. Réessayez plus tard.' });
     if (e instanceof EspacesPartages) throw new APIError('BAD_REQUEST', { code: 'ESPACES_PARTAGES', message: 'Vous êtes propriétaire d\'espaces où d\'autres personnes sont membres (' + e.titres.slice(0, 3).join(', ') + (e.titres.length > 3 ? '…' : '') + ') : retirez-les d\'abord, rien de ce qu\'elles y ont mis ne sera effacé.' });
     throw e;
   }

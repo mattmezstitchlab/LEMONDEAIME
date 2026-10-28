@@ -22,6 +22,7 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
   const [mode, setMode] = useState<ModeHaut>(null);
   const [reglages, setReglages] = useState(false);
   const [groupe, setGroupe] = useState<string | null>(null);
+  const [effacerOuvrages, setEffacerOuvrages] = useState(false);   /* jamais coché par défaut */
   const [annonce, setAnnonce] = useState('');
   const [comptes, setComptes] = useState<Record<string, number> | null>(null);
   const session = useSession();
@@ -113,7 +114,7 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
               </>)}
             {mode === 'recherche' && [null, ...GROUPES].map(g => <button key={g || 'tout'} type="button" className="lieu" aria-current={groupe === g ? 'true' : 'false'} onClick={() => setGroupe(g)}>{g || 'Tout'}</button>)}
             {mode === 'espace' && (session
-              ? <><Lien className="lieu" href="/buro" onClick={() => setMode(null)}>Ouvrir mon espace</Lien><Lien className="lieu" href="/point-zero" onClick={() => setMode(null)}>Point Zéro</Lien><Lien className="lieu" href="/a-plus" onClick={() => setMode(null)}>A+</Lien><button type="button" className="lieu" onClick={() => { setMode(null); seDeconnecter(); }}>Déconnexion</button></>
+              ? <><Lien className="lieu" href="/buro" onClick={() => setMode(null)}>Ouvrir mon espace</Lien><Lien className="lieu" href="/point-zero" onClick={() => setMode(null)}>Point Zéro</Lien><Lien className="lieu" href="/a-plus" onClick={() => setMode(null)}>A+</Lien><label className="lieu lieu-case" title="Vos ouvrages déjà rangés dans votre espace AIME restent sur votre compte ; ceux qui n’y sont pas encore restent sur l’appareil."><input type="checkbox" checked={effacerOuvrages} onChange={e => setEffacerOuvrages(e.target.checked)} aria-describedby="effacer-ouvrages-note" /> Effacer les ouvrages de cet appareil<span id="effacer-ouvrages-note" className="sr-only">Vos ouvrages déjà rangés dans votre espace AIME restent sur votre compte ; ceux qui n’y sont pas encore restent sur l’appareil.</span></label><button type="button" className="lieu" onClick={async () => { const e = effacerOuvrages; setEffacerOuvrages(false); setMode(null); const b = await seDeconnecter({ effacerOuvrages: e }); if (b) setAnnonce(b.effaces + ' ouvrage' + (b.effaces > 1 ? 's' : '') + ' effacé' + (b.effaces > 1 ? 's' : '') + ' de cet appareil' + (b.gardes ? ', ' + b.gardes + ' gardé' + (b.gardes > 1 ? 's' : '') + ' (pas encore rangé' + (b.gardes > 1 ? 's' : '') + ' dans votre espace)' : '') + '.'); }}>Déconnexion</button></>
               : <><Lien className="lieu" href="/a-propos" onClick={() => setMode(null)}>Pourquoi un compte ?</Lien><Lien className="lieu" href="/a-plus" onClick={() => setMode(null)}>A+ pour les pros</Lien></>)}
           </div>
         </div>}
