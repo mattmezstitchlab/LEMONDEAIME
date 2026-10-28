@@ -13,7 +13,7 @@ type Analyse = { domaine: string; label: string; studio: string; certitude: numb
 const D = data.briques as unknown as Record<string, Brique>;
 const G = data.grille as string[][];
 const FEEDS = Object.fromEntries(Object.entries(D).map(([k, v]) => [k, v.feeds]));
-const HREF: Record<string, string> = { union: '/', broderie: '/studio/atelier', sal: '/studio/atelier', formation: '/studio/atelier', presentation: '/studio/atelier', site: '/studio/atelier' };
+const HREF: Record<string, string> = { union: '/aime-wedding', broderie: '/studio/atelier', sal: '/studio/atelier', formation: '/studio/atelier', presentation: '/studio/atelier', site: '/studio/atelier' };
 const EXEMPLES = ['Nous nous marions en juin, à la campagne', 'Je veux broder le portrait de mon chat', 'Je prépare une formation sur le point de croix', 'J’organise un concert entre amis'];
 const reduit = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -163,7 +163,7 @@ export default function PointZero() {
               </div>}
               {an && fini && <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 18 }}>
                 <button className="bouton noir" type="button" onClick={ranger} style={{ height: 48 }}>Ranger dans mon espace</button>
-                <Lien className="bouton" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener" style={{ height: 48 }}>{href === '/' ? 'Voir Le Monde AIME' : href === '/studio/atelier' ? 'Ouvrir l’atelier de broderie' : 'Ouvrir le Studio'}{href.startsWith('http') && <span className="sr-only"> (nouvel onglet)</span>}</Lien>
+                <Lien className="bouton" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener" style={{ height: 48 }}>{href === '/aime-wedding' ? 'Voir AIME Wedding' : href === '/' ? 'Voir Le Monde AIME' : href === '/studio/atelier' ? 'Ouvrir l’atelier de broderie' : 'Ouvrir le Studio'}{href.startsWith('http') && <span className="sr-only"> (nouvel onglet)</span>}</Lien>
               </div>}
               <p role="status" style={{ margin: '10px 0 0', minHeight: 20, fontSize: 14, fontWeight: 600 }}>{msg}{msg.startsWith('Entrez') && <> <Lien href="/entrer">+ Entrer</Lien></>}</p>
             </aside>

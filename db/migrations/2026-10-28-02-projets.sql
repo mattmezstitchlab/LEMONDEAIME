@@ -1,0 +1,19 @@
+-- LE MONDE AIME · migration 2026-10-28-02 : les projets du portfolio (l'accueil de LE MONDE AIME et l'administration).
+-- Ajout pur : aucune table existante n'est modifiée. Le code fonctionne avant elle : il montre alors les deux projets
+-- d'origine (Brode Way, AIME Wedding), et l'administration répond qu'il faut appliquer cette migration.
+-- Les deux projets d'origine sont inscrits une fois (« on conflict do nothing ») : rejouer la migration ne touche jamais
+-- un projet modifié par l'administration ; elle réinscrirait seulement un projet d'origine qui aurait été supprimé.
+-- Retour arrière : 2026-10-28-02-projets.retour.sql.
+begin;
+create table if not exists projets (
+  slug text primary key check (slug ~ '^[a-z0-9]([a-z0-9-]{0,58}[a-z0-9])?$'),
+  data jsonb not null check (jsonb_typeof(data) = 'object'),
+  publie boolean not null default false,
+  ordre integer not null default 0,
+  cree_le timestamptz not null default now(),
+  maj timestamptz not null default now()
+);
+create index if not exists projets_publies on projets (publie, ordre);
+insert into projets (slug, data, publie, ordre) values ('brode-way', '{"titre":"Brode Way","categorie":"Broderie","annee":2026,"statut":"en-ligne","une":true,"accroche":"L’atelier de point de croix : dessiner, lire et broder un patron, case par case.","description":"Brode Way est un atelier de broderie complet, dans le navigateur.\n\nOn y dessine un patron qui nous ressemble, on le lit en rendu réaliste, à plat ou en symboles, et on suit sa progression fil par fil. Les fils DMC du motif sont dans le dock, avec leur avancement et l’état du stock.\n\nUn patron en plusieurs pages PDF se recompose sur une table magnétique, raccords et couleurs vérifiés. Chaque ouvrage se range dans l’espace AIME de la personne et la suit d’un appareil à l’autre.","role":"Conception, design et développement","lien":"/studio/atelier","couverture":"/media/studio/dessiner.jpg","alt":"Brode Way : une initiale botanique brodée au point de croix, entourée de fleurs roses","galerie":[{"src":"/media/studio/fils.jpg","alt":"Les fils DMC du motif en pastilles dans le dock du bas"},{"src":"/media/studio/patron.jpg","alt":"Le motif affiché en symboles de patron"},{"src":"/media/studio/progression.jpg","alt":"La timeline du patron dans le dock du bas, couleur par couleur"},{"src":"/media/studio/puzzle-pdf.jpg","alt":"Un patron PDF recomposé sur la table de montage magnétique"}]}'::jsonb, true, 1) on conflict (slug) do nothing;
+insert into projets (slug, data, publie, ordre) values ('aime-wedding', '{"titre":"AIME Wedding","categorie":"Mariage","annee":2026,"statut":"en-cours","une":false,"accroche":"Le site officiel de l’union : une page pour les mariés, les prestataires et les invités.","description":"AIME Wedding réunit autour d’une union toutes les personnes qui la font vivre.\n\nLes mariés ont la page de leur union, les prestataires une vitrine pensée pour leur métier, les invités leur place dans l’histoire. Chacun voit ce qui le concerne, au bon moment.\n\nLe projet est en cours : la page d’accueil, les unions, le Réseau des prestataires et l’espace personnel sont en construction.","role":"Conception, design et développement","lien":"/aime-wedding","couverture":"/media/wedding/piscine.jpg","alt":"Un couple de mariés au bord de la piscine d’un motel dans le désert","galerie":[{"src":"/media/wedding/union-ines-hugo.jpg","alt":"Un couple sur un balcon face aux toits de Paris et à la tour Eiffel"},{"src":"/media/wedding/collection-chateaux.jpg","alt":"Un bal de mariage devant un château illuminé"},{"src":"/media/wedding/invites-table-7.jpg","alt":"Une longue table dressée sur une terrasse face à la mer"},{"src":"/media/wedding/collection-electro.jpg","alt":"Des mariés s’embrassent sur une piste de danse aux néons"}]}'::jsonb, true, 2) on conflict (slug) do nothing;
+commit;

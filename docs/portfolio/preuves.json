@@ -1,0 +1,102 @@
+{
+ "tests/e2e/portfolio.py": {
+  "date": "2026-10-28",
+  "commit": "f2d2b35",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "aperçu local (vite preview) : sans serveur pour l’accueil et les pages projet, API SIMULÉES pour l’administration",
+  "resultats": [
+   {
+    "test": "accueil : le titre LE MONDE AIME",
+    "ok": true
+   },
+   {
+    "test": "accueil : Brode Way à la une (sans serveur : les projets d’origine)",
+    "ok": true
+   },
+   {
+    "test": "accueil : deux projets en cartes, dans l’ordre",
+    "ok": true
+   },
+   {
+    "test": "accueil : le filtre « Mariage » ne garde qu’AIME Wedding",
+    "ok": true
+   },
+   {
+    "test": "carte → la page du projet",
+    "ok": true
+   },
+   {
+    "test": "page projet : la fiche (état) et le titre de l’onglet",
+    "ok": true
+   },
+   {
+    "test": "page projet : « Visiter le site » mène à /aime-wedding",
+    "ok": true
+   },
+   {
+    "test": "page projet : le projet suivant",
+    "ok": true
+   },
+   {
+    "test": "AIME Wedding garde son site sur /aime-wedding (unions comprises)",
+    "ok": true
+   },
+   {
+    "test": "Brode Way : « Visiter le site » ouvre l’atelier",
+    "ok": true
+   },
+   {
+    "test": "un projet inconnu : la page le dit",
+    "ok": true
+   },
+   {
+    "test": "téléphone (390 px) : / ne déborde pas",
+    "ok": true
+   },
+   {
+    "test": "téléphone (390 px) : /projets/brode-way ne déborde pas",
+    "ok": true
+   },
+   {
+    "test": "administration sans compte : invitée à entrer, rien d’autre",
+    "ok": true
+   },
+   {
+    "test": "administration, autre compte : refusée, aucun formulaire",
+    "ok": true
+   },
+   {
+    "test": "accueil, autre compte : pas de lien d’administration",
+    "ok": true
+   },
+   {
+    "test": "accueil, administration : le lien « Administrer les projets »",
+    "ok": true
+   },
+   {
+    "test": "administration : les deux projets, dans l’ordre",
+    "ok": true
+   },
+   {
+    "test": "nouveau projet : l’adresse se déduit du titre",
+    "ok": true
+   },
+   {
+    "test": "enregistrer : un nouveau projet, en brouillon par défaut",
+    "ok": true
+   },
+   {
+    "test": "supprimer demande une confirmation, rien n’est envoyé avant",
+    "ok": true
+   },
+   {
+    "test": "table absente : l’administration le dit, Enregistrer est désactivé",
+    "ok": true
+   },
+   {
+    "test": "aucune erreur dans la page",
+    "ok": true
+   }
+  ]
+ }
+}

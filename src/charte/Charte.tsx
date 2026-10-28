@@ -128,10 +128,18 @@ function Avatar({ p }: { p: Personne | null | undefined }) {
 /* Le dock du haut de tout le site : les rubriques du Monde AIME (des mots, pas de pictos). */
 export function VerbesSite({ actif }: { actif?: 'unions' | 'prestataires' | 'studio' | 'boutique' }) {
   return <>
-    <Verbe href="/#unions" actif={actif === 'unions'}>Unions</Verbe>
+    <Verbe href="/aime-wedding#unions" actif={actif === 'unions'}>Unions</Verbe>
     <Verbe href="/reseau?domaine=mariage" actif={actif === 'prestataires'}>Prestataires</Verbe>
     <Verbe href="/studio/atelier" actif={actif === 'studio'}>Studio</Verbe>
     <Verbe href="/boutique" actif={actif === 'boutique'}>Boutique</Verbe>
+  </>;
+}
+/* Le dock du haut de LE MONDE AIME (le portfolio) : les projets, le fondateur, à propos. */
+export function VerbesProjets({ actif }: { actif?: 'projets' | 'fondateur' | 'apropos' }) {
+  return <>
+    <Verbe href="/#projets" actif={actif === 'projets'}>Projets</Verbe>
+    <Verbe href="/#fondateur" actif={actif === 'fondateur'}>Fondateur</Verbe>
+    <Verbe href="/a-propos" actif={actif === 'apropos'}>À propos</Verbe>
   </>;
 }
 export function Verbe({ href, children, actif }: { href: string; children: ReactNode; actif?: boolean }) {
@@ -294,9 +302,10 @@ export function Pied() {
     <footer className="pied">
       <Lien href="/" aria-label="AIME, accueil" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}><Orbe taille={28} /><span className="marque" style={{ fontSize: 22 }}>AIME<sup aria-hidden="true">®</sup></span></Lien>
       <nav aria-label="Plan du site">
-        {col('Le Monde AIME', [['Les unions', '/#unions'], ['Prestataires', '/reseau?domaine=mariage'], ['Invités', '/#invites'], ['Collections', '/#collections']])}
-        {col('Créer', [['Studio', '/studio/atelier'], ['Brodez votre mariage', '/#studio'], ['La journée en musique', '/musique'], ['Point Zéro', '/point-zero'], ['Boutique', '/boutique']])}
-        {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil'], ['A+', '/a-plus']])}
+        {col('Le Monde AIME', [['Les projets', '/#projets'], ['Brode Way', '/projets/brode-way'], ['AIME Wedding', '/projets/aime-wedding'], ['Le fondateur', '/#fondateur']])}
+        {col('AIME Wedding', [['Le site de l’union', '/aime-wedding'], ['Les unions', '/aime-wedding#unions'], ['Prestataires', '/reseau?domaine=mariage'], ['La journée en musique', '/musique'], ['Boutique', '/boutique']])}
+        {col('Brode Way', [['L’atelier', '/studio/atelier'], ['Les patrons à broder', '/studio/boutique']])}
+        {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil']])}
         {col('La maison', [['À propos d’AIME', '/a-propos'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', null], ['Mentions légales', null]])}
       </nav>
       <div className="bas"><p style={{ margin: 0 }}>AIME® est la marque mère. LE MONDE AIME est une association.</p><p style={{ margin: 0 }}>© 2026 AIME®</p></div>
