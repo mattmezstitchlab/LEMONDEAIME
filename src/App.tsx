@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useChemin } from './lib/router';
+import BrodeWay from './pages/BrodeWay';
 import Portfolio from './pages/Portfolio';
 import AimeWedding from './pages/AimeWedding';
 import Projet from './pages/Projet';
@@ -16,7 +17,8 @@ import { APlus, Introuvable } from './pages/Simples';
 import { aller } from './lib/router';
 
 const PAGES: Record<string, [() => React.JSX.Element, string]> = {
-  '/': [Portfolio, 'LE MONDE AIME — les projets d’AIME'],
+  '/': [BrodeWay, 'Brode Way — l’atelier de point de croix'],
+  '/projets': [Portfolio, 'LE MONDE AIME — les projets d’AIME'],
   '/aime-wedding': [AimeWedding, 'AIME Wedding — le site officiel de l’union'],
   '/admin': [Admin, 'LE MONDE AIME — Administration'],
   '/a-propos': [APropos, 'À propos d’AIME'],

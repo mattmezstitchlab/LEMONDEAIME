@@ -137,8 +137,8 @@ export function VerbesSite({ actif }: { actif?: 'unions' | 'prestataires' | 'stu
 /* Le dock du haut de LE MONDE AIME (le portfolio) : les projets, le fondateur, à propos. */
 export function VerbesProjets({ actif }: { actif?: 'projets' | 'fondateur' | 'apropos' }) {
   return <>
-    <Verbe href="/#projets" actif={actif === 'projets'}>Projets</Verbe>
-    <Verbe href="/#fondateur" actif={actif === 'fondateur'}>Fondateur</Verbe>
+    <Verbe href="/projets#projets" actif={actif === 'projets'}>Projets</Verbe>
+    <Verbe href="/projets#fondateur" actif={actif === 'fondateur'}>Fondateur</Verbe>
     <Verbe href="/a-propos" actif={actif === 'apropos'}>À propos</Verbe>
   </>;
 }
@@ -302,11 +302,9 @@ export function Pied() {
     <footer className="pied">
       <Lien href="/" aria-label="AIME, accueil" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}><Orbe taille={28} /><span className="marque" style={{ fontSize: 22 }}>AIME<sup aria-hidden="true">®</sup></span></Lien>
       <nav aria-label="Plan du site">
-        {col('Le Monde AIME', [['Les projets', '/#projets'], ['Brode Way', '/projets/brode-way'], ['AIME Wedding', '/projets/aime-wedding'], ['Le fondateur', '/#fondateur']])}
-        {col('AIME Wedding', [['Le site de l’union', '/aime-wedding'], ['Les unions', '/aime-wedding#unions'], ['Prestataires', '/reseau?domaine=mariage'], ['La journée en musique', '/musique'], ['Boutique', '/boutique']])}
-        {col('Brode Way', [['L’atelier', '/studio/atelier'], ['Les patrons à broder', '/studio/boutique']])}
+        {col('Brode Way', [['Comment ça marche', '/#parcours'], ['Le nuancier DMC', '/#nuancier'], ['Les éditions', '/#editions'], ['Ouvrir l’atelier', '/studio/atelier'], ['Les patrons', '/studio/boutique']])}
         {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil']])}
-        {col('La maison', [['À propos d’AIME', '/a-propos'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', null], ['Mentions légales', null]])}
+        {col('La maison', [['À propos d’AIME', '/a-propos'], ['Les projets d’AIME', '/projets'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', null], ['Mentions légales', null]])}
       </nav>
       <div className="bas"><p style={{ margin: 0 }}>AIME® est la marque mère. LE MONDE AIME est une association.</p><p style={{ margin: 0 }}>© 2026 AIME®</p></div>
     </footer>

@@ -460,3 +460,106 @@ html.calme .carte-flip > .dos { opacity: 0; } html.calme .carte-flip.retournee >
 .ad-alerte { margin: 0 0 16px; padding: 12px 16px; border-radius: 12px; background: #FFF0EE; border: 1px solid #E7A39A; font-size: 15px; }
 .ad-ok { margin: 0 0 16px; padding: 12px 16px; border-radius: 12px; background: #EEF8EF; border: 1px solid #9BCBA0; font-size: 15px; }
 .ad-confirmer { display: inline-flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 15px; font-weight: 600; }
+
+/* Brode Way : la page de l'atelier de point de croix (/). La toile Aïda de l'atelier en fond, le fil DMC 312 en seul accent. */
+.bw { --aida: #F2EEE3; --aida-case: rgba(92, 78, 52, .09); --aida-dix: rgba(92, 78, 52, .2); --repere: rgba(214, 74, 66, .45); --fil: #35668B; --papier: #FFFFFF; --nuit: #1A1917;
+  background: var(--aida); }
+.bw .tete { background: transparent; }
+.bw-ouverture { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: clamp(32px, 5vw, 80px); align-items: center; min-height: calc(100vh - 80px); padding: clamp(32px, 5vw, 64px) var(--marge) clamp(56px, 7vw, 96px);
+  background-color: var(--aida);
+  background-image: linear-gradient(var(--aida-dix) 1px, transparent 1px), linear-gradient(90deg, var(--aida-dix) 1px, transparent 1px), linear-gradient(var(--aida-case) 1px, transparent 1px), linear-gradient(90deg, var(--aida-case) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 12px 12px, 12px 12px; background-position: -1px -1px; }
+.bw-titre { margin: 0; font-size: clamp(64px, 10.5vw, 188px); line-height: .84; font-weight: 800; letter-spacing: -0.055em; color: var(--encre); }
+.bw-chapeau { margin: 28px 0 0; max-width: 34ch; font-size: clamp(19px, 1.6vw, 23px); line-height: 1.45; color: var(--encre-2); }
+.bw-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 36px; }
+.bouton.bw-grand { height: 58px; padding: 0 26px; font-size: 17px; }
+.bw-faits { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.bw-faits li { padding: 7px 12px; border-radius: 999px; background: var(--papier); border: 1px solid var(--aida-dix); font-size: 14px; color: var(--encre-2); }
+.bw-broderie { margin: 0; }
+.bw-toile { position: relative; width: 100%; border-radius: 6px; background: var(--aida);
+  background-image: linear-gradient(var(--aida-case) 1px, transparent 1px), linear-gradient(90deg, var(--aida-case) 1px, transparent 1px);
+  background-size: calc(100% / 130) calc(100% / 124); box-shadow: 0 1px 0 var(--aida-dix), 0 30px 60px -30px rgba(60, 48, 25, .35); }
+.bw-toile canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* les deux repères rouges du centre, comme dans l'atelier : le point zéro de la grille */
+.bw-toile::before, .bw-toile::after { content: ''; position: absolute; pointer-events: none; background: var(--repere); }
+.bw-toile::before { left: 0; right: 0; top: 50%; height: 1px; }
+.bw-toile::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+.bw-fil { display: flex; align-items: center; gap: 14px; width: fit-content; max-width: 100%; margin: 18px auto 0; padding: 10px 12px 10px 10px; border-radius: 16px; background: var(--nuit); color: #fff; }
+.bw-bobine { position: relative; width: 40px; height: 40px; flex: none; }
+.bw-anneau { width: 40px; height: 40px; display: block; transform: rotate(-90deg); }
+.bw-anneau circle { fill: none; stroke-width: 3; stroke: rgba(255,255,255,.18); }
+.bw-anneau circle + circle { stroke: #fff; stroke-linecap: round; }
+.bw-pastille { position: absolute; inset: 9px; border-radius: 50%; }
+.bw-fil-texte { display: flex; flex-direction: column; min-width: 0; font-size: 14px; line-height: 1.3; }
+.bw-fil-texte b { font-size: 15px; }
+.bw-fil-texte span { color: rgba(255,255,255,.72); font-variant-numeric: tabular-nums; }
+.bw-rebroder { margin-left: 6px; min-height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,.5); background: transparent; color: #fff; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.bw-rebroder:hover { background: rgba(255,255,255,.12); }
+
+.bw-section { padding: clamp(80px, 10vw, 150px) var(--marge); }
+.bw-papier { background: var(--papier); }
+.bw-sombre { background: var(--nuit); color: #fff; }
+.bw-sombre .bw-texte { color: rgba(255,255,255,.75); }
+.bw-entete { max-width: 46rem; margin-bottom: clamp(36px, 5vw, 64px); }
+.bw-h2 { margin: 0; font-size: clamp(40px, 5.6vw, 84px); line-height: .98; font-weight: 700; letter-spacing: -0.045em; }
+.bw-texte { margin: 20px 0 0; font-size: clamp(18px, 1.5vw, 21px); line-height: 1.5; color: var(--encre-2); max-width: 40ch; }
+.bw-ecran { position: relative; aspect-ratio: 16 / 10; border-radius: 14px; overflow: hidden; background: var(--aida); box-shadow: 0 0 0 1px rgba(26,25,23,.08), 0 40px 80px -40px rgba(26,25,23,.45); }
+.bw-ecran img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .45s ease; }
+
+.bw-lectures { display: grid; grid-template-columns: minmax(220px, 300px) minmax(0, 1fr); gap: clamp(20px, 3vw, 40px); align-items: start; }
+.bw-onglets { display: grid; gap: 8px; }
+.bw-onglets button { display: grid; gap: 4px; text-align: left; padding: 16px 18px; border-radius: 14px; border: 1px solid var(--aida-dix); background: transparent; color: var(--encre); font: inherit; cursor: pointer; }
+.bw-onglets button b { font-size: 20px; font-weight: 650; letter-spacing: -0.02em; }
+.bw-onglets button span { font-size: 15px; line-height: 1.4; color: var(--encre-3); }
+.bw-onglets button[aria-selected="true"] { background: var(--nuit); border-color: var(--nuit); color: #fff; }
+.bw-onglets button[aria-selected="true"] span { color: rgba(255,255,255,.75); }
+.bw-lecture-ecran { position: relative; aspect-ratio: 16 / 10; border-radius: 14px; overflow: hidden; background: var(--aida); box-shadow: 0 0 0 1px rgba(26,25,23,.08), 0 40px 80px -40px rgba(26,25,23,.45); }
+.bw-lecture-ecran img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .35s ease; }
+
+.bw-parcours { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
+.bw-etapes { list-style: none; margin: 0; padding: 0; }
+.bw-etapes li { position: relative; min-height: 64vh; display: flex; flex-direction: column; justify-content: center; padding-left: 64px; opacity: .38; transition: opacity .3s; }
+.bw-etapes li[aria-current="step"] { opacity: 1; }
+.bw-num { position: absolute; left: 0; top: 50%; transform: translateY(-50%); margin-top: -1.1em; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--nuit); color: #fff; font-weight: 700; font-size: 17px; }
+.bw-etapes h3 { margin: 0; font-size: clamp(28px, 3vw, 42px); font-weight: 700; letter-spacing: -0.035em; }
+.bw-etapes p { margin: 12px 0 0; max-width: 38ch; font-size: 18px; line-height: 1.55; color: var(--encre-2); }
+.bw-etape-ecran { display: none; }
+.bw-colle { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-top: 40px; }
+.bw-colle-legende { margin: 14px 0 0; font-size: 15px; color: var(--encre-3); }
+
+.bw-nuancier { display: grid; grid-template-columns: repeat(auto-fill, minmax(26px, 1fr)); gap: 3px; }
+.bw-nuancier span { aspect-ratio: 1; border-radius: 4px; transition: opacity .3s, transform .3s; }
+.bw-nuancier.filtre span:not(.du-motif) { opacity: .12; }
+.bw-nuancier.filtre span.du-motif { transform: scale(1.12); box-shadow: 0 0 0 2px #fff; }
+.bw-nuancier-pied { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; justify-content: space-between; margin-top: 28px; }
+.bw-nuancier-pied p { margin: 0; max-width: 60ch; font-size: 14px; color: rgba(255,255,255,.6); }
+.bw-bascule { min-height: 48px; padding: 0 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,.6); background: transparent; color: #fff; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; }
+.bw-bascule[aria-pressed="true"] { background: #fff; color: var(--nuit); }
+.bw-sombre :focus-visible { outline-color: #fff; }
+
+.bw-editions { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
+.bw-collections { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.bw-collections li { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--encre); font-size: 15px; font-weight: 500; }
+.bw-note { margin: 22px 0 26px; font-size: 15px; color: var(--encre-3); }
+
+.bw-trois { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 40px clamp(24px, 4vw, 56px); }
+.bw-trois h3 { margin: 0; padding-top: 18px; border-top: 2px solid var(--encre); font-size: 24px; font-weight: 650; letter-spacing: -0.02em; }
+.bw-trois p { margin: 10px 0 0; font-size: 18px; line-height: 1.55; color: var(--encre-2); max-width: 34ch; }
+
+.bw-fin { padding: clamp(96px, 12vw, 180px) var(--marge); text-align: center;
+  background-image: linear-gradient(var(--aida-case) 1px, transparent 1px), linear-gradient(90deg, var(--aida-case) 1px, transparent 1px); background-size: 12px 12px; }
+.bw-fin-lien { display: inline-block; font-size: clamp(52px, 9vw, 160px); line-height: .9; font-weight: 800; letter-spacing: -0.055em; color: var(--encre); text-decoration: none; background: var(--aida); padding: 0 .1em; }
+.bw-fin-lien:hover { color: var(--fil); }
+.bw-fin p { margin: 22px 0 0; font-size: 18px; color: var(--encre-2); }
+
+@media (max-width: 900px) {
+  .bw-ouverture { grid-template-columns: 1fr; min-height: 0; }
+  .bw-lectures, .bw-editions { grid-template-columns: 1fr; }
+  .bw-parcours { grid-template-columns: 1fr; }
+  .bw-colle { display: none; }
+  .bw-etapes li { min-height: 0; opacity: 1; padding: 0 0 56px 56px; }
+  .bw-num { top: 0; transform: none; margin-top: 0; width: 38px; height: 38px; font-size: 15px; }
+  .bw-etape-ecran { display: block; margin-top: 20px; margin-left: -56px; }
+}
+@media (prefers-reduced-motion: reduce) { .bw-ecran img, .bw-lecture-ecran img, .bw-etapes li, .bw-nuancier span { transition: none; } }
+html.calme .bw-ecran img, html.calme .bw-lecture-ecran img { transition: none; }

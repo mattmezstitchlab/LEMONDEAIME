@@ -43,8 +43,8 @@ def simuler(pg, qui, admin, table=True):
 with sync_playwright() as p:
     b = p.chromium.launch()
     # — sans serveur : les projets d'origine
-    pg = contexte(b); pg.goto(B + '/'); pg.wait_for_timeout(800)
-    ok(pg.locator('h1').inner_text().strip().lower() == 'le monde aime', 'accueil : le titre LE MONDE AIME')
+    pg = contexte(b); pg.goto(B + '/projets'); pg.wait_for_timeout(800)
+    ok(pg.locator('h1').inner_text().strip().lower() == 'le monde aime', 'portfolio (/projets) : le titre LE MONDE AIME')
     ok(pg.locator('#une h3').inner_text() == 'Brode Way', 'accueil : Brode Way à la une (sans serveur : les projets d’origine)')
     cartes = pg.locator('.pf-grille .pf-carte-titre')
     ok(cartes.all_inner_texts() == ['Brode Way', 'AIME Wedding'], 'accueil : deux projets en cartes, dans l’ordre')
@@ -69,7 +69,7 @@ with sync_playwright() as p:
 
     # — téléphone : rien ne déborde
     pg = contexte(b, 390)
-    for chemin in ['/', '/projets/brode-way']:
+    for chemin in ['/projets', '/projets/brode-way']:
         pg.goto(B + chemin); pg.wait_for_timeout(600)
         ok(pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth + 1'), 'téléphone (390 px) : %s ne déborde pas' % chemin)
     capture(pg, 'accueil-telephone')
@@ -81,11 +81,11 @@ with sync_playwright() as p:
     pg.close()
     pg = contexte(b); simuler(pg, {'id': 'u2', 'email': 'autre@exemple.invalid', 'name': 'Autre'}, False); pg.goto(B + '/admin'); pg.wait_for_timeout(600)
     ok('réservée à l’administration' in pg.locator('main').inner_text() and pg.locator('form').count() == 0, 'administration, autre compte : refusée, aucun formulaire')
-    pg.goto(B + '/'); pg.wait_for_timeout(500)
+    pg.goto(B + '/projets'); pg.wait_for_timeout(500)
     ok(pg.get_by_role('link', name='Administrer les projets').count() == 0, 'accueil, autre compte : pas de lien d’administration')
     pg.close()
     pg = contexte(b); ecrits = simuler(pg, {'id': 'u1', 'email': 'matt@exemple.invalid', 'name': 'Matt'}, True)
-    pg.goto(B + '/'); pg.wait_for_timeout(500)
+    pg.goto(B + '/projets'); pg.wait_for_timeout(500)
     ok(pg.get_by_role('link', name='Administrer les projets').count() == 1, 'accueil, administration : le lien « Administrer les projets »')
     pg.goto(B + '/admin'); pg.wait_for_timeout(600)
     ok(pg.locator('.ad-liste li').count() == 2, 'administration : les deux projets, dans l’ordre')

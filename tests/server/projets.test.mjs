@@ -138,9 +138,10 @@ test('projets · API : sans la table, l’administration le dit (503) et n’éc
   finally { if (avant !== undefined) process.env.BLOB_READ_WRITE_TOKEN = avant; }
 });
 
-test('projets : l’accueil est le portfolio, AIME Wedding a sa propre adresse, l’administration est une page', () => {
+test('projets : l’accueil est Brode Way, le portfolio est sur /projets, AIME Wedding a sa propre adresse, l’administration est une page', () => {
   const a = lire('src/App.tsx');
-  assert.match(a, /'\/': \[Portfolio,/);
+  assert.match(a, /'\/': \[BrodeWay,/, 'l’accueil est Brode Way');
+  assert.match(a, /'\/projets': \[Portfolio,/, 'le portfolio reste sur /projets');
   assert.match(a, /'\/aime-wedding': \[AimeWedding,/);
   assert.match(a, /'\/admin': \[Admin,/);
   assert.match(a, /\/\^\\\/projets\\\/\(\[a-z0-9-\]\{1,60\}\)\$\//);
