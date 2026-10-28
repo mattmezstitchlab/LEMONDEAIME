@@ -123,3 +123,24 @@ img, video { display: block; max-width: 100%; }
 .cartes.ligne:focus-visible { outline-offset: -2px; }
 @keyframes orbe-tourne { to { transform: rotate(360deg); } }
 .orbe-tourne { animation: orbe-tourne 6s linear infinite; }
+
+/* la loupe : chercher dans tout AIME, et le plan du site, sous le dock */
+.recherche { position: absolute; z-index: 2; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); width: min(760px, calc(100vw - 24px)); padding: 16px; border-radius: 20px; background: var(--carte); border: 1px solid var(--trait); box-shadow: 0 24px 60px rgba(11,11,12,.2); }
+.recherche-lien { display: flex; flex-direction: column; gap: 1px; padding: 9px 10px; border-radius: 10px; text-decoration: none; font-size: 16px; }
+.recherche-lien span { font-size: 13.5px; color: var(--encre-3); line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recherche-lien:hover, .recherche-lien:focus-visible { background: var(--doux); }
+
+/* la visite guidée : le Point, le cadre autour de ce qu'il montre, sa bulle */
+.visite-point { position: fixed; z-index: 60; width: 34px; height: 34px; border-radius: 50%; background: var(--nacre); box-shadow: 0 0 0 3px #0B0B0C, 0 10px 26px rgba(11,11,12,.35); pointer-events: none; }
+.visite-cadre { position: fixed; z-index: 58; border-radius: 16px; border: 2px solid #0B0B0C; box-shadow: 0 0 0 9999px rgba(11,11,12,.28); pointer-events: none; }
+.visite-bulle { position: fixed; z-index: 61; padding: 18px; border-radius: 20px; background: #fff; border: 1px solid var(--trait); box-shadow: 0 24px 60px rgba(11,11,12,.28); }
+.visite-invite { position: fixed; z-index: 40; left: clamp(12px, 2vw, 24px); bottom: 96px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; max-width: min(520px, calc(100vw - 24px)); padding: 14px 16px; border-radius: 20px; background: #fff; border: 1px solid var(--trait); box-shadow: 0 18px 48px rgba(11,11,12,.22); }
+.visite-invite .visite-point { width: 30px; height: 30px; box-shadow: 0 0 0 2px #0B0B0C; }
+
+/* l'aperçu du studio : une info, une seule fois */
+.studio-demo { margin-top: 48px; padding: clamp(16px, 3vw, 36px); border-radius: 24px; background: #ECECE8; border: 1px solid var(--trait); }
+.studio-papier { min-height: 300px; padding: clamp(24px, 4vw, 44px); border-radius: 6px; background: #fff; box-shadow: 0 1px 0 #E2E2DE, 0 18px 40px rgba(11,11,12,.10); font-size: 17px; color: var(--encre); }
+mark.info-remplie { background: #ECE4FF; color: inherit; padding: 0 .2em; border-radius: 4px; box-shadow: inset 0 -2px 0 #A98BE0; transition: background .3s; }
+mark.info-remplie.vient { background: #FFE9A8; box-shadow: inset 0 -2px 0 #C79A1E; }
+@media (prefers-reduced-motion: reduce) { mark.info-remplie { transition: none; } }
+@media (max-width: 820px) { .recherche { position: fixed; top: 84px; left: 12px; right: 12px; width: auto; transform: none; max-height: calc(100vh - 110px); overflow: auto; } }

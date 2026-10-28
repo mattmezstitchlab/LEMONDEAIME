@@ -4,6 +4,8 @@ import { aller, Lien } from '../lib/router';
 import { MEDIAS } from '../lib/medias';
 import { Projets } from './Projets';
 import { DemoDocks, Orbes, PRINCIPES, VISIBILITES } from './Concept';
+import { StudioDemo } from './StudioDemo';
+import { Visite } from '../charte/Visite';
 import { CarteReseau } from './Reseau';
 import { FONDATEUR } from '../lib/reseau-exemples';
 
@@ -48,6 +50,13 @@ export default function Aime() {
           </p>
             </div>
           </div>
+        </section>
+
+        <section id="studio" aria-labelledby="titre-studio" className="section blanche">
+          <p className="surtitre">Le studio · un aperçu</p>
+          <h2 id="titre-studio" className="titre" style={{ maxWidth: '18ch' }}>Une info, une seule fois.</h2>
+          <p className="chapeau">Dans AIME, tout le monde est relié. Ce que vous avez déjà dit n’est jamais redemandé : le Point Zéro s’en sert pour préparer vos documents avec les bonnes infos.</p>
+          <StudioDemo />
         </section>
 
         <section id="manifeste" aria-labelledby="titre-manifeste" className="section">
@@ -111,9 +120,10 @@ export default function Aime() {
           <Projets ligne />
         </section>
       </main>
-      <DockBas lieux={[['manifeste', 'Manifeste'], ['docks', 'Docks'], ['point', 'Le Point'], ['principes', 'Principes'], ['fondateur', 'Fondateur'], ['studios', 'Studios']]} />
+      <DockBas lieux={[['studio', 'Le studio'], ['manifeste', 'Manifeste'], ['docks', 'Docks'], ['point', 'Le Point'], ['principes', 'Principes'], ['fondateur', 'Fondateur'], ['studios', 'Studios']]} />
       <Pied />
       <BoutonBuro />
+      <Visite />
     </>
   );
 }

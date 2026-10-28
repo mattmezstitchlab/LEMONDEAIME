@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Lien } from '../lib/router';
 import { useSession, seDeconnecter } from '../lib/session';
+import { Recherche } from './Recherche';
 
 export function Orbe({ taille = 30 }: { taille?: number }) {
   return <span className="orbe" aria-hidden="true" style={{ width: taille, height: taille }} />;
@@ -12,6 +13,8 @@ export function Marque() {
 /* Le dock du haut : AIME® (menu), les verbes de la page, la loupe. À droite : A+ et le « + » (Entrer, puis Point Zéro). */
 export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string }) {
   const [ouvert, setOuvert] = useState(false);
+  const [cherche, setCherche] = useState(false);
+  const loupe = useRef<HTMLButtonElement>(null);
   const session = useSession();
   const bouton = useRef<HTMLButtonElement>(null);
   const menu = useRef<HTMLUListElement>(null);
@@ -24,22 +27,29 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
       <span aria-hidden="true" />
       <nav className="dock-haut" aria-label="Dock du haut">
         <div className="rangee">
-          <button ref={bouton} className="outil" type="button" aria-expanded={ouvert} aria-controls="menu-aime" onClick={() => setOuvert(o => !o)} style={{ paddingLeft: 8 }}>
+          <button ref={bouton} className="outil" type="button" aria-expanded={ouvert} aria-controls="menu-aime" onClick={() => { setCherche(false); setOuvert(o => !o); }} style={{ paddingLeft: 8 }}>
             <Orbe /><Marque />
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true" style={{ transform: ouvert ? 'rotate(180deg)' : 'none' }}><path d="M6 9l6 6 6-6" /></svg>
           </button>
           {verbes ? <><span className="separateur" aria-hidden="true" />{verbes}</> : null}
         </div>
         <span className="separateur" aria-hidden="true" />
-        <Lien className="outil loupe" href="/monde#projets" aria-label="Rechercher dans tous les projets d’AIME" title="Rechercher">
-          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-4.2-4.2" /></svg>
-        </Lien>
+        <button ref={loupe} type="button" className="outil loupe" aria-expanded={cherche} aria-label={cherche ? 'Fermer la recherche' : 'Chercher dans tout AIME, et le plan du site'} title="Chercher" onClick={() => { setOuvert(false); setCherche(c => !c); }}>
+          {cherche
+            ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            : <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-4.2-4.2" /></svg>}
+        </button>
+        {cherche && <>
+          <div aria-hidden="true" onClick={() => setCherche(false)} style={{ position: 'fixed', inset: 0, zIndex: 1 }} />
+          <Recherche fermer={() => { setCherche(false); loupe.current?.focus(); }} />
+        </>}
         {ouvert && <>
           <div aria-hidden="true" onClick={() => setOuvert(false)} style={{ position: 'fixed', inset: 0, zIndex: 1 }} />
           <ul id="menu-aime" ref={menu} className="menu-aime" onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); fermer(); } }}>
             {items.map(([h, l]) => <li key={l}>{h
               ? <Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setOuvert(false)} style={{ fontWeight: courant === h ? 700 : 500 }}>{l}</Lien>
               : <span aria-disabled="true" style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 46, padding: '0 12px', fontSize: 17, color: '#55555A' }}>{l}<span className="bientot">Bientôt</span></span>}</li>)}
+            <li style={{ borderTop: '1px solid #ECECE8', marginTop: 6, paddingTop: 6 }}><button type="button" onClick={() => { setOuvert(false); lancerVisite(); }}>Visite guidée · 2 min</button></li>
             {session && <li style={{ borderTop: '1px solid #ECECE8', marginTop: 6, paddingTop: 6 }}><button type="button" onClick={() => { setOuvert(false); seDeconnecter(); }}>Déconnexion</button></li>}
           </ul>
         </>}
@@ -53,6 +63,11 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
       </div>
     </header>
   );
+}
+/* la visite guidée par le Point : sur l'accueil elle démarre tout de suite, ailleurs on y retourne d'abord */
+export function lancerVisite() {
+  if (window.location.pathname === '/') window.dispatchEvent(new Event('aime-visite'));
+  else window.location.assign('/?visite=1');
 }
 export function Verbe({ href, children, actif }: { href: string; children: ReactNode; actif?: boolean }) {
   return <Lien className="outil" href={href} aria-current={actif ? 'page' : undefined}>{children}</Lien>;
