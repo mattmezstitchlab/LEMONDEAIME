@@ -32,6 +32,8 @@ test('lien e-mail : le jeton passe dans le chemin, puis redevient la vérificati
   const { lienPropre } = await import('../../api/_auth/auth.mjs');
   assert.equal(lienPropre('https://www.lemondeaime.com/api/auth/magic-link/verify?token=AbCdEf123456&callbackURL=%2Fpoint-zero'), 'https://www.lemondeaime.com/lien/AbCdEf123456/point-zero');
   assert.equal(lienPropre('https://x.fr/api/auth/magic-link/verify?token=AbCdEf123456&callbackURL=https%3A%2F%2Fmal.example'), 'https://x.fr/lien/AbCdEf123456/buro');
+  assert.equal(lienPropre('https://x.fr/api/auth/magic-link/verify?token=AbCdEf123456&callbackURL=%2F'), 'https://x.fr/lien/AbCdEf123456/accueil');
+  assert.match(adresseOrigine('/api/comptes?__lien=AbCdEf123456/accueil'), /callbackURL=%2F&/);
   const a = adresseOrigine('/api/comptes?__lien=AbCdEf123456/point-zero');
   const u = new URL(a, 'http://x');
   assert.equal(u.pathname, '/api/auth/magic-link/verify');

@@ -42,6 +42,20 @@ img, video { display: block; max-width: 100%; }
 .bloc-menu a:hover, .bloc-menu button:hover { color: var(--encre-3); }
 .bloc-menu a[aria-current="page"] { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; }
 .bloc-note { margin: 14px 0 0; font-size: 15px; color: var(--encre-2); }
+.entrer-bloc { display: grid; gap: 12px; margin-top: 14px; }
+.entrer-lien { display: grid; gap: 6px; }
+.entrer-lien label { font-size: 14px; font-weight: 600; }
+.entrer-ligne { display: flex; gap: 8px; flex-wrap: wrap; }
+.entrer-ligne .champ { flex: 1 1 220px; width: auto; }
+.entrer-ligne .bouton { flex: 0 0 auto; min-height: 52px; }
+.entrer-autres { display: flex; gap: 8px; flex-wrap: wrap; }
+.entrer-alt { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 18px; border-radius: 12px; border: 1px solid #BDBDB8; background: var(--carte); color: var(--encre); font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; flex: 1 1 200px; }
+.entrer-alt:hover:not(:disabled) { border-color: var(--encre); }
+.entrer-etat { margin: 0; min-height: 22px; font-size: 15px; font-weight: 600; }
+.entrer-etat.erreur { color: #A3122A; }
+.entrer-etat:empty { min-height: 0; margin-top: -12px; }
+.entrer-bloc.compact .champ { height: 48px; }
+.entrer-bloc.compact .entrer-ligne .bouton { min-height: 48px; }
 .bloc-dossiers { list-style: none; margin: 14px 0 0; padding: 0 0 4px; display: flex; gap: 10px; overflow-x: auto; }
 .bloc-dossiers a { display: flex; flex-direction: column; gap: 4px; width: 170px; padding: 14px; border-radius: 14px; border: 1px solid var(--trait); text-decoration: none; color: var(--encre); }
 .bloc-dossiers a:hover { background: var(--doux); color: var(--encre); }

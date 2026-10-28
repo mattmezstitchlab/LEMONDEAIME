@@ -4,6 +4,7 @@ import { lireBuro } from '../lib/buro';
 import { ajouter as ajouterPistes, basculer as basculerLecture, precedent, suivant, useLecteur } from '../lib/lecteur';
 import { useSession, seDeconnecter, type Personne } from '../lib/session';
 import { Recherche, GROUPES } from './Recherche';
+import { EntrerBloc } from './EntrerBloc';
 import { arcs, earcon, ecrirePrefs, profilCourant, profils, useConfort, type Prefs, type Profil } from '../lib/confort';
 
 export function Orbe({ taille = 30 }: { taille?: number }) {
@@ -32,7 +33,7 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
   const cp = profilCourant(prefs);
   const retour = chemin !== '/' || profondeur() > 0;
   useEffect(() => { setMode(null); }, [chemin]);
-  useEffect(() => { if (mode && mode !== 'recherche') bloc.current?.querySelector<HTMLElement>('a, button')?.focus(); }, [mode]);
+  useEffect(() => { if (mode && mode !== 'recherche') bloc.current?.querySelector<HTMLElement>('input, a, button')?.focus(); }, [mode]);
   useEffect(() => { if (mode === 'espace' && session) lireBuro().then(r => {
     const ps = r.ok ? r.projets || [] : [];
     setComptes({ projets: ps.filter(p => p.role === 'owner' && !p.archive).length, partages: ps.filter(p => p.role !== 'owner' && !p.archive).length, archives: ps.filter(p => p.archive).length });
@@ -91,10 +92,10 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
                   </Lien></li>)}
                 </ul>
               </>
-              : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-                <p className="bloc-note" style={{ margin: 0, maxWidth: '40ch' }}>Entrez dans AIME pour retrouver vos projets, vos ouvrages et votre profil sur tous vos appareils.</p>
-                <Lien className="bouton noir" href="/entrer" onClick={() => setMode(null)}>Entrer</Lien>
-              </div>)}
+              : <>
+                <p className="bloc-note" style={{ marginTop: 0 }}>Entrez dans AIME, sans quitter la page : vos projets, vos ouvrages et votre profil vous suivent sur tous vos appareils.</p>
+                <EntrerBloc compact retour={/^\/[a-z0-9-]{1,40}$/.test(chemin) || chemin === '/' ? chemin : '/buro'} />
+              </>)}
           </div>
           <div className="mini-dock" role="group" aria-label={mode === 'aime' ? 'Choisir mon orbe' : mode === 'recherche' ? 'Chercher dans' : 'Votre espace'}>
             {mode === 'aime' && <>
@@ -108,7 +109,7 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
             {mode === 'recherche' && [null, ...GROUPES].map(g => <button key={g || 'tout'} type="button" className="lieu" aria-current={groupe === g ? 'true' : 'false'} onClick={() => setGroupe(g)}>{g || 'Tout'}</button>)}
             {mode === 'espace' && (session
               ? <><Lien className="lieu" href="/buro" onClick={() => setMode(null)}>Ouvrir mon espace</Lien><Lien className="lieu" href="/point-zero" onClick={() => setMode(null)}>Point Zéro</Lien><Lien className="lieu" href="/a-plus" onClick={() => setMode(null)}>A+</Lien><button type="button" className="lieu" onClick={() => { setMode(null); seDeconnecter(); }}>Déconnexion</button></>
-              : <><Lien className="lieu" href="/entrer" onClick={() => setMode(null)}>Entrer</Lien><Lien className="lieu" href="/a-plus" onClick={() => setMode(null)}>A+</Lien></>)}
+              : <><Lien className="lieu" href="/a-propos" onClick={() => setMode(null)}>Pourquoi un compte ?</Lien><Lien className="lieu" href="/a-plus" onClick={() => setMode(null)}>A+ pour les pros</Lien></>)}
           </div>
         </div>}
       </nav>

@@ -14,7 +14,7 @@ export function adresseOrigine(url) {
   if (l !== null) {   /* /lien/<jeton>/<page> : le lien reçu par e-mail */
     const m = /^([A-Za-z0-9_-]{8,200})(?:\/([a-z0-9-]{1,40}))?\/?$/.exec(l);
     if (!m) return '/api/auth/magic-link/verify';
-    return '/api/auth/magic-link/verify?token=' + m[1] + '&callbackURL=' + encodeURIComponent('/' + (m[2] || 'buro')) + '&errorCallbackURL=' + encodeURIComponent('/entrer?erreur=lien');
+    return '/api/auth/magic-link/verify?token=' + m[1] + '&callbackURL=' + encodeURIComponent(m[2] === 'accueil' ? '/' : '/' + (m[2] || 'buro')) + '&errorCallbackURL=' + encodeURIComponent('/entrer?erreur=lien');
   }
   const c = u.searchParams.get('__chemin') || ''; u.searchParams.delete('__chemin');
   if (!/^[A-Za-z0-9_-]+(\/[A-Za-z0-9_-]+){0,5}$/.test(c)) return null;
