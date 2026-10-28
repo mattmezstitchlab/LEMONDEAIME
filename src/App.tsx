@@ -9,6 +9,7 @@ import Reseau from './pages/Reseau';
 import FicheReseau from './pages/FicheReseau';
 import Boutique from './pages/Boutique';
 import Musique from './pages/Musique';
+import Moments from './pages/Moments';
 import { APlus, Introuvable } from './pages/Simples';
 import { aller } from './lib/router';
 
@@ -22,6 +23,7 @@ const PAGES: Record<string, [() => React.JSX.Element, string]> = {
   '/a-plus': [APlus, 'LE MONDE AIME — A+'],
   '/boutique': [Boutique, 'LE MONDE AIME — Boutique'],
   '/musique': [Musique, 'LE MONDE AIME — La journée en musique'],
+  '/moments': [() => <Moments />, 'LE MONDE AIME — Les moments de l’union'],
 };
 /* anciennes adresses : elles mènent toutes à l'accueil LE MONDE AIME (rien ne casse pour qui les a gardées) */
 const ANCIENNES: Record<string, string> = { '/charte': '/', '/monde': '/', '/aime-wedding': '/' };
@@ -29,8 +31,10 @@ export default function App() {
   const chemin = useChemin().replace(/\/+$/, '') || '/';
   useEffect(() => { if (ANCIENNES[chemin]) aller(ANCIENNES[chemin]); }, [chemin]);
   const fiche = /^\/reseau\/([a-z0-9-]{1,60})$/.exec(chemin);
+  const unMoment = /^\/moments\/([a-z0-9-]{1,60})$/.exec(chemin);
   const [Page, titre] = PAGES[ANCIENNES[chemin] || chemin] || [Introuvable, 'LE MONDE AIME — Page introuvable'];
-  useEffect(() => { if (!fiche) document.title = titre; }, [titre, fiche]);
+  useEffect(() => { if (!fiche && !unMoment) document.title = titre; }, [titre, fiche, unMoment]);
   if (fiche) return <FicheReseau key={fiche[1]} cle={fiche[1]} />;
+  if (unMoment) return <Moments id={unMoment[1]} />;
   return <Page />;
 }

@@ -9,19 +9,14 @@ import { CarteCreation } from './Boutique';
 import { Lien } from '../lib/router';
 import { EXEMPLES, UNION_EXEMPLE } from '../lib/reseau-exemples';
 import { CarteReseau } from './Reseau';
+import { JOURJ } from '../lib/jourj.mjs';
+import { PROGRAMME, moment, heureLisible, compter, type MomentP } from '../lib/programme';
+import { BandeEtapes } from '../charte/Programme';
 
 /* LE MONDE AIME : l'accueil du site, le site officiel de l'union (la planche Main de la maquette). Une page pour chaque personne qui la fait vivre : les mariés, les prestataires, les invités. */
 const W = (s: string) => '/media/wedding/' + s + '.jpg';
-const DIAPOS = [
-  { src: W('piscine'), who: 'Camille & Gabriel', where: 'Piscine du motel, 18 h 12', alt: 'Un couple de mariés au bord de la piscine d’un motel dans le désert' },
-  { src: W('supermarche'), who: 'Les mariés', where: 'Rayon frais, 11 h 40', alt: 'Une mariée pousse un caddie fleuri dans les rayons d’un supermarché' },
-  { src: W('laverie'), who: 'Les invités', where: 'Laverie automatique, cycle 40°', alt: 'Les mariés assis sur des machines à laver, entourés d’invités' },
-  { src: W('wagon'), who: 'Le maître d’hôtel', where: 'Wagon-restaurant, entre deux tunnels', alt: 'Les mariés dans un wagon-restaurant devant des montagnes enneigées' },
-  { src: '/media/sous-la-mer.jpg', who: 'L’officiant', where: 'Sous la mer, 20 h', alt: 'Une cérémonie sous un dôme vitré entouré de poissons' },
-  { src: '/media/scene.jpg', who: 'Le DJ', where: 'Le club, 2 h 17', alt: 'Les mariés s’embrassent au milieu d’une piste de danse éclairée en rose' },
-  { src: '/media/phare.jpg', who: 'Le photographe', where: 'Le phare, marée haute', alt: 'Un couple au pied d’un phare face à la mer agitée au coucher du soleil' },
-  { src: '/media/facade.jpg', who: 'Le chauffeur', where: 'Las Vegas, 23 h 59', alt: 'Une limousine blanche devant une chapelle de mariage illuminée à Las Vegas' },
-];
+/* les huit photos du Jour J : chacune est un moment du programme ; l'heure vient du programme, jamais du texte */
+const DIAPOS: Diapo[] = JOURJ.map(d => { const m = moment(PROGRAMME, d.moment)!; return { src: d.image.startsWith('w:') ? W(d.image.slice(2)) : d.image, who: d.who, where: d.ou + ', ' + heureLisible(m), alt: d.alt, moment: m }; });
 const UNIONS = [
   { nom: UNION_EXEMPLE, ou: 'Motel dans le désert', univers: 'desert', src: W('union-camille-gabriel'), alt: 'Un couple danse sous les étoiles devant un motel du désert' },
   { nom: 'Inès & Hugo', ou: 'Toits de Paris', univers: 'paris', src: W('union-ines-hugo'), alt: 'Un couple sur un balcon face aux toits de Paris et à la tour Eiffel' },
@@ -93,7 +88,7 @@ function Entete({ id, sur, texte, lien }: { id: string; sur: string; titre?: str
 const Fleche = ({ d }: { d: string }) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d={d} /></svg>;
 
 /* les univers de la Métamorphose : leurs visuels passent en tête du diaporama */
-type Diapo = { src: string; who: string; where: string; alt: string };
+type Diapo = { src: string; who: string; where: string; alt: string; moment?: MomentP };
 const UNIVERS_M: (UniversM & { diapos: Diapo[] })[] = [
   { id: 'desert', nom: 'Désert', vignette: W('piscine'), diapos: [DIAPOS[0], { src: W('union-camille-gabriel'), who: 'Les mariés', where: 'Sous les étoiles du motel', alt: UNIONS[0].alt }] },
   { id: 'chateau', nom: 'Château', vignette: W('collection-chateaux'), diapos: [{ src: W('collection-chateaux'), who: 'Le bal', where: 'Au pied du château', alt: COLLECTIONS[0].alt }] },
@@ -181,6 +176,10 @@ export default function LeMondeAime() {
   const lieux = useMemo(() => visibles.map(id => [id, SECTIONS.find(s => s[0] === id)![1]] as [string, string]), [visibles]);
 
   const SECTION: Record<SectionId, (classe: string) => ReactNode> = {
+    moments: c => <section id="moments" aria-labelledby="titre-moments" className={c}>
+      <Entete id="titre-moments" sur={compter(PROGRAMME).moments + ' moments'} texte={'Tous les métiers, une seule histoire. Dix étapes, du premier rêve au premier anniversaire de ' + PROGRAMME.union.nom + ' : chaque moment a ses métiers, sa musique et son patron à broder.'} lien={['Voir les ' + compter(PROGRAMME).moments + ' moments', '/moments']} />
+      <BandeEtapes />
+    </section>,
     unions: c => <section id="unions" aria-labelledby="titre-unions" className={c}>
       <Entete id="titre-unions" sur="Unions" texte="Les pages des mariés. Chaque couple raconte son union à sa façon." lien={['Créer la page de notre union', '/point-zero?q=Nous%20nous%20marions']} />
       <div className="grille-auto" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '40px 24px' }}>{UNIONS.map(x => <Figure key={x.nom} x={x} action={<button type="button" className="bouton" onClick={() => { setMeta({ ...meta, univers: x.univers }); window.scrollTo({ top: 0, behavior: confort.mouvement === 'reduit' ? 'auto' : 'smooth' }); }}>Essayer leur univers</button>} />)}</div>
@@ -269,7 +268,8 @@ export default function LeMondeAime() {
             {diapos.map((x, k) => <img key={x.src} src={x.src} alt={k === i ? x.alt : ''} aria-hidden={k !== i} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: k === i ? 1 : 0, transition: 'opacity .9s ease' }} />)}
             <div aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '46%', background: 'linear-gradient(to top, rgba(0,0,0,.65), rgba(0,0,0,0))' }} />
             <div style={{ position: 'absolute', left: 'clamp(16px, 3vw, 40px)', right: 'clamp(16px, 3vw, 40px)', bottom: 'clamp(18px, 3vw, 36px)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 16, flexWrap: 'wrap', color: '#fff' }}>
-              <p aria-live="polite" style={{ margin: 0 }}><span style={{ display: 'block', fontSize: 13, fontWeight: 600, letterSpacing: '.14em', textTransform: 'uppercase' }}>{String(i + 1).padStart(2, '0')} / {String(diapos.length).padStart(2, '0')} · {d.who}</span><span style={{ display: 'block', marginTop: 6, fontSize: 'clamp(22px, 2.6vw, 38px)', fontWeight: 600, letterSpacing: '-0.02em' }}>{d.where}</span></p>
+              <p aria-live="polite" style={{ margin: 0 }}><span style={{ display: 'block', fontSize: 13, fontWeight: 600, letterSpacing: '.14em', textTransform: 'uppercase' }}>{String(i + 1).padStart(2, '0')} / {String(diapos.length).padStart(2, '0')} · {d.who}</span><span style={{ display: 'block', marginTop: 6, fontSize: 'clamp(22px, 2.6vw, 38px)', fontWeight: 600, letterSpacing: '-0.02em' }}>{d.where}</span>
+                {d.moment && <Lien href={'/moments/' + d.moment.id} className="diapo-moment">{d.moment.titre} · moment {d.moment.n} sur {PROGRAMME.moments.length}</Lien>}</p>
               <span style={{ display: 'flex', gap: 8 }}>
                 <button type="button" style={bouton} aria-label="Photo précédente" onClick={() => setI((i - 1 + diapos.length) % diapos.length)}><Fleche d="M15 5l-7 7 7 7" /></button>
                 <button type="button" style={bouton} aria-label={lecture ? 'Mettre le diaporama en pause' : 'Relancer le diaporama'} onClick={() => setLecture(l => !l)}>{lecture ? <Fleche d="M8 5v14M16 5v14" /> : <Fleche d="M8 5l11 7-11 7z" />}</button>

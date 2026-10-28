@@ -20,6 +20,12 @@ export function aller(href: string) {
   if (u.hash) requestAnimationFrame(() => document.getElementById(u.hash.slice(1))?.scrollIntoView());
   else window.scrollTo({ top: 0 });
 }
+/* changer l'adresse sans nouvelle entrée d'historique ni défilement (un onglet, un filtre) */
+export function remplacer(href: string) {
+  const u = new URL(href, window.location.href);
+  window.history.replaceState(window.history.state, '', u.pathname + u.search + u.hash);
+  ecouteurs.forEach(f => f());
+}
 export function useChemin() {
   const [chemin, setChemin] = useState(window.location.pathname);
   useEffect(() => {

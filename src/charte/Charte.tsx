@@ -294,7 +294,7 @@ export function Pied() {
       <Lien href="/" aria-label="AIME, accueil" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}><Orbe taille={28} /><span className="marque" style={{ fontSize: 22 }}>AIME<sup aria-hidden="true">®</sup></span></Lien>
       <nav aria-label="Plan du site">
         {col('Le Monde AIME', [['Les unions', '/#unions'], ['Prestataires', '/reseau?domaine=mariage'], ['Invités', '/#invites'], ['Collections', '/#collections']])}
-        {col('Créer', [['Studio', '/studio/atelier'], ['Brodez votre mariage', '/#studio'], ['La journée en musique', '/musique'], ['Point Zéro', '/point-zero'], ['Boutique', '/boutique']])}
+        {col('Créer', [['Studio', '/studio/atelier'], ['Brodez votre mariage', '/#studio'], ['Les 200 moments', '/moments'], ['La journée en musique', '/musique'], ['Point Zéro', '/point-zero'], ['Boutique', '/boutique']])}
         {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil'], ['A+', '/a-plus']])}
         {col('La maison', [['À propos d’AIME', '/a-propos'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', null], ['Mentions légales', null]])}
       </nav>
