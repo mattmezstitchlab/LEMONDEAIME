@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
-import type { DockPath } from "./StudioDocks";
 import "./OrbeGuide.css";
 
 /**
@@ -15,9 +14,10 @@ export interface Etape {
   cible: string;
   titre: string;
   texte: string;
-  /** le sous-dock à ouvrir avant de montrer la cible */
-  chemin?: DockPath;
-  dock: "haut" | "bas";
+  /** le sous-dock (ou le chemin) à ouvrir avant de montrer la cible */
+  chemin?: string;
+  /** où se trouve la cible : le dock du haut, celui du bas, ou la page elle-même */
+  dock: "haut" | "bas" | "page";
 }
 
 export const ETAPES: Etape[] = [
@@ -52,10 +52,22 @@ function boiteDe(cible: string): Boite | null | "absente" {
   return { x, y, w: Math.max(...r.map(b => b.right)) - x, h: Math.max(...r.map(b => b.bottom)) - y };
 }
 
-export function visiteVue(): boolean { try { return localStorage.getItem(VISITE_CLE) === "vue"; } catch { return true; } }
-function marquerVue() { try { localStorage.setItem(VISITE_CLE, "vue"); } catch { /* l'appareil refuse : la visite reviendra */ } }
+export function visiteVue(cle = VISITE_CLE): boolean { try { return localStorage.getItem(cle) === "vue"; } catch { return true; } }
+function marquerVue(cle: string) { try { localStorage.setItem(cle, "vue"); } catch { /* l'appareil refuse : la visite reviendra */ } }
+const LIEUX = { haut: "dock du haut", bas: "dock du bas", page: "la page" } as const;
 
-export default function OrbeGuide({ ouverte, onFermer, onChemin }: { ouverte: boolean; onFermer: () => void; onChemin: (p: DockPath) => void }) {
+interface GuideProps {
+  ouverte: boolean; onFermer: () => void;
+  /** ouvrir le sous-dock d'une étape (null : revenir au dock de départ) */
+  onChemin: (p: string | null) => void;
+  etapes?: Etape[];
+  /** la clé qui retient que la visite a été vue */
+  cle?: string;
+  /** le libellé du dernier bouton */
+  fin?: string;
+}
+export default function OrbeGuide({ ouverte, onFermer, onChemin, etapes = ETAPES, cle = VISITE_CLE, fin = "Commencer à broder" }: GuideProps) {
+  const ETAPES_ = etapes;
   const [i, setI] = useState(0);
   const [boite, setBoite] = useState<Boite | null>(null);
   const [vue, setVue] = useState({ w: 0, h: 0 });
@@ -66,7 +78,7 @@ export default function OrbeGuide({ ouverte, onFermer, onChemin }: { ouverte: bo
   const [sautees, setSautees] = useState<Set<number>>(new Set());
 
   useEffect(() => { if (ouverte) { setI(0); setSautees(new Set()); } }, [ouverte]);
-  const etape = ETAPES[i];
+  const etape = ETAPES_[i];
 
   /* ouvrir le sous-dock de l'étape, puis mesurer la cible une fois le dock redessiné */
   useLayoutEffect(() => {
@@ -76,13 +88,14 @@ export default function OrbeGuide({ ouverte, onFermer, onChemin }: { ouverte: bo
     const mesurer = () => {
       if (!vivant) return;
       /* sur téléphone, les docks défilent : on amène l'outil sous l'orbe */
-      try { document.querySelector<HTMLElement>(`[data-guide="${etape.cible}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" as ScrollBehavior }); } catch { /* jsdom */ }
+      try { document.querySelector<HTMLElement>(`[data-guide="${etape.cible}"]`)?.scrollIntoView({ block: etape.dock === "page" ? "center" : "nearest", inline: "nearest", behavior: "instant" as ScrollBehavior }); } catch { /* jsdom */ }
       const b = boiteDe(etape.cible);
       setVue({ w: window.innerWidth, h: window.innerHeight });
-      if (b !== "absente") { setBoite(b); return; }
+      /* le dock ouvert peut avoir pris le focus (sa flèche « remonter ») : on le rend au bouton Suivant */
+      if (b !== "absente") { setBoite(b); suivantRef.current?.focus({ preventScroll: true }); return; }
       if (++essais < 6) { requestAnimationFrame(mesurer); return; }
       setSautees(s => new Set(s).add(i));
-      setI(n => n < ETAPES.length - 1 ? n + 1 : n);
+      setI(n => n < ETAPES_.length - 1 ? n + 1 : n);
     };
     requestAnimationFrame(mesurer);
     const remesurer = () => { const b = boiteDe(etape.cible); if (b && b !== "absente") setBoite(b); setVue({ w: window.innerWidth, h: window.innerHeight }); };
@@ -93,9 +106,9 @@ export default function OrbeGuide({ ouverte, onFermer, onChemin }: { ouverte: bo
   useEffect(() => { if (ouverte) suivantRef.current?.focus({ preventScroll: true }); }, [ouverte, i]);
   useLayoutEffect(() => { if (carteRef.current) setHCarte(carteRef.current.offsetHeight); }, [i, boite, ouverte]);
 
-  const fermer = useCallback(() => { marquerVue(); onChemin(null); onFermer(); }, [onChemin, onFermer]);
+  const fermer = useCallback(() => { marquerVue(cle); onChemin(null); onFermer(); }, [cle, onChemin, onFermer]);
   const precedent = () => { let n = i - 1; while (n > 0 && sautees.has(n)) n--; setI(Math.max(0, n)); };
-  const suivant = () => { if (i >= ETAPES.length - 1) fermer(); else setI(i + 1); };
+  const suivant = () => { if (i >= ETAPES_.length - 1) fermer(); else setI(i + 1); };
   const onKey = (e: KeyboardEvent) => {
     if (e.key === "Escape") { e.preventDefault(); fermer(); }
     else if (e.key === "ArrowRight") { e.preventDefault(); suivant(); }
@@ -103,31 +116,35 @@ export default function OrbeGuide({ ouverte, onFermer, onChemin }: { ouverte: bo
   };
   if (!ouverte) return null;
 
-  const total = ETAPES.length - sautees.size, rang = i + 1 - [...sautees].filter(n => n < i).length;
+  const total = ETAPES_.length - sautees.size, rang = i + 1 - [...sautees].filter(n => n < i).length;
   const W = vue.w || 1024, H = vue.h || 768;
   const largeur = Math.min(360, W - 2 * MARGE);
   /* l'orbe se pose au bord de l'outil, côté écran ; la bulle s'ouvre au-delà de l'orbe */
   const b = boite ?? { x: W / 2 - 20, y: etape.dock === "haut" ? 20 : H - 70, w: 40, h: 46 };
-  const enHaut = etape.dock === "haut";
+  /* la bulle s'ouvre du côté où il y a de la place : sous la cible si elle est dans la moitié haute de l'écran */
+  const enHaut = etape.dock === "haut" || (etape.dock === "page" && b.y + b.h / 2 < H / 2);
   const cx = b.x + b.w / 2;
   const orbe = { x: cx, y: enHaut ? b.y + b.h + 22 : b.y - 22 };
   const carteX = Math.min(Math.max(MARGE, cx - largeur / 2), W - largeur - MARGE);
   const carteY = enHaut ? orbe.y + 22 : orbe.y - 22 - hCarte;
+  /* pour une cible de la page, la bulle reste entre les deux docks, quand l'écran le permet */
+  const entreDocks = etape.dock === "page" && H - 2 * 96 > hCarte;
+  const haut = entreDocks ? 96 : MARGE, bas = entreDocks ? 96 : MARGE;
 
   return <div className="og-couche" onKeyDown={onKey}>
     <div className="og-cadre" aria-hidden="true" style={{ transform: `translate(${b.x - 6}px, ${b.y - 6}px)`, width: b.w + 12, height: b.h + 12 }} />
     <div className="og-orbe" aria-hidden="true" style={{ transform: `translate(${orbe.x - 15}px, ${orbe.y - 15}px)` }}><span /></div>
     <div ref={carteRef} className={"og-carte " + (enHaut ? "og-sous" : "og-sur")} role="dialog" aria-modal="false" aria-labelledby="og-titre" aria-describedby="og-texte"
-      style={{ transform: `translate(${carteX}px, ${Math.max(MARGE, Math.min(carteY, H - hCarte - MARGE))}px)`, width: largeur }}>
-      <p className="og-rang"><span><b className="og-nom">Le Point</b> · {etape.dock === "haut" ? "dock du haut" : "dock du bas"}</span><span aria-label={`Étape ${rang} sur ${total}`}>{rang} / {total}</span></p>
+      style={{ transform: `translate(${carteX}px, ${Math.max(haut, Math.min(carteY, H - hCarte - bas))}px)`, width: largeur }}>
+      <p className="og-rang"><span><b className="og-nom">Le Point</b> · {LIEUX[etape.dock]}</span><span aria-label={`Étape ${rang} sur ${total}`}>{rang} / {total}</span></p>
       <h2 id="og-titre" className="og-titre">{etape.titre}</h2>
       <p id="og-texte" className="og-texte" aria-live="polite">{etape.texte}</p>
       <div className="og-barre" aria-hidden="true"><span style={{ width: `${(rang / total) * 100}%` }} /></div>
       <div className="og-boutons">
-        {i < ETAPES.length - 1 ? <button type="button" className="og-passer" onClick={fermer}>Passer la visite</button> : <span />}
+        {i < ETAPES_.length - 1 ? <button type="button" className="og-passer" onClick={fermer}>Passer la visite</button> : <span />}
         <span>
           {i > 0 && <button type="button" className="og-prec" onClick={precedent}>Précédent</button>}
-          <button ref={suivantRef} type="button" className="og-suiv" onClick={suivant}>{i >= ETAPES.length - 1 ? "Commencer à broder" : "Suivant"}</button>
+          <button ref={suivantRef} type="button" className="og-suiv" onClick={suivant}>{i >= ETAPES_.length - 1 ? fin : "Suivant"}</button>
         </span>
       </div>
     </div>

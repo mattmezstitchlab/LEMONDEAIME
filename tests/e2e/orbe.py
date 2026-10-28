@@ -17,13 +17,18 @@ def boite(pg, sel):
       if (!r.length) return null; const x = Math.min(...r.map(b => b.left)), y = Math.min(...r.map(b => b.top));
       return { x, y, r: Math.max(...r.map(b => b.right)), b: Math.max(...r.map(b => b.bottom)) }; }""", sel)
 
-def parcours(b, largeur, hauteur, nom):
+LIEUX = {
+    'atelier': dict(chemin='/atelier', premier='Bonjour, je suis Le Point', fin='Commencer à broder', dernier='Tout voir', menu='#pzs-brand'),
+    'buro': dict(chemin='/buro', premier='Bienvenue dans votre BurO', fin='Découvrir mon BurO', dernier='Me retrouver', menu='button[aria-label="Menu Point Zéro"]'),
+}
+def parcours(b, largeur, hauteur, nom, lieu='atelier'):
+    L = LIEUX[lieu]
     ctx = b.new_context(viewport={'width': largeur, 'height': hauteur}, reduced_motion='reduce')
     pg = ctx.new_page(); pg.set_default_timeout(8000)
     pg.on('pageerror', lambda e: erreurs.append(str(e)))
-    pg.goto(B + '/atelier'); pg.wait_for_selector('#og-titre')
-    ok(pg.locator('#og-titre').inner_text() == 'Bonjour, je suis Le Point', f'{nom} : l’orbe s’ouvre dès l’arrivée dans l’atelier')
-    titres, horsCadre, horsEcran, loin = [], [], [], []
+    pg.goto(B + L['chemin']); pg.wait_for_selector('#og-titre')
+    ok(pg.locator('#og-titre').inner_text() == L['premier'], f'{nom} : Le Point s’ouvre dès l’arrivée ({lieu})')
+    titres, horsCadre, horsEcran, loin, sansFocus = [], [], [], [], []
     for k in range(30):
         pg.wait_for_timeout(120)
         titre = pg.locator('#og-titre').inner_text(); titres.append(titre)
@@ -37,22 +42,24 @@ def parcours(b, largeur, hauteur, nom):
         # l'orbe se pose contre l'outil présenté
         ocx = (orbe['x'] + orbe['r']) / 2
         if not (cadre['x'] - 20 <= ocx <= cadre['r'] + 20) or min(abs(orbe['y'] - cadre['b']), abs(orbe['b'] - cadre['y'])) > 30: loin.append(titre)
-        fin = pg.get_by_role('button', name='Commencer à broder').count() == 1
+        fin = pg.get_by_role('button', name=L['fin']).count() == 1
+        if pg.evaluate('document.activeElement && document.activeElement.textContent') not in ('Suivant', L['fin']): sansFocus.append(titre)
         if k in (0, 2, 4, 10) or fin: capture(pg, f'{nom}-{k + 1:02d}')
         if fin: break
         pg.get_by_role('button', name='Suivant').click()
     total = int(pg.locator('.og-rang span').nth(1).inner_text().split('/')[1])
-    ok(len(titres) == total and len(set(titres)) == total and titres[-1] == 'Tout voir', f'{nom} : {total} étapes de bout en bout, chacune sur son outil')
+    ok(len(titres) == total and len(set(titres)) == total and titres[-1] == L['dernier'], f'{nom} : {total} étapes de bout en bout, chacune sur son outil')
+    ok(not sansFocus, f'{nom} : le focus reste sur « Suivant » à chaque étape ' + str(sansFocus))
     ok(not horsCadre, f'{nom} : le cadre entoure toujours un outil des docks ' + str(horsCadre))
     ok(not horsEcran, f'{nom} : la bulle reste dans l’écran ' + str(horsEcran))
     ok(not loin, f'{nom} : l’orbe se pose contre chaque outil présenté ' + str(loin))
     ok(pg.locator('.og-orbe').evaluate("e => Math.max(...getComputedStyle(e).transitionDuration.split(',').map(parseFloat))") < 0.01, f'{nom} : moins d’animations demandées, l’orbe ne glisse pas')
-    pg.get_by_role('button', name='Commencer à broder').click()
-    ok(pg.locator('#og-titre').count() == 0, f'{nom} : « Commencer à broder » ferme la visite')
+    pg.get_by_role('button', name=L['fin']).click()
+    ok(pg.locator('#og-titre').count() == 0, f'{nom} : « {L["fin"]} » ferme la visite')
     pg.reload(); pg.wait_for_timeout(800)
     ok(pg.locator('#og-titre').count() == 0, f'{nom} : la visite ne revient pas à la réouverture')
-    pg.locator('#pzs-brand').click(); pg.get_by_role('button', name='Revoir la visite avec Le Point').click()
-    ok(pg.locator('#og-titre').inner_text() == 'Bonjour, je suis Le Point', f'{nom} : le menu de l’orbe relance la visite')
+    pg.locator(L['menu']).click(); pg.get_by_role('button', name='Revoir la visite avec Le Point').click()
+    ok(pg.locator('#og-titre').inner_text() == L['premier'], f'{nom} : le menu de l’orbe relance la visite')
     pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
     ok(pg.locator('#og-titre').count() == 0, f'{nom} : Échap ferme la visite')
     ctx.close()
@@ -86,6 +93,8 @@ with sync_playwright() as p:
     depuis_accueil(b)
     parcours(b, 1440, 900, 'ordinateur')
     parcours(b, 390, 844, 'telephone')
+    parcours(b, 1440, 900, 'buro-ordinateur', 'buro')
+    parcours(b, 390, 844, 'buro-telephone', 'buro')
     mouvement(b)
     b.close()
 ok(not erreurs, 'aucune erreur dans la page ' + str(erreurs[:3]))

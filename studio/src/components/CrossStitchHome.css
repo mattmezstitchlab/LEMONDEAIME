@@ -33,33 +33,13 @@ html:has(.cross-stitch-home) { scroll-padding-top: 110px; scroll-padding-bottom:
 .csh-skip { position: absolute; left: 16px; top: -100px; z-index: 100; padding: 12px 16px; background: var(--pzh-ink); color: #fff; border-radius: 10px; }
 .csh-skip:focus { top: 12px; }
 
-/* ===== Dock du haut ===== */
-.pzh-head { position: sticky; top: 0; z-index: 30; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr); align-items: center; gap: 10px; padding: 14px clamp(8px, 2vw, 24px) 0; pointer-events: none; }
-.pzh-top { pointer-events: auto; position: relative; min-width: 0; display: flex; align-items: center; gap: 6px; max-width: 100%; padding: 7px; border-radius: 18px; background: #fff; border: 1px solid var(--pzh-line); box-shadow: 0 14px 36px rgba(11,11,12,.12); }
-.pzh-row { display: flex; align-items: center; gap: 4px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
-.pzh-row::-webkit-scrollbar { display: none; }
-.pzh-tool { flex: none; display: inline-flex; align-items: center; gap: 6px; height: 48px; padding: 0 14px; border-radius: 12px; border: 0; background: transparent; font-size: 15px; font-weight: 500; white-space: nowrap; color: var(--pzh-ink); }
-.pzh-tool:hover { background: #f1f1ee; }
-.pzh-brandwrap { position: relative; flex: none; }
-.pzh-brand { font-weight: 700; font-size: 16px; }
-.pzh-x { color: #c4416b; font-weight: 800; }
-.pzh-caret { font-size: 11px; color: var(--pzh-graphite); }
-.pzh-sep { flex: none; width: 1px; height: 30px; background: var(--pzh-line); margin: 0 2px; }
-.pzh-veil { position: fixed; inset: 0; z-index: 1; }
-.pzh-menu { position: absolute; z-index: 2; top: calc(100% + 12px); left: -7px; width: min(280px, calc(100vw - 24px)); margin: 0; padding: 10px; list-style: none; border-radius: 18px; background: #fff; border: 1px solid var(--pzh-line); box-shadow: 0 24px 60px rgba(11,11,12,.2); }
-.pzh-menu button { display: flex; width: 100%; align-items: center; min-height: 46px; padding: 0 12px; border: 0; border-radius: 10px; background: transparent; font-size: 16px; text-align: left; }
-.pzh-menu button:hover { background: #f1f1ee; }
-.pzh-enter { pointer-events: auto; justify-self: end; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 18px 0 14px; border-radius: 12px; border: 0; background: var(--pzh-ink); color: #fff !important; font-size: 15px; font-weight: 600; box-shadow: 0 14px 36px rgba(11,11,12,.22); }
-.pzh-enter span { font-size: 20px; font-weight: 500; line-height: 1; }
-.pzh-enter:hover { background: #2a2a28; }
-
 /* ===== Typographie ===== */
 .pzh-kicker, .pzh-step { font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--pzh-graphite); }
 .pzh-section h2 { font-size: clamp(44px, 7vw, 110px); line-height: .9; font-weight: 600; letter-spacing: -.045em; text-transform: uppercase; }
 .pzh-section h3 { font-size: 22px; line-height: 1.2; font-weight: 600; letter-spacing: -.02em; }
 
 /* ===== Hero ===== */
-.pzh-hero { padding: clamp(56px, 9vw, 120px) clamp(16px, 4vw, 56px) 0; text-align: center; }
+.pzh-hero { padding: clamp(130px, 14vw, 190px) clamp(16px, 4vw, 56px) 0; text-align: center; }
 .pzh-hero .pzh-kicker { margin-bottom: 18px; }
 .pzh-hero h1 { font-size: clamp(64px, 13vw, 220px); line-height: .84; font-weight: 900; letter-spacing: -.055em; text-transform: uppercase; }
 .pzh-lead { margin: 26px auto 0 !important; max-width: 44rem; font-size: clamp(24px, 2.6vw, 36px); line-height: 1.15; font-weight: 600; letter-spacing: -.025em; }
@@ -145,12 +125,7 @@ html:has(.cross-stitch-home) { scroll-padding-top: 110px; scroll-padding-bottom:
   .pzh-drop { min-height: 180px; }
 }
 @media (max-width: 720px) {
-  .pzh-head { grid-template-columns: minmax(0, 1fr) auto; }
-  .pzh-head > span:first-child { display: none; }
-  .pzh-top { gap: 2px; padding: 5px; }
-  .pzh-tool { height: 44px; padding: 0 10px; font-size: 14px; }
-  .pzh-enter { height: 44px; padding: 0 14px 0 12px; }
-  .pzh-bottom-orb { display: none; }
+  .pzh-bottom-orb { width: 44px; height: 44px; }
   .pzh-bottom a { height: 44px; padding: 0 12px; font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .cross-stitch-home * { transition: none !important; animation: none !important; } }
@@ -295,3 +270,14 @@ html:has(.cross-stitch-home) { scroll-padding-top: 110px; scroll-padding-bottom:
 .pzh-replica-bas em { display: none; }
 @media (max-width: 720px) { .pzh-replica { font-size: 12px; } .pzh-replica span, .pzh-replica em { height: 30px; padding: 0 8px; } }
 @media (max-width: 720px) { .sdemo-bottom .sdemo-place { display: none; } }
+
+/* Le dock du haut de l'accueil est celui du studio (TopDock, classes pzs-*) : on neutralise les styles génériques de la page */
+.cross-stitch-home .pzs-head :is(button, a) { color: #0b0b0c; }
+.cross-stitch-home .pzs-head .buro-studio { color: #fff !important; }
+.cross-stitch-home .pzs-head :is(button, a):focus-visible { outline: 2px solid #0b0b0c; outline-offset: 2px; }
+.pzh-entrer span { font-size: 20px; font-weight: 500; line-height: 1; }
+.pzh-x { color: #c4416b; font-weight: 800; }
+.pzh-bottom-orb { border: 0; cursor: pointer; }
+.pzh-bottom-orb:hover::after { transform: scale(1.1); }
+.pzh-bottom-orb:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.cross-stitch-home .pzs-bloc-menu button { font-size: 19px; font-weight: 600; letter-spacing: -0.02em; }

@@ -1,5 +1,6 @@
 import { useEffect, useState, type ChangeEvent, type ReactNode } from "react";
 import StudioDemo from "./StudioDemo";
+import TopDock from "./TopDock";
 import { ETAPES } from "./OrbeGuide";
 import { BASE_FLOSS } from "../lib/dmc";
 import { MOTIF_PRESETS } from "../lib/motifPresets";
@@ -92,7 +93,6 @@ const TUILES: Tuile[] = [
 
 /** Un écran d'accueil seulement : l'ouvrir ne crée aucun patron et ne réécrit aucun projet. */
 export default function CrossStitchHome({ projectName, onOpen, onImport, onShare, onBuro, onVisite }: Props) {
-  const [menu, setMenu] = useState(false);
   const [current, setCurrent] = useState<SectionId | null>(null);
   const enter = () => (onBuro ? onBuro() : onOpen("library"));
   const visite = () => (onVisite ? onVisite() : onOpen("create"));
@@ -138,31 +138,14 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
   return <div className="cross-stitch-home">
     <a className="csh-skip" href="#csh-main">Aller au contenu</a>
 
-    <header className="pzh-head">
-      <span aria-hidden="true" />
-      <nav className="pzh-top" aria-label="Navigation point de croix" onKeyDown={e => { if (e.key === "Escape" && menu) { e.preventDefault(); setMenu(false); document.getElementById("pzh-brand")?.focus(); } }}>
-        <div className="pzh-brandwrap">
-          <button id="pzh-brand" type="button" className="pzh-tool pzh-brand" aria-expanded={menu} aria-controls="pzh-menu" onClick={() => setMenu(v => !v)}>
-            <span className="pzh-x" aria-hidden="true">×</span> Point Zéro <span className="pzh-caret" aria-hidden="true">▾</span>
-          </button>
-          {menu && <>
-            <div className="pzh-veil" aria-hidden="true" onClick={() => setMenu(false)} />
-            <ul id="pzh-menu" className="pzh-menu">
-              <li><button type="button" onClick={() => { setMenu(false); onOpen("library"); }}>Mes ouvrages</button></li>
-              <li><button type="button" onClick={() => { setMenu(false); onOpen("stitch"); }}>Ouvrir le studio</button></li>
-              <li><button type="button" onClick={() => { setMenu(false); visite(); }}>Faire la visite avec Le Point</button></li>
-            </ul>
-          </>}
-        </div>
-        <span className="pzh-sep" aria-hidden="true" />
-        <div className="pzh-row">
-          <a className="pzh-tool" href="#docks" onClick={go("docks")}>Les docks</a>
-          <a className="pzh-tool" href="#le-point" onClick={go("le-point")}>Le Point</a>
-          <a className="pzh-tool" href="#fonctionnalites" onClick={go("fonctionnalites")}>Fonctionnalités</a>
-        </div>
-      </nav>
-      <button type="button" className="pzh-enter" onClick={enter} aria-label="Entrer dans Point Zéro"><span aria-hidden="true">+</span> Entrer</button>
-    </header>
+    <TopDock label="Navigation point de croix" idBloc="pzh-menu"
+      menu={[{ label: "Mes ouvrages", faire: () => onOpen("library") }, { label: "Ouvrir le studio", faire: () => onOpen("stitch") }, { label: "Faire la visite avec Le Point", faire: visite }]}
+      droite={<button type="button" className="pzs-tool buro-studio pzh-entrer" onClick={enter} aria-label="Entrer dans Point Zéro"><span aria-hidden="true">+</span> Entrer</button>}>
+      <a className="pzs-tool" href="#docks" onClick={go("docks")}>Les docks</a>
+      <a className="pzs-tool" href="#le-point" onClick={go("le-point")}>Le Point</a>
+      <a className="pzs-tool" href="#fonctionnalites" onClick={go("fonctionnalites")}>Fonctionnalités</a>
+      <a className="pzs-tool" href="#csh-import" onClick={go("csh-import")}>Importer</a>
+    </TopDock>
 
     <main id="csh-main">
       <section className="pzh-hero" aria-labelledby="csh-title">

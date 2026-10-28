@@ -2385,3 +2385,31 @@ html[data-pz-motion="reduce"] .pz-guided-lens { transition: none; }
 /* outils en pictos : carrés, l'infobulle et le nom lu par les lecteurs d'écran restent */
 .pzs-tool.pzs-picto { width: 46px; padding: 0; justify-content: center; }
 @media (max-width: 720px) { .pzs-tool.pzs-picto { width: 44px; } }
+
+/* ===== BurO, refondu : dock du haut partagé (TopDock), Commencer, projets, Le Point ===== */
+.buro-studio { background: #0b0b0c !important; color: #fff !important; font-weight: 600; }
+.buro-studio:hover { background: #2a2a28 !important; }
+.buro-h2 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -.02em; }
+.buro-h2 .buro-n { font-size: 16px; font-weight: 500; color: #55555a; opacity: 1; }
+.buro-start { margin: 8px 0 56px; }
+.buro-starts { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 12px; }
+.buro-start-tile { width: 100%; height: 100%; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; padding: 20px; border-radius: 16px; border: 1px solid #e2e2de; background: #fff; color: #0b0b0c; font: inherit; text-align: left; cursor: pointer; }
+.buro-start-tile b { font-size: 19px; font-weight: 600; letter-spacing: -.02em; }
+.buro-start-tile span { font-size: 15px; line-height: 1.45; color: #3a3a3f; }
+.buro-start-tile:hover { border-color: #0b0b0c; }
+.buro-start-tile:focus-visible { outline: 2px solid #0b0b0c; outline-offset: 3px; }
+.buro-start-sombre { background: #1b1b1a; border-color: #3a3a38; color: #fff; }
+.buro-start-sombre span { color: #d6d6d2; }
+.buro-start-sombre:hover { border-color: #fff; }
+.buro-liste-tete { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 24px; flex-wrap: wrap; margin-bottom: 18px; }
+.buro-astuce { margin: 0; font-size: 14px; color: #55555a; }
+.buro-bas { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px; align-items: start; margin-top: 96px; }
+.buro-bas .buro-band { margin-top: 0; }
+.buro-bas .buro-activity { margin-top: 0; padding: 28px; border-radius: 18px; background: #fff; border: 1px solid #e2e2de; }
+.buro-activity p { margin: 0; font-size: 15px; line-height: 1.5; color: #3a3a3f; }
+.buro-point { flex: none; }
+.buro-point .pzs-orb { width: 24px; height: 24px; }
+.buro-main { padding-top: 140px; }
+@media (max-width: 900px) { .buro-bas { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .buro-studio { padding: 0 10px; } .pzs-sep-marque { display: none; } .buro-main { padding-top: 110px; } }
+@media (max-width: 720px) { .buro-studio-txt { display: none; } .buro-studio { width: 44px; justify-content: center; padding: 0 !important; } }

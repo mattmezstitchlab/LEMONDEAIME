@@ -71,7 +71,8 @@ const button = (label: string) => container?.querySelector(`button[aria-label="$
 beforeEach(() => {
   localStorage.clear();
   localStorage.setItem("pointzero:workspace","embroidery");
-  localStorage.setItem("pointzero:visite-docks:v1","vue"); // la visite de l'orbe a ses propres tests (orbeGuide.test.tsx)
+  localStorage.setItem("pointzero:visite-docks:v1","vue"); // les visites du Point ont leurs propres tests (orbeGuide.test.tsx)
+  localStorage.setItem("pointzero:visite-buro:v1","vue");
   window.history.replaceState(null, "", "/");
 });
 afterEach(async () => {
@@ -320,7 +321,8 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     const top = () => container?.querySelector('nav[aria-label="Dock des actions du BurO"]');
     const inTop = (name: string) => [...(top()?.querySelectorAll("button") ?? [])].find(b => b.textContent?.replace(/\d+$/, "") === name);
     expect(["Créer","Rejoindre","Échanger"].every(name => inTop(name))).toBe(true);
-    const places = [...(container?.querySelectorAll('nav[aria-label="Lieux du BurO"] button') ?? [])].map(b => b.textContent?.replace(/\s*\d+$/, ""));
+    const places = [...(container?.querySelectorAll('nav[aria-label="Lieux du BurO"] .pzs-seg button') ?? [])].map(b => b.textContent?.replace(/\s*\d+$/, ""));
+    expect(container?.querySelector('nav[aria-label="Lieux du BurO"] button[aria-label^="Le Point"]')).toBeTruthy();
     expect(places).toEqual(["Projets","Partagés avec moi","Archives"]);
     await click(inTop("Créer"));
     expect(["Grille vierge","Importer","Générer"].every(name => inTop(name))).toBe(true);

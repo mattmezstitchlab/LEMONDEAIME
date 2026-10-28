@@ -90,7 +90,7 @@ describe("Point Zéro spécialisé", () => {
     for (const id of ["docks", "le-point", "fonctionnalites", "commencer"]) expect(view.querySelector("#" + id)).toBeTruthy();
     act(() => bottom.querySelector<HTMLButtonElement>('button[aria-label^="Le Point"]')!.click());
     expect(onVisite).toHaveBeenCalledTimes(1);
-    const brand = view.querySelector<HTMLButtonElement>("#pzh-brand")!;
+    const brand = view.querySelector<HTMLButtonElement>('button[aria-label="Menu Point Zéro"]')!;
     act(() => brand.click());
     expect(brand.getAttribute("aria-expanded")).toBe("true");
     expect([...view.querySelectorAll("#pzh-menu button")].map(b => b.textContent)).not.toContain("Boutique de patrons");
