@@ -389,6 +389,20 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     await click(inBottom("Repères"));
     expect(inBottom("Revenir au BurO")).toBeTruthy();
   });
+  it("cherche dans la grille depuis la loupe du dock du haut, et invite depuis le rond du profil", async () => {
+    await mount();
+    await click(button("Chercher un fil, un outil ou une fonction de la grille"));
+    const champ = container?.querySelector<HTMLInputElement>("#pzs-cherche");
+    expect(champ).toBeTruthy();
+    await act(async () => { const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!; set.call(champ, "gomme"); champ!.dispatchEvent(new Event("input", { bubbles: true })); });
+    const res = [...(container?.querySelectorAll(".pzs-resultats button") ?? [])].find(b => b.textContent?.startsWith("Gomme"));
+    expect(res).toBeTruthy();
+    await click(res);
+    expect(container?.querySelector("#pzs-cherche")).toBeNull();
+    expect(category("Gomme")?.getAttribute("aria-pressed")).toBe("true");
+    await click(button("Inviter quelqu’un à rejoindre la grille"));
+    expect([...(container?.querySelectorAll(".pzs-bloc button") ?? [])].some(b => b.textContent === "Inviter à regarder")).toBe(true);
+  });
   it("ouvre et ferme le panneau Calques sans masquer la grille", async () => {
     await mount();
     await click(category("Dessiner"));
