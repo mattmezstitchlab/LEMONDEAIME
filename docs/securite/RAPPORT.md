@@ -88,7 +88,7 @@ Elle exclut tout `kind = 'evenement'` (unions, mariages, séminaires), quelle qu
 
 | Fichier | Environnement | Avant | Après |
 |---|---|---|---|
-| `tests/base/securite.mjs` | **vraie base** : branche Neon de test, vrai Better Auth et vrai flux de suppression ; Claude et le stockage de fichiers simulés | 6/16 (code de `main`, première version du test) | **23/23** |
+| `tests/base/securite.mjs` | **vraie base** : branche Neon de test, vrai Better Auth et vrai flux de suppression ; Claude et le stockage de fichiers simulés | 6/16 (code de `main`, première version du test) | **25/25** |
 | `studio/src/__tests__/cloisonnement.test.ts` | vitest | 0/7 (`main`) | **7/7** |
 | `studio/src/__tests__/cloisonnementBibliotheque.test.ts` | vitest, IndexedDB en mémoire | 0/3 (`main`) | **3/3** |
 | `studio/src/__tests__/anciensPartages.test.ts` (navigateur partagé, ouvrages anciens) | vitest, IndexedDB et serveur simulés | 0/7 sur la première version de cette PR (B pouvait rattacher l'ancien de A) | **7/7** |

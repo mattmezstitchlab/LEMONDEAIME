@@ -1,7 +1,7 @@
 {
  "studio/src/__tests__/aimeSync.test.ts": {
   "date": "2026-10-28",
-  "commit": "10c6c31",
+  "commit": "0fc1da7",
   "code_modifie_depuis_le_commit": false,
   "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
   "resultats": [
@@ -19,9 +19,45 @@
    }
   ]
  },
+ "studio/src/__tests__/anciensPartages.test.ts": {
+  "date": "2026-10-28",
+  "commit": "0fc1da7",
+  "code_modifie_depuis_le_commit": false,
+  "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
+  "resultats": [
+   {
+    "test": "sans compte : les anciens sont cachés (propriétaire inconnu), comptés, et rien n'est effacé",
+    "ok": true
+   },
+   {
+    "test": "B se connecte : il retrouve le sien, voit celui créé ici (local), ne voit jamais celui de A ; rien de A ne part",
+    "ok": true
+   },
+   {
+    "test": "aucun geste ne permet à B de prendre l'ouvrage de A : ni rattachement, ni suppression, ni enregistrement par-dessus",
+    "ok": true
+   },
+   {
+    "test": "un ouvrage « de l'appareil » qui s'avère rangé dans un autre compte : le serveur refuse, il est mis à l'écart, pas copié",
+    "ok": true
+   },
+   {
+    "test": "une création locale légitime se rattache par un geste explicite, sans rien effacer",
+    "ok": true
+   },
+   {
+    "test": "A se connecte ensuite sur le même appareil : son ouvrage lui revient ; celui rattaché par B reste à B",
+    "ok": true
+   },
+   {
+    "test": "serveur injoignable : les anciens restent cachés et intacts, rien n'est envoyé",
+    "ok": true
+   }
+  ]
+ },
  "studio/src/__tests__/cloisonnement.test.ts": {
   "date": "2026-10-28",
-  "commit": "10c6c31",
+  "commit": "0fc1da7",
   "code_modifie_depuis_le_commit": false,
   "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
   "resultats": [
@@ -34,7 +70,7 @@
     "ok": true
    },
    {
-    "test": "un ouvrage sans propriétaire déjà présent dans le compte lui est rattaché (c'est le sien), sans rien envoyer d'autre",
+    "test": "un ouvrage de l'appareil déjà présent dans le compte lui est rattaché (c'est le sien), sans rien envoyer d'autre",
     "ok": true
    },
    {
@@ -42,11 +78,11 @@
     "ok": true
    },
    {
-    "test": "l'affichage : chacun voit les siens et ceux sans propriétaire ; personne ne voit ceux d'un autre",
+    "test": "l'affichage : chacun voit les siens et ceux de l'appareil ; personne ne voit ceux d'un autre ni les anciens non vérifiés",
     "ok": true
    },
    {
-    "test": "rattacher un ouvrage sans propriétaire : seulement par un geste, au compte connecté",
+    "test": "rattacher un ouvrage de l'appareil : seulement par un geste, au compte connecté ; jamais un ancien non vérifié",
     "ok": true
    },
    {
@@ -57,7 +93,7 @@
  },
  "studio/src/__tests__/cloisonnementBibliotheque.test.ts": {
   "date": "2026-10-28",
-  "commit": "10c6c31",
+  "commit": "0fc1da7",
   "code_modifie_depuis_le_commit": false,
   "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
   "resultats": [
@@ -77,12 +113,20 @@
  },
  "tests/base/securite.mjs": {
   "date": "2026-10-28",
-  "commit": "10c6c31",
+  "commit": "0fc1da7",
   "code_modifie_depuis_le_commit": false,
   "environnement": "base réelle : branche Neon de test isolée « test/unions-2026-10-28 » (jamais la production), connexion WebSocket Neon ; Claude et le stockage de fichiers simulés",
   "resultats": [
    {
     "test": "base : trois comptes de test, connectés par le vrai lien de connexion",
+    "ok": true
+   },
+   {
+    "test": "S1 : sans la migration de la file d’effacement, la suppression est refusée et rien n’est effacé",
+    "ok": true
+   },
+   {
+    "test": "S1 : inscrire deux fois ne double rien ; deux reprises simultanées et un fichier déjà absent ne font aucune erreur",
     "ok": true
    },
    {
@@ -98,6 +142,10 @@
     "ok": true
    },
    {
+    "test": "S1 : son texte libre perd ses adresses, téléphones, liens et son nom ; la date et le nombre d’invités restent",
+    "ok": true
+   },
+   {
     "test": "S1 : les données des autres comptes et l’espace partagé sont intacts",
     "ok": true
    },
@@ -107,6 +155,10 @@
    },
    {
     "test": "S1 : la reprise (tâche quotidienne protégée) efface le fichier et les envois jamais rattachés, puis vide la file",
+    "ok": true
+   },
+   {
+    "test": "S1 : conservation : une demande anonymisée de plus de 12 mois est effacée, une récente reste",
     "ok": true
    },
    {
@@ -123,6 +175,18 @@
    },
    {
     "test": "S3 : connecté, l’analyse passe (Claude simulé, un appel)",
+    "ok": true
+   },
+   {
+    "test": "S3 : une demande invalide est refusée avant tout : ni appel à Claude, ni quota consommé",
+    "ok": true
+   },
+   {
+    "test": "S3 : Claude en erreur : une seule tentative, pas de nouvel essai automatique, le moteur local prend le relais",
+    "ok": true
+   },
+   {
+    "test": "S3 : les quotas se règlent par l’environnement (ANALYSE_QUOTA_PERSONNE=1 : la 2e analyse de l’heure est refusée)",
     "ok": true
    },
    {
@@ -144,12 +208,20 @@
    {
     "test": "S4 : la liste publique du Réseau ne montre aucun espace",
     "ok": true
+   },
+   {
+    "test": "S2 : un ouvrage déjà rangé dans un autre compte est refusé (409) : aucune copie d’un compte à l’autre",
+    "ok": true
+   },
+   {
+    "test": "S2 : vérifier des anciens ne rend que des identifiants : « à un autre compte » pour l’un, « à moi » pour son propriétaire, jamais de nom ni de contenu",
+    "ok": true
    }
   ]
  },
  "tests/e2e/securite.py": {
   "date": "2026-10-28",
-  "commit": "10c6c31",
+  "commit": "0fc1da7",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API SIMULÉES : interface seulement",
   "resultats": [
@@ -201,7 +273,7 @@
  },
  "tests/server/analyse.test.mjs": {
   "date": "2026-10-28",
-  "commit": "10c6c31",
+  "commit": "0fc1da7",
   "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -217,7 +289,7 @@
  },
  "tests/server/securite.test.mjs": {
   "date": "2026-10-28",
-  "commit": "10c6c31",
+  "commit": "0fc1da7",
   "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -243,6 +315,22 @@
    },
    {
     "test": "S4 : la lecture publique du Réseau exclut tout événement",
+    "ok": true
+   },
+   {
+    "test": "S1 : le texte libre d’une demande perd ce qui identifie son auteur, garde ce qui sert au destinataire",
+    "ok": true
+   },
+   {
+    "test": "S1 : la conservation des demandes anonymisées se règle (12 mois par défaut, de 1 à 120)",
+    "ok": true
+   },
+   {
+    "test": "S1 : la file vient d’une migration explicite, idempotente, avec son retour arrière",
+    "ok": true
+   },
+   {
+    "test": "S3 : les quotas de l’analyse se règlent par l’environnement (20 et 300 par défaut)",
     "ok": true
    }
   ]
