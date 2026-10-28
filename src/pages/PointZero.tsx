@@ -13,7 +13,7 @@ type Analyse = { domaine: string; label: string; studio: string; certitude: numb
 const D = data.briques as unknown as Record<string, Brique>;
 const G = data.grille as string[][];
 const FEEDS = Object.fromEntries(Object.entries(D).map(([k, v]) => [k, v.feeds]));
-const HREF: Record<string, string> = { union: '/monde', broderie: 'https://pointzero-zeta.vercel.app/', sal: 'https://pointzero-zeta.vercel.app/', formation: '/monde', presentation: '/monde', site: '/monde' };
+const HREF: Record<string, string> = { union: '/aime-wedding', broderie: 'https://pointzero-zeta.vercel.app/', sal: 'https://pointzero-zeta.vercel.app/', formation: '/monde', presentation: '/monde', site: '/monde' };
 const EXEMPLES = ['Nous nous marions en juin, à la campagne', 'Je veux broder le portrait de mon chat', 'Je prépare une formation sur le point de croix', 'J’organise un concert entre amis'];
 const reduit = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

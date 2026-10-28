@@ -6,6 +6,7 @@ import PointZero from './pages/PointZero';
 import Buro from './pages/Buro';
 import Entrer from './pages/Entrer';
 import Reseau from './pages/Reseau';
+import AimeWedding from './pages/AimeWedding';
 import FicheReseau from './pages/FicheReseau';
 import { APlus, Introuvable } from './pages/Simples';
 import { aller } from './lib/router';
@@ -16,6 +17,7 @@ const PAGES: Record<string, [() => React.JSX.Element, string]> = {
   '/point-zero': [PointZero, 'AIME — Point Zéro'],
   '/buro': [Buro, 'AIME — Votre espace'],
   '/reseau': [Reseau, 'AIME — Réseau'],
+  '/aime-wedding': [AimeWedding, 'AIME Wedding — le site officiel de l’union'],
   '/entrer': [Entrer, 'AIME — Entrer'],
   '/a-plus': [APlus, 'AIME — A+'],
 };

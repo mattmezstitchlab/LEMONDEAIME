@@ -47,7 +47,7 @@ export function DemoDocks() {
       </div>
       <div style={{ marginTop: 32, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 16 }}>
         <p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: '#3A3A3F' }}><b style={{ color: '#0B0B0C', fontWeight: 600 }}>En haut, blanc : faire.</b> Des mots, pas de pictos. D’abord ce qui sert maintenant ; un outil se déploie en fonctions, dans le dock même.</p>
-        <p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: '#3A3A3F' }}><b style={{ color: '#0B0B0C', fontWeight: 600 }}>En bas, sombre : aller.</b> Les lieux de la page, le lieu visible en blanc. L’orbe à gauche ramène toujours à l’accueil.</p>
+        <p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: '#3A3A3F' }}><b style={{ color: '#0B0B0C', fontWeight: 600 }}>En bas, sombre : aller.</b> Les lieux de la page, le lieu visible en blanc. Le Point, à gauche, ramène toujours à l’accueil.</p>
       </div>
     </div>
   );

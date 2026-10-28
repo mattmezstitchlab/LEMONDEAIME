@@ -64,14 +64,14 @@ export default function Aime() {
         <section id="docks" aria-labelledby="titre-docks" className="section blanche">
           <p className="surtitre">Le concept · deux docks</p>
           <h2 id="titre-docks" className="titre" style={{ maxWidth: '18ch' }}>Faire en haut, aller en bas.</h2>
-          <p className="chapeau">Un seul langage pour tous les studios et projets d’AIME : deux docks, une famille d’orbes, des mots plutôt que des pictos. Essayez :</p>
+          <p className="chapeau">Un seul langage pour tous les studios et projets d’AIME : deux docks, le Point, des mots plutôt que des pictos. Essayez :</p>
           <DemoDocks />
         </section>
 
-        <section id="orbe" aria-labelledby="titre-orbe" className="section">
-          <p className="surtitre">Le concept · l’orbe</p>
-          <h2 id="titre-orbe" className="titre" style={{ maxWidth: '18ch' }}>Une orbe qui guide, et qui dit où l’on en est.</h2>
-          <p className="chapeau">L’orbe du logo se détache et montre ce qu’il faut voir, une phrase à la fois, puis revient près de AIME. Neuf états, une seule liste pour tout AIME : chacun change de forme et porte un mot, jamais la couleur seule.</p>
+        <section id="point" aria-labelledby="titre-point" className="section">
+          <p className="surtitre">Le concept · le Point</p>
+          <h2 id="titre-point" className="titre" style={{ maxWidth: '18ch' }}>Le Point guide, et dit où l’on en est.</h2>
+          <p className="chapeau">Le Point du logo se détache et montre ce qu’il faut voir, une phrase à la fois, puis revient près de AIME. Comme le point de broderie, tout part de lui. Neuf états, une seule liste pour tout AIME : chacun change de forme et porte un mot, jamais la couleur seule.</p>
           <Orbes />
         </section>
 
@@ -111,7 +111,7 @@ export default function Aime() {
           <Projets ligne />
         </section>
       </main>
-      <DockBas lieux={[['manifeste', 'Manifeste'], ['docks', 'Docks'], ['orbe', 'Orbe'], ['principes', 'Principes'], ['fondateur', 'Fondateur'], ['studios', 'Studios']]} />
+      <DockBas lieux={[['manifeste', 'Manifeste'], ['docks', 'Docks'], ['point', 'Le Point'], ['principes', 'Principes'], ['fondateur', 'Fondateur'], ['studios', 'Studios']]} />
       <Pied />
       <BoutonBuro />
     </>

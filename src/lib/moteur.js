@@ -15,7 +15,7 @@ const Moteur = (function () {
   // ---------- lexique : domaines ----------
   // "mot" = commence par ; "=mot" = mot exact ; "a b c" = expression (chaque mot commence par)
   var DOMAINES = {
-    union: { label: 'Union', studio: 'AIME Wedding', href: 'Main.dc.html', mots: { mari: 4, noce: 3, wedding: 3, fianc: 2, '=pacs': 3, pacse: 3, temoin: 2, epou: 2, '=union': 2, 'liste de mariage': 3, 'lune de miel': 2, 'faire part': 1, 'jour j': 1, ceremonie: 1, 'vin d honneur': 2 },
+    union: { label: 'Union', studio: 'AIME Wedding', href: '/aime-wedding', mots: { mari: 4, noce: 3, wedding: 3, fianc: 2, '=pacs': 3, pacse: 3, temoin: 2, epou: 2, '=union': 2, 'liste de mariage': 3, 'lune de miel': 2, 'faire part': 1, 'jour j': 1, ceremonie: 1, 'vin d honneur': 2 },
       chemin: ['intention', 'calendrier', 'budget', 'comparateur', 'devis', 'personnes', 'annonce', 'invitation', 'placement', 'programme', 'page', 'cagnotte', 'galerie', 'livreor', 'capsule'] },
     sal: { label: 'SAL', studio: 'Brode Way', href: 'https://pointzero-zeta.vercel.app/', mots: { '=sal': 4, 'stitch along': 4, 'a plusieurs': 1, ensemble: 1, collecti: 1 },
       chemin: ['annonce', 'invitation', 'calendrier', 'rappels', 'messages', 'suivi'] },

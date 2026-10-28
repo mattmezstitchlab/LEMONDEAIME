@@ -33,7 +33,7 @@ const deProfil = (p: Profil): Carte & { domaine: string } => ({ href: '/reseau/'
 export default function Reseau() {
   const session = useSession();
   const [profils, setProfils] = useState<Profil[] | null>(null);
-  const [filtre, setFiltre] = useState<string | null>(null);
+  const [filtre, setFiltre] = useState<string | null>(() => { const d = new URLSearchParams(window.location.search).get('domaine'); return d && domaine(d) ? d : null; });
   useEffect(() => { lireReseau().then(r => setProfils(r.ok ? r.profils || [] : [])); }, []);
   const cartes = [
     ...FICHES.filter(e => e.vrai).map(e => ({ href: '/reseau/' + e.slug, nom: e.nom, etiquette: domaine(e.domaine)!.label + ' · ' + e.famille, photo: e.photo, alt: e.alt, domaine: e.domaine })),
