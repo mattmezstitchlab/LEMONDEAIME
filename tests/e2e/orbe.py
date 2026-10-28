@@ -19,7 +19,6 @@ def boite(pg, sel):
 
 LIEUX = {
     'atelier': dict(chemin='/atelier', premier='Bonjour, je suis Le Point', fin='Commencer à broder', dernier='Tout voir', menu='#pzs-brand'),
-    'buro': dict(chemin='/buro', premier='Bienvenue dans votre BurO', fin='Découvrir mon BurO', dernier='Me retrouver', menu='button[aria-label="Menu Point Zéro"]'),
 }
 def parcours(b, largeur, hauteur, nom, lieu='atelier'):
     L = LIEUX[lieu]
@@ -74,6 +73,39 @@ def mouvement(b):
     ok(avant['x'] != apres['x'] and pendant['x'] not in (avant['x'], apres['x']), 'ordinateur : l’orbe glisse d’un outil au suivant')
     ctx.close()
 
+def docks(b, largeur, hauteur, nom):
+    """Les docks rétractables : grilles des points, nuancier, loupe ; le point zéro ; plus de BurO."""
+    ctx = b.new_context(viewport={'width': largeur, 'height': hauteur})
+    pg = ctx.new_page(); pg.on('pageerror', lambda e: erreurs.append(str(e))); pg.set_default_timeout(6000)
+    pg.add_init_script("localStorage.setItem('pointzero:visite-docks:v1','vue')")
+    pg.goto(B + '/atelier'); pg.wait_for_timeout(1200)
+    zero = boite(pg, '.pz-point-zero-bouton')
+    ok(zero and abs((zero['x'] + zero['r']) / 2 - largeur / 2) < 4 and abs((zero['y'] + zero['b']) / 2 - hauteur / 2) < 8, f'{nom} : le bouton d’import est au point zéro, au centre de la grille')
+    pg.locator('[data-guide="dessiner"]').click(); pg.wait_for_timeout(250)
+    ok(pg.locator('.dg-case').count() >= 19, f'{nom} : Dessiner déplie la grille de tous les points et outils')
+    capture(pg, f'docks-{nom}-dessiner')
+    pg.locator('.dg-case', has_text='Demi-point').click(); pg.wait_for_timeout(200)
+    ok(pg.locator('.dg-case').count() == 0 and 'Demi-point' in pg.locator('.pzs-crumbs').inner_text(), f'{nom} : choisir un point replie le dock et le garde actif')
+    pg.locator('.pzs-up').click(); pg.locator('[data-guide="fils"]').click(); pg.wait_for_timeout(250)
+    pg.locator('#dg-cherche-fil').fill('rouge foncé'); pg.wait_for_timeout(200)
+    n = pg.locator('.dg-pastille').count()
+    ok(n > 0 and pg.locator('.pzs-bottom').count() == 1, f'{nom} : le nuancier se déplie dans le dock du haut ({n} rouges foncés)')
+    capture(pg, f'docks-{nom}-nuancier')
+    code = pg.locator('.dg-pastille .dg-code').first.inner_text(); pg.locator('.dg-pastille').first.click(); pg.wait_for_timeout(200)
+    ok(pg.locator('.dg-pastille').count() == 0 and code in pg.locator('.pzs-top').inner_text(), f'{nom} : toucher une pastille rend le fil actif et replie le dock')
+    pg.locator('.pzs-up').click(); pg.wait_for_timeout(150)
+    pg.get_by_role('button', name='Loupe : la grille agrandie sous le pointeur').click(); pg.wait_for_timeout(200)
+    pg.mouse.move(largeur * .3, hauteur * .22); pg.wait_for_timeout(150); a1 = pg.locator('.pzs-loupe-dock').inner_text()
+    pg.mouse.move(largeur * .7, hauteur * .32); pg.wait_for_timeout(150); a2 = pg.locator('.pzs-loupe-dock').inner_text()
+    ok('X ' in a1 and a1 != a2, f'{nom} : la loupe suit le pointeur sur la grille')
+    capture(pg, f'docks-{nom}-loupe')
+    pg.locator('.pzs-profil').click(); pg.wait_for_timeout(200)
+    t = pg.locator('.pzs-bloc').inner_text()
+    ok('Mes ouvrages' in t and 'Nouvelle grille' in t and 'Votre espace AIME' not in t and 'BurO' not in t, f'{nom} : Mes ouvrages dans le dock, sans BurO ni Espace AIME')
+    pg.goto(B + '/buro'); pg.wait_for_timeout(600)
+    ok(pg.locator('#csh-title').count() == 1, f'{nom} : l’ancienne adresse /buro mène à l’accueil')
+    ctx.close()
+
 def depuis_accueil(b):
     """L'accueil met Le Point en avant : « Faire la visite » ouvre l'atelier avec la visite, même déjà vue."""
     ctx = b.new_context(viewport={'width': 1440, 'height': 900})
@@ -93,8 +125,8 @@ with sync_playwright() as p:
     depuis_accueil(b)
     parcours(b, 1440, 900, 'ordinateur')
     parcours(b, 390, 844, 'telephone')
-    parcours(b, 1440, 900, 'buro-ordinateur', 'buro')
-    parcours(b, 390, 844, 'buro-telephone', 'buro')
+    docks(b, 1440, 900, 'ordinateur')
+    docks(b, 390, 844, 'telephone')
     mouvement(b)
     b.close()
 ok(not erreurs, 'aucune erreur dans la page ' + str(erreurs[:3]))

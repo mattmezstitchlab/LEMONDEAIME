@@ -14,7 +14,7 @@ afterEach(() => {
   localStorage.clear();
   vi.restoreAllMocks();
 });
-function mount(extra: { onBuro?: () => void; onShare?: () => void; onVisite?: () => void } = {}) {
+function mount(extra: { onOuvrages?: () => void; onShare?: () => void; onVisite?: () => void } = {}) {
   const onOpen = vi.fn(), onImport = vi.fn();
   host = document.createElement("div");
   document.body.append(host);
@@ -76,13 +76,13 @@ describe("Point Zéro spécialisé", () => {
     act(() => input.dispatchEvent(new Event("change", { bubbles: true })));
     expect(onImport).toHaveBeenCalledTimes(1);
   });
-  it("suit la charte AIME : dock du haut, « + Entrer » vers le BurO, dock du bas des sections", () => {
-    const onBuro = vi.fn(), onShare = vi.fn(), onVisite = vi.fn();
-    const { view, onOpen } = mount({ onBuro, onShare, onVisite });
+  it("suit la charte AIME : dock du haut, « + Entrer » vers Mes ouvrages, dock du bas des sections", () => {
+    const onOuvrages = vi.fn(), onShare = vi.fn(), onVisite = vi.fn();
+    const { view, onOpen } = mount({ onOuvrages, onShare, onVisite });
     expect(view.querySelector('nav[aria-label="Navigation point de croix"]')).toBeTruthy();
     const enter = view.querySelector<HTMLButtonElement>('button[aria-label="Entrer dans Point Zéro"]')!;
     act(() => enter.click());
-    expect(onBuro).toHaveBeenCalledTimes(1);
+    expect(onOuvrages).toHaveBeenCalledTimes(1);
     expect(onOpen).not.toHaveBeenCalled();
     const bottom = view.querySelector('nav[aria-label="Sections de la page"]')!;
     expect([...bottom.querySelectorAll("a")].map(a => a.textContent)).toEqual(["Les docks", "Le Point", "Fonctionnalités", "Commencer"]);
@@ -124,7 +124,7 @@ describe("Point Zéro spécialisé", () => {
     act(() => [...view.querySelectorAll<HTMLButtonElement>("button")].find(b => b.textContent === "Faire la visite avec Le Point")!.click());
     expect(onOpen).toHaveBeenCalledWith("create");
   });
-  it("sans BurO, « + Entrer » ouvre mes ouvrages", () => {
+  it("sans branchement, « + Entrer » ouvre mes ouvrages", () => {
     const { view, onOpen } = mount();
     act(() => view.querySelector<HTMLButtonElement>('button[aria-label="Entrer dans Point Zéro"]')!.click());
     expect(onOpen).toHaveBeenCalledWith("library");

@@ -21,21 +21,23 @@ export interface Etape {
 }
 
 export const ETAPES: Etape[] = [
-  { dock: "haut", cible: "orbe", titre: "Bonjour, je suis Le Point", texte: "Je vous fais faire le tour du studio : en haut, le dock pour travailler ; en bas, celui pour vous repérer. Mon carré ouvre le menu : le BurO, l’accueil, les réglages et l’affichage (débutante, confirmée, experte)." },
-  { dock: "haut", cible: "dessiner", titre: "Dessiner", texte: "Pour composer votre patron case par case, ou retoucher un patron importé. Un clic déploie ses outils dans le dock." },
-  { dock: "haut", cible: "outils", chemin: "dessiner", titre: "Les outils du dessin", texte: "D’abord le fil actif, puis la main pour vous déplacer, la croix, la gomme, le remplissage, la pipette et la sélection. « Plus d’outils » garde les demi-points, quarts, perles, points arrière et nœuds. La flèche à gauche remonte d’un niveau." },
+  { dock: "haut", cible: "orbe", titre: "Bonjour, je suis Le Point", texte: "Je vous fais faire le tour du studio : en haut, le dock pour travailler ; en bas, celui pour vous repérer. Mon carré ouvre le menu : l’accueil, les réglages et l’affichage (débutante, confirmée, experte)." },
+  { dock: "page", cible: "point-zero", titre: "Le point zéro", texte: "Sur une grille vide, tout commence au centre : importez une image, un patron PDF ou un projet, ou glissez-le sur la grille." },
+  { dock: "haut", cible: "dessiner", titre: "Dessiner", texte: "Pour composer votre patron case par case. Un clic déplie, sous le dock, la grille de tous les points et de tous les outils." },
+  { dock: "haut", cible: "outils", chemin: "dessiner", titre: "Les outils du dessin", texte: "Le fil actif, puis les six outils les plus utilisés. « Tous les points » déplie la grille complète : points, outils, formes, motifs et calques. Choisir replie le dock ; la flèche à gauche remonte d’un niveau." },
   { dock: "haut", cible: "broder", titre: "Broder", texte: "Pour suivre le patron pendant que vous brodez : la grille passe en lecture Patron et le fil actif ressort." },
-  { dock: "haut", cible: "outils", chemin: "broder", titre: "Les outils de la brodeuse", texte: "Marquez une case, un bloc de 10 × 10 ou une ligne entière ; garez un fil au parking, notez, défaites. « Suivi » montre où vous en êtes." },
-  { dock: "haut", cible: "fils", titre: "Fils", texte: "Le fil actif et le nuancier DMC : cherchez « 310 », « rouge » ou « vert foncé ». « Fils et toile » règle le nombre de brins et la toile." },
+  { dock: "haut", cible: "outils", chemin: "broder", titre: "Les gestes de la brodeuse", texte: "Main, Marquer, Bloc 10 × 10, Ligne. « Tous les gestes » déplie le reste : détails, pipette, parking, à défaire, note, et le suivi." },
+  { dock: "haut", cible: "fils", titre: "Fils", texte: "Fils déplie le nuancier DMC dans le dock : cherchez « 310 », « rouge » ou « vert foncé », touchez une pastille, le dock se replie." },
   { dock: "haut", cible: "partager", titre: "Partager", texte: "Inviter quelqu’un à regarder en direct, choisir qui voit l’ouvrage, exporter le patron en PDF, enregistrer." },
   { dock: "haut", cible: "historique", titre: "Annuler, rétablir", texte: "Chaque geste se reprend : une croix de trop, un remplissage raté, un clic suffit." },
   { dock: "haut", cible: "chercher", titre: "Chercher", texte: "Un fil, un outil, une fonction : tapez quelques lettres, choisissez, c’est fait." },
-  { dock: "haut", cible: "profil", titre: "Mes ouvrages", texte: "Rouvrez un ouvrage, déposez un fichier (image, PDF, patron), invitez quelqu’un à rejoindre la grille." },
+  { dock: "haut", cible: "profil", titre: "Mes ouvrages", texte: "Tous vos ouvrages sont rangés ici : rouvrez-en un, déposez un fichier (image, PDF, patron), invitez quelqu’un à rejoindre la grille." },
   { dock: "bas", cible: "cercle", titre: "Le cercle", texte: "Son anneau suit votre avancement. Un clic change le dock du bas : Repères, Fils (vos pastilles DMC, avec le stock) ou Progression (la timeline du patron, fil par fil)." },
   { dock: "bas", cible: "ouvrage", titre: "L’ouvrage en cours", texte: "Son nom et sa visibilité : pour vous seule, pour vos proches, ou pour tout le monde." },
   { dock: "bas", cible: "lectures", titre: "Trois lectures de la grille", texte: "Réaliste : comme une fois brodé. À plat : les couleurs franches. Patron : la grille à suivre, case par case." },
   { dock: "bas", cible: "symboles", titre: "Symboles", texte: "Les symboles par-dessus les couleurs, comme sur un patron papier : utile pour les teintes proches." },
-  { dock: "bas", cible: "zoom", titre: "Zoomer", texte: "La loupe double le zoom de la zone visible ; − et + règlent le reste. Sur tablette, pincez la grille." },
+  { dock: "bas", cible: "loupe", titre: "La loupe", texte: "Un clic, et un dock se déplie au-dessus : la grille agrandie case par case, là où vous survolez ou touchez. Elle ne modifie rien." },
+  { dock: "bas", cible: "zoom", titre: "Zoomer", texte: "− et + règlent le zoom ; sur tablette, pincez la grille." },
   { dock: "bas", cible: "tout-voir", titre: "Tout voir", texte: "Le patron entier revient à l’écran. C’est tout : bonne broderie ! Vous me retrouverez dans le menu de l’orbe : « Revoir la visite avec Le Point »." },
 ];
 

@@ -12,8 +12,8 @@ interface Props {
   onOpen: (entry: StitchEntry) => void;
   onImport: (file: File) => void;
   onShare?: () => void;
-  /** Le BurO : le bureau de Point Zéro (Mon Espace). À défaut, la bibliothèque. */
-  onBuro?: () => void;
+  /** Mes ouvrages : l'atelier, le bloc des ouvrages ouvert dans le dock. À défaut, onOpen("library"). */
+  onOuvrages?: () => void;
   /** ouvrir l'atelier avec la visite du Point */
   onVisite?: () => void;
 }
@@ -32,21 +32,21 @@ type SectionId = typeof SECTIONS[number][0];
 
 /* Les deux docks, pièce par pièce : ce que l'on voit, ce que cela fait */
 const HAUT: [string, string][] = [
-  ["L’orbe", "Le menu : BurO, accueil, réglages, et l’affichage débutante, confirmée ou experte."],
-  ["Dessiner", "Six outils d’abord, treize de plus à côté, les motifs, les calques et les réglages du dessin."],
-  ["Broder", "Marquer, bloc 10 × 10, ligne, parking, note, à défaire, et le suivi."],
-  ["Fils", "Le fil actif, la palette DMC, les fils et la toile."],
+  ["L’orbe", "Le menu : l’accueil, les réglages, et l’affichage débutante, confirmée ou experte."],
+  ["Dessiner", "Six outils sous la main ; « Tous les points » déplie la grille complète, qui se replie au choix."],
+  ["Broder", "Marquer, bloc 10 × 10, ligne ; la grille déplie parking, note, à défaire et le suivi."],
+  ["Fils", "Le nuancier DMC se déplie dans le dock, cherché en français ; puis les fils et la toile."],
   ["Partager", "Inviter à regarder, la visibilité, exporter, enregistrer."],
   ["Annuler · Rétablir", "Chaque geste se reprend."],
   ["Chercher", "Un fil, un outil, une fonction : on tape, on choisit."],
-  ["Mes ouvrages", "Rouvrir, déposer un fichier, inviter à rejoindre la grille."],
+  ["Mes ouvrages", "Tous les ouvrages, rangés dans le dock : rouvrir, déposer un fichier, inviter."],
 ];
 const BAS: [string, string][] = [
   ["Le cercle", "L’anneau suit l’avancement ; un clic change le dock."],
   ["L’ouvrage", "Son nom et sa visibilité, toujours sous les yeux."],
   ["Réaliste · À plat · Patron", "Trois lectures de la même grille."],
   ["Symboles", "Par-dessus les couleurs, comme sur un patron papier."],
-  ["Loupe · − · +", "La loupe double la zone visible ; − et + règlent le reste."],
+  ["Loupe · − · +", "La loupe déplie un dock : la grille agrandie sous le pointeur ; − et + règlent le zoom."],
   ["Tout voir", "Le patron entier revient à l’écran."],
 ];
 const MODES: [string, string][] = [
@@ -85,16 +85,16 @@ const TUILES: Tuile[] = [
     points: ["Inviter à regarder", "Privé · Restreint · Par lien · Public", "PDF paginé", "SVG · PNG · JSON", <>SAL à plusieurs <Bientot /></>, <>Commenter sur la grille <Bientot /></>] },
   { id: "garder", num: "09", cat: "Garder", titre: "Vos ouvrages, en sûreté", taille: "m",
     texte: "Sans compte, tout reste sur l’appareil ; avec AIME, vos ouvrages vous suivent.",
-    points: ["Sauvegarde automatique", "Le BurO : projets, partagés, archives", "Espace AIME synchronisé", "Hors ligne après chargement", "Export JSON de sûreté"] },
+    points: ["Sauvegarde automatique", "Mes ouvrages, rangés dans le dock", "Espace AIME synchronisé", "Hors ligne après chargement", "Export JSON de sûreté"] },
   { id: "confort", num: "10", cat: "Confort", titre: "Un studio qui s’adapte à la brodeuse", taille: "xl",
     texte: "L’interface s’ajuste à votre main, à vos yeux et à votre rythme.",
     points: ["Débutante · Confirmée · Experte", "Contraste élevé", "Texte plus grand", "Stylet uniquement", "La grille au clavier", "Lecteur d’écran", "Moins d’animations respecté", "Le Point pour démarrer"] },
 ];
 
 /** Un écran d'accueil seulement : l'ouvrir ne crée aucun patron et ne réécrit aucun projet. */
-export default function CrossStitchHome({ projectName, onOpen, onImport, onShare, onBuro, onVisite }: Props) {
+export default function CrossStitchHome({ projectName, onOpen, onImport, onShare, onOuvrages, onVisite }: Props) {
   const [current, setCurrent] = useState<SectionId | null>(null);
-  const enter = () => (onBuro ? onBuro() : onOpen("library"));
+  const enter = () => (onOuvrages ? onOuvrages() : onOpen("library"));
   const visite = () => (onVisite ? onVisite() : onOpen("create"));
 
   // Repère : la section visible est mise en évidence dans le dock du bas.
@@ -140,7 +140,7 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
 
     <TopDock label="Navigation point de croix" idBloc="pzh-menu"
       menu={[{ label: "Mes ouvrages", faire: () => onOpen("library") }, { label: "Ouvrir le studio", faire: () => onOpen("stitch") }, { label: "Faire la visite avec Le Point", faire: visite }]}
-      droite={<button type="button" className="pzs-tool buro-studio pzh-entrer" onClick={enter} aria-label="Entrer dans Point Zéro"><span aria-hidden="true">+</span> Entrer</button>}>
+      droite={<button type="button" className="pzs-tool pzs-noir pzh-entrer" onClick={enter} aria-label="Entrer dans Point Zéro"><span aria-hidden="true">+</span> Entrer</button>}>
       <a className="pzs-tool" href="#docks" onClick={go("docks")}>Les docks</a>
       <a className="pzs-tool" href="#le-point" onClick={go("le-point")}>Le Point</a>
       <a className="pzs-tool" href="#fonctionnalites" onClick={go("fonctionnalites")}>Fonctionnalités</a>

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 
 /**
  * Le dock du haut, à la charte du studio (UniO) : l'orbe dans son carré, la marque, les verbes, puis ce qui vit à droite.
  * L'orbe ouvre le même bloc que dans l'atelier : un menu en grandes lignes et, en bas, un mini dock sombre.
- * Partagé par l'accueil et le BurO ; l'atelier garde StudioDocks, qui porte en plus ses outils et sa recherche.
+ * Utilisé par l'accueil ; l'atelier garde StudioDocks, qui porte en plus ses outils et sa recherche.
  */
 export interface EntreeMenu { label: string; faire: () => void }
 interface Props {

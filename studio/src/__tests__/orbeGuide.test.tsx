@@ -8,7 +8,6 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import App from "../App";
 import { ETAPES, VISITE_CLE } from "../components/OrbeGuide";
-import { ETAPES_BURO, VISITE_BURO } from "../components/Buro";
 
 vi.mock("../lib/library", async importOriginal => ({ ...await importOriginal<typeof import("../lib/library")>(), saveLibrary: vi.fn().mockResolvedValue(undefined) }));
 const saved = { matchMedia: globalThis.matchMedia, ResizeObserver: globalThis.ResizeObserver, getContext: HTMLCanvasElement.prototype.getContext };
@@ -42,10 +41,10 @@ afterEach(async () => { await act(async () => root?.unmount()); root = null; con
 describe("L'orbe qui guide", () => {
   it("chaque étape vise un outil qui existe dans les docks", () => {
     const cibles = new Set(ETAPES.map(e => e.cible));
-    expect([...cibles].sort()).toEqual(["broder", "cercle", "chercher", "dessiner", "fils", "historique", "lectures", "orbe", "outils", "ouvrage", "partager", "profil", "symboles", "tout-voir", "zoom"].sort());
+    expect([...cibles].sort()).toEqual(["broder", "cercle", "chercher", "dessiner", "fils", "historique", "lectures", "loupe", "orbe", "outils", "ouvrage", "partager", "point-zero", "profil", "symboles", "tout-voir", "zoom"].sort());
     expect(ETAPES[0].dock).toBe("haut");
     expect(ETAPES[ETAPES.length - 1].dock).toBe("bas");
-    expect(ETAPES.findIndex(e => e.dock === "bas")).toBe(ETAPES.filter(e => e.dock === "haut").length); // tout le haut, puis tout le bas
+    expect(ETAPES.findIndex(e => e.dock === "bas")).toBe(ETAPES.filter(e => e.dock !== "bas").length); // tout le haut, puis tout le bas
   });
 
   it("s'ouvre dès la première ouverture de l'atelier et parcourt les deux docks de bout en bout", async () => {
@@ -94,39 +93,13 @@ describe("L'orbe qui guide", () => {
     expect(titre()).toBe("Bonjour, je suis Le Point");
   });
 
-  it("la visite de l'atelier ne passe pas devant l'accueil ; le BurO a la sienne", async () => {
-    for (const chemin of ["/", "/boutique"]) {
+  it("la visite de l'atelier ne passe pas devant l'accueil", async () => {
+    for (const chemin of ["/", "/boutique", "/buro"]) {
       window.history.replaceState(null, "", chemin);
       container = document.createElement("div"); document.body.appendChild(container); root = createRoot(container);
       await act(async () => { root!.render(<App />); }); await attendre();
       expect(bulle(), chemin).toBeFalsy();
       await act(async () => root?.unmount()); container.remove(); root = null; container = null;
     }
-    window.history.replaceState(null, "", "/buro");
-    container = document.createElement("div"); document.body.appendChild(container); root = createRoot(container);
-    await act(async () => { root!.render(<App />); }); await attendre();
-    expect(titre()).toBe(ETAPES_BURO[0].titre);
-  });
-
-  it("le BurO : Le Point le présente de bout en bout, une fois, et se relance d'un clic", async () => {
-    window.history.replaceState(null, "", "/buro");
-    container = document.createElement("div"); document.body.appendChild(container); root = createRoot(container);
-    await act(async () => { root!.render(<App />); }); await attendre();
-    for (const e of ETAPES_BURO) if (e.cible !== "outils") expect(container.querySelector(`[data-guide="${e.cible}"]`), e.cible).toBeTruthy();
-    const vus: string[] = [titre()!];
-    for (let k = 1; k < ETAPES_BURO.length; k++) {
-      await cliquer(bouton("Suivant"));
-      vus.push(titre()!);
-      if (ETAPES_BURO[k].chemin === "creer") expect(bouton("Grille vierge")).toBeTruthy();
-    }
-    expect(vus).toEqual(ETAPES_BURO.map(e => e.titre));
-    await cliquer(bouton("Découvrir mon BurO"));
-    expect(bulle()).toBeFalsy();
-    expect(localStorage.getItem(VISITE_BURO)).toBe("vue");
-    expect(localStorage.getItem(VISITE_CLE)).toBeNull(); // la visite de l'atelier reste à faire
-    await cliquer(container.querySelector('button[aria-label="Le Point : faire la visite du BurO"]'));
-    expect(titre()).toBe(ETAPES_BURO[0].titre);
-    await touche("Escape");
-    expect(bulle()).toBeFalsy();
   });
 });

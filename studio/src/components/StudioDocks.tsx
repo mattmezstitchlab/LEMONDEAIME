@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import OuvragesBloc from "./OuvragesBloc";
 import { ToolIcon } from "./ToolIcons";
-import { ArrowLeft, Redo2, Search, Undo2, X } from "lucide-react";
+import { ArrowLeft, LayoutGrid, Redo2, Search, Undo2, X } from "lucide-react";
+import { GrilleOutils, GROUPES_BRODER, GROUPES_DESSIN, Loupe, Nuancier } from "./DockGrilles";
+import type { Pattern } from "../lib/pattern";
 import { FLOSS } from "../lib/dmc";
 import { dansAime } from "../lib/aimeSync";
 import type { Tool } from "../lib/stitch";
@@ -12,17 +14,22 @@ import VisibilityOrb from "./VisibilityOrb";
 
 /**
  * Les deux docks du studio (charte UniO du Monde AIME).
- * En haut, blanc : des verbes. Dessiner, Broder, Fils, Partager ; chacun se déploie
- * dans le dock lui-même, le contexte d'abord (le fil actif), la profondeur ensuite.
- * En bas, sombre : des lieux. Le BurO, l'ouvrage, l'affichage et le zoom.
- * Créer, ouvrir et importer vivent au BurO : on entre dans le studio avec un projet.
+ * En haut, blanc : des verbes. Dessiner, Broder, Fils, Partager. Chaque verbe garde une ligne courte
+ * (le fil actif, les outils les plus utilisés) et déplie sous lui une grille : tous les points et outils,
+ * ou le nuancier DMC. Choisir replie le dock. Les ouvrages se rangent sous le rond du profil.
+ * En bas, sombre : se repérer. Le cercle, l'ouvrage, les lectures, la loupe qui agrandit sous le pointeur, le zoom.
  */
-export type DockPath = null | "dessiner" | "dessiner-plus" | "fils" | "broder" | "partager" | "visibilite";
+export type DockPath = null | "dessiner" | "fils" | "broder" | "partager" | "visibilite";
+/** les blocs qu'on peut demander d'ailleurs : Mes ouvrages, le nuancier, la grille des outils */
+export type BlocDemande = "inviter" | "nuancier" | "outils";
+type Bloc = null | "menu" | "chercher" | "inviter" | "outils" | "nuancier";
 
 export interface DockActions {
-  buro: () => void; home: () => void; settings: () => void; share: () => void;
+  home: () => void; settings: () => void; share: () => void;
   motifs: () => void; exportPanel: () => void; save: () => void; palette: () => void;
   threadsSettings: () => void; follow: () => void; layers: () => void; drawSettings: () => void;
+  /** une nouvelle grille vierge (l'ouvrage en cours reste rangé dans Mes ouvrages) */
+  nouveau: () => void;
   /** relancer la visite de l'orbe */
   visite?: () => void;
 }
@@ -55,6 +62,12 @@ interface Props {
   /** la progression du patron : le cercle du dock et le mode Progression */
   progression?: { total: number; done: number; couleurs: { idx: number; hex: string; code: string; cells: number; done: number }[] };
   onCouleur?: (idx: number) => void;
+  /** le patron : pour le nuancier (fils du motif) et la loupe */
+  pattern?: Pattern;
+  /** l'index DMC du fil actif */
+  couleur?: number;
+  /** un bloc demandé d'ailleurs ; n change à chaque demande */
+  blocDemande?: { bloc: BlocDemande; n: number } | null;
 }
 type Genre = "tout" | "outils" | "fils" | "fonctions";
 const GENRES: [Genre, string][] = [["tout", "Tout"], ["outils", "Outils"], ["fils", "Fils"], ["fonctions", "Fonctions"]];
@@ -72,19 +85,22 @@ const DRAW_MORE: [Tool, string][] = [["half", "Demi-point"], ["quarter", "Quart"
 const STITCH: [Tool, string][] = [["hand", "Main"], ["mark", "Marquer"], ["block", "Bloc 10 × 10"], ["row", "Ligne"], ["pick", "Pipette"], ["details", "Détails"], ["park", "Parking"], ["unpick", "À défaire"], ["note", "Note"]];
 const BEGINNER = new Set<Tool>(["hand", "cross", "erase", "pick", "mark"]);
 const VIEWS: [ViewMode, string][] = [["real", "Réaliste"], ["flat", "À plat"], ["pattern", "Patron"]];
-const LABELS: Record<Exclude<DockPath, null>, string> = { dessiner: "Dessiner", "dessiner-plus": "Plus d’outils", fils: "Fils", broder: "Broder", partager: "Partager", visibilite: "Visibilité" };
-const PARENT: Partial<Record<Exclude<DockPath, null>, DockPath>> = { "dessiner-plus": "dessiner", visibilite: "partager" };
+const LABELS: Record<Exclude<DockPath, null>, string> = { dessiner: "Dessiner", fils: "Fils", broder: "Broder", partager: "Partager", visibilite: "Visibilité" };
+const PARENT: Partial<Record<Exclude<DockPath, null>, DockPath>> = { visibilite: "partager" };
+/* la ligne courte de Broder : les gestes les plus fréquents ; tout le reste est dans la grille */
+const STITCH_VITE: [Tool, string][] = [["hand", "Main"], ["mark", "Marquer"], ["block", "Bloc 10 × 10"], ["row", "Ligne"]];
 
 function Tool_({ children, pressed, onClick, disabled, haspopup, count, soon, label, guide }: { children: ReactNode; pressed?: boolean; onClick?: () => void; disabled?: boolean; haspopup?: boolean; count?: number; soon?: boolean; label?: string; guide?: string }) {
   return <button type="button" data-guide={guide} className={"pzs-tool" + (label ? " pzs-icon pzs-picto" : "")} aria-label={label} title={label} aria-pressed={pressed === undefined ? undefined : pressed} aria-haspopup={haspopup ? "true" : undefined}
     disabled={disabled} onClick={onClick} data-on={pressed ? "1" : undefined}>
     {children}{count !== undefined && <span className="pzs-count" aria-hidden="true">{count}</span>}
-    {soon && <span className="buro-soon">Bientôt</span>}
+    {soon && <span className="pzs-soon">Bientôt</span>}
   </button>;
 }
 
 export default function StudioDocks(p: Props) {
-  const [bloc, setBloc] = useState<null | "menu" | "chercher" | "inviter">(null);
+  const [bloc, setBloc] = useState<Bloc>(null);
+  const [loupe, setLoupe] = useState(false);
   const [q, setQ] = useState("");
   const [genre, setGenre] = useState<Genre>("tout");
   const [moi, setMoi] = useState<{ name?: string; email?: string; image?: string } | null>(null);
@@ -93,10 +109,11 @@ export default function StudioDocks(p: Props) {
   useEffect(() => { if (!aime) return; let vivant = true;
     fetch("/api/auth/get-session", { credentials: "same-origin" }).then(r => r.ok ? r.json() : null).then(j => { if (vivant && j && j.user) setMoi({ name: j.user.name, email: j.user.email, image: j.user.image }); }).catch(() => {});
     return () => { vivant = false; }; }, [aime]);
-  const ouvrir = (b: "menu" | "chercher" | "inviter") => setBloc(x => x === b ? null : b);
+  const ouvrir = (b: Exclude<Bloc, null>) => setBloc(x => x === b ? null : b);
+  useEffect(() => { if (p.blocDemande) setBloc(p.blocDemande.bloc); }, [p.blocDemande]);
   const fermer = () => setBloc(null);
   const retourSite = () => { try { if (document.referrer && new URL(document.referrer).origin === window.location.origin && !new URL(document.referrer).pathname.startsWith("/studio")) { window.history.back(); return; } } catch { /* adresse illisible */ } window.location.href = "/"; };
-  useEffect(() => { if (bloc === "chercher") document.getElementById("pzs-cherche")?.focus(); else if (bloc) blocRef.current?.querySelector<HTMLElement>("a, button")?.focus(); }, [bloc]);
+  useEffect(() => { if (bloc === "chercher") document.getElementById("pzs-cherche")?.focus(); else if (bloc === "nuancier") document.getElementById("dg-cherche-fil")?.focus(); else if (bloc) blocRef.current?.querySelector<HTMLElement>("[aria-pressed=\"true\"], a, button")?.focus(); }, [bloc]);
   const [modes, setModes] = useState(false);
   const [modeBas, setModeBas] = useState<ModeBas>(p.path === "fils" ? "fils" : "reperes");
   const cercleRef = useRef<HTMLButtonElement>(null);
@@ -108,10 +125,10 @@ export default function StudioDocks(p: Props) {
     wasPath.current = p.path;
   }, [p.path]);
 
-  const up = () => p.onPath(p.path ? PARENT[p.path] ?? null : null);
+  const up = () => { if (bloc === "outils" || bloc === "nuancier") setBloc(null); p.onPath(p.path ? PARENT[p.path] ?? null : null); };
   const onKey = (e: KeyboardEvent) => {
     if (e.key !== "Escape") return;
-    if (bloc) { e.preventDefault(); const b = bloc; setBloc(null); (b === "menu" ? document.getElementById("pzs-brand") : document.querySelector<HTMLElement>(b === "chercher" ? ".pzs-loupe" : ".pzs-profil"))?.focus(); return; }
+    if (bloc) { e.preventDefault(); const b = bloc; setBloc(null); (b === "menu" ? document.getElementById("pzs-brand") : document.querySelector<HTMLElement>(b === "chercher" ? ".pzs-loupe" : b === "inviter" ? ".pzs-profil" : "[data-guide=\"grille\"]"))?.focus(); return; }
     if (p.path) { e.preventDefault(); up(); }
   };
   const level = (list: [Tool, string][]) => p.level === "beginner" ? list.filter(([id]) => BEGINNER.has(id) || id === p.tool) : list;
@@ -119,27 +136,26 @@ export default function StudioDocks(p: Props) {
     <span className="pzs-swatch" style={{ background: p.colorHex }} aria-hidden="true" />{p.colorLabel}
   </button>;
 
+  const grille = (label: string, n: number) => <button type="button" data-guide="grille" className={"pzs-tool pzs-grille" + (bloc === "outils" ? " pzs-grille-on" : "")} aria-expanded={bloc === "outils"} aria-controls="pzs-bloc" onClick={() => ouvrir("outils")}>
+    <LayoutGrid size={17} aria-hidden="true" />{label}<span className="pzs-count" aria-hidden="true">{n}</span>
+  </button>;
+  const choisir = (id: Tool) => { p.onTool(id); setBloc(null); };
+
   let items: ReactNode;
   if (p.path === "dessiner") items = <>
     {thread}<span className="pzs-sep" aria-hidden="true" />
     {level(DRAW).map(([id, name]) => <Tool_ key={id} label={name} pressed={p.tool === id} disabled={p.readOnly && id !== "hand"} onClick={() => p.onTool(id)}><ToolIcon tool={id} /></Tool_>)}
-    <Tool_ haspopup count={DRAW_MORE.length} onClick={() => p.onPath("dessiner-plus")} disabled={p.readOnly}>Plus d’outils</Tool_>
-    <Tool_ onClick={p.actions.motifs} disabled={p.readOnly}>Motifs</Tool_>
-    <Tool_ pressed={p.inspectorOpen} onClick={p.actions.layers}>Calques</Tool_>
-    <Tool_ onClick={p.actions.drawSettings}>Réglages du dessin</Tool_>
-  </>;
-  else if (p.path === "dessiner-plus") items = <>
-    {DRAW_MORE.map(([id, name]) => <Tool_ key={id} label={name} pressed={p.tool === id} disabled={p.readOnly} onClick={() => p.onTool(id)}><ToolIcon tool={id} /></Tool_>)}
+    {grille("Tous les points", DRAW.length + DRAW_MORE.length)}
   </>;
   else if (p.path === "fils") items = <>
     <span className="pzs-chip"><span className="pzs-swatch" style={{ background: p.colorHex }} aria-hidden="true" />Fil actif · {p.colorLabel}</span>
-    <Tool_ onClick={p.actions.palette}>Palette DMC</Tool_>
+    <button type="button" data-guide="grille" className={"pzs-tool pzs-grille" + (bloc === "nuancier" ? " pzs-grille-on" : "")} aria-expanded={bloc === "nuancier"} aria-controls="pzs-bloc" onClick={() => ouvrir("nuancier")}><LayoutGrid size={17} aria-hidden="true" />Nuancier DMC</button>
     <Tool_ onClick={p.actions.threadsSettings}>Fils et toile</Tool_>
   </>;
   else if (p.path === "broder") items = <>
     {thread}<span className="pzs-sep" aria-hidden="true" />
-    {level(STITCH).map(([id, name]) => <Tool_ key={id} label={name} pressed={p.tool === id} disabled={p.readOnly && id !== "hand"} onClick={() => p.onTool(id)}><ToolIcon tool={id} /></Tool_>)}
-    <Tool_ onClick={p.actions.follow}>Suivi</Tool_>
+    {level(STITCH_VITE).map(([id, name]) => <Tool_ key={id} label={name} pressed={p.tool === id} disabled={p.readOnly && id !== "hand"} onClick={() => p.onTool(id)}><ToolIcon tool={id} /></Tool_>)}
+    {grille("Tous les gestes", STITCH.length + 1)}
   </>;
   else if (p.path === "partager") items = <>
     <Tool_ onClick={p.actions.share}>Inviter à regarder</Tool_>
@@ -152,19 +168,19 @@ export default function StudioDocks(p: Props) {
     {VISIBILITY_ORDER.map(v => <Tool_ key={v} pressed={p.visibility === v} onClick={() => p.onVisibility(v)}><VisibilityOrb value={v} size={20} />{VISIBILITY[v].label}</Tool_>)}
   </>;
   else items = <>
-    <Tool_ guide="dessiner" haspopup count={DRAW.length + 4} pressed={p.workspace === "create"} onClick={() => { p.onWorkspace("create"); p.onPath("dessiner"); }}>Dessiner</Tool_>
-    <Tool_ guide="broder" haspopup count={STITCH.length + 1} pressed={p.workspace === "stitch"} onClick={() => { p.onWorkspace("stitch"); p.onPath("broder"); }}>Broder</Tool_>
-    <Tool_ guide="fils" haspopup count={2} onClick={() => p.onPath("fils")}>Fils</Tool_>
-    <Tool_ guide="partager" haspopup count={6} onClick={() => p.onPath("partager")}>Partager</Tool_>
+    <Tool_ guide="dessiner" haspopup count={DRAW.length + DRAW_MORE.length} pressed={p.workspace === "create"} onClick={() => { p.onWorkspace("create"); p.onPath("dessiner"); setBloc("outils"); }}>Dessiner</Tool_>
+    <Tool_ guide="broder" haspopup count={STITCH.length + 1} pressed={p.workspace === "stitch"} onClick={() => { p.onWorkspace("stitch"); p.onPath("broder"); setBloc("outils"); }}>Broder</Tool_>
+    <Tool_ guide="fils" haspopup count={2} onClick={() => { p.onPath("fils"); setBloc("nuancier"); }}>Fils</Tool_>
+    <Tool_ guide="partager" haspopup count={5} onClick={() => p.onPath("partager")}>Partager</Tool_>
   </>;
 
   const ql = sansAccents(q.trim());
   const resultats: Resultat[] = [
     ...[...DRAW, ...DRAW_MORE, ...STITCH].filter((x, i, l) => l.findIndex(y => y[0] === x[0]) === i).map(([id, name]): Resultat => ({ id: "o-" + id, genre: "outils", label: name, meta: "Outil" + (STITCH.some(x => x[0] === id) && !DRAW.some(x => x[0] === id) ? " · Broder" : " · Dessiner"), faire: () => { const broder = STITCH.some(x => x[0] === id) && !DRAW.some(x => x[0] === id) && !DRAW_MORE.some(x => x[0] === id);
-      p.onWorkspace(broder ? "stitch" : "create"); p.onPath(broder ? "broder" : DRAW_MORE.some(x => x[0] === id) ? "dessiner-plus" : "dessiner"); p.onTool(id); } })),
+      p.onWorkspace(broder ? "stitch" : "create"); p.onPath(broder ? "broder" : "dessiner"); p.onTool(id); } })),
     ...(p.progression?.couleurs ?? []).map((c): Resultat => ({ id: "f-" + c.idx, genre: "fils", label: "DMC " + c.code, meta: (FLOSS[c.idx]?.name ?? "") + " · dans le motif" + (c.cells ? " · " + Math.round(c.done / c.cells * 100) + " % brodé" : ""), hex: c.hex, faire: () => p.onCouleur?.(c.idx) })),
     ...(ql ? FLOSS.map((f, idx): Resultat => ({ id: "d-" + idx, genre: "fils", label: "DMC " + f.code, meta: f.name + " · nuancier", hex: f.hex, faire: () => p.onCouleur?.(idx) })).filter(r => !(p.progression?.couleurs ?? []).some(c => "f-" + c.idx === r.id.replace("d-", "f-"))) : []),
-    ...([["motifs", "Motifs", p.actions.motifs], ["calques", "Calques", p.actions.layers], ["reglages-dessin", "Réglages du dessin", p.actions.drawSettings], ["palette", "Palette DMC", p.actions.palette], ["fils-toile", "Fils et toile", p.actions.threadsSettings], ["suivi", "Suivi de broderie", p.actions.follow], ["inviter", "Inviter à regarder", p.actions.share], ["exporter", "Exporter", p.actions.exportPanel], ["enregistrer", "Enregistrer", p.actions.save], ["tout-voir", "Tout voir", p.zoom.fit], ["symboles", "Symboles", p.onSymbols], ["reglages", "Réglages et aide", p.actions.settings], ...(p.actions.visite ? [["visite", "Revoir la visite avec Le Point", p.actions.visite]] : [])] as [string, string, () => void][])
+    ...([["motifs", "Motifs", p.actions.motifs], ["calques", "Calques", p.actions.layers], ["reglages-dessin", "Réglages du dessin", p.actions.drawSettings], ["palette", "Palette DMC", p.actions.palette], ["fils-toile", "Fils et toile", p.actions.threadsSettings], ["suivi", "Suivi de broderie", p.actions.follow], ["nouveau", "Nouvelle grille", p.actions.nouveau], ["inviter", "Inviter à regarder", p.actions.share], ["exporter", "Exporter", p.actions.exportPanel], ["enregistrer", "Enregistrer", p.actions.save], ["tout-voir", "Tout voir", p.zoom.fit], ["symboles", "Symboles", p.onSymbols], ["reglages", "Réglages et aide", p.actions.settings], ...(p.actions.visite ? [["visite", "Revoir la visite avec Le Point", p.actions.visite]] : [])] as [string, string, () => void][])
       .map(([id, label, f]): Resultat => ({ id: "x-" + id, genre: "fonctions", label, meta: "Fonction de la grille", faire: f })),
   ];
   const trouves = resultats.filter(r => (genre === "tout" || r.genre === genre) && (!ql || correspond(r.label + " " + r.meta, ql))).slice(0, ql ? 40 : 24);
@@ -173,7 +189,7 @@ export default function StudioDocks(p: Props) {
   const toolName = [...DRAW, ...DRAW_MORE, ...STITCH].find(([id]) => id === p.tool)?.[1];
   const crumbs = ["Point Zéro", p.patternName];
   if (p.path) { const parent = PARENT[p.path]; if (parent) crumbs.push(LABELS[parent]); crumbs.push(LABELS[p.path]); }
-  if ((p.path === "dessiner" || p.path === "dessiner-plus" || p.path === "broder") && toolName) crumbs.push(toolName);
+  if ((p.path === "dessiner" || p.path === "broder") && toolName) crumbs.push(toolName);
 
   return <>
     <header className="pzs-head" aria-label="En-tête du studio">
@@ -212,7 +228,6 @@ export default function StudioDocks(p: Props) {
             <div id="pzs-menu" className="pzs-bloc-corps">
               <ul className="pzs-bloc-menu">
                 {aime && <li><a href="/">Le Monde AIME</a></li>}
-                <li><button type="button" onClick={() => { setBloc(null); p.actions.buro(); }}>BurO</button></li>
                 <li><button type="button" onClick={() => { setBloc(null); p.actions.home(); }}>Accueil Point Zéro</button></li>
                 <li><button type="button" onClick={() => { setBloc(null); p.actions.settings(); }}>Réglages et aide</button></li>
                 {p.actions.visite && <li><button type="button" onClick={() => { setBloc(null); p.actions.visite!(); }}>Revoir la visite avec Le Point</button></li>}
@@ -222,6 +237,28 @@ export default function StudioDocks(p: Props) {
               <span>Affichage</span>
               {(Object.keys(LEVEL_LABELS) as InterfaceLevel[]).map(id =>
                 <button key={id} type="button" aria-pressed={p.level === id} onClick={() => p.onLevel(id)}>{LEVEL_LABELS[id]}</button>)}
+            </div>
+          </>}
+          {bloc === "outils" && <>
+            <div className="pzs-bloc-corps">
+              {p.path === "broder"
+                ? <GrilleOutils groupes={GROUPES_BRODER} outil={p.tool} onOutil={choisir} filtre={p.level === "beginner" ? (id => BEGINNER.has(id) || id === p.tool || id === "block" || id === "row") : undefined} desactive={id => !!p.readOnly && id !== "hand"} plus={[["Suivi de broderie", () => { setBloc(null); p.actions.follow(); }]]} />
+                : <GrilleOutils groupes={GROUPES_DESSIN} outil={p.tool} onOutil={choisir} filtre={p.level === "beginner" ? (id => BEGINNER.has(id) || id === p.tool) : undefined} desactive={id => !!p.readOnly && id !== "hand"}
+                  plus={[["Motifs", () => { setBloc(null); p.actions.motifs(); }], ["Calques", () => { setBloc(null); p.actions.layers(); }], ["Réglages du dessin", () => { setBloc(null); p.actions.drawSettings(); }]]} />}
+            </div>
+            <div className="pzs-mini" role="group" aria-label="Le fil actif">
+              <span>Fil actif</span>
+              <button type="button" onClick={() => setBloc("nuancier")}><span className="pzs-swatch" style={{ background: p.colorHex }} aria-hidden="true" />&nbsp;{p.colorLabel} · changer</button>
+              <button type="button" onClick={() => setBloc(null)}>Replier</button>
+            </div>
+          </>}
+          {bloc === "nuancier" && p.pattern && <>
+            <div className="pzs-bloc-corps">
+              <Nuancier pattern={p.pattern} couleur={p.couleur ?? 0} onCouleur={idx => { p.onCouleur?.(idx); setBloc(null); }} />
+            </div>
+            <div className="pzs-mini" role="group" aria-label="Fils">
+              <button type="button" onClick={() => { setBloc(null); p.actions.threadsSettings(); }}>Fils et toile</button>
+              <button type="button" onClick={() => setBloc(null)}>Replier</button>
             </div>
           </>}
           {bloc === "chercher" && <>
@@ -243,11 +280,12 @@ export default function StudioDocks(p: Props) {
             <div className="pzs-bloc-corps">
               <p className="pzs-titre">Mes ouvrages{moi?.name ? " · " + moi.name.split(" ")[0] : ""}</p>
               {p.ouvrages && <OuvragesBloc courant={p.ouvrages.courant} ouvrir={id => { setBloc(null); p.ouvrages!.ouvrir(id); }} importer={f => { setBloc(null); p.ouvrages!.importer(f); }} />}
-              <p className="pzs-note">Inviter : quelqu’un regarde l’ouvrage en direct, depuis son appareil, pendant que vous brodez.{!moi && aime ? " Entrez dans AIME pour retrouver vos ouvrages sur tous vos appareils." : ""}</p>
+              <p className="pzs-note">Inviter : quelqu’un regarde l’ouvrage en direct, depuis son appareil, pendant que vous brodez.{!moi && aime ? " Entrez dans AIME pour retrouver vos ouvrages sur tous vos appareils." : moi ? " Vos ouvrages sont rangés sur votre compte AIME et sur cet appareil." : ""}</p>
             </div>
-            <div className="pzs-mini" role="group" aria-label="Inviter et votre espace">
+            <div className="pzs-mini" role="group" aria-label="Nouvel ouvrage et invitation">
+              <button type="button" onClick={() => { setBloc(null); p.actions.nouveau(); }}>+ Nouvelle grille</button>
               <button type="button" onClick={() => { setBloc(null); p.actions.share(); }}>+ Inviter à rejoindre la grille</button>
-              {aime && <a href={moi ? "/buro" : "/entrer"}>{moi ? "Votre espace AIME" : "Entrer"}</a>}
+              {aime && !moi && <a href="/entrer">Entrer dans AIME</a>}
             </div>
           </>}
         </div>}
@@ -256,7 +294,8 @@ export default function StudioDocks(p: Props) {
       {!bloc && <p className="pzs-crumbs">{crumbs.map((c, i) => <span key={i}>{i > 0 && <span aria-hidden="true"> › </span>}{i === crumbs.length - 1 ? <strong>{c}</strong> : c}</span>)}</p>}
     </header>
 
-    <nav className="pzs-bottom" aria-label="Se repérer dans le studio" onKeyDown={e => { if (e.key === "Escape" && modes) { e.preventDefault(); setModes(false); cercleRef.current?.focus(); } }}>
+    {loupe && p.pattern && <div className="pzs-loupe-dock"><Loupe pattern={p.pattern} /><button type="button" className="pzs-loupe-fermer" aria-label="Fermer la loupe" onClick={() => setLoupe(false)}><X size={16} aria-hidden="true" /></button></div>}
+    <nav className="pzs-bottom" aria-label="Se repérer dans le studio" onKeyDown={e => { if (e.key === "Escape" && loupe) { e.preventDefault(); setLoupe(false); return; } if (e.key === "Escape" && modes) { e.preventDefault(); setModes(false); cercleRef.current?.focus(); } }}>
       <Cercle refBouton={cercleRef} ouvert={modes} onClick={() => setModes(v => !v)} part={prog} teinte={teinte}
         label={(modes ? "Revenir au dock" : "Changer le dock") + ", mode " + (MODES.find(m => m[0] === modeBas)?.[1] ?? "") + (total ? ", patron brodé à " + Math.round(prog * 100) + " %" : "")} />
       {modes
@@ -276,7 +315,7 @@ export default function StudioDocks(p: Props) {
       </div>
       <button type="button" data-guide="symboles" className="pzs-btm" aria-pressed={p.symbols} onClick={p.onSymbols}>Symboles</button>
       <span className="pzs-sep" aria-hidden="true" />
-      <button type="button" data-guide="zoom" className="pzs-btm pzs-sq" aria-label="Loupe : doubler le zoom de la zone visible" title="Loupe" onClick={p.zoom.magnify}><Search size={17} aria-hidden="true" /></button>
+      <button type="button" data-guide="loupe" className="pzs-btm pzs-loupe-btn" aria-pressed={loupe} aria-label="Loupe : la grille agrandie sous le pointeur" title="Loupe" onClick={() => setLoupe(v => !v)}><Search size={17} aria-hidden="true" /><span className="pzs-loupe-txt">Loupe</span></button>
       <button type="button" data-guide="zoom" className="pzs-btm pzs-sq" aria-label="Dézoomer" onClick={p.zoom.zoomOut}>−</button>
       <button type="button" data-guide="zoom" className="pzs-btm pzs-sq" aria-label="Zoomer" onClick={p.zoom.zoomIn}>+</button>
       <button type="button" data-guide="tout-voir" className="pzs-btm pzs-light" onClick={p.zoom.fit}>Tout voir</button>

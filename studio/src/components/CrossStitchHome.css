@@ -273,7 +273,7 @@ html:has(.cross-stitch-home) { scroll-padding-top: 110px; scroll-padding-bottom:
 
 /* Le dock du haut de l'accueil est celui du studio (TopDock, classes pzs-*) : on neutralise les styles génériques de la page */
 .cross-stitch-home .pzs-head :is(button, a) { color: #0b0b0c; }
-.cross-stitch-home .pzs-head .buro-studio { color: #fff !important; }
+.cross-stitch-home .pzs-head .pzs-noir { color: #fff !important; }
 .cross-stitch-home .pzs-head :is(button, a):focus-visible { outline: 2px solid #0b0b0c; outline-offset: 2px; }
 .pzh-entrer span { font-size: 20px; font-weight: 500; line-height: 1; }
 .pzh-x { color: #c4416b; font-weight: 800; }

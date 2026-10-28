@@ -7,18 +7,18 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
  */
 export interface Arret { k: string; nom: string; dit: string; dock: "haut" | "bas" }
 export const ARRETS: Arret[] = [
-  { k: "orbe", dock: "haut", nom: "Le menu", dit: "BurO, accueil, réglages et affichage : débutante, confirmée ou experte." },
-  { k: "dessiner", dock: "haut", nom: "Dessiner", dit: "Composer le patron case par case : croix, fractions, points arrière, formes." },
+  { k: "orbe", dock: "haut", nom: "Le menu", dit: "L’accueil, les réglages et l’affichage : débutante, confirmée ou experte." },
+  { k: "dessiner", dock: "haut", nom: "Dessiner", dit: "Déplie la grille de tous les points et outils ; choisir la replie." },
   { k: "broder", dock: "haut", nom: "Broder", dit: "Suivre le patron : marquer une case, un bloc, une ligne ; garer un fil." },
-  { k: "fils", dock: "haut", nom: "Fils", dit: "Le fil actif et tout le nuancier DMC, cherché en français." },
+  { k: "fils", dock: "haut", nom: "Fils", dit: "Le nuancier DMC se déplie dans le dock, cherché en français." },
   { k: "partager", dock: "haut", nom: "Partager", dit: "Inviter à regarder en direct, choisir qui voit, exporter en PDF." },
   { k: "historique", dock: "haut", nom: "Annuler, rétablir", dit: "Chaque geste se reprend." },
   { k: "chercher", dock: "haut", nom: "Chercher", dit: "Un fil, un outil, une fonction : quelques lettres suffisent." },
-  { k: "profil", dock: "haut", nom: "Mes ouvrages", dit: "Rouvrir un ouvrage, déposer un fichier, inviter." },
+  { k: "profil", dock: "haut", nom: "Mes ouvrages", dit: "Tous vos ouvrages, rangés dans le dock : rouvrir, déposer, inviter." },
   { k: "cercle", dock: "bas", nom: "Le cercle", dit: "Il suit l’avancement et change le dock : Repères, Fils, Progression." },
   { k: "lectures", dock: "bas", nom: "Trois lectures", dit: "Réaliste, À plat ou Patron : la même grille, trois regards." },
   { k: "symboles", dock: "bas", nom: "Symboles", dit: "Les symboles par-dessus les couleurs, comme sur papier." },
-  { k: "zoom", dock: "bas", nom: "Zoomer", dit: "La loupe, moins et plus, au plus près de la croix." },
+  { k: "zoom", dock: "bas", nom: "La loupe", dit: "Un dock se déplie : la grille agrandie là où vous survolez." },
   { k: "tout-voir", dock: "bas", nom: "Tout voir", dit: "Le patron entier revient à l’écran." },
 ];
 const DUREE = 2600;

@@ -14,8 +14,8 @@ export function stitchAt(pattern:Pattern,focus:StitchFocus) {
     quarters:pattern.q.map(q=>q[i]),color:FLOSS[pattern.cross[i]]?.code??null};
 }
 const CELL=21;
-const RADIUS=5;
-export default function StitchMagnifier({pattern,focus}:{pattern:Pattern;focus:StitchFocus}) {
+export default function StitchMagnifier({pattern,focus,rayon=5,className}:{pattern:Pattern;focus:StitchFocus;rayon?:number;className?:string}) {
+  const RADIUS=rayon;
   const ref=useRef<HTMLCanvasElement>(null);
   const resolved=clampFocus(pattern,focus);
   const info=stitchAt(pattern,resolved);
@@ -60,10 +60,10 @@ export default function StitchMagnifier({pattern,focus}:{pattern:Pattern;focus:S
       ctx.lineTo((seg.x2-startX)*CELL,(seg.y2-startY)*CELL);ctx.stroke();
     }
     ctx.strokeStyle="#f43f5e";ctx.lineWidth=2.5;ctx.strokeRect(RADIUS*CELL+1,RADIUS*CELL+1,CELL-2,CELL-2);
-  },[pattern,resolved.x,resolved.y]);
+  },[pattern,resolved.x,resolved.y,RADIUS]);
   const quarterCount=info.quarters.filter(i=>i>=0).length;
-  return <div aria-label="Loupe de détail des points" className="w-[252px] max-w-full rounded-[6px] border border-white/20 bg-[#09090b] p-2 text-white shadow-[0_15px_40px_#0007]">
-    <div className="mb-2 flex items-center justify-between text-[11px]"><strong>Loupe · × 21</strong><span className="font-mono text-white/65">X {info.x+1} · Y {info.y+1}</span></div>
+  return <div aria-label="Loupe de détail des points" className={className ?? "w-[252px] max-w-full rounded-[6px] border border-white/20 bg-[#09090b] p-2 text-white shadow-[0_15px_40px_#0007]"}>
+    <div className="mb-2 flex items-center justify-between text-[11px]"><strong>Loupe · {2*RADIUS+1} × {2*RADIUS+1} cases</strong><span className="font-mono text-white/65">X {info.x+1} · Y {info.y+1}</span></div>
     <canvas ref={ref} aria-label="Grille agrandie autour du point sélectionné" width={231} height={231}
       className="block aspect-square w-full rounded-[4px] bg-[#f7f2e8] [image-rendering:pixelated]"/>
     <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-white/80">
