@@ -193,7 +193,12 @@ export default function LeMondeAime() {
 
         {visibles.map((id, k) => <div key={id} style={{ display: 'contents' }}>{SECTION[id]('section' + (k % 2 ? ' blanche' : '') + (k === 0 ? ' premiere' : ''))}</div>)}
       </main>
-      <DockBas lieux={lieux} />
+      <DockBas lieux={lieux} modes={[{ id: 'jourj', nom: 'Jour J', halo: '#F5B754', progres: (i + 1) / diapos.length, rendu: () => <>
+        {diapos.map((x, k) => <button key={x.src} type="button" className="lieu" aria-current={k === i ? 'true' : 'false'} onClick={() => { setI(k); setLecture(false); window.scrollTo({ top: 0, behavior: confort.mouvement === 'reduit' ? 'auto' : 'smooth' }); }}
+          style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', gap: 0, lineHeight: 1.15 }}>
+          <span style={{ fontSize: 12, opacity: .75 }}>{String(k + 1).padStart(2, '0')} · {x.who}</span><span style={{ fontSize: 14 }}>{x.where}</span>
+        </button>)}
+      </> }]} />
       <Pied />
       {panneau && <Metamorphose m={meta} set={setMeta} univers={UNIVERS_M} fermer={() => setPanneau(false)} />}
     </>

@@ -1,8 +1,10 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
-import { Lien } from '../lib/router';
+import { Lien, profondeur, revenir, useChemin } from '../lib/router';
+import { lireBuro } from '../lib/buro';
+import { ajouter as ajouterPistes, basculer as basculerLecture, precedent, suivant, useLecteur } from '../lib/lecteur';
 import { useSession, seDeconnecter, type Personne } from '../lib/session';
-import { Recherche } from './Recherche';
-import { arcs, earcon, ecrirePrefs, estPerso, profilCourant, profils, useConfort, type Prefs, type Profil } from '../lib/confort';
+import { Recherche, GROUPES } from './Recherche';
+import { arcs, earcon, ecrirePrefs, profilCourant, profils, useConfort, type Prefs, type Profil } from '../lib/confort';
 
 export function Orbe({ taille = 30 }: { taille?: number }) {
   return <span className="orbe" aria-hidden="true" style={{ width: taille, height: taille }} />;
@@ -11,52 +13,104 @@ export function Marque() {
   return <span className="marque">AIME<sup aria-hidden="true">®</sup></span>;
 }
 
-/* Le dock du haut : AIME® (le menu), les verbes de la page, la loupe, et le rond du profil (votre espace). */
+/* Le dock du haut, en un seul bloc. À gauche : la flèche retour, l'orbe dans son carré, AIME®. Au centre : les verbes du site.
+   À droite : la loupe et le rond du profil. L'orbe, la loupe et le profil ouvrent le même bloc vers le bas :
+   le contenu au-dessus, un mini dock en bas (les orbes, les filtres de recherche, les accès de l'espace). */
+type ModeHaut = 'aime' | 'recherche' | 'espace' | null;
 export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string }) {
-  const [ouvert, setOuvert] = useState(false);
-  const [cherche, setCherche] = useState(false);
-  const loupe = useRef<HTMLButtonElement>(null);
+  const [mode, setMode] = useState<ModeHaut>(null);
+  const [reglages, setReglages] = useState(false);
+  const [groupe, setGroupe] = useState<string | null>(null);
+  const [annonce, setAnnonce] = useState('');
+  const [comptes, setComptes] = useState<Record<string, number> | null>(null);
   const session = useSession();
-  const bouton = useRef<HTMLButtonElement>(null);
-  const menu = useRef<HTMLUListElement>(null);
-  useEffect(() => { if (ouvert) menu.current?.querySelector('a')?.focus(); }, [ouvert]);
-  const fermer = () => { setOuvert(false); bouton.current?.focus(); };
-  /* le menu AIME® : la marque. Studio et Boutique sont dans le dock ; l'espace, derrière le rond du profil. */
-  const items: [string, string][] = [['/', 'Le Monde AIME'], ['/a-propos', 'À propos d’AIME']];
-  const actif = (h: string) => courant === h;
+  const prefs = useConfort();
+  const chemin = useChemin();
+  const iris = useId().replace(/:/g, '');
+  const boutons = useRef<Partial<Record<'aime' | 'recherche' | 'espace', HTMLButtonElement | null>>>({});
+  const bloc = useRef<HTMLDivElement>(null);
+  const cp = profilCourant(prefs);
+  const retour = chemin !== '/' || profondeur() > 0;
+  useEffect(() => { setMode(null); }, [chemin]);
+  useEffect(() => { if (mode && mode !== 'recherche') bloc.current?.querySelector<HTMLElement>('a, button')?.focus(); }, [mode]);
+  useEffect(() => { if (mode === 'espace' && session) lireBuro().then(r => {
+    const ps = r.ok ? r.projets || [] : [];
+    setComptes({ projets: ps.filter(p => p.role === 'owner' && !p.archive).length, partages: ps.filter(p => p.role !== 'owner' && !p.archive).length, archives: ps.filter(p => p.archive).length });
+  }); }, [mode, session]);
+  const ouvrir = (m: Exclude<ModeHaut, null>) => { setReglages(false); setMode(x => x === m ? null : m); };
+  const fermer = () => { const m = mode; setMode(null); setReglages(false); if (m) boutons.current[m]?.focus(); };
+  const choisir = (p: Profil) => { ecrirePrefs({ ...p.prefs }); setAnnonce(p.msg); if (p.prefs.sons === 'on') earcon('ok', true); };
+  const regler = <K extends keyof Prefs>(k: K, v: Prefs[K], msg: string) => { ecrirePrefs({ ...prefs, [k]: v }); setAnnonce(msg); earcon('ok', k === 'sons' && v === 'on'); };
+  const blanche = { ...profils()[0], couleurs: ['#FFFFFF'], halo: 'rgba(255,255,255,.4)' };
+  const DOSSIERS: [string, string, string][] = [['projets', 'Projets', '#C9B8FF'], ['partages', 'Partagés avec moi', '#D9E8FF'], ['archives', 'Archives', '#E4E4E1'], ['profil', 'Profil', '#FFD6EC']];
   return (
     <header className="tete">
-      <nav className="dock-haut" aria-label="Dock du haut">
-        <div className="rangee">
-          <button ref={bouton} className="outil" type="button" aria-expanded={ouvert} aria-controls="menu-aime" onClick={() => { setCherche(false); setOuvert(o => !o); }} style={{ paddingLeft: 8 }}>
-            <Orbe /><Marque />
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true" style={{ transform: ouvert ? 'rotate(180deg)' : 'none' }}><path d="M6 9l6 6 6-6" /></svg>
+      {mode && <div aria-hidden="true" className="tete-voile" onClick={fermer} />}
+      <nav className={'dock-haut' + (mode ? ' ouvert' : '')} aria-label="Dock du haut" onKeyDown={e => { if (e.key === 'Escape' && mode) { e.preventDefault(); fermer(); } }}>
+        <div className="dock-ligne">
+          {retour && <button type="button" className="outil carre" aria-label="Revenir là où vous étiez" title="Retour" onClick={revenir}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+          </button>}
+          <button ref={el => { boutons.current.aime = el; }} type="button" className="carre-orbe" aria-expanded={mode === 'aime'} aria-controls="bloc-dock"
+            aria-label={'Menu AIME et Mon confort, orbe ' + (cp ? cp.nom : 'personnalisée')} title="Menu et Mon confort" onClick={() => ouvrir('aime')}>
+            <OrbeDessin p={cp || blanche} taille={38} iris={iris} />
           </button>
-          {verbes ? <><span className="separateur" aria-hidden="true" />{verbes}</> : null}
+          <Lien href="/" className="outil" aria-label="AIME, accueil" aria-current={courant === '/' ? 'page' : undefined} style={{ padding: '0 10px' }}><Marque /></Lien>
+          <div className="rangee">{verbes ? <><span className="separateur" aria-hidden="true" />{verbes}</> : null}</div>
+          <span className="separateur" aria-hidden="true" />
+          <button ref={el => { boutons.current.recherche = el; }} type="button" className="outil loupe" aria-expanded={mode === 'recherche'} aria-controls="bloc-dock" aria-label={mode === 'recherche' ? 'Fermer la recherche' : 'Chercher dans tout AIME, et le plan du site'} title="Chercher" onClick={() => ouvrir('recherche')}>
+            {mode === 'recherche'
+              ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+              : <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-4.2-4.2" /></svg>}
+          </button>
+          <button ref={el => { boutons.current.espace = el; }} type="button" className="outil profil" aria-expanded={mode === 'espace'} aria-controls="bloc-dock" aria-current={courant === '/buro' || courant === '/entrer' ? 'page' : undefined}
+            aria-label={session ? 'Votre espace' + (session.name ? ', ' + session.name : '') : 'Votre espace : entrer dans AIME'} title="Votre espace" onClick={() => ouvrir('espace')}>
+            <Avatar p={session} />
+          </button>
         </div>
-        <span className="separateur" aria-hidden="true" />
-        <button ref={loupe} type="button" className="outil loupe" aria-expanded={cherche} aria-label={cherche ? 'Fermer la recherche' : 'Chercher dans tout AIME, et le plan du site'} title="Chercher" onClick={() => { setOuvert(false); setCherche(c => !c); }}>
-          {cherche
-            ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-            : <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-4.2-4.2" /></svg>}
-        </button>
-        <Lien className="outil profil" href={session ? '/buro' : '/entrer'} aria-current={courant === '/buro' || courant === '/entrer' ? 'page' : undefined}
-          aria-label={session ? 'Votre espace' + (session.name ? ', ' + session.name : '') : 'Entrer dans AIME'} title={session ? 'Votre espace' : 'Entrer'}>
-          <Avatar p={session} />
-        </Lien>
-        {cherche && <>
-          <div aria-hidden="true" onClick={() => setCherche(false)} style={{ position: 'fixed', inset: 0, zIndex: 1 }} />
-          <Recherche fermer={() => { setCherche(false); loupe.current?.focus(); }} />
-        </>}
-        {ouvert && <>
-          <div aria-hidden="true" onClick={() => setOuvert(false)} style={{ position: 'fixed', inset: 0, zIndex: 1 }} />
-          <ul id="menu-aime" ref={menu} className="menu-aime" onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); fermer(); } }}>
-            {items.map(([h, l]) => <li key={l}>
-              <Lien href={h} aria-current={actif(h) ? 'page' : undefined} onClick={() => setOuvert(false)} style={{ fontWeight: actif(h) ? 700 : 500 }}>{l}</Lien>
-            </li>)}
-            {session && <li style={{ borderTop: '1px solid #ECECE8', marginTop: 6, paddingTop: 6 }}><button type="button" onClick={() => { setOuvert(false); seDeconnecter(); }}>Déconnexion</button></li>}
-          </ul>
-        </>}
+        <p className="sr-only" aria-live="polite">{annonce}</p>
+        {mode && <div id="bloc-dock" ref={bloc} className="dock-bloc">
+          <div className="dock-bloc-corps">
+            {mode === 'aime' && (reglages
+              ? <MonConfort prefs={prefs} cp={cp} iris={iris} annonce={annonce} regler={regler} fermer={() => setReglages(false)} retablir={() => { ecrirePrefs(null); setAnnonce('Réglages de l’appareil rétablis.'); }} />
+              : <>
+                <ul className="bloc-menu">
+                  {([['/', 'Accueil'], ['/a-propos', 'À propos d’AIME']] as [string, string][]).map(([h, l]) => <li key={h}><Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setMode(null)}>{l}</Lien></li>)}
+                  {session && <li><button type="button" onClick={() => { setMode(null); seDeconnecter(); }}>Déconnexion</button></li>}
+                </ul>
+                <p className="bloc-note">Votre orbe : <b>{cp ? cp.nom : 'personnalisée'}</b>{cp ? ' · ' + cp.indice : ''}. Choisissez-en une autre en bas : tout le site s’adapte.</p>
+              </>)}
+            {mode === 'recherche' && <Recherche fermer={fermer} groupe={groupe} />}
+            {mode === 'espace' && (session
+              ? <>
+                <p className="bloc-note" style={{ marginTop: 0 }}>Bonjour{session.name ? ' ' + session.name.split(' ')[0] : ''}. Votre espace, sans quitter la page.</p>
+                <ul className="bloc-dossiers">
+                  {DOSSIERS.map(([id, nom, teinte]) => <li key={id}><Lien href={'/buro?lieu=' + id} onClick={() => setMode(null)}>
+                    <svg width="40" height="40" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2.2h8.5A1.5 1.5 0 0 1 21 9.7v8.8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z" fill={teinte} stroke="#0B0B0C" strokeWidth="1.2" strokeLinejoin="round" /></svg>
+                    <b>{nom}</b><span>{id === 'profil' ? 'Ma page du Réseau' : comptes ? comptes[id] + ' projet' + (comptes[id] > 1 ? 's' : '') : '…'}</span>
+                  </Lien></li>)}
+                </ul>
+              </>
+              : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+                <p className="bloc-note" style={{ margin: 0, maxWidth: '40ch' }}>Entrez dans AIME pour retrouver vos projets, vos ouvrages et votre profil sur tous vos appareils.</p>
+                <Lien className="bouton noir" href="/entrer" onClick={() => setMode(null)}>Entrer</Lien>
+              </div>)}
+          </div>
+          <div className="mini-dock" role="group" aria-label={mode === 'aime' ? 'Choisir mon orbe' : mode === 'recherche' ? 'Chercher dans' : 'Votre espace'}>
+            {mode === 'aime' && <>
+              {profils().map(p => { const on = cp?.id === p.id;
+                return <button key={p.id} type="button" className="orbe-choix" aria-pressed={on} aria-label={'Orbe ' + p.nom + ' : ' + p.indice} title={'Orbe ' + p.nom + ' : ' + p.indice} onClick={() => choisir(p)}><OrbeDessin p={p} taille={40} iris={iris} /></button>; })}
+              <span className="separateur sombre" aria-hidden="true" />
+              <button type="button" className="orbe-choix" aria-pressed={reglages} aria-label="Réglages fins de Mon confort" title="Réglages fins" style={{ color: '#fff' }} onClick={() => setReglages(r => !r)}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
+              </button>
+            </>}
+            {mode === 'recherche' && [null, ...GROUPES].map(g => <button key={g || 'tout'} type="button" className="lieu" aria-current={groupe === g ? 'true' : 'false'} onClick={() => setGroupe(g)}>{g || 'Tout'}</button>)}
+            {mode === 'espace' && (session
+              ? <><Lien className="lieu" href="/buro" onClick={() => setMode(null)}>Ouvrir mon espace</Lien><Lien className="lieu" href="/point-zero" onClick={() => setMode(null)}>Point Zéro</Lien><Lien className="lieu" href="/a-plus" onClick={() => setMode(null)}>A+</Lien><button type="button" className="lieu" onClick={() => { setMode(null); seDeconnecter(); }}>Déconnexion</button></>
+              : <><Lien className="lieu" href="/entrer" onClick={() => setMode(null)}>Entrer</Lien><Lien className="lieu" href="/a-plus" onClick={() => setMode(null)}>A+</Lien></>)}
+          </div>
+        </div>}
       </nav>
     </header>
   );
@@ -80,16 +134,19 @@ export function Verbe({ href, children, actif }: { href: string; children: React
   return <Lien className="outil" href={href} aria-current={actif ? 'page' : undefined}>{children}</Lien>;
 }
 
-/* Le dock du bas : l'orbe, puis les lieux de la page (le lieu visible en blanc). Il reste toujours en bas de l'écran.
-   L'orbe montre où l'on est (un arc par lieu) et ce qu'on a lu (l'anneau) ; un clic ouvre le choix d'orbes de Mon confort. */
-export function DockBas({ lieux = [], label = 'Sections de la page', children }: { lieux?: [string, string][]; label?: string; children?: ReactNode }) {
+/* Le dock du bas : toujours en bas de l'écran. Le cercle progresse avec la lecture et montre où l'on est (un arc par lieu).
+   Un clic sur le cercle ouvre les modes du dock, chacun avec son halo : Navigation (les lieux de la page), Musique (vos morceaux),
+   et ceux que la page apporte (Jour J sur l'accueil…). Le dock se transforme, sans rien ouvrir par-dessus la page. */
+export type ModeDock = { id: string; nom: string; halo: string; progres?: number; rendu: () => ReactNode };
+export function DockBas({ lieux = [], label = 'Sections de la page', children, modes = [] }: { lieux?: [string, string][]; label?: string; children?: ReactNode; modes?: ModeDock[] }) {
   const [courant, setCourant] = useState<string | null>(null);
   const [lu, setLu] = useState(0);
-  const [choix, setChoix] = useState(false);
-  const [reglages, setReglages] = useState(false);
-  const [annonce, setAnnonce] = useState('');
+  const [haut, setHaut] = useState(false);
+  const [menu, setMenu] = useState(false);
+  const [modeId, setModeId] = useState('nav');
   const prefs = useConfort();
-  const orbe = useRef<HTMLButtonElement>(null);
+  const musique = useLecteur();
+  const cercle = useRef<HTMLButtonElement>(null);
   const iris = useId().replace(/:/g, '');
   const avant = useRef<string | null>(null);
   useEffect(() => {
@@ -99,55 +156,73 @@ export function DockBas({ lieux = [], label = 'Sections de la page', children }:
       lieux.forEach(([id]) => { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top <= ligne) c = id; });
       const d = document.documentElement, max = Math.max(1, d.scrollHeight - window.innerHeight);
       setLu(Math.min(1, Math.max(0, window.scrollY / max)));
+      setHaut(window.scrollY > window.innerHeight * 0.8);
       if (c !== avant.current) { if (avant.current !== null && c) earcon('nav'); avant.current = c; }
       setCourant(c);
     }); };
     window.addEventListener('scroll', f, { passive: true }); window.addEventListener('resize', f); f();
     return () => { window.removeEventListener('scroll', f); window.removeEventListener('resize', f); cancelAnimationFrame(raf); };
   }, [lieux]);
-  const ouvert = useRef(false);
-  useEffect(() => { const o = choix || reglages; if (ouvert.current && !o) orbe.current?.focus(); ouvert.current = o; if (reglages) document.getElementById('confort-titre')?.focus(); }, [choix, reglages]);
-  const cp = profilCourant(prefs), perso = estPerso(prefs);
-  const teinte = cp ? cp.couleurs[0] : '#FFFFFF';
+  const tous: ModeDock[] = [
+    { id: 'nav', nom: 'Navigation', halo: '#FFFFFF', rendu: () => children || lieux.map(([id, l]) => <a key={id} className="lieu" href={'#' + id} aria-current={courant === id ? 'true' : 'false'}>{l}</a>) },
+    ...modes,
+    { id: 'musique', nom: 'Musique', halo: '#A46BFF', progres: musique.duree ? musique.temps / musique.duree : 0, rendu: () => <Musique /> },
+  ];
+  const m = tous.find(x => x.id === modeId) || tous[0];
+  const cp = profilCourant(prefs);
+  const teinte = m.id === 'nav' ? (cp ? cp.couleurs[0] : '#FFFFFF') : m.halo;
+  const progres = m.progres ?? lu;
   const circ = 2 * Math.PI * 11;
-  const segments = lieux.length
+  const segments = m.id === 'nav' && lieux.length
     ? lieux.map(([id], k) => { const on = id === courant; return { d: arc(k, lieux.length), w: on ? 4 : 2, o: on ? 1 : 0.32, c: on ? teinte : '#FFFFFF' }; })
-    : arcs(cp ? cp.n : 12, cp ? cp.couleurs : ['#FFFFFF'], 18, 10).map(a => ({ d: a.d, w: 2, o: 0.5, c: a.c }));
+    : arcs(12, [teinte], 18, 10).map(a => ({ d: a.d, w: 2, o: 0.55, c: a.c }));
   const nomLieu = lieux.find(([id]) => id === courant)?.[1];
-  const choisir = (p: Profil) => { ecrirePrefs({ ...p.prefs }); setAnnonce(p.msg); if (p.prefs.sons === 'on') earcon('ok', true); };
-  const regler = <K extends keyof Prefs>(k: K, v: Prefs[K], msg: string) => { ecrirePrefs({ ...prefs, [k]: v }); setAnnonce(msg); earcon('ok', k === 'sons' && v === 'on'); };
-  const echap = (e: React.KeyboardEvent) => { if (e.key === 'Escape') { e.preventDefault(); setChoix(false); setReglages(false); } };
+  const rang = useRef<HTMLDivElement>(null);
+  useEffect(() => { rang.current?.querySelector<HTMLElement>('[aria-current="true"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' }); });
+  const choisirMode = (id: string) => { setModeId(id); setMenu(false); earcon('ok'); requestAnimationFrame(() => cercle.current?.focus()); };
   return (
-    <nav className="dock-bas" aria-label={label} onKeyDown={echap}>
-      <div>
-        <button ref={orbe} type="button" className="orbe-dock" aria-pressed={choix} onClick={() => { setReglages(false); setChoix(c => !c); }}
-          title={choix ? 'Revenir à la navigation' : 'Choisir mon orbe'}
-          aria-label={choix ? 'Revenir à la navigation' : 'Choisir mon orbe' + (perso ? ', réglages personnalisés actifs' : '') + '. ' + (nomLieu ? 'Vous êtes dans la section ' + nomLieu + ', ' : '') + Math.round(lu * 100) + ' % de la page lue'}>
+    <nav className="dock-bas" aria-label={label} onKeyDown={e => { if (e.key === 'Escape' && menu) { e.preventDefault(); setMenu(false); cercle.current?.focus(); } }}>
+      <div ref={rang}>
+        <button ref={cercle} type="button" className="orbe-dock" aria-expanded={menu} onClick={() => setMenu(o => !o)}
+          title={menu ? 'Revenir au dock' : 'Changer le dock'}
+          aria-label={(menu ? 'Revenir au dock ' : 'Changer le dock, mode ') + m.nom + '. ' + (m.id === 'nav' ? (nomLieu ? 'Vous êtes dans la section ' + nomLieu + ', ' : '') + Math.round(lu * 100) + ' % de la page lue' : Math.round(progres * 100) + ' %')}>
           <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
             {segments.map((g, k) => <path key={k} d={g.d} fill="none" stroke={g.c} strokeWidth={g.w} strokeOpacity={g.o} strokeLinecap="round" />)}
-            <circle cx="22" cy="22" r="11" fill="none" stroke="#FFFFFF" strokeOpacity={perso ? 0.85 : 0.18} strokeWidth="2" strokeDasharray={perso ? '2 3' : undefined} />
-            <circle cx="22" cy="22" r="11" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeDasharray={(circ * lu).toFixed(1) + ' ' + circ.toFixed(1)} transform="rotate(-90 22 22)" />
+            <circle cx="22" cy="22" r="11" fill="none" stroke="#FFFFFF" strokeOpacity={0.18} strokeWidth="2" />
+            <circle cx="22" cy="22" r="11" fill="none" stroke={m.id === 'nav' ? '#FFFFFF' : m.halo} strokeWidth="2" strokeDasharray={(circ * progres).toFixed(1) + ' ' + circ.toFixed(1)} transform="rotate(-90 22 22)" />
             <circle cx="22" cy="22" r="5.5" fill={'url(#' + iris + ')'} />
             <defs><Iris id={iris} /></defs>
           </svg>
         </button>
-        {!choix && (children || lieux.map(([id, l]) => <a key={id} className="lieu" href={'#' + id} aria-current={courant === id ? 'true' : 'false'}>{l}</a>))}
-        {choix && <div role="group" aria-label="Choisir mon orbe" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          {profils().map(p => { const on = cp?.id === p.id;
-            return <button key={p.id} type="button" className="orbe-choix" aria-pressed={on} aria-label={'Orbe ' + p.nom + ' : ' + p.indice} title={'Orbe ' + p.nom + ' : ' + p.indice} onClick={() => choisir(p)}>
-              <OrbeDessin p={p} taille={40} iris={iris} />
-            </button>; })}
-          <span aria-hidden="true" style={{ flex: 'none', width: 1, height: 30, margin: '0 2px', background: '#3A3A38' }} />
-          <button type="button" className="orbe-choix" aria-label="Réglages fins de Mon confort" title="Réglages fins" style={{ border: '1px solid #3A3A38', color: '#fff' }} onClick={() => { setChoix(false); setReglages(true); }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
-          </button>
-        </div>}
+        {menu
+          ? <div role="group" aria-label="Les modes du dock" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {tous.map(x => <button key={x.id} type="button" className="halo-mode" aria-pressed={x.id === m.id} onClick={() => choisirMode(x.id)}>
+              <span aria-hidden="true" className="halo" style={{ boxShadow: '0 0 0 2px ' + x.halo + ', 0 0 14px 2px ' + x.halo }} />{x.nom}
+            </button>)}
+          </div>
+          : m.rendu()}
+        {haut && !menu && <button type="button" className="lieu remonter" aria-label="Remonter en haut de la page" title="Remonter" onClick={() => { window.scrollTo({ top: 0, behavior: prefs.mouvement === 'reduit' ? 'auto' : 'smooth' }); cercle.current?.focus(); }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg>
+        </button>}
       </div>
-      <p className="sr-only" aria-live="polite">{annonce}</p>
-      {reglages && <MonConfort prefs={prefs} cp={cp} iris={iris} annonce={annonce} regler={regler} fermer={() => setReglages(false)}
-        retablir={() => { ecrirePrefs(null); setAnnonce('Réglages de l’appareil rétablis.'); }} />}
     </nav>
   );
+}
+/* Le mode Musique : vos morceaux, choisis sur l'appareil (rien n'est envoyé), lus sans quitter la page */
+function Musique() {
+  const e = useLecteur();
+  const choix = useRef<HTMLInputElement>(null);
+  const p = e.pistes[e.i];
+  return <>
+    <input ref={choix} type="file" accept="audio/*" multiple className="sr-only" aria-label="Choisir des morceaux sur cet appareil" onChange={ev => { if (ev.target.files) ajouterPistes(ev.target.files); ev.target.value = ''; }} />
+    {p ? <>
+      <button type="button" className="lieu carre-sombre" aria-label="Morceau précédent" onClick={precedent}><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 6h2v12H7zM19 6v12L10 12z" /></svg></button>
+      <button type="button" className="lieu carre-sombre" aria-label={e.joue ? 'Pause' : 'Lecture'} onClick={basculerLecture}>{e.joue ? <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg> : <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5l11 7-11 7z" /></svg>}</button>
+      <button type="button" className="lieu carre-sombre" aria-label="Morceau suivant" onClick={suivant}><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15 6h2v12h-2zM5 6v12l9-6z" /></svg></button>
+      <span className="lieu" style={{ maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', lineHeight: '48px' }} aria-live="polite">{p.nom}<span style={{ opacity: .6 }}> · {e.i + 1}/{e.pistes.length}</span></span>
+      <button type="button" className="lieu" onClick={() => choix.current?.click()}>Ajouter</button>
+    </> : <button type="button" className="lieu" onClick={() => choix.current?.click()}>Choisir des morceaux sur cet appareil</button>}
+  </>;
 }
 function arc(i: number, n: number) {
   const gap = 14, span = 360 / n, a0 = -90 + i * span + gap / 2, a1 = a0 + span - gap, r = 18;

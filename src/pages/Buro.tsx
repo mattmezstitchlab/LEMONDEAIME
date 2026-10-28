@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Tete, DockBas, Pied, Orbe } from '../charte/Charte';
-import { Lien } from '../lib/router';
+import { Lien, useRecherche } from '../lib/router';
 import { useSession } from '../lib/session';
 import { lireBuro, ecrireBuro, type Projet } from '../lib/buro';
 import MonProfil from './MonProfil';
@@ -16,7 +16,9 @@ export default function Buro() {
   const session = useSession();
   const [projets, setProjets] = useState<Projet[] | null>(null);
   const [raison, setRaison] = useState('');
-  const [lieu, setLieu] = useState<Lieu>(() => new URLSearchParams(window.location.search).get('lieu') === 'profil' ? 'profil' : 'projets');
+  const [lieu, setLieu] = useState<Lieu>(() => { const l = new URLSearchParams(window.location.search).get('lieu'); return l === 'profil' || l === 'partages' || l === 'archives' ? l : 'projets'; });
+  const recherche = useRecherche();
+  useEffect(() => { const l = new URLSearchParams(recherche).get('lieu'); setLieu(l === 'profil' || l === 'partages' || l === 'archives' ? l : 'projets'); }, [recherche]);
   const [choisi, setChoisi] = useState<string | null>(null);
   const [msg, setMsg] = useState('');
   const [proposerCle, setProposerCle] = useState(false);
