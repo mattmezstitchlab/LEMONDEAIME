@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
-import { ArrowLeft, ChevronDown, Redo2, Search, Undo2 } from "lucide-react";
+import { ArrowLeft, Redo2, Search, Undo2, X } from "lucide-react";
+import { FLOSS } from "../lib/dmc";
+import { dansAime } from "../lib/aimeSync";
 import type { Tool } from "../lib/stitch";
 import type { ViewMode } from "./Canvas";
 import { LEVEL_LABELS, type InterfaceLevel } from "../lib/interfaceLevel";
@@ -48,6 +50,14 @@ interface Props {
   progression?: { total: number; done: number; couleurs: { idx: number; hex: string; code: string; cells: number; done: number }[] };
   onCouleur?: (idx: number) => void;
 }
+type Genre = "tout" | "outils" | "fils" | "fonctions";
+const GENRES: [Genre, string][] = [["tout", "Tout"], ["outils", "Outils"], ["fils", "Fils"], ["fonctions", "Fonctions"]];
+type Resultat = { id: string; genre: Exclude<Genre, "tout">; label: string; meta: string; hex?: string; faire: () => void };
+const sansAccents = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+/* les noms DMC sont en anglais : on cherche aussi en français */
+const COULEURS_FR: Record<string, string[]> = { rouge: ["red"], bleu: ["blue"], vert: ["green"], jaune: ["yellow"], rose: ["pink", "rose"], noir: ["black"], blanc: ["white"], gris: ["gray", "grey"], violet: ["violet", "purple"], mauve: ["mauve", "lavender"], orange: ["orange"], marron: ["brown"], brun: ["brown"], beige: ["beige", "tan"], or: ["gold"], dore: ["gold"], argent: ["silver"], turquoise: ["turquoise"], corail: ["coral"], creme: ["cream", "ecru"], ecru: ["ecru"], kaki: ["khaki"], saumon: ["salmon"], lilas: ["lavender", "lilac"], fonce: ["dark", "dk"], clair: ["light", "lt"], pale: ["pale", "vy lt"] };
+const correspond = (texte: string, q: string) => { const t = sansAccents(texte); return q.split(/\s+/).every(m => t.includes(m) || (COULEURS_FR[m] ?? []).some(e => t.includes(e))); };
+const initiales = (s: string) => s.trim().split(/[\s@.]+/).filter(Boolean).slice(0, 2).map(x => x[0]).join("").toUpperCase() || "·";
 type ModeBas = "reperes" | "fils" | "progression";
 const MODES: [ModeBas, string, string][] = [["reperes", "Repères", "#FFFFFF"], ["fils", "Fils", "#4FD69A"], ["progression", "Progression", "#F5B754"]];
 
@@ -68,24 +78,34 @@ function Tool_({ children, pressed, onClick, disabled, haspopup, count, soon }: 
 }
 
 export default function StudioDocks(p: Props) {
-  const [menu, setMenu] = useState(false);
+  const [bloc, setBloc] = useState<null | "menu" | "chercher" | "inviter">(null);
+  const [q, setQ] = useState("");
+  const [genre, setGenre] = useState<Genre>("tout");
+  const [moi, setMoi] = useState<{ name?: string; email?: string; image?: string } | null>(null);
+  const blocRef = useRef<HTMLDivElement>(null);
+  const aime = dansAime();
+  useEffect(() => { if (!aime) return; let vivant = true;
+    fetch("/api/auth/get-session", { credentials: "same-origin" }).then(r => r.ok ? r.json() : null).then(j => { if (vivant && j && j.user) setMoi({ name: j.user.name, email: j.user.email, image: j.user.image }); }).catch(() => {});
+    return () => { vivant = false; }; }, [aime]);
+  const ouvrir = (b: "menu" | "chercher" | "inviter") => setBloc(x => x === b ? null : b);
+  const fermer = () => setBloc(null);
+  const retourSite = () => { try { if (document.referrer && new URL(document.referrer).origin === window.location.origin && !new URL(document.referrer).pathname.startsWith("/studio")) { window.history.back(); return; } } catch { /* adresse illisible */ } window.location.href = "/"; };
+  useEffect(() => { if (bloc === "chercher") document.getElementById("pzs-cherche")?.focus(); else if (bloc) blocRef.current?.querySelector<HTMLElement>("a, button")?.focus(); }, [bloc]);
   const [modes, setModes] = useState(false);
   const [modeBas, setModeBas] = useState<ModeBas>(p.path === "fils" ? "fils" : "reperes");
   const cercleRef = useRef<HTMLButtonElement>(null);
   useEffect(() => { if (p.path === "fils") { setModeBas("fils"); setModes(false); } else setModeBas(m => m === "fils" ? "reperes" : m); }, [p.path]);
-  const menuRef = useRef<HTMLDivElement>(null);
   const upRef = useRef<HTMLButtonElement>(null);
   const wasPath = useRef<DockPath>(p.path);
   useEffect(() => {
     if (p.path && p.path !== wasPath.current) upRef.current?.focus();
     wasPath.current = p.path;
   }, [p.path]);
-  useEffect(() => { if (menu) menuRef.current?.querySelector<HTMLButtonElement>("button")?.focus(); }, [menu]);
 
   const up = () => p.onPath(p.path ? PARENT[p.path] ?? null : null);
   const onKey = (e: KeyboardEvent) => {
     if (e.key !== "Escape") return;
-    if (menu) { e.preventDefault(); setMenu(false); document.getElementById("pzs-brand")?.focus(); return; }
+    if (bloc) { e.preventDefault(); const b = bloc; setBloc(null); (b === "menu" ? document.getElementById("pzs-brand") : document.querySelector<HTMLElement>(b === "chercher" ? ".pzs-loupe" : ".pzs-profil"))?.focus(); return; }
     if (p.path) { e.preventDefault(); up(); }
   };
   const level = (list: [Tool, string][]) => p.level === "beginner" ? list.filter(([id]) => BEGINNER.has(id) || id === p.tool) : list;
@@ -133,6 +153,16 @@ export default function StudioDocks(p: Props) {
     <Tool_ haspopup count={6} onClick={() => p.onPath("partager")}>Partager</Tool_>
   </>;
 
+  const ql = sansAccents(q.trim());
+  const resultats: Resultat[] = [
+    ...[...DRAW, ...DRAW_MORE, ...STITCH].filter((x, i, l) => l.findIndex(y => y[0] === x[0]) === i).map(([id, name]): Resultat => ({ id: "o-" + id, genre: "outils", label: name, meta: "Outil" + (STITCH.some(x => x[0] === id) && !DRAW.some(x => x[0] === id) ? " · Broder" : " · Dessiner"), faire: () => { const broder = STITCH.some(x => x[0] === id) && !DRAW.some(x => x[0] === id) && !DRAW_MORE.some(x => x[0] === id);
+      p.onWorkspace(broder ? "stitch" : "create"); p.onPath(broder ? "broder" : DRAW_MORE.some(x => x[0] === id) ? "dessiner-plus" : "dessiner"); p.onTool(id); } })),
+    ...(p.progression?.couleurs ?? []).map((c): Resultat => ({ id: "f-" + c.idx, genre: "fils", label: "DMC " + c.code, meta: (FLOSS[c.idx]?.name ?? "") + " · dans le motif" + (c.cells ? " · " + Math.round(c.done / c.cells * 100) + " % brodé" : ""), hex: c.hex, faire: () => p.onCouleur?.(c.idx) })),
+    ...(ql ? FLOSS.map((f, idx): Resultat => ({ id: "d-" + idx, genre: "fils", label: "DMC " + f.code, meta: f.name + " · nuancier", hex: f.hex, faire: () => p.onCouleur?.(idx) })).filter(r => !(p.progression?.couleurs ?? []).some(c => "f-" + c.idx === r.id.replace("d-", "f-"))) : []),
+    ...([["motifs", "Motifs", p.actions.motifs], ["calques", "Calques", p.actions.layers], ["reglages-dessin", "Réglages du dessin", p.actions.drawSettings], ["palette", "Palette DMC", p.actions.palette], ["fils-toile", "Fils et toile", p.actions.threadsSettings], ["suivi", "Suivi de broderie", p.actions.follow], ["inviter", "Inviter à regarder", p.actions.share], ["exporter", "Exporter", p.actions.exportPanel], ["enregistrer", "Enregistrer", p.actions.save], ["tout-voir", "Tout voir", p.zoom.fit], ["symboles", "Symboles", p.onSymbols], ["reglages", "Réglages et aide", p.actions.settings]] as [string, string, () => void][])
+      .map(([id, label, f]): Resultat => ({ id: "x-" + id, genre: "fonctions", label, meta: "Fonction de la grille", faire: f })),
+  ];
+  const trouves = resultats.filter(r => (genre === "tout" || r.genre === genre) && (!ql || correspond(r.label + " " + r.meta, ql))).slice(0, ql ? 40 : 24);
   const total = p.progression?.total ?? 0, prog = total ? (p.progression!.done / total) : 0;
   const teinte = MODES.find(m => m[0] === modeBas)?.[2] ?? "#FFFFFF";
   const toolName = [...DRAW, ...DRAW_MORE, ...STITCH].find(([id]) => id === p.tool)?.[1];
@@ -142,43 +172,82 @@ export default function StudioDocks(p: Props) {
 
   return <>
     <header className="pzs-head" aria-label="En-tête du studio">
-      <nav className="pzs-top" aria-label="Dock des outils du studio de broderie" onKeyDown={onKey}>
-        <div className="pzs-brandwrap">
-          <button id="pzs-brand" type="button" className="pzs-tool pzs-brand" aria-label="Menu Point Zéro" aria-expanded={menu} aria-controls="pzs-menu" onClick={() => setMenu(v => !v)}>
-            <span className="pzs-x" aria-hidden="true">×</span><span className="pzs-brandtxt"> Point Zéro</span> <ChevronDown size={13} aria-hidden="true" style={{ transform: menu ? "rotate(180deg)" : undefined }} />
+      {bloc && <div className="pzs-voile" aria-hidden="true" onClick={fermer} />}
+      <nav className={"pzs-top" + (bloc ? " pzs-ouvert" : "")} aria-label="Dock des outils du studio de broderie" onKeyDown={onKey}>
+        <div className="pzs-ligne">
+          {aime && <button type="button" className="pzs-tool pzs-icon" aria-label="Revenir sur Le Monde AIME" title="Retour" onClick={retourSite}><ArrowLeft size={18} aria-hidden="true" /></button>}
+          <button id="pzs-brand" type="button" className="pzs-orbe" aria-label="Menu AIME et Point Zéro" aria-expanded={bloc === "menu"} aria-controls="pzs-bloc" onClick={() => ouvrir("menu")}>
+            <span className="pzs-orb" aria-hidden="true" />
           </button>
-          {menu && <>
-            <div className="pzs-veil" aria-hidden="true" onClick={() => setMenu(false)} />
-            <div id="pzs-menu" ref={menuRef} className="pzs-menu">
-              <ul>
-                <li><button type="button" onClick={() => { setMenu(false); p.actions.buro(); }}>BurO</button></li>
-                <li><button type="button" onClick={() => { setMenu(false); p.actions.home(); }}>Accueil Point Zéro</button></li>
-                <li><button type="button" onClick={() => { setMenu(false); p.actions.shop(); }}>Boutique de patrons</button></li>
-                <li><button type="button" onClick={() => { setMenu(false); p.actions.settings(); }}>Réglages et aide</button></li>
+          {aime ? <a className="pzs-tool pzs-marque" href="/" aria-label="AIME, Le Monde AIME">AIME<sup aria-hidden="true">®</sup></a> : <span className="pzs-tool pzs-marque">Point Zéro</span>}
+          <span className="pzs-sep" aria-hidden="true" />
+          <div className="pzs-row">
+            {p.path && <>
+              <button ref={upRef} type="button" className="pzs-tool pzs-up" aria-label="Remonter d’un niveau" onClick={up}><ArrowLeft size={18} aria-hidden="true" /></button>
+              <span className="pzs-parent">{LABELS[p.path]}</span>
+              <span className="pzs-sep" aria-hidden="true" />
+            </>}
+            {items}
+          </div>
+          <span className="pzs-sep" aria-hidden="true" />
+          <button type="button" className="pzs-tool pzs-icon" aria-label="Annuler" title="Annuler" disabled={!p.canUndo} onClick={p.onUndo}><Undo2 size={17} aria-hidden="true" /></button>
+          <button type="button" className="pzs-tool pzs-icon pzs-redo" aria-label="Rétablir" title="Rétablir" disabled={!p.canRedo} onClick={p.onRedo}><Redo2 size={17} aria-hidden="true" /></button>
+          <span className="pzs-sep" aria-hidden="true" />
+          <button type="button" className="pzs-tool pzs-icon pzs-loupe" aria-label={bloc === "chercher" ? "Fermer la recherche" : "Chercher un fil, un outil ou une fonction de la grille"} title="Chercher dans la grille" aria-expanded={bloc === "chercher"} aria-controls="pzs-bloc" onClick={() => ouvrir("chercher")}>
+            {bloc === "chercher" ? <X size={17} aria-hidden="true" /> : <Search size={18} aria-hidden="true" />}
+          </button>
+          <button type="button" className="pzs-tool pzs-icon pzs-profil" aria-label={"Inviter quelqu’un à rejoindre la grille" + (moi?.name ? ", " + moi.name : "")} title="Inviter à rejoindre la grille" aria-expanded={bloc === "inviter"} aria-controls="pzs-bloc" onClick={() => ouvrir("inviter")}>
+            {moi?.image ? <img className="pzs-avatar" src={moi.image} alt="" /> : <span className="pzs-avatar" aria-hidden="true">{moi ? initiales(moi.name || moi.email || "") : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="9" r="3.6" /><path d="M5 19.5c1.4-3.2 4-4.7 7-4.7s5.6 1.5 7 4.7" /></svg>}</span>}
+            <span className="pzs-plus" aria-hidden="true">+</span>
+          </button>
+        </div>
+        {bloc && <div id="pzs-bloc" className="pzs-bloc" ref={blocRef}>
+          {bloc === "menu" && <>
+            <div id="pzs-menu" className="pzs-bloc-corps">
+              <ul className="pzs-bloc-menu">
+                {aime && <li><a href="/">Le Monde AIME</a></li>}
+                <li><button type="button" onClick={() => { setBloc(null); p.actions.buro(); }}>BurO</button></li>
+                <li><button type="button" onClick={() => { setBloc(null); p.actions.home(); }}>Accueil Point Zéro</button></li>
+                <li><button type="button" onClick={() => { setBloc(null); p.actions.shop(); }}>Boutique de patrons</button></li>
+                <li><button type="button" onClick={() => { setBloc(null); p.actions.settings(); }}>Réglages et aide</button></li>
               </ul>
-              <div className="pzs-levels" role="group" aria-label="Affichage du studio">
-                <span>Affichage</span>
-                {(Object.keys(LEVEL_LABELS) as InterfaceLevel[]).map(id =>
-                  <button key={id} type="button" aria-pressed={p.level === id} onClick={() => p.onLevel(id)}>{LEVEL_LABELS[id]}</button>)}
-              </div>
+            </div>
+            <div className="pzs-mini pzs-levels" role="group" aria-label="Affichage du studio">
+              <span>Affichage</span>
+              {(Object.keys(LEVEL_LABELS) as InterfaceLevel[]).map(id =>
+                <button key={id} type="button" aria-pressed={p.level === id} onClick={() => p.onLevel(id)}>{LEVEL_LABELS[id]}</button>)}
             </div>
           </>}
-        </div>
-        <span className="pzs-sep" aria-hidden="true" />
-        <div className="pzs-row">
-          {p.path && <>
-            <button ref={upRef} type="button" className="pzs-tool pzs-up" aria-label="Remonter d’un niveau" onClick={up}><ArrowLeft size={18} aria-hidden="true" /></button>
-            <span className="pzs-parent">{LABELS[p.path]}</span>
-            <span className="pzs-sep" aria-hidden="true" />
+          {bloc === "chercher" && <>
+            <div className="pzs-bloc-corps">
+              <label htmlFor="pzs-cherche" className="sr-only">Chercher un fil, un outil ou une fonction</label>
+              <input id="pzs-cherche" className="pzs-champ" type="search" autoComplete="off" placeholder="Chercher : 310, rouge, croix, calques, exporter…" value={q} onChange={e => setQ(e.target.value)} />
+              <p className="pzs-note" role="status">{q.trim() ? trouves.length + " résultat" + (trouves.length > 1 ? "s" : "") : "Les fils du motif, les outils et les fonctions de la grille"}</p>
+              <ul className="pzs-resultats">
+                {trouves.map(r => <li key={r.id}><button type="button" onClick={() => { r.faire(); setBloc(null); }}>
+                  {r.hex ? <span className="pzs-swatch" style={{ background: r.hex }} aria-hidden="true" /> : null}<b>{r.label}</b><span>{r.meta}</span>
+                </button></li>)}
+              </ul>
+            </div>
+            <div className="pzs-mini" role="group" aria-label="Chercher dans">
+              {GENRES.map(([g, l]) => <button key={g} type="button" aria-pressed={genre === g} onClick={() => setGenre(g)}>{l}</button>)}
+            </div>
           </>}
-          {items}
-        </div>
-        <span className="pzs-sep" aria-hidden="true" />
-        <button type="button" className="pzs-tool pzs-icon" aria-label="Annuler" title="Annuler" disabled={!p.canUndo} onClick={p.onUndo}><Undo2 size={17} aria-hidden="true" /></button>
-        <button type="button" className="pzs-tool pzs-icon pzs-redo" aria-label="Rétablir" title="Rétablir" disabled={!p.canRedo} onClick={p.onRedo}><Redo2 size={17} aria-hidden="true" /></button>
+          {bloc === "inviter" && <>
+            <div className="pzs-bloc-corps">
+              <p className="pzs-titre">Inviter à rejoindre la grille</p>
+              <p className="pzs-note">Quelqu’un regarde l’ouvrage en direct, depuis son appareil, pendant que vous brodez. {moi ? "Vous êtes entré" + (moi.name ? " : " + moi.name : "") + "." : aime ? "Entrez dans AIME pour retrouver vos ouvrages partout." : ""}</p>
+            </div>
+            <div className="pzs-mini" role="group" aria-label="Inviter et votre espace">
+              <button type="button" aria-pressed="true" onClick={() => { setBloc(null); p.actions.share(); }}>Inviter à regarder</button>
+              {aime && <a href={moi ? "/buro" : "/entrer"}>{moi ? "Votre espace AIME" : "Entrer"}</a>}
+              <button type="button" onClick={() => { setBloc(null); p.actions.buro(); }}>BurO</button>
+            </div>
+          </>}
+        </div>}
       </nav>
       <span className="sr-only" role="status">{p.patternName} · {p.saving}</span>
-      <p className="pzs-crumbs">{crumbs.map((c, i) => <span key={i}>{i > 0 && <span aria-hidden="true"> › </span>}{i === crumbs.length - 1 ? <strong>{c}</strong> : c}</span>)}</p>
+      {!bloc && <p className="pzs-crumbs">{crumbs.map((c, i) => <span key={i}>{i > 0 && <span aria-hidden="true"> › </span>}{i === crumbs.length - 1 ? <strong>{c}</strong> : c}</span>)}</p>}
     </header>
 
     <nav className="pzs-bottom" aria-label="Se repérer dans le studio" onKeyDown={e => { if (e.key === "Escape" && modes) { e.preventDefault(); setModes(false); cercleRef.current?.focus(); } }}>
