@@ -55,7 +55,7 @@ Cascades de la base déjà en place : cartes, activités, sessions, comptes lié
 
 | Fichier | Environnement | Avant (code de `main`) | Après |
 |---|---|---|---|
-| `tests/base/securite.mjs` | **vraie base**, branche Neon de test, vrai Better Auth et vrai flux de suppression ; Claude et le stockage de fichiers simulés | 6/17 | **17/17** |
+| `tests/base/securite.mjs` | **vraie base**, branche Neon de test, vrai Better Auth et vrai flux de suppression ; Claude et le stockage de fichiers simulés | 6/16 | **16/16** |
 | `studio/src/__tests__/cloisonnement.test.ts` | vitest | 0/7 | **7/7** |
 | `studio/src/__tests__/cloisonnementBibliotheque.test.ts` | vitest, IndexedDB en mémoire | 0/3 | **3/3** |
 | `tests/server/securite.test.mjs` | node, sans base | échec (modules absents) | **6/6** |
