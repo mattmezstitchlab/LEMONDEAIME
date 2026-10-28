@@ -90,6 +90,14 @@ img, video { display: block; max-width: 100%; }
 .orbe-choix { flex: none; width: 50px; height: 50px; padding: 0; border-radius: 12px; border: 1px solid transparent; background: transparent; display: flex; align-items: center; justify-content: center; }
 .orbe-choix:hover { background: #2A2A28; }
 .orbe-choix[aria-pressed="true"] { border: 2px solid #fff; background: #2A2A28; }
+.reglage { flex: none; display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--dock-trait); background: transparent; color: #fff; cursor: pointer; }
+.reglage:hover { background: #2A2A28; }
+.reglage[aria-pressed="true"] { background: #2A2A28; border-color: #fff; }
+.reglage:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.picto-aa { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+.reglage-val { font-size: 13px; font-weight: 600; opacity: .85; }
+.coche { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid rgba(255,255,255,.7); display: inline-flex; align-items: center; justify-content: center; }
+.coche.on { background: #fff; border-color: #fff; color: #0B0B0C; }
 .confort { color: var(--encre); }
 .opt { display: flex; align-items: center; justify-content: center; min-width: 64px; height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #CFCFCB; background: #fff; color: var(--encre); font-size: 15px; font-weight: 500; }
 .opt[aria-pressed="true"] { border: 2px solid var(--encre); background: var(--encre); color: #fff; font-weight: 700; }

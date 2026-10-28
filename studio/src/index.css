@@ -2381,3 +2381,7 @@ html[data-pz-motion="reduce"] .pz-guided-lens { transition: none; }
 .pzs-depot.survol { background: #F1EEFF; border-color: #0B0B0C; }
 .pzs-depot-voile { position: fixed; inset: 0; z-index: 90; display: flex; align-items: center; justify-content: center; background: rgba(11,11,12,.28); pointer-events: none; }
 .pzs-depot-voile span { padding: 16px 22px; border-radius: 16px; background: #0B0B0C; color: #fff; font-size: 17px; font-weight: 600; outline: 2px dashed #fff; outline-offset: -8px; }
+
+/* outils en pictos : carrés, l'infobulle et le nom lu par les lecteurs d'écran restent */
+.pzs-tool.pzs-picto { width: 46px; padding: 0; justify-content: center; }
+@media (max-width: 720px) { .pzs-tool.pzs-picto { width: 44px; } }

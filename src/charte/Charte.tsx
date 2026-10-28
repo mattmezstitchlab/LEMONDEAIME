@@ -72,15 +72,15 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
         <p className="sr-only" aria-live="polite">{annonce}</p>
         {mode && <div id="bloc-dock" ref={bloc} className="dock-bloc">
           <div className="dock-bloc-corps">
-            {mode === 'aime' && (reglages
-              ? <MonConfort prefs={prefs} cp={cp} iris={iris} annonce={annonce} regler={regler} fermer={() => setReglages(false)} retablir={() => { ecrirePrefs(null); setAnnonce('Réglages de l’appareil rétablis.'); }} />
-              : <>
-                <ul className="bloc-menu">
-                  {([['/', 'Accueil'], ['/a-propos', 'À propos d’AIME']] as [string, string][]).map(([h, l]) => <li key={h}><Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setMode(null)}>{l}</Lien></li>)}
-                  {session && <li><button type="button" onClick={() => { setMode(null); seDeconnecter(); }}>Déconnexion</button></li>}
-                </ul>
-                <p className="bloc-note">Votre orbe : <b>{cp ? cp.nom : 'personnalisée'}</b>{cp ? ' · ' + cp.indice : ''}. Choisissez-en une autre en bas : tout le site s’adapte.</p>
-              </>)}
+            {mode === 'aime' && <>
+              <ul className="bloc-menu">
+                {([['/', 'Accueil'], ['/a-propos', 'À propos d’AIME']] as [string, string][]).map(([h, l]) => <li key={h}><Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setMode(null)}>{l}</Lien></li>)}
+                {session && <li><button type="button" onClick={() => { setMode(null); seDeconnecter(); }}>Déconnexion</button></li>}
+              </ul>
+              <p className="bloc-note">{reglages
+                ? <>Mon confort, en bas : touchez un picto pour l’activer. Réglé une fois, appliqué partout, gardé sur cet appareil. <b>{annonce}</b></>
+                : <>Votre orbe : <b>{cp ? cp.nom : 'personnalisée'}</b>{cp ? ' · ' + cp.indice : ''}. Choisissez-en une autre en bas, ou réglez chaque détail avec <b>Mon confort</b>.</>}</p>
+            </>}
             {mode === 'recherche' && <Recherche fermer={fermer} groupe={groupe} />}
             {mode === 'espace' && (session
               ? <>
@@ -97,15 +97,17 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
                 <EntrerBloc compact retour={/^\/[a-z0-9-]{1,40}$/.test(chemin) || chemin === '/' ? chemin : '/buro'} />
               </>)}
           </div>
-          <div className="mini-dock" role="group" aria-label={mode === 'aime' ? 'Choisir mon orbe' : mode === 'recherche' ? 'Chercher dans' : 'Votre espace'}>
-            {mode === 'aime' && <>
-              {profils().map(p => { const on = cp?.id === p.id;
-                return <button key={p.id} type="button" className="orbe-choix" aria-pressed={on} aria-label={'Orbe ' + p.nom + ' : ' + p.indice} title={'Orbe ' + p.nom + ' : ' + p.indice} onClick={() => choisir(p)}><OrbeDessin p={p} taille={40} iris={iris} /></button>; })}
-              <span className="separateur sombre" aria-hidden="true" />
-              <button type="button" className="orbe-choix" aria-pressed={reglages} aria-label="Réglages fins de Mon confort" title="Réglages fins" style={{ color: '#fff' }} onClick={() => setReglages(r => !r)}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
-              </button>
-            </>}
+          <div className="mini-dock" role="group" aria-label={mode === 'aime' ? (reglages ? 'Mon confort' : 'Choisir mon orbe') : mode === 'recherche' ? 'Chercher dans' : 'Votre espace'}>
+            {mode === 'aime' && (reglages
+              ? <ReglagesLigne prefs={prefs} regler={regler} retour={() => setReglages(false)} retablir={() => { ecrirePrefs(null); setAnnonce('Réglages de l’appareil rétablis.'); }} />
+              : <>
+                {profils().map(p => { const on = cp?.id === p.id;
+                  return <button key={p.id} type="button" className="orbe-choix" aria-pressed={on} aria-label={'Orbe ' + p.nom + ' : ' + p.indice} title={'Orbe ' + p.nom + ' : ' + p.indice} onClick={() => choisir(p)}><OrbeDessin p={p} taille={40} iris={iris} /></button>; })}
+                <span className="separateur sombre" aria-hidden="true" />
+                <button type="button" className="orbe-choix" aria-label="Mon confort : régler chaque détail" title="Mon confort" style={{ color: '#fff' }} onClick={() => setReglages(true)}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
+                </button>
+              </>)}
             {mode === 'recherche' && [null, ...GROUPES].map(g => <button key={g || 'tout'} type="button" className="lieu" aria-current={groupe === g ? 'true' : 'false'} onClick={() => setGroupe(g)}>{g || 'Tout'}</button>)}
             {mode === 'espace' && (session
               ? <><Lien className="lieu" href="/buro" onClick={() => setMode(null)}>Ouvrir mon espace</Lien><Lien className="lieu" href="/point-zero" onClick={() => setMode(null)}>Point Zéro</Lien><Lien className="lieu" href="/a-plus" onClick={() => setMode(null)}>A+</Lien><button type="button" className="lieu" onClick={() => { setMode(null); seDeconnecter(); }}>Déconnexion</button></>
@@ -249,37 +251,34 @@ const REGLAGES: { k: keyof Prefs; label: string; indice: string; opts: [Prefs[ke
   { k: 'mouvement', label: 'Mouvement', indice: 'Coupe le diaporama et les animations', opts: [['normal', 'Normal'], ['reduit', 'Réduit']], msg: l => 'Mouvement ' + l.toLowerCase() + '.' },
   { k: 'sons', label: 'Sons et vibrations', indice: 'Un retour de l’orbe en changeant de section', opts: [['off', 'Coupés'], ['on', 'Activés']], msg: l => 'Sons et vibrations ' + l.toLowerCase() + '.' },
 ];
-function MonConfort({ prefs, cp, iris, annonce, regler, fermer, retablir }: { prefs: Prefs; cp: Profil | null; iris: string; annonce: string; regler: <K extends keyof Prefs>(k: K, v: Prefs[K], msg: string) => void; fermer: () => void; retablir: () => void }) {
-  return (
-    <section id="mon-confort" className="confort" role="dialog" aria-modal="false" aria-labelledby="confort-titre">
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 18 }}>
-        <span aria-hidden="true" style={{ flex: 'none', width: 64, height: 64, borderRadius: 14, background: '#0B0B0C', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {cp ? <OrbeDessin p={cp} taille={54} iris={iris} /> : <OrbeDessin p={{ ...profils()[0], couleurs: ['#FFFFFF'], halo: 'rgba(255,255,255,.4)' }} taille={54} iris={iris} />}
-        </span>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <h2 id="confort-titre" tabIndex={-1} style={{ margin: 0, fontSize: 26, fontWeight: 600, letterSpacing: '-0.03em', outline: 'none' }}>Mon confort</h2>
-          <p style={{ margin: '4px 0 0', fontSize: 15, lineHeight: 1.45, color: '#3A3A3F' }}>Orbe {cp ? cp.nom : 'personnalisée'}. Réglé une fois, appliqué sur chaque page. Ces réglages restent sur cet appareil et ne sont visibles par personne d’autre.</p>
-        </div>
-        <button type="button" className="opt" aria-label="Fermer Mon confort" onClick={fermer} style={{ flex: 'none', width: 44, minWidth: 44, padding: 0, justifyContent: 'center' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-        </button>
-      </div>
-      {REGLAGES.map(s => <div key={s.k} role="group" aria-labelledby={'reglage-' + s.k} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px 16px', flexWrap: 'wrap', padding: '14px 0', borderTop: '1px solid #E6E6E2' }}>
-        <div style={{ minWidth: 0 }}><span id={'reglage-' + s.k} style={{ display: 'block', fontSize: 16, fontWeight: 700 }}>{s.label}</span><span style={{ fontSize: 13, color: '#55555A' }}>{s.indice}</span></div>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-          {s.opts.map(([v, l]) => <button key={l} type="button" className="opt" aria-pressed={prefs[s.k] === v} onClick={() => regler(s.k, v as never, s.msg(l))}>{l}</button>)}
-        </div>
-      </div>)}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: '14px 0', borderTop: '1px solid #E6E6E2' }}>
-        <span style={{ width: '100%', fontSize: 13, color: '#55555A' }}>Bientôt</span>
-        {['Lecture facile', 'Langue des signes', 'Langue'].map(x => <span key={x} style={{ padding: '8px 12px', borderRadius: 999, border: '1px dashed #A8A8A3', fontSize: 14 }}>{x}</span>)}
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', paddingTop: 14, borderTop: '1px solid #E6E6E2' }}>
-        <p style={{ margin: 0, fontSize: 14, color: '#3A3A3F' }}>{annonce}</p>
-        <button type="button" className="opt" style={{ fontWeight: 600, border: '1px solid #0B0B0C' }} onClick={retablir}>Revenir aux réglages de l’appareil</button>
-      </div>
-    </section>
-  );
+/* Mon confort, sur une ligne du dock : un picto par réglage, une case cochée quand il est actif.
+   La taille du texte passe de 100 à 115 puis 130 %. Chaque réglage s'annonce aux lecteurs d'écran. */
+const Coche = ({ on }: { on: boolean }) => <span className={'coche' + (on ? ' on' : '')} aria-hidden="true">{on && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>}</span>;
+const PICTOS: Record<keyof Prefs, ReactNode> = {
+  taille: <span className="picto-aa" aria-hidden="true">Aa</span>,
+  espace: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h10" /><path d="M21 9v6M19.5 10.5 21 9l1.5 1.5M19.5 13.5 21 15l1.5-1.5" strokeWidth="1.4" /></svg>,
+  contraste: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" /></svg>,
+  mouvement: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" aria-hidden="true"><path d="M3 12c2.5-4 5-4 7.5 0s5 4 7.5 0" /><path d="M20 6v12" strokeWidth="2.4" /></svg>,
+  sons: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" /></svg>,
+};
+function ReglagesLigne({ prefs, regler, retour, retablir }: { prefs: Prefs; regler: <K extends keyof Prefs>(k: K, v: Prefs[K], msg: string) => void; retour: () => void; retablir: () => void }) {
+  return <>
+    <button type="button" className="orbe-choix" aria-label="Revenir aux orbes" title="Revenir aux orbes" style={{ color: '#fff' }} onClick={retour}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+    </button>
+    <span className="separateur sombre" aria-hidden="true" />
+    {REGLAGES.map(s => {
+      const i = s.opts.findIndex(o => o[0] === prefs[s.k]), on = i > 0, [v, l] = s.opts[(i + 1) % s.opts.length];
+      const etat = s.opts[Math.max(0, i)][1];
+      return <button key={s.k} type="button" className="reglage" aria-pressed={s.k === 'taille' ? undefined : on}
+        aria-label={s.label + ' : ' + etat.toLowerCase() + (s.k === 'taille' ? ', passer à ' + l : '') + '. ' + s.indice} title={s.label + ' · ' + etat}
+        onClick={() => regler(s.k, v as never, s.msg(l))}>
+        {PICTOS[s.k]}{s.k === 'taille' ? <span className="reglage-val" aria-hidden="true">{etat}</span> : <Coche on={on} />}
+      </button>;
+    })}
+    <span className="separateur sombre" aria-hidden="true" />
+    <button type="button" className="lieu" onClick={retablir}>Comme mon appareil</button>
+  </>;
 }
 
 export function Pied() {

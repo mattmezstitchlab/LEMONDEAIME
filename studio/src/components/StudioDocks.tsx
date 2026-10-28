@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import OuvragesBloc from "./OuvragesBloc";
+import { ToolIcon } from "./ToolIcons";
 import { ArrowLeft, Redo2, Search, Undo2, X } from "lucide-react";
 import { FLOSS } from "../lib/dmc";
 import { dansAime } from "../lib/aimeSync";
@@ -72,8 +73,8 @@ const VIEWS: [ViewMode, string][] = [["real", "Réaliste"], ["flat", "À plat"],
 const LABELS: Record<Exclude<DockPath, null>, string> = { dessiner: "Dessiner", "dessiner-plus": "Plus d’outils", fils: "Fils", broder: "Broder", partager: "Partager", visibilite: "Visibilité" };
 const PARENT: Partial<Record<Exclude<DockPath, null>, DockPath>> = { "dessiner-plus": "dessiner", visibilite: "partager" };
 
-function Tool_({ children, pressed, onClick, disabled, haspopup, count, soon }: { children: ReactNode; pressed?: boolean; onClick?: () => void; disabled?: boolean; haspopup?: boolean; count?: number; soon?: boolean }) {
-  return <button type="button" className="pzs-tool" aria-pressed={pressed === undefined ? undefined : pressed} aria-haspopup={haspopup ? "true" : undefined}
+function Tool_({ children, pressed, onClick, disabled, haspopup, count, soon, label }: { children: ReactNode; pressed?: boolean; onClick?: () => void; disabled?: boolean; haspopup?: boolean; count?: number; soon?: boolean; label?: string }) {
+  return <button type="button" className={"pzs-tool" + (label ? " pzs-icon pzs-picto" : "")} aria-label={label} title={label} aria-pressed={pressed === undefined ? undefined : pressed} aria-haspopup={haspopup ? "true" : undefined}
     disabled={disabled} onClick={onClick} data-on={pressed ? "1" : undefined}>
     {children}{count !== undefined && <span className="pzs-count" aria-hidden="true">{count}</span>}
     {soon && <span className="buro-soon">Bientôt</span>}
@@ -119,14 +120,14 @@ export default function StudioDocks(p: Props) {
   let items: ReactNode;
   if (p.path === "dessiner") items = <>
     {thread}<span className="pzs-sep" aria-hidden="true" />
-    {level(DRAW).map(([id, name]) => <Tool_ key={id} pressed={p.tool === id} disabled={p.readOnly && id !== "hand"} onClick={() => p.onTool(id)}>{name}</Tool_>)}
+    {level(DRAW).map(([id, name]) => <Tool_ key={id} label={name} pressed={p.tool === id} disabled={p.readOnly && id !== "hand"} onClick={() => p.onTool(id)}><ToolIcon tool={id} /></Tool_>)}
     <Tool_ haspopup count={DRAW_MORE.length} onClick={() => p.onPath("dessiner-plus")} disabled={p.readOnly}>Plus d’outils</Tool_>
     <Tool_ onClick={p.actions.motifs} disabled={p.readOnly}>Motifs</Tool_>
     <Tool_ pressed={p.inspectorOpen} onClick={p.actions.layers}>Calques</Tool_>
     <Tool_ onClick={p.actions.drawSettings}>Réglages du dessin</Tool_>
   </>;
   else if (p.path === "dessiner-plus") items = <>
-    {DRAW_MORE.map(([id, name]) => <Tool_ key={id} pressed={p.tool === id} disabled={p.readOnly} onClick={() => p.onTool(id)}>{name}</Tool_>)}
+    {DRAW_MORE.map(([id, name]) => <Tool_ key={id} label={name} pressed={p.tool === id} disabled={p.readOnly} onClick={() => p.onTool(id)}><ToolIcon tool={id} /></Tool_>)}
   </>;
   else if (p.path === "fils") items = <>
     <span className="pzs-chip"><span className="pzs-swatch" style={{ background: p.colorHex }} aria-hidden="true" />Fil actif · {p.colorLabel}</span>
@@ -135,7 +136,7 @@ export default function StudioDocks(p: Props) {
   </>;
   else if (p.path === "broder") items = <>
     {thread}<span className="pzs-sep" aria-hidden="true" />
-    {level(STITCH).map(([id, name]) => <Tool_ key={id} pressed={p.tool === id} disabled={p.readOnly && id !== "hand"} onClick={() => p.onTool(id)}>{name}</Tool_>)}
+    {level(STITCH).map(([id, name]) => <Tool_ key={id} label={name} pressed={p.tool === id} disabled={p.readOnly && id !== "hand"} onClick={() => p.onTool(id)}><ToolIcon tool={id} /></Tool_>)}
     <Tool_ onClick={p.actions.follow}>Suivi</Tool_>
   </>;
   else if (p.path === "partager") items = <>
@@ -246,7 +247,6 @@ export default function StudioDocks(p: Props) {
             <div className="pzs-mini" role="group" aria-label="Inviter et votre espace">
               <button type="button" onClick={() => { setBloc(null); p.actions.share(); }}>+ Inviter à rejoindre la grille</button>
               {aime && <a href={moi ? "/buro" : "/entrer"}>{moi ? "Votre espace AIME" : "Entrer"}</a>}
-              <button type="button" onClick={() => { setBloc(null); p.actions.buro(); }}>BurO</button>
             </div>
           </>}
         </div>}

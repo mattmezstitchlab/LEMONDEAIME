@@ -59,7 +59,7 @@ async function click(el: Element | null | undefined) {
 // Les deux docks (charte UniO) : en haut, faire ; en bas, se repérer.
 const nav = () => container?.querySelector('nav[aria-label="Dock des outils du studio de broderie"]');
 const bottom = () => container?.querySelector('nav[aria-label="Se repérer dans le studio"]');
-const category = (name: string) => [...(nav()?.querySelectorAll("button") ?? [])].find((b) => b.textContent?.replace(/\d+$/, "") === name);
+const category = (name: string) => [...(nav()?.querySelectorAll("button") ?? [])].find((b) => b.textContent?.replace(/\d+$/, "") === name || b.getAttribute("aria-label") === name);
 const inBottom = (name: string) => [...(bottom()?.querySelectorAll("button") ?? [])].find((b) => b.textContent === name || b.getAttribute("aria-label") === name);
 const inspector = () => container?.querySelector('[aria-label="Inspecteur de broderie"]');
 async function brandMenu(item: string) {
