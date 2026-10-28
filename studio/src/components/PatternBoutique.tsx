@@ -20,18 +20,25 @@ function MotifVisual({item,large=false}:{item:Product;large?:boolean}){
   const ref=useRef<HTMLCanvasElement>(null);
   useEffect(()=>{
     const el=ref.current;const ctx=el?.getContext?.("2d");if(!el||!ctx)return;
-    const p=patternOf(item.id),step=large?6:4;
-    el.width=p.w*step;el.height=p.h*step;
-    ctx.fillStyle="#f4f0e6";ctx.fillRect(0,0,el.width,el.height);
-    ctx.fillStyle="rgba(120,104,80,.07)";
-    for(let y=0;y<p.h;y++)for(let x=0;x<p.w;x++)ctx.fillRect(x*step+step/2-.5,y*step+step/2-.5,1,1);
-    ctx.lineCap="round";ctx.lineWidth=step*.34;
-    for(let y=0;y<p.h;y++)for(let x=0;x<p.w;x++){
-      const idx=p.cross[y*p.w+x];if(idx<0)continue;
-      ctx.strokeStyle=FLOSS[idx]?.hex??"#555";
-      const l=x*step+step*.18,t=y*step+step*.18,r=x*step+step*.82,b=y*step+step*.82;
-      ctx.beginPath();ctx.moveTo(l,t);ctx.lineTo(r,b);ctx.moveTo(r,t);ctx.lineTo(l,b);ctx.stroke();
-    }
+    /* dessiné seulement quand l'aperçu approche de l'écran ; les croix d'un même fil en un seul tracé */
+    const dessiner=()=>{
+      const p=patternOf(item.id),step=large?6:4;
+      el.width=p.w*step;el.height=p.h*step;
+      ctx.fillStyle="#f4f0e6";ctx.fillRect(0,0,el.width,el.height);
+      ctx.fillStyle="rgba(120,104,80,.07)";
+      for(let y=0;y<p.h;y++)for(let x=0;x<p.w;x++)ctx.fillRect(x*step+step/2-.5,y*step+step/2-.5,1,1);
+      ctx.lineCap="round";ctx.lineWidth=step*.34;
+      const parFil=new Map<number,number[]>();
+      p.cross.forEach((idx,i)=>{if(idx<0)return;let l=parFil.get(idx);if(!l)parFil.set(idx,l=[]);l.push(i)});
+      for(const [idx,cases] of parFil){
+        ctx.strokeStyle=FLOSS[idx]?.hex??"#555";ctx.beginPath();
+        for(const i of cases){const x=i%p.w,y=(i-x)/p.w;const l=x*step+step*.18,t=y*step+step*.18,r=x*step+step*.82,b=y*step+step*.82;ctx.moveTo(l,t);ctx.lineTo(r,b);ctx.moveTo(r,t);ctx.lineTo(l,b)}
+        ctx.stroke();
+      }
+    };
+    if(typeof IntersectionObserver==="undefined"){dessiner();return}
+    const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();dessiner()}},{rootMargin:"300px"});
+    io.observe(el);return()=>io.disconnect();
   },[item.id,large]);
   return <div className="pb-motif" aria-hidden="true"><canvas ref={ref}/></div>;
 }
@@ -44,12 +51,12 @@ export default function PatternBoutique({onBack,onCreate,onGenerate,onOpenPatter
  const filtered=useMemo(()=>PRODUCT_CATALOG.filter(p=>(category==="Tout"||p.collection===category)&&(level==="Tout"||p.level===level)&&((p.title+" "+p.collection).toLocaleLowerCase("fr").includes(query.toLocaleLowerCase("fr")))),[category,level,query]);
  return <div className="pattern-boutique">
   <header className="pb-header"><button onClick={onBack} className="pb-back"><ArrowLeft size={17}/> Point Zéro</button><span className="pb-mark">× ÉDITIONS</span><button className="pb-create" onClick={onGenerate}><LockKeyhole size={15}/> Atelier privé</button></header>
-  <main><section className="pb-hero"><p className="pb-eyebrow">POINT ZÉRO / ÉDITIONS</p><h1>Des motifs qui<br/><em>ont quelque chose à dire.</em></h1><p>Des collections originales à transformer en patrons de point de croix. Explorez les 24 premiers patrons, dessinés case par case en fils DMC.</p><div className="pb-actions"><button onClick={onCreate}>Créer mon propre motif <ArrowRight size={16}/></button><a href="#catalogue">Explorer les collections <ArrowRight size={16}/></a></div><p className="pb-disclosure"><ShieldCheck size={15}/> Collection pilote : 24 patrons originaux à ouvrir dans le studio. La vente n'est pas encore ouverte.</p></section>
-  <section className="pb-catalog" id="catalogue"><div className="pb-section-heading"><div><p className="pb-eyebrow">BIBLIOTHÈQUE ÉDITORIALE</p><h2>Les collections <span>({filtered.length})</span></h2></div><span className="pb-aside-note">24 patrons · 6 collections</span></div>
+  <main><section className="pb-hero"><p className="pb-eyebrow">POINT ZÉRO / ÉDITIONS</p><h1>Des motifs qui<br/><em>ont quelque chose à dire.</em></h1><p>Des collections originales à transformer en patrons de point de croix. Explorez les {EDITIONS.length} patrons, dessinés case par case en fils DMC, dont les nouveaux oiseaux botaniques.</p><div className="pb-actions"><button onClick={onCreate}>Créer mon propre motif <ArrowRight size={16}/></button><a href="#catalogue">Explorer les collections <ArrowRight size={16}/></a></div><p className="pb-disclosure"><ShieldCheck size={15}/> Collection pilote : {EDITIONS.length} patrons originaux à ouvrir dans le studio. La vente n'est pas encore ouverte.</p></section>
+  <section className="pb-catalog" id="catalogue"><div className="pb-section-heading"><div><p className="pb-eyebrow">BIBLIOTHÈQUE ÉDITORIALE</p><h2>Les collections <span>({filtered.length})</span></h2></div><span className="pb-aside-note">{EDITIONS.length} patrons · {COLLECTIONS.length} collections</span></div>
   <div className="pb-filters"><label className="pb-search"><Search size={17}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Rechercher un motif…" aria-label="Rechercher un motif"/></label><label className="pb-select"><SlidersHorizontal size={16}/><select aria-label="Difficulté" value={level} onChange={e=>setLevel(e.target.value)}><option>Tout</option><option>Débutant</option><option>Intermédiaire</option><option>Expert</option></select></label></div>
   <nav className="pb-categories" aria-label="Collections">{collections.map(c=><button key={c} aria-pressed={category===c} onClick={()=>setCategory(c)}>{c}</button>)}</nav>
   <section className="pb-featured" aria-labelledby="featured-title"><div className="pb-featured-header"><div><p className="pb-eyebrow">À DÉCOUVRIR</p><h2 id="featured-title">Des histoires à broder.</h2></div><div className="pb-rail-controls"><button aria-label="Défiler les patrons vers la gauche" onClick={()=>railRef.current?.scrollBy({left:-370,behavior:"smooth"})}><ArrowLeft size={19}/></button><button aria-label="Défiler les patrons vers la droite" onClick={()=>railRef.current?.scrollBy({left:370,behavior:"smooth"})}><ArrowRight size={19}/></button></div></div><div className="pb-featured-rail" ref={railRef}>{PRODUCT_CATALOG.filter((_,i)=>i%4===0).map(item=><button key={item.id} className="pb-featured-card" onClick={()=>setSelected(item)}><MotifVisual item={item}/><span>{item.collection}</span><strong>{item.title}</strong><small>{item.width} × {item.height} points · {patternOf(item.id).palette.length} fils</small></button>)}</div></section>
-  <div className="pb-view-choice" role="group" aria-label="Présentation du catalogue"><span>Explorer les 24 patrons</span><div><button aria-pressed={view==="mosaic"} onClick={()=>setView("mosaic")}>Mosaïque</button><button aria-pressed={view==="horizontal"} onClick={()=>setView("horizontal")}>Défilement</button></div></div>
+  <div className="pb-view-choice" role="group" aria-label="Présentation du catalogue"><span>Explorer les {EDITIONS.length} patrons</span><div><button aria-pressed={view==="mosaic"} onClick={()=>setView("mosaic")}>Mosaïque</button><button aria-pressed={view==="horizontal"} onClick={()=>setView("horizontal")}>Défilement</button></div></div>
   <div className={view==="horizontal"?"pb-grid pb-grid-horizontal":"pb-grid"}>{filtered.map(item=><button key={item.id} className="pb-product" onClick={()=>setSelected(item)} aria-label={"Découvrir le patron "+item.title}><MotifVisual item={item}/><div className="pb-product-info"><span>{item.collection} / {item.level}</span><h3>{item.title}</h3><small>{item.width} × {item.height} points · prix envisagé {euro(item.price)}</small></div></button>)}</div>
   {!filtered.length&&<p>Aucun patron ne correspond à ces filtres.</p>}</section>
   <section className="pb-human" aria-labelledby="pb-human-title"><div className="pb-human-copy"><p className="pb-eyebrow">DERRIÈRE CHAQUE CROIX</p><h2 id="pb-human-title">Et surtout,<br/><em>des mains, des histoires.</em></h2><p>La broderie n'est pas seulement un fichier : c'est du temps, une matière, un geste et une personne. Les prochains portraits et ouvrages seront réalisés avec des brodeuses participantes, avec leur accord.</p><p className="pb-human-note">Prévisualisez votre ouvrage ici, sans publication ni transfert de photo.</p><label className="pb-human-upload">Montrer mon ouvrage<input type="file" accept="image/png,image/jpeg,image/webp" onChange={e=>{const file=e.target.files?.[0];e.target.value="";if(!file)return;if(file.size>8*1024*1024){alert("Image limitée à 8 Mo.");return}setPhoto(URL.createObjectURL(file))}}/></label></div><div className="pb-human-frame">{photo?<img src={photo} alt="Photographie de votre ouvrage choisie sur cet appareil"/>:<div className="pb-human-placeholder"><span>×</span><strong>Les ouvrages ont une histoire.</strong><p>Votre photo apparaîtra ici.</p></div>}</div></section>

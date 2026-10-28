@@ -24,12 +24,12 @@ export default function Projet({ slug }: { slug: string }) {
         {p === null && <section className="pf-tete" aria-labelledby="titre-introuvable">
           <p className="surtitre">Projet</p>
           <h1 id="titre-introuvable" className="titre">Ce projet n’existe pas, ou n’est pas encore publié.</h1>
-          <p className="chapeau"><Lien href="/#projets">Voir tous les projets</Lien></p>
+          <p className="chapeau"><Lien href="/projets#projets">Voir tous les projets</Lien></p>
         </section>}
         {p && <>
           <section aria-labelledby="titre-projet" className="pf-tete">
             {!p.publie && <p className="pf-brouillon" role="note">Brouillon : seule l’administration voit cette page.</p>}
-            <p className="surtitre"><Lien href="/#projets" style={{ color: 'inherit' }}>Projets</Lien> · {p.categorie}</p>
+            <p className="surtitre"><Lien href="/projets#projets" style={{ color: 'inherit' }}>Projets</Lien> · {p.categorie}</p>
             <h1 id="titre-projet" className="pf-titre-projet">{p.titre}</h1>
             {p.accroche && <p className="chapeau" style={{ maxWidth: '40ch' }}>{p.accroche}</p>}
             <dl className="pf-fiche">
@@ -40,7 +40,7 @@ export default function Projet({ slug }: { slug: string }) {
             </dl>
             <div className="pf-boutons">
               <Visiter p={p} className="bouton noir" />
-              <Lien className="bouton" href="/#projets">Tous les projets</Lien>
+              <Lien className="bouton" href="/projets#projets">Tous les projets</Lien>
               {admin && <Lien className="bouton" href={'/admin?projet=' + p.slug}>Modifier</Lien>}
             </div>
           </section>

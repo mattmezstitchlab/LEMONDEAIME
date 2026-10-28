@@ -4,6 +4,7 @@ import { chatALaFenetre, chatNoirNuitClaire, deuxChatsUnDimanche, felinDeVelours
 import { hirondelleLibre, mesangeDuJardin, oiseauxDuMatin, rougeGorgeHiver } from "./oiseaux";
 import { atelierDuDimanche, fenetreSurLaCampagne, machineAEcrire, theiereEnPorcelaine } from "./maison";
 import { alphabetAtelier, datePrecieuse, deuxInitiales, initialeBotanique } from "./monogrammes";
+import { bouvreuilEnHiver, chardonneretEnFete, hirondelleAuPrintemps, martinPecheur, mesangeFleurie, moineauDesJardins, rougeGorgeFleuri, sittelleDesBois } from "./botaniques";
 import { cercleDesEtoiles, constellationIntime, luneDeMinuit, solstice } from "./celeste";
 
 export type Drawing = (t: Toile) => void;
@@ -34,4 +35,12 @@ export const DRAWINGS: Record<string, Drawing> = {
   "pz-6-2": architectureDuSilence,
   "pz-6-3": filInvisible,
   "pz-6-4": geometrieDesJours,
+  "pz-7-1": rougeGorgeFleuri,
+  "pz-7-2": mesangeFleurie,
+  "pz-7-3": chardonneretEnFete,
+  "pz-7-4": martinPecheur,
+  "pz-7-5": moineauDesJardins,
+  "pz-7-6": bouvreuilEnHiver,
+  "pz-7-7": hirondelleAuPrintemps,
+  "pz-7-8": sittelleDesBois,
 };

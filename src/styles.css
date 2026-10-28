@@ -460,3 +460,4 @@ html.calme .carte-flip > .dos { opacity: 0; } html.calme .carte-flip.retournee >
 .ad-alerte { margin: 0 0 16px; padding: 12px 16px; border-radius: 12px; background: #FFF0EE; border: 1px solid #E7A39A; font-size: 15px; }
 .ad-ok { margin: 0 0 16px; padding: 12px 16px; border-radius: 12px; background: #EEF8EF; border: 1px solid #9BCBA0; font-size: 15px; }
 .ad-confirmer { display: inline-flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 15px; font-weight: 600; }
+

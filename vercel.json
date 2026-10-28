@@ -58,6 +58,11 @@
   "installCommand": "npm ci && npm ci --prefix studio",
   "redirects": [
     {
+      "source": "/",
+      "destination": "/studio/",
+      "permanent": false
+    },
+    {
       "source": "/studio",
       "destination": "/studio/",
       "permanent": false

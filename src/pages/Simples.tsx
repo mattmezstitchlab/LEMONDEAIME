@@ -25,7 +25,7 @@ export function Introuvable() {
       <main id="contenu" style={{ padding: 'clamp(64px, 10vw, 140px) var(--marge) 140px' }}>
         <p className="surtitre">Page introuvable</p>
         <h1 className="titre">Cette page n’existe pas, ou plus.</h1>
-        <p className="chapeau"><Lien href="/">Revenir à l’accueil</Lien> ou <Lien href="/#projets">voir les projets</Lien>.</p>
+        <p className="chapeau"><Lien href="/">Revenir à l’accueil</Lien> ou <Lien href="/studio/atelier">ouvrir l’atelier</Lien>.</p>
       </main>
       <Pied />
     </>

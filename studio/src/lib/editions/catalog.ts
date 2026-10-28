@@ -1,9 +1,9 @@
 /**
- * Point Zéro · Éditions — les 24 patrons du catalogue.
+ * Point Zéro · Éditions — les patrons du catalogue (24 premiers, puis les 8 oiseaux botaniques).
  * Les dimensions et plafonds de couleurs sont ceux annoncés dans la boutique ;
  * chaque dessin (voir drawings/) doit les respecter, ce que vérifient les tests.
  */
-export type Collection = "Félins" | "Oiseaux" | "Céleste" | "Objets & Maison" | "Monogrammes" | "Signature";
+export type Collection = "Félins" | "Oiseaux" | "Céleste" | "Objets & Maison" | "Monogrammes" | "Signature" | "Oiseaux botaniques";
 export type Level = "Débutant" | "Intermédiaire" | "Expert";
 export interface EditionProduct {
   id: string;
@@ -68,4 +68,19 @@ export const EDITIONS: EditionProduct[] = definitions.flatMap((group, g) => grou
   description,
 })));
 
-export const COLLECTIONS = definitions.map(d => d.collection);
+/* Oiseaux botaniques : des oiseaux dont le plumage est fait de fleurs, 150 × 150 points, jusqu'à 60 fils (drawings/botaniques.ts). */
+const BOTANIQUES: [string, string][] = [
+  ["Le rouge-gorge fleuri", "Un rouge-gorge à la poitrine de pivoines orangées, le dos semé de fleurs crème, sur une branche en bourgeons."],
+  ["La mésange aux fleurs des champs", "Une mésange bleue : calotte de myosotis, poitrine de boutons d’or, aile aux plumes rayées."],
+  ["Le chardonneret en fête", "Un chardonneret au masque rouge, aux joues blanches fleuries et à l’aile noire barrée d’or."],
+  ["Le martin-pêcheur", "Un martin-pêcheur au dos de turquoises et de bleuets, au ventre de fleurs orangées."],
+  ["Le moineau des jardins", "Un moineau tout en bruns et en lin, semé de fleurettes de lavande."],
+  ["Le bouvreuil en hiver", "Un bouvreuil à la poitrine de roses framboise, au dos gris perle et à la calotte noire."],
+  ["L’hirondelle au printemps", "Une hirondelle posée, dos marine semé de myosotis, gorge rouge et longue queue fourchue."],
+  ["La sittelle des bois", "Une sittelle au dos bleu ardoise fleuri, au ventre pêche et au trait noir sur l’œil."],
+];
+EDITIONS.push(...BOTANIQUES.map(([title, description], i): EditionProduct => ({
+  id: "pz-7-" + (i + 1), title, collection: "Oiseaux botaniques", level: "Expert", width: 150, height: 150, maxColors: 60, price: 1190, description,
+})));
+
+export const COLLECTIONS: Collection[] = [...definitions.map(d => d.collection), "Oiseaux botaniques"];

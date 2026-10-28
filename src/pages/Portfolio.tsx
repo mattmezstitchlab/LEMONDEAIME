@@ -45,7 +45,7 @@ export default function Portfolio() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/" verbes={<VerbesProjets />} />
+      <Tete courant="/projets" verbes={<VerbesProjets />} />
       <main id="contenu">
         <section aria-labelledby="titre-monde" className="pf-tete">
           <p className="surtitre">Les projets de {FONDATEUR.nom}</p>
