@@ -8,7 +8,12 @@ import { dateLisible, repondreLocal } from '../../api/_orbe-local.mjs';
    Le petit bouton orbe la retourne : au dos, l'assistant de la personne, qui ne répond qu'avec sa fiche. */
 export type FicheOrbe = { nom: string; metier?: string; ville?: string; zone?: string; langues?: string; tarif?: string; bio?: string; prestations?: Prestation[] };
 export type Carte = { href: string; nom: string; etiquette: string; photo?: string; alt?: string; exemple?: boolean; credit?: string | null;
-  ref?: string; fiche?: FicheOrbe; etat?: Etat | null; date?: string | null };
+  ref?: string; fiche?: FicheOrbe; etat?: Etat | null; date?: string | null; idees?: string[] };
+/* « de la fleuriste », « du chef », « des témoins », « de Camille » ; « à la fleuriste », « au chef », « aux témoins », « à Camille » */
+const article = (nom: string) => /^les\s/i.test(nom) ? ['des ', 'aux ', nom.slice(4)] : /^le\s/i.test(nom) ? ['du ', 'au ', nom.slice(3)] : /^la\s/i.test(nom) ? ['de la ', 'à la ', nom.slice(3)] : /^l[’']/i.test(nom) ? ['de l’', 'à l’', nom.slice(2)] : null;
+export function deNom(nom: string) { const a = article(nom); return a ? a[0] + a[2] : 'de ' + nom.split(' ')[0]; }
+export function aNom(nom: string) { const a = article(nom); return a ? a[1] + a[2] : 'à ' + nom.split(' ')[0]; }
+const PICTO_RETOURNER = <svg className="picto-retourner" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 4v4h-4M20 12a8 8 0 0 1-14 5.3M4 20v-4h4" /></svg>;
 const ETIQUETTE: Record<Etat, string> = { libre: 'Libre le', option: 'En option le', prise: 'Pris le' };
 const court = (d: string) => dateLisible(d).replace(/ \d{4}$/, '');
 
@@ -18,29 +23,28 @@ function Dos({ c, retourner, ouvert }: { c: Carte; retourner: () => void; ouvert
   const [fil, setFil] = useState<{ q: string; r: string; trouve: boolean }[]>([]);
   const [envoi, setEnvoi] = useState(false);
   const champ = useRef<HTMLInputElement>(null), bas = useRef<HTMLDivElement>(null);
-  const prenom = /^(le|la|les|l’|l')\s?/i.test(c.nom) ? c.nom.charAt(0).toLowerCase() + c.nom.slice(1) : c.nom.split(' ')[0];
   useEffect(() => { if (ouvert) champ.current?.focus({ preventScroll: true }); }, [ouvert]);
   useEffect(() => { bas.current?.scrollTo({ top: bas.current.scrollHeight }); }, [fil]);
-  const idees = [c.date ? 'Libre le ' + court(c.date) + ' ?' : 'Libre le 12 juin ?', 'Quelles prestations ?', 'Où intervenez-vous ?'];
+  const idees = c.idees || [c.date ? 'Libre le ' + court(c.date) + ' ?' : 'Libre le 12 juin ?', 'Quelles prestations ?', 'Où intervenez-vous ?'];
   const demander = async (question: string) => {
     const t = question.trim(); if (!t || envoi) return;
     setQ(''); setEnvoi(true);
     let r: { reponse: string; trouve: boolean };
     if (c.ref) { const x = await demanderOrbe(c.ref, t); r = x.ok && x.reponse ? { reponse: x.reponse, trouve: !!x.trouve } : { reponse: x.raison || 'L’orbe ne répond pas pour le moment.', trouve: false }; }
-    else r = repondreLocal(c.fiche || { nom: c.nom }, t, () => null);
+    else { r = repondreLocal(c.fiche || { nom: c.nom }, t, () => null); if (!r.trouve && c.fiche?.bio) r = { trouve: true, reponse: 'D’après la fiche : « ' + c.fiche.bio + ' »' }; }
     setFil(f => [...f, { q: t, r: r.reponse, trouve: r.trouve }].slice(-4)); setEnvoi(false);
   };
   const envoyer = (e: FormEvent) => { e.preventDefault(); void demander(q); };
   return (
     <div className="face dos" aria-hidden={!ouvert} inert={!ouvert}>
       <div className="dos-haut">
-        <span className="dos-titre">L’assistant de {prenom}</span>
+        <span className="dos-titre">L’assistant {deNom(c.nom)}</span>
         <button type="button" className="dos-retour" onClick={retourner} aria-label={'Retourner la carte de ' + c.nom}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 4v4h-4M20 12a8 8 0 0 1-14 5.3M4 20v-4h4" /></svg>
+          {PICTO_RETOURNER}
         </button>
       </div>
       <div className="dos-fil" ref={bas} aria-live="polite">
-        {!fil.length && <div className="dos-orbe"><Orbe taille={72} /><p>Posez une question : l’orbe connaît la fiche de {prenom}, et seulement elle.</p></div>}
+        {!fil.length && <div className="dos-orbe"><Orbe taille={52} /><p>Posez une question : l’orbe connaît la fiche {deNom(c.nom)}, et seulement elle.</p></div>}
         {fil.map((m, k) => <div key={k} className="dos-echange"><p className="dos-q">{m.q}</p><p className="dos-r">{m.r}</p></div>)}
         {envoi && <p className="dos-r dos-attente">…</p>}
       </div>
@@ -50,7 +54,7 @@ function Dos({ c, retourner, ouvert }: { c: Carte; retourner: () => void; ouvert
         <input ref={champ} id={'q-' + id} value={q} onChange={e => setQ(e.target.value)} placeholder="Votre question…" maxLength={300} autoComplete="off" />
         <button type="submit" disabled={envoi || !q.trim()} aria-label="Envoyer la question"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
       </form>
-      <Lien className="dos-demande" href={c.href + (c.exemple ? '' : '#demande')}>{c.exemple ? 'Voir la fiche' : 'Envoyer une demande à ' + prenom}</Lien>
+      <Lien className="dos-demande" href={c.href + (c.exemple ? '' : '#demande')}>{c.exemple ? 'Voir la fiche' : 'Envoyer une demande ' + aNom(c.nom)}</Lien>
       {c.exemple && <p className="dos-note">Exemple : sur un vrai profil, l’orbe répond avec sa fiche, ses dates et ses prestations.</p>}
     </div>
   );
@@ -78,7 +82,7 @@ export function CarteReseau({ c }: { c: Carte }) {
               <span style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.03em' }}>{c.nom}</span>
             </div>
           </Lien>
-          {orbe && <button ref={bouton} type="button" className="carte-orbe" aria-label={'Retourner la carte : poser une question à l’assistant de ' + c.nom} title="Poser une question" onClick={() => setRetournee(true)}><Orbe taille={26} /></button>}
+          {orbe && <button ref={bouton} type="button" className="carte-orbe" aria-label={'Retourner la carte : poser une question à l’assistant de ' + c.nom} title="Poser une question" onClick={() => setRetournee(true)}><Orbe taille={44} />{PICTO_RETOURNER}</button>}
         </div>
         {orbe && <Dos c={c} ouvert={retournee} retourner={retourner} />}
       </div>
