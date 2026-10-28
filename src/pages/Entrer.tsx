@@ -36,7 +36,7 @@ export default function Entrer() {
         <p className="surtitre">Un seul compte pour tous les studios</p>
         <h1 className="titre" style={{ fontSize: 'clamp(48px, 7vw, 108px)', lineHeight: .9, textTransform: 'uppercase' }}>Entrer dans AIME</h1>
         {session
-          ? <p className="chapeau">Vous êtes entré·e{session.email ? ' avec ' + session.email : ''}. <Lien href="/buro">Ouvrir mon BurO</Lien> ou <Lien href="/point-zero">commencer au Point Zéro</Lien>.</p>
+          ? <p className="chapeau">Vous êtes entré·e{session.email ? ' avec ' + session.email : ''}. <Lien href="/buro">Ouvrir mon espace</Lien> ou <Lien href="/point-zero">commencer au Point Zéro</Lien>.</p>
           : <div style={{ marginTop: 40, display: 'grid', gap: 12, maxWidth: 460 }}>
             {f && !f.comptes && <p className="chapeau" style={{ marginTop: 0 }}>Les comptes ne sont pas encore ouverts sur cette version du site.</p>}
             {f?.google && <button type="button" onClick={google} disabled={!!etat.envoi} style={{ ...grand, border: '1px solid #0B0B0C', background: '#fff' }}>{GOOGLE}{etat.envoi === 'google' ? 'Ouverture de Google…' : 'Continuer avec Google'}</button>}

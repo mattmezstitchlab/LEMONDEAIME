@@ -23,7 +23,7 @@ export default async function buro(req, res) {
   const refus = R.ecriture(req); if (refus) return json(res, ...refus);
   if (!auth()) return json(res, 503, { ok: false, raison: 'Les comptes ne sont pas encore ouverts sur cet environnement.' });
   const moi = await personne(req).catch(() => null);
-  if (!moi) return json(res, 401, { ok: false, raison: 'Entrez dans AIME pour ouvrir votre BurO.' });
+  if (!moi) return json(res, 401, { ok: false, raison: 'Entrez dans AIME pour ouvrir votre espace.' });
   const db = _pool();
   try {
     if (req.method === 'GET') {
@@ -42,7 +42,7 @@ export default async function buro(req, res) {
     const p = nettoyerProjet(b);
     if (!p) return json(res, 400, { ok: false, raison: 'Donnez un nom au projet.' });
     const n = await db.query(`select count(*)::int as n from spaces where owner_id = $1`, [moi.id]);
-    if (n.rows[0].n >= 500) return json(res, 429, { ok: false, raison: 'Votre BurO est plein (500 projets) : archivez ou supprimez-en.' });
+    if (n.rows[0].n >= 500) return json(res, 429, { ok: false, raison: 'Votre espace est plein (500 projets) : archivez ou supprimez-en.' });
     const c = await db.connect();
     try {
       await c.query('begin');
@@ -52,6 +52,6 @@ export default async function buro(req, res) {
       return json(res, 201, { ok: true, id: s.rows[0].id });
     } catch (e) { await c.query('rollback').catch(() => {}); throw e; } finally { c.release(); }
   } catch {
-    return json(res, 500, { ok: false, raison: 'Le BurO est momentanément indisponible : réessayez.' });
+    return json(res, 500, { ok: false, raison: 'Votre espace est momentanément indisponible : réessayez.' });
   }
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Lien } from '../lib/router';
 import { useSession, seDeconnecter } from '../lib/session';
+import { Recherche } from './Recherche';
 
 export function Orbe({ taille = 30 }: { taille?: number }) {
   return <span className="orbe" aria-hidden="true" style={{ width: taille, height: taille }} />;
@@ -12,31 +13,43 @@ export function Marque() {
 /* Le dock du haut : AIME® (menu), les verbes de la page, la loupe. À droite : A+ et le « + » (Entrer, puis Point Zéro). */
 export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string }) {
   const [ouvert, setOuvert] = useState(false);
+  const [cherche, setCherche] = useState(false);
+  const loupe = useRef<HTMLButtonElement>(null);
   const session = useSession();
   const bouton = useRef<HTMLButtonElement>(null);
   const menu = useRef<HTMLUListElement>(null);
   useEffect(() => { if (ouvert) menu.current?.querySelector('a')?.focus(); }, [ouvert]);
   const fermer = () => { setOuvert(false); bouton.current?.focus(); };
-  const items: [string, string][] = [['/', 'AIME'], ['/monde', 'Le Monde AIME'], ['/charte', 'La Charte AIME']];
+  /* le menu AIME® : la marque mère, ses studios, puis Le Monde AIME qui les rassemble */
+  const items: [string | null, string][] = [['/', 'AIME'], ['/aime-wedding', 'AIME Wedding'], ['https://pointzero-zeta.vercel.app/', 'Brode Way'], ['/monde', 'Le Monde AIME']];
   return (
     <header className="tete">
       <span aria-hidden="true" />
       <nav className="dock-haut" aria-label="Dock du haut">
         <div className="rangee">
-          <button ref={bouton} className="outil" type="button" aria-expanded={ouvert} aria-controls="menu-aime" onClick={() => setOuvert(o => !o)} style={{ paddingLeft: 8 }}>
+          <button ref={bouton} className="outil" type="button" aria-expanded={ouvert} aria-controls="menu-aime" onClick={() => { setCherche(false); setOuvert(o => !o); }} style={{ paddingLeft: 8 }}>
             <Orbe /><Marque />
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true" style={{ transform: ouvert ? 'rotate(180deg)' : 'none' }}><path d="M6 9l6 6 6-6" /></svg>
           </button>
           {verbes ? <><span className="separateur" aria-hidden="true" />{verbes}</> : null}
         </div>
         <span className="separateur" aria-hidden="true" />
-        <Lien className="outil loupe" href="/monde#projets" aria-label="Rechercher dans tous les projets d’AIME" title="Rechercher">
-          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-4.2-4.2" /></svg>
-        </Lien>
+        <button ref={loupe} type="button" className="outil loupe" aria-expanded={cherche} aria-label={cherche ? 'Fermer la recherche' : 'Chercher dans tout AIME, et le plan du site'} title="Chercher" onClick={() => { setOuvert(false); setCherche(c => !c); }}>
+          {cherche
+            ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            : <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-4.2-4.2" /></svg>}
+        </button>
+        {cherche && <>
+          <div aria-hidden="true" onClick={() => setCherche(false)} style={{ position: 'fixed', inset: 0, zIndex: 1 }} />
+          <Recherche fermer={() => { setCherche(false); loupe.current?.focus(); }} />
+        </>}
         {ouvert && <>
           <div aria-hidden="true" onClick={() => setOuvert(false)} style={{ position: 'fixed', inset: 0, zIndex: 1 }} />
           <ul id="menu-aime" ref={menu} className="menu-aime" onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); fermer(); } }}>
-            {items.map(([h, l]) => <li key={h}><Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setOuvert(false)} style={{ fontWeight: courant === h ? 700 : 500 }}>{l}</Lien></li>)}
+            {items.map(([h, l]) => <li key={l}>{h
+              ? <Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setOuvert(false)} style={{ fontWeight: courant === h ? 700 : 500 }}>{l}</Lien>
+              : <span aria-disabled="true" style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 46, padding: '0 12px', fontSize: 17, color: '#55555A' }}>{l}<span className="bientot">Bientôt</span></span>}</li>)}
+            <li style={{ borderTop: '1px solid #ECECE8', marginTop: 6, paddingTop: 6 }}><button type="button" onClick={() => { setOuvert(false); lancerVisite(); }}>Visite guidée · 2 min</button></li>
             {session && <li style={{ borderTop: '1px solid #ECECE8', marginTop: 6, paddingTop: 6 }}><button type="button" onClick={() => { setOuvert(false); seDeconnecter(); }}>Déconnexion</button></li>}
           </ul>
         </>}
@@ -50,6 +63,11 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
       </div>
     </header>
   );
+}
+/* la visite guidée par le Point : sur l'accueil elle démarre tout de suite, ailleurs on y retourne d'abord */
+export function lancerVisite() {
+  if (window.location.pathname === '/') window.dispatchEvent(new Event('aime-visite'));
+  else window.location.assign('/?visite=1');
 }
 export function Verbe({ href, children, actif }: { href: string; children: ReactNode; actif?: boolean }) {
   return <Lien className="outil" href={href} aria-current={actif ? 'page' : undefined}>{children}</Lien>;
@@ -80,7 +98,7 @@ export function DockBas({ lieux, label = 'Sections de la page' }: { lieux: [stri
 
 export function BoutonBuro({ courant }: { courant?: boolean }) {
   return (
-    <Lien className="buro-bouton" href="/buro" aria-label="BurO" title="BurO" aria-current={courant ? 'page' : undefined}>
+    <Lien className="buro-bouton" href="/buro" aria-label="Votre espace AIME" title="Votre espace" aria-current={courant ? 'page' : undefined}>
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2.2h8.5A1.5 1.5 0 0 1 21 9.7v8.8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z" /></svg>
     </Lien>
   );
@@ -95,9 +113,9 @@ export function Pied() {
       <Lien href="/" aria-label="AIME, accueil" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}><Orbe taille={28} /><span className="marque" style={{ fontSize: 22 }}>AIME<sup aria-hidden="true">®</sup></span></Lien>
       <nav aria-label="Plan du site">
         {col('AIME', [['Manifeste', '/#manifeste'], ['Fondateur', '/#fondateur'], ['Vision', '/#vision']])}
-        {col('Le Monde AIME', [['Tous les projets', '/monde'], ['Point Zéro', '/point-zero'], ['Brode Way', 'https://pointzero-zeta.vercel.app/']])}
-        {col('Votre espace', [['Entrer', '/entrer'], ['BurO', '/buro'], ['A+', '/a-plus']])}
-        {col('La maison', [['La Charte AIME', '/charte'], ['Contact et presse', null], ['Mentions légales', null]])}
+        {col('Le Monde AIME', [['Tous les projets', '/monde'], ['Réseau', '/reseau'], ['Point Zéro', '/point-zero'], ['AIME Wedding', '/aime-wedding'], ['Brode Way', 'https://pointzero-zeta.vercel.app/']])}
+        {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil'], ['A+', '/a-plus']])}
+        {col('La maison', [['La Charte AIME', '/#docks'], ['Contact et presse', null], ['Mentions légales', null]])}
       </nav>
       <div className="bas"><p style={{ margin: 0 }}>AIME® est la marque mère. LE MONDE AIME est une association.</p><p style={{ margin: 0 }}>© 2026 AIME®</p></div>
     </footer>

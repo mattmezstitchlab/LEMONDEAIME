@@ -62,7 +62,7 @@ img, video { display: block; max-width: 100%; }
 
 /* typographie */
 .surtitre { margin: 0 0 14px; font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--encre-3); }
-.signature { margin: 0; font-size: clamp(52px, 11vw, 196px); line-height: .86; font-weight: 900; letter-spacing: -0.055em; text-transform: uppercase; white-space: pre-line; }
+.signature { margin: 0; font-size: clamp(52px, 11vw, 196px); line-height: .86; font-weight: 900; letter-spacing: -0.035em; text-transform: uppercase; white-space: pre-line; }
 .titre { margin: 0; font-size: clamp(36px, 5vw, 68px); line-height: 1; font-weight: 600; letter-spacing: -0.035em; }
 .chapeau { margin: 26px 0 0; max-width: 42ch; font-size: clamp(19px, 1.7vw, 23px); line-height: 1.45; color: var(--encre-2); }
 .texte { margin: 0; font-size: clamp(18px, 1.6vw, 21px); line-height: 1.6; color: var(--encre-2); }
@@ -105,3 +105,42 @@ img, video { display: block; max-width: 100%; }
 .pied .bas { margin-top: 56px; padding-top: 24px; border-top: 2px dotted #BDBDB8; display: flex; justify-content: space-between; gap: 12px 32px; flex-wrap: wrap; font-size: 15px; color: var(--encre-2); }
 @media (max-width: 1080px) { .g44 { grid-template-columns: minmax(0, 1fr) !important; } }
 @media (max-width: 620px) { .g44-nom, .g44-etape { display: none !important; } }
+
+/* le grand visuel d'entrée de l'accueil : la photo plein cadre, le nom en blanc */
+.hero { position: relative; min-height: calc(100svh - 104px); border-radius: 24px; overflow: hidden; background: #111; color: #fff; display: flex; align-items: flex-end; }
+.hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.35) 45%, rgba(0,0,0,.15) 100%); pointer-events: none; }
+.hero-contenu { position: relative; z-index: 1; width: 100%; padding: clamp(28px, 5vw, 72px) clamp(20px, 4vw, 64px) calc(clamp(36px, 5vw, 72px) + 76px); }  /* le dock du bas passe par-dessus : on lui laisse sa place */
+.hero-titre { font-size: clamp(110px, 24vw, 400px); line-height: .8; letter-spacing: -0.035em; color: #fff; }
+.hero-sous-titre { margin: clamp(14px, 2vw, 26px) 0 0; max-width: 30ch; font-size: clamp(20px, 2.4vw, 36px); line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+.hero a { color: #fff; }
+.hero a:hover { color: #E2E2DE; }
+.hero :focus-visible { outline-color: #fff; }
+
+/* les studios sur une seule ligne, qui défile à l'horizontale */
+.cartes.ligne { display: flex; grid-template-columns: none; gap: 28px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px var(--marge) 24px; margin: 0 calc(-1 * var(--marge)); scrollbar-width: thin; }
+.cartes.ligne > li { flex: 0 0 min(82vw, 440px); scroll-snap-align: start; scroll-margin-left: var(--marge); }
+.cartes.ligne:focus-visible { outline-offset: -2px; }
+@keyframes orbe-tourne { to { transform: rotate(360deg); } }
+.orbe-tourne { animation: orbe-tourne 6s linear infinite; }
+
+/* la loupe : chercher dans tout AIME, et le plan du site, sous le dock */
+.recherche { position: absolute; z-index: 2; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); width: min(760px, calc(100vw - 24px)); padding: 16px; border-radius: 20px; background: var(--carte); border: 1px solid var(--trait); box-shadow: 0 24px 60px rgba(11,11,12,.2); }
+.recherche-lien { display: flex; flex-direction: column; gap: 1px; padding: 9px 10px; border-radius: 10px; text-decoration: none; font-size: 16px; }
+.recherche-lien span { font-size: 13.5px; color: var(--encre-3); line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recherche-lien:hover, .recherche-lien:focus-visible { background: var(--doux); }
+
+/* la visite guidée : le Point, le cadre autour de ce qu'il montre, sa bulle */
+.visite-point { position: fixed; z-index: 60; width: 34px; height: 34px; border-radius: 50%; background: var(--nacre); box-shadow: 0 0 0 3px #0B0B0C, 0 10px 26px rgba(11,11,12,.35); pointer-events: none; }
+.visite-cadre { position: fixed; z-index: 58; border-radius: 16px; border: 2px solid #0B0B0C; box-shadow: 0 0 0 9999px rgba(11,11,12,.28); pointer-events: none; }
+.visite-bulle { position: fixed; z-index: 61; padding: 18px; border-radius: 20px; background: #fff; border: 1px solid var(--trait); box-shadow: 0 24px 60px rgba(11,11,12,.28); }
+.visite-invite { position: fixed; z-index: 40; left: clamp(12px, 2vw, 24px); bottom: 96px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; max-width: min(520px, calc(100vw - 24px)); padding: 14px 16px; border-radius: 20px; background: #fff; border: 1px solid var(--trait); box-shadow: 0 18px 48px rgba(11,11,12,.22); }
+.visite-invite .visite-point { width: 30px; height: 30px; box-shadow: 0 0 0 2px #0B0B0C; }
+
+/* l'aperçu du studio : une info, une seule fois */
+.studio-demo { margin-top: 48px; padding: clamp(16px, 3vw, 36px); border-radius: 24px; background: #ECECE8; border: 1px solid var(--trait); }
+.studio-papier { min-height: 300px; padding: clamp(24px, 4vw, 44px); border-radius: 6px; background: #fff; box-shadow: 0 1px 0 #E2E2DE, 0 18px 40px rgba(11,11,12,.10); font-size: 17px; color: var(--encre); }
+mark.info-remplie { background: #ECE4FF; color: inherit; padding: 0 .2em; border-radius: 4px; box-shadow: inset 0 -2px 0 #A98BE0; transition: background .3s; }
+mark.info-remplie.vient { background: #FFE9A8; box-shadow: inset 0 -2px 0 #C79A1E; }
+@media (prefers-reduced-motion: reduce) { mark.info-remplie { transition: none; } }
+@media (max-width: 820px) { .recherche { position: fixed; top: 84px; left: 12px; right: 12px; width: auto; transform: none; max-height: calc(100vh - 110px); overflow: auto; } }
