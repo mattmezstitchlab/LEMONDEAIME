@@ -58,6 +58,7 @@ async function compter(nom, valeur, { max, fenetre }, opts = {}) {
   return reponse(enMemoire(cle, max, fenetre, t).n, false);
 }
 
+const entier = (v, defaut) => { const n = parseInt(v, 10); return Number.isInteger(n) && n >= 1 && n <= 100000 ? n : defaut; };
 /* les quotas du site, en un seul endroit */
 const QUOTAS = {
   'contact:ip': { max: 3, fenetre: 600 },           /* le formulaire de contact : 3 envois par adresse IP et par 10 minutes */
@@ -72,7 +73,11 @@ const QUOTAS = {
   'envoi:personne': { max: 30, fenetre: 3600 },      /* fichiers audio envoyés : 30 par personne et par heure */
   'musique:ip': { max: 60, fenetre: 600 },          /* recherches de morceaux : 60 par adresse IP et par 10 minutes */
   'orbe:ip': { max: 20, fenetre: 600 },             /* questions à l'orbe d'une carte : 20 par adresse IP et par 10 minutes */
-  'orbe:tous': { max: 600, fenetre: 3600 },         /* … et 600 par heure pour tout le site (le coût des appels à Claude) */
+  'orbe:tous': { max: 600, fenetre: 3600 },
+  /* l'analyse par Claude du Point Zéro : 20 par personne connectée et par heure, et 300 par heure pour tout le site (le coût) ;
+     réglables sans toucher au code : ANALYSE_QUOTA_PERSONNE et ANALYSE_PLAFOND_HEURE (entiers de 1 à 100 000) */
+  'analyse:personne': { get max() { return entier(process.env.ANALYSE_QUOTA_PERSONNE, 20); }, fenetre: 3600 },
+  'analyse:tous': { get max() { return entier(process.env.ANALYSE_PLAFOND_HEURE, 300); }, fenetre: 3600 },         /* … et 600 par heure pour tout le site (le coût des appels à Claude) */
   'carte:demande:ip': { max: 3, fenetre: 600 },     /* écrire à une Carte : 3 demandes par adresse IP et par 10 minutes (comme Contact) */
   'carte:demande:boite': { max: 20, fenetre: 86400 },/* … et 20 demandes par Carte et par jour, pour qu'aucune personne ne soit submergée */
   'live:act': { max: 30, fenetre: 60 },             /* le direct : 30 actions par adresse IP et par minute */

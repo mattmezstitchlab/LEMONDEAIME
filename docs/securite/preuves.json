@@ -1,0 +1,338 @@
+{
+ "studio/src/__tests__/aimeSync.test.ts": {
+  "date": "2026-10-28",
+  "commit": "da817ca",
+  "code_modifie_depuis_le_commit": false,
+  "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
+  "resultats": [
+   {
+    "test": "hors d'AIME (à la racine), rien ne part ni ne revient",
+    "ok": true
+   },
+   {
+    "test": "dans AIME et connecté : ramène l'ouvrage du compte plus récent, garde celui de l'appareil plus récent",
+    "ok": true
+   },
+   {
+    "test": "un ouvrage trop lourd reste sur l'appareil et le dit",
+    "ok": true
+   }
+  ]
+ },
+ "studio/src/__tests__/anciensPartages.test.ts": {
+  "date": "2026-10-28",
+  "commit": "da817ca",
+  "code_modifie_depuis_le_commit": false,
+  "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
+  "resultats": [
+   {
+    "test": "sans compte : les anciens sont cachés (propriétaire inconnu), comptés, et rien n'est effacé",
+    "ok": true
+   },
+   {
+    "test": "B se connecte : il retrouve le sien, voit celui créé ici (local), ne voit jamais celui de A ; rien de A ne part",
+    "ok": true
+   },
+   {
+    "test": "aucun geste ne permet à B de prendre l'ouvrage de A : ni rattachement, ni suppression, ni enregistrement par-dessus",
+    "ok": true
+   },
+   {
+    "test": "un ouvrage « de l'appareil » qui s'avère rangé dans un autre compte : le serveur refuse, il est mis à l'écart, pas copié",
+    "ok": true
+   },
+   {
+    "test": "une création locale légitime se rattache par un geste explicite, sans rien effacer",
+    "ok": true
+   },
+   {
+    "test": "A se connecte ensuite sur le même appareil : son ouvrage lui revient ; celui rattaché par B reste à B",
+    "ok": true
+   },
+   {
+    "test": "serveur injoignable : les anciens restent cachés et intacts, rien n'est envoyé",
+    "ok": true
+   }
+  ]
+ },
+ "studio/src/__tests__/cloisonnement.test.ts": {
+  "date": "2026-10-28",
+  "commit": "da817ca",
+  "code_modifie_depuis_le_commit": false,
+  "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
+  "resultats": [
+   {
+    "test": "B connecté sur l'appareil de A : rien de A ni de l'appareil ne part dans le compte de B",
+    "ok": true
+   },
+   {
+    "test": "les ouvrages ramenés du compte portent ce compte ; ceux du compte plus récents sur l'appareil repartent",
+    "ok": true
+   },
+   {
+    "test": "un ouvrage de l'appareil déjà présent dans le compte lui est rattaché (c'est le sien), sans rien envoyer d'autre",
+    "ok": true
+   },
+   {
+    "test": "envoyer refuse l'ouvrage d'un autre compte, ou sans propriétaire",
+    "ok": true
+   },
+   {
+    "test": "l'affichage : chacun voit les siens et ceux de l'appareil ; personne ne voit ceux d'un autre ni les anciens non vérifiés",
+    "ok": true
+   },
+   {
+    "test": "rattacher un ouvrage de l'appareil : seulement par un geste, au compte connecté ; jamais un ancien non vérifié",
+    "ok": true
+   },
+   {
+    "test": "effacer à la déconnexion : seulement les ouvrages de ce compte, jamais ceux sans propriétaire ni d'un autre",
+    "ok": true
+   }
+  ]
+ },
+ "studio/src/__tests__/cloisonnementBibliotheque.test.ts": {
+  "date": "2026-10-28",
+  "commit": "da817ca",
+  "code_modifie_depuis_le_commit": false,
+  "environnement": "vitest (StudiO), IndexedDB et serveur simulés",
+  "resultats": [
+   {
+    "test": "B ne voit que ses ouvrages et ceux sans propriétaire ; sans compte, seulement ceux sans propriétaire",
+    "ok": true
+   },
+   {
+    "test": "B ne peut pas supprimer l'ouvrage de A, ni sur l'appareil ni dans un compte",
+    "ok": true
+   },
+   {
+    "test": "rattacher un ouvrage sans propriétaire : au compte connecté, envoyé une fois, jamais celui d'un autre",
+    "ok": true
+   }
+  ]
+ },
+ "tests/base/securite.mjs": {
+  "date": "2026-10-28",
+  "commit": "da817ca",
+  "code_modifie_depuis_le_commit": false,
+  "environnement": "base réelle : branche Neon de test isolée « test/unions-2026-10-28 » (jamais la production), connexion WebSocket Neon ; Claude et le stockage de fichiers simulés",
+  "resultats": [
+   {
+    "test": "base : trois comptes de test, connectés par le vrai lien de connexion",
+    "ok": true
+   },
+   {
+    "test": "S1 : sans la migration de la file d’effacement, la suppression est refusée et rien n’est effacé",
+    "ok": true
+   },
+   {
+    "test": "S1 : inscrire deux fois ne double rien ; deux reprises simultanées et un fichier déjà absent ne font aucune erreur",
+    "ok": true
+   },
+   {
+    "test": "S1 : le compte est supprimé par le vrai flux de suppression (200)",
+    "ok": true
+   },
+   {
+    "test": "S1 : aucune ligne du compte ne reste (musique, Réseau, profil, adhésions, sessions)",
+    "ok": true
+   },
+   {
+    "test": "S1 : une demande envoyée reste chez son destinataire, sans le nom, l’adresse ni le compte de son auteur",
+    "ok": true
+   },
+   {
+    "test": "S1 : son texte libre est nettoyé (adresses, téléphones, liens, son nom) ; la date et le nombre d’invités restent",
+    "ok": true
+   },
+   {
+    "test": "S1 : les données des autres comptes et l’espace partagé sont intacts",
+    "ok": true
+   },
+   {
+    "test": "S1 : stockage en panne, les fichiers restent inscrits dans la file d’effacement, avec l’erreur",
+    "ok": true
+   },
+   {
+    "test": "S1 : la reprise (tâche quotidienne protégée) efface le fichier et les envois jamais rattachés, puis vide la file",
+    "ok": true
+   },
+   {
+    "test": "S1 : conservation : une demande d’un compte supprimé de plus de 12 mois est effacée, une récente reste",
+    "ok": true
+   },
+   {
+    "test": "S1 : propriétaire d’un espace où d’autres sont membres : suppression refusée, rien n’est effacé",
+    "ok": true
+   },
+   {
+    "test": "S3 : sans compte, refusé (401) et rien n’est dépensé",
+    "ok": true
+   },
+   {
+    "test": "S3 : même connecté, une requête sans origine ou d’un autre site est refusée",
+    "ok": true
+   },
+   {
+    "test": "S3 : connecté, l’analyse passe (Claude simulé, un appel)",
+    "ok": true
+   },
+   {
+    "test": "S3 : une demande invalide est refusée avant tout : ni appel à Claude, ni quota consommé",
+    "ok": true
+   },
+   {
+    "test": "S3 : Claude en erreur : une seule tentative, pas de nouvel essai automatique, le moteur local prend le relais",
+    "ok": true
+   },
+   {
+    "test": "S3 : les quotas se règlent par l’environnement (ANALYSE_QUOTA_PERSONNE=1 : la 2e analyse de l’heure est refusée)",
+    "ok": true
+   },
+   {
+    "test": "S3 : au quota de la personne, refusé (429) sans appel à Claude",
+    "ok": true
+   },
+   {
+    "test": "S3 : plafond global atteint, refusé pour tous (429) sans appel à Claude",
+    "ok": true
+   },
+   {
+    "test": "S3 : la clé n’apparaît jamais dans une réponse",
+    "ok": true
+   },
+   {
+    "test": "S4 : la fiche publique ne montre jamais une union ni un événement, même marqués « public »",
+    "ok": true
+   },
+   {
+    "test": "S4 : la liste publique du Réseau ne montre aucun espace",
+    "ok": true
+   },
+   {
+    "test": "S2 : un ouvrage déjà rangé dans un autre compte est refusé (409) : aucune copie d’un compte à l’autre",
+    "ok": true
+   },
+   {
+    "test": "S2 : vérifier des anciens ne rend que des identifiants : « à un autre compte » pour l’un, « à moi » pour son propriétaire, jamais de nom ni de contenu",
+    "ok": true
+   }
+  ]
+ },
+ "tests/e2e/securite.py": {
+  "date": "2026-10-28",
+  "commit": "da817ca",
+  "code_modifie_depuis_le_commit": false,
+  "environnement": "aperçu local (vite preview), API SIMULÉES : interface seulement",
+  "resultats": [
+   {
+    "test": "S3 · sans compte : aucun appel à l’analyse, le moteur local le dit",
+    "ok": true
+   },
+   {
+    "test": "S3 · sans compte : le Point Zéro allume quand même ses briques (moteur local)",
+    "ok": true
+   },
+   {
+    "test": "S3 · connecté, réponse « ok » : Analysé par Claude",
+    "ok": true
+   },
+   {
+    "test": "S3 · connecté, réponse « compte » : entrez dans AIME pour l’analyse par Claude",
+    "ok": true
+   },
+   {
+    "test": "S3 · connecté, réponse « quota » : beaucoup d’analyses à la suite",
+    "ok": true
+   },
+   {
+    "test": "S3 · connecté, réponse « plafond » : a atteint sa limite pour l’heure",
+    "ok": true
+   },
+   {
+    "test": "S3 · connecté, réponse « indisponible » : analyse par Claude indisponible",
+    "ok": true
+   },
+   {
+    "test": "S2 · à la déconnexion, « Effacer les ouvrages de cet appareil » est proposé, jamais coché",
+    "ok": true
+   },
+   {
+    "test": "S2 · sans cocher : la déconnexion n’efface rien sur l’appareil",
+    "ok": true
+   },
+   {
+    "test": "S2 · coché : seul l’ouvrage du compte déjà rangé dans son espace est effacé (autre, pas-range, sans restent)",
+    "ok": true
+   },
+   {
+    "test": "aucune erreur dans la page",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/analyse.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "da817ca",
+  "code_modifie_depuis_le_commit": false,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "analyse : la garde commune d’abord (même site, JSON), puis fermée sans clé ni comptes ; jamais la clé dans une réponse",
+    "ok": true
+   },
+   {
+    "test": "nettoyer : domaine inconnu devient projet, sujet identique ignoré",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/securite.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "da817ca",
+  "code_modifie_depuis_le_commit": false,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "S1 : la suppression de compte couvre la musique, le Réseau, et inscrit les fichiers pour effacement",
+    "ok": true
+   },
+   {
+    "test": "S1 : la reprise est fermée sans secret, refuse un mauvais secret, et la tâche est planifiée",
+    "ok": true
+   },
+   {
+    "test": "S1 : la file ne perd rien quand le stockage échoue, et se vide quand il répond",
+    "ok": true
+   },
+   {
+    "test": "S2 : à la déconnexion, seuls les ouvrages du compte déjà rangés (version au moins aussi récente) sont effacés",
+    "ok": true
+   },
+   {
+    "test": "S3 : /api/analyse exige une session, la garde commune et les quotas partagés",
+    "ok": true
+   },
+   {
+    "test": "S4 : la lecture publique du Réseau exclut tout événement",
+    "ok": true
+   },
+   {
+    "test": "S1 : le nettoyage automatique du texte libre retire ce qui se reconnaît à coup sûr, garde ce qui sert au destinataire",
+    "ok": true
+   },
+   {
+    "test": "S1 : la conservation des demandes d’un compte supprimé se règle (12 mois par défaut, de 1 à 120)",
+    "ok": true
+   },
+   {
+    "test": "S1 : la file vient d’une migration explicite, idempotente, avec son retour arrière",
+    "ok": true
+   },
+   {
+    "test": "S3 : les quotas de l’analyse se règlent par l’environnement (20 et 300 par défaut)",
+    "ok": true
+   }
+  ]
+ }
+}
