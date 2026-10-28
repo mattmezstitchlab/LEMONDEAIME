@@ -1,0 +1,38 @@
+{
+  "name": "lemondeaime",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "LE MONDE AIME — le site officiel (lemondeaime.com) : AIME, Le Monde AIME, Point Zéro, BurO, la Charte AIME.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "node --test tests/server/*.test.mjs",
+    "verify": "npm run test && npm run build"
+  },
+  "dependencies": {
+    "@better-auth/passkey": "1.7.7",
+    "@neondatabase/serverless": "^1.2.0",
+    "better-auth": "1.7.7",
+    "pg": "8.16.3",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "overrides": {
+    "@better-auth/core": "1.7.7",
+    "@better-auth/utils": "0.4.2",
+    "better-call": "1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.17",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.7"
+  }
+}

@@ -1,0 +1,785 @@
+{
+ "briques": {
+  "intention": {
+   "n": "01",
+   "name": "Intention",
+   "fam": "Commencer",
+   "does": "Une phrase devient un plan de briques",
+   "w": "« Nous nous marions »",
+   "b": "« Broder mon chat »",
+   "feeds": [
+    "modele",
+    "taches"
+   ],
+   "kw": "",
+   "c": "#E4DAFF",
+   "cl": "#F3EEFF"
+  },
+  "import": {
+   "n": "02",
+   "name": "Import",
+   "fam": "Commencer",
+   "does": "Faire entrer un lien, un PDF, une photo, un tableur",
+   "w": "Liste d’invités, devis reçu",
+   "b": "Photo à convertir, patron PDF",
+   "feeds": [
+    "conversion",
+    "document",
+    "personnes",
+    "site"
+   ],
+   "kw": "import|pdf|lien|http|fichier|excel|tableur",
+   "c": "#E4DAFF",
+   "cl": "#F3EEFF"
+  },
+  "modele": {
+   "n": "03",
+   "name": "Modèle",
+   "fam": "Commencer",
+   "does": "Partir d’un projet type déjà assemblé",
+   "w": "Mariage civil et laïque",
+   "b": "SAL de printemps",
+   "feeds": [
+    "taches",
+    "calendrier"
+   ],
+   "kw": "modèle|modele|exemple",
+   "c": "#E4DAFF",
+   "cl": "#F3EEFF"
+  },
+  "document": {
+   "n": "04",
+   "name": "Document",
+   "fam": "Créer",
+   "does": "Un texte structuré par titres",
+   "w": "Discours, mot aux invités",
+   "b": "Notice d’un patron",
+   "feeds": [
+    "presentation",
+    "formation",
+    "fiche",
+    "page"
+   ],
+   "kw": "document|texte|discours|support|notice|rapport",
+   "c": "#FFD9B0",
+   "cl": "#FFEEDC"
+  },
+  "grille": {
+   "n": "05",
+   "name": "Grille",
+   "fam": "Créer",
+   "does": "Composer librement sur la grille infinie",
+   "w": "Carton, planche d’ambiance",
+   "b": "Grille point par point",
+   "feeds": [
+    "palette",
+    "atelier",
+    "boutique"
+   ],
+   "kw": "grille|maquette|affiche|carton",
+   "c": "#FFD9B0",
+   "cl": "#FFEEDC"
+  },
+  "palette": {
+   "n": "06",
+   "name": "Palette",
+   "fam": "Créer",
+   "does": "Couleurs et matières du projet",
+   "w": "Thème de couleurs",
+   "b": "Palette de fils",
+   "feeds": [
+    "atelier"
+   ],
+   "kw": "couleur|palette|dmc|thème|theme",
+   "c": "#FFD9B0",
+   "cl": "#FFEEDC"
+  },
+  "galerie": {
+   "n": "07",
+   "name": "Galerie",
+   "fam": "Créer",
+   "does": "Des images en série",
+   "w": "Photos du jour J",
+   "b": "Ouvrages finis",
+   "feeds": [
+    "page"
+   ],
+   "kw": "photo|galerie|album|portfolio",
+   "c": "#FFD9B0",
+   "cl": "#FFEEDC"
+  },
+  "media": {
+   "n": "08",
+   "name": "Média",
+   "fam": "Créer",
+   "does": "Son et vidéo",
+   "w": "Playlist, vidéo des témoins",
+   "b": "Tutoriel filmé",
+   "feeds": [
+    "presentation",
+    "page"
+   ],
+   "kw": "vidéo|video|musique|playlist|podcast",
+   "c": "#FFD9B0",
+   "cl": "#FFEEDC"
+  },
+  "page": {
+   "n": "09",
+   "name": "Page",
+   "fam": "Montrer",
+   "does": "Une page publique à soi",
+   "w": "Page de l’union",
+   "b": "Page de la brodeuse",
+   "feeds": [
+    "annonce",
+    "livreor"
+   ],
+   "kw": "page",
+   "c": "#FFC9E3",
+   "cl": "#FFE6F2"
+  },
+  "site": {
+   "n": "10",
+   "name": "Site",
+   "fam": "Montrer",
+   "does": "Plusieurs pages en deux docks",
+   "w": "Site du mariage",
+   "b": "Site de boutique",
+   "feeds": [
+    "annonce"
+   ],
+   "kw": "\\bsite|web",
+   "c": "#FFC9E3",
+   "cl": "#FFE6F2"
+  },
+  "habillage": {
+   "n": "11",
+   "name": "Habillage",
+   "fam": "Montrer",
+   "does": "Les deux docks et l’orbe sur un site existant",
+   "w": "Site du lieu de réception",
+   "b": "Blog existant",
+   "feeds": [
+    "questions"
+   ],
+   "kw": "habill|refonte",
+   "c": "#FFC9E3",
+   "cl": "#FFE6F2"
+  },
+  "presentation": {
+   "n": "12",
+   "name": "Présentation",
+   "fam": "Montrer",
+   "does": "Un document devient des diapositives",
+   "w": "Diaporama du repas",
+   "b": "Atelier en salon",
+   "feeds": [
+    "annonce"
+   ],
+   "kw": "présent|present|diapo|conférence|conference|pitch",
+   "c": "#FFC9E3",
+   "cl": "#FFE6F2"
+  },
+  "annonce": {
+   "n": "13",
+   "name": "Annonce",
+   "fam": "Montrer",
+   "does": "Faire savoir une nouvelle",
+   "w": "Save the date, faire-part",
+   "b": "Sortie d’un patron",
+   "feeds": [
+    "invitation"
+   ],
+   "kw": "annonc|faire-part|faire part|save the date|lancement",
+   "c": "#FFC9E3",
+   "cl": "#FFE6F2"
+  },
+  "vitrine": {
+   "n": "14",
+   "name": "Vitrine",
+   "fam": "Montrer",
+   "does": "Profil pro avec réalisations (A+)",
+   "w": "Fiche prestataire",
+   "b": "Créatrice de patrons",
+   "feeds": [
+    "annuaire",
+    "devis"
+   ],
+   "kw": "vitrine|prestataire",
+   "c": "#FFC9E3",
+   "cl": "#FFE6F2"
+  },
+  "personnes": {
+   "n": "15",
+   "name": "Personnes",
+   "fam": "Réunir",
+   "does": "Une liste de personnes, en groupes",
+   "w": "Invités",
+   "b": "Participantes d’un SAL",
+   "feeds": [
+    "invitation",
+    "roles",
+    "placement",
+    "messages"
+   ],
+   "kw": "invité|invite|personnes|participant|amis|famille|élève|eleve|client",
+   "c": "#C9DDFF",
+   "cl": "#E6EFFF"
+  },
+  "invitation": {
+   "n": "16",
+   "name": "Invitation",
+   "fam": "Réunir",
+   "does": "Inviter et recueillir les réponses",
+   "w": "Réponses des invités",
+   "b": "Inscription au SAL",
+   "feeds": [
+    "placement",
+    "rappels",
+    "suivi"
+   ],
+   "kw": "invit|inscri|rsvp|réponse",
+   "c": "#C9DDFF",
+   "cl": "#E6EFFF"
+  },
+  "roles": {
+   "n": "17",
+   "name": "Rôles",
+   "fam": "Réunir",
+   "does": "Qui fait quoi, qui peut modifier",
+   "w": "Témoins, organisatrice",
+   "b": "Animatrice du SAL",
+   "feeds": [
+    "taches"
+   ],
+   "kw": "témoin|temoin|rôle|équipe|equipe|bénévole",
+   "c": "#C9DDFF",
+   "cl": "#E6EFFF"
+  },
+  "placement": {
+   "n": "18",
+   "name": "Placement",
+   "fam": "Réunir",
+   "does": "Placer des personnes dans un espace",
+   "w": "Plan de table",
+   "b": "Places d’un atelier",
+   "feeds": [
+    "programme"
+   ],
+   "kw": "table|placement|plan de salle",
+   "c": "#C9DDFF",
+   "cl": "#E6EFFF"
+  },
+  "annuaire": {
+   "n": "19",
+   "name": "Annuaire",
+   "fam": "Réunir",
+   "does": "Trouver des personnes ou des pros",
+   "w": "Prestataires",
+   "b": "Brodeuses, merceries",
+   "feeds": [
+    "comparateur",
+    "devis"
+   ],
+   "kw": "annuaire|traiteur|photographe|fleuriste|\\bdj\\b|mercerie",
+   "c": "#C9DDFF",
+   "cl": "#E6EFFF"
+  },
+  "taches": {
+   "n": "20",
+   "name": "Tâches",
+   "fam": "Organiser",
+   "does": "Ce qu’il reste à faire, et par qui",
+   "w": "Rétroplanning",
+   "b": "Étapes d’un ouvrage",
+   "feeds": [
+    "calendrier",
+    "suivi",
+    "rappels"
+   ],
+   "kw": "tâche|tache|préparer|preparer|organis",
+   "c": "#B9EBD6",
+   "cl": "#DFF6EC"
+  },
+  "calendrier": {
+   "n": "21",
+   "name": "Calendrier",
+   "fam": "Organiser",
+   "does": "Les dates qui comptent",
+   "w": "Dates clés",
+   "b": "Calendrier du SAL",
+   "feeds": [
+    "rappels",
+    "programme"
+   ],
+   "kw": "date|janvier|février|mars|avril|\\bmai\\b|juin|juillet|août|septembre|octobre|novembre|décembre|calendrier|planning|20\\d\\d",
+   "c": "#B9EBD6",
+   "cl": "#DFF6EC"
+  },
+  "programme": {
+   "n": "22",
+   "name": "Programme",
+   "fam": "Organiser",
+   "does": "Le déroulé heure par heure",
+   "w": "Jour J",
+   "b": "Programme d’un salon",
+   "feeds": [
+    "lieu"
+   ],
+   "kw": "programme|déroulé|deroule|jour j|horaire",
+   "c": "#B9EBD6",
+   "cl": "#DFF6EC"
+  },
+  "suivi": {
+   "n": "23",
+   "name": "Suivi",
+   "fam": "Organiser",
+   "does": "La progression, mesurée",
+   "w": "Avancement des préparatifs",
+   "b": "Points brodés",
+   "feeds": [
+    "journal"
+   ],
+   "kw": "suivi|progress|avanc",
+   "c": "#B9EBD6",
+   "cl": "#DFF6EC"
+  },
+  "rappels": {
+   "n": "24",
+   "name": "Rappels",
+   "fam": "Organiser",
+   "does": "Relancer au bon moment",
+   "w": "Relance des réponses",
+   "b": "Partie suivante du SAL",
+   "feeds": [],
+   "kw": "rappel|relance",
+   "c": "#B9EBD6",
+   "cl": "#DFF6EC"
+  },
+  "messages": {
+   "n": "25",
+   "name": "Messages",
+   "fam": "Échanger",
+   "does": "Un fil de discussion",
+   "w": "Fil avec les témoins",
+   "b": "Fil du SAL",
+   "feeds": [
+    "sondage"
+   ],
+   "kw": "message|discut|groupe",
+   "c": "#FFE98F",
+   "cl": "#FFF5CC"
+  },
+  "sondage": {
+   "n": "26",
+   "name": "Sondage",
+   "fam": "Échanger",
+   "does": "Faire choisir, faire voter",
+   "w": "Choix du menu",
+   "b": "Prochain motif",
+   "feeds": [
+    "selection"
+   ],
+   "kw": "sondage|vote|choisir",
+   "c": "#FFE98F",
+   "cl": "#FFF5CC"
+  },
+  "questions": {
+   "n": "27",
+   "name": "Questions",
+   "fam": "Échanger",
+   "does": "Les réponses aux questions fréquentes",
+   "w": "Parking, tenue, horaires",
+   "b": "Questions sur un patron",
+   "feeds": [],
+   "kw": "question|faq",
+   "c": "#FFE98F",
+   "cl": "#FFF5CC"
+  },
+  "livreor": {
+   "n": "28",
+   "name": "Livre d’or",
+   "fam": "Échanger",
+   "does": "Des mots laissés par les autres",
+   "w": "Mots des invités",
+   "b": "Remerciements d’un SAL",
+   "feeds": [
+    "capsule"
+   ],
+   "kw": "livre d|remerci",
+   "c": "#FFE98F",
+   "cl": "#FFF5CC"
+  },
+  "budget": {
+   "n": "29",
+   "name": "Budget",
+   "fam": "Compter",
+   "does": "Prévu, dépensé, reste",
+   "w": "Budget du mariage",
+   "b": "Coût du matériel",
+   "feeds": [
+    "devis",
+    "cagnotte",
+    "comparateur"
+   ],
+   "kw": "budget|€|euro|coût|cout|prix",
+   "c": "#D6F0AE",
+   "cl": "#ECF8D8"
+  },
+  "devis": {
+   "n": "30",
+   "name": "Devis",
+   "fam": "Compter",
+   "does": "Demander et comparer des prix",
+   "w": "Devis prestataires",
+   "b": "Commande sur mesure",
+   "feeds": [
+    "comparateur",
+    "facture"
+   ],
+   "kw": "devis|tarif",
+   "c": "#D6F0AE",
+   "cl": "#ECF8D8"
+  },
+  "cagnotte": {
+   "n": "31",
+   "name": "Cagnotte",
+   "fam": "Compter",
+   "does": "Recevoir des participations",
+   "w": "Liste de mariage",
+   "b": "Projet collectif",
+   "feeds": [],
+   "kw": "cagnotte|liste de mariage|collecte|cadeau",
+   "c": "#D6F0AE",
+   "cl": "#ECF8D8"
+  },
+  "boutique": {
+   "n": "32",
+   "name": "Boutique",
+   "fam": "Compter",
+   "does": "Vendre",
+   "w": "Boutique",
+   "b": "Vente de patrons",
+   "feeds": [
+    "facture",
+    "avis"
+   ],
+   "kw": "boutique|vendre|vente",
+   "c": "#D6F0AE",
+   "cl": "#ECF8D8"
+  },
+  "billetterie": {
+   "n": "33",
+   "name": "Billetterie",
+   "fam": "Compter",
+   "does": "Vendre des places",
+   "w": "Soirée payante",
+   "b": "Atelier payant",
+   "feeds": [
+    "facture",
+    "personnes"
+   ],
+   "kw": "billet|ticket|entrée payante",
+   "c": "#D6F0AE",
+   "cl": "#ECF8D8"
+  },
+  "facture": {
+   "n": "34",
+   "name": "Facture",
+   "fam": "Compter",
+   "does": "Facturer, suivre les paiements (A+)",
+   "w": "Facture de prestataire",
+   "b": "Facture de vente",
+   "feeds": [
+    "budget"
+   ],
+   "kw": "factur",
+   "c": "#D6F0AE",
+   "cl": "#ECF8D8"
+  },
+  "comparateur": {
+   "n": "35",
+   "name": "Comparateur",
+   "fam": "Choisir",
+   "does": "Mettre des options côte à côte",
+   "w": "Prestataires comparés",
+   "b": "Toiles et fils comparés",
+   "feeds": [
+    "selection",
+    "avis"
+   ],
+   "kw": "compar",
+   "c": "#F2CCB3",
+   "cl": "#F9E6DA"
+  },
+  "selection": {
+   "n": "36",
+   "name": "Sélection",
+   "fam": "Choisir",
+   "does": "Garder ses coups de cœur",
+   "w": "Idées retenues",
+   "b": "Patrons favoris",
+   "feeds": [
+    "devis"
+   ],
+   "kw": "favori|coup de c|sélection|idée",
+   "c": "#F2CCB3",
+   "cl": "#F9E6DA"
+  },
+  "avis": {
+   "n": "37",
+   "name": "Avis",
+   "fam": "Choisir",
+   "does": "Noter et commenter",
+   "w": "Avis sur un prestataire",
+   "b": "Avis sur un patron",
+   "feeds": [
+    "vitrine"
+   ],
+   "kw": "avis|critique",
+   "c": "#F2CCB3",
+   "cl": "#F9E6DA"
+  },
+  "formation": {
+   "n": "38",
+   "name": "Formation",
+   "fam": "Apprendre",
+   "does": "Des modules guidés par l’orbe",
+   "w": "Préparer ses témoins",
+   "b": "Apprendre à broder",
+   "feeds": [
+    "quiz",
+    "suivi"
+   ],
+   "kw": "formation|cours|apprendre|enseign",
+   "c": "#BFE9F5",
+   "cl": "#E2F5FA"
+  },
+  "quiz": {
+   "n": "39",
+   "name": "Quiz",
+   "fam": "Apprendre",
+   "does": "Vérifier ce qu’on sait",
+   "w": "Quiz sur les mariés",
+   "b": "Quiz des points",
+   "feeds": [
+    "suivi"
+   ],
+   "kw": "quiz",
+   "c": "#BFE9F5",
+   "cl": "#E2F5FA"
+  },
+  "fiche": {
+   "n": "40",
+   "name": "Fiche",
+   "fam": "Apprendre",
+   "does": "Un pas-à-pas court",
+   "w": "Le rôle du témoin",
+   "b": "Le point de croix",
+   "feeds": [
+    "formation"
+   ],
+   "kw": "fiche|tuto|pas à pas",
+   "c": "#BFE9F5",
+   "cl": "#E2F5FA"
+  },
+  "journal": {
+   "n": "41",
+   "name": "Journal",
+   "fam": "Garder",
+   "does": "Un fil daté de ce qui s’est passé",
+   "w": "Carnet de préparation",
+   "b": "Journal d’ouvrage",
+   "feeds": [
+    "capsule",
+    "galerie"
+   ],
+   "kw": "journal|carnet",
+   "c": "#E2D8C4",
+   "cl": "#F1ECE2"
+  },
+  "capsule": {
+   "n": "42",
+   "name": "Capsule",
+   "fam": "Garder",
+   "does": "Un message à ouvrir plus tard",
+   "w": "Lettres à ouvrir dans dix ans",
+   "b": "Ouvrage à offrir",
+   "feeds": [],
+   "kw": "capsule|plus tard|souvenir",
+   "c": "#E2D8C4",
+   "cl": "#F1ECE2"
+  },
+  "lieu": {
+   "n": "43",
+   "name": "Lieu",
+   "fam": "Situer",
+   "does": "Une adresse sur une carte",
+   "w": "Lieu de réception",
+   "b": "Mercerie, atelier",
+   "feeds": [
+    "itineraire"
+   ],
+   "kw": "lieu|salle|château|chateau|adresse|campagne|église|mairie",
+   "c": "#CBD3FF",
+   "cl": "#E7EAFF"
+  },
+  "itineraire": {
+   "n": "44",
+   "name": "Itinéraire",
+   "fam": "Situer",
+   "does": "Comment venir",
+   "w": "Accès des invités",
+   "b": "Venir à l’atelier",
+   "feeds": [],
+   "kw": "itinéraire|itineraire|venir|accès|parking|transport",
+   "c": "#CBD3FF",
+   "cl": "#E7EAFF"
+  },
+  "conversion": {
+   "n": "45",
+   "name": "Conversion",
+   "fam": "Métier",
+   "does": "Une image devient une grille de points",
+   "w": "—",
+   "b": "Photo vers grille",
+   "feeds": [
+    "grille",
+    "palette"
+   ],
+   "kw": "convert|image|portrait",
+   "c": "#EAD6FF",
+   "cl": "#F5ECFF"
+  },
+  "atelier": {
+   "n": "46",
+   "name": "Atelier",
+   "fam": "Métier",
+   "does": "La grille en mode broderie, case par case",
+   "w": "—",
+   "b": "Broder pas à pas",
+   "feeds": [
+    "suivi",
+    "journal"
+   ],
+   "kw": "broder|brod|point de croix|aiguille",
+   "c": "#EAD6FF",
+   "cl": "#F5ECFF"
+  }
+ },
+ "grille": [
+  [
+   "galerie",
+   "media",
+   "page",
+   "site",
+   "habillage",
+   "messages",
+   "sondage"
+  ],
+  [
+   "palette",
+   "grille",
+   "presentation",
+   "annonce",
+   "vitrine",
+   "questions",
+   "livreor"
+  ],
+  [
+   "conversion",
+   "document",
+   "import",
+   "intention",
+   "modele",
+   "taches",
+   "calendrier"
+  ],
+  [
+   "atelier",
+   "personnes",
+   "invitation",
+   "PZ",
+   "suivi",
+   "programme",
+   "rappels"
+  ],
+  [
+   "annuaire",
+   "roles",
+   "placement",
+   "lieu",
+   "itineraire",
+   "journal",
+   "capsule"
+  ],
+  [
+   "budget",
+   "devis",
+   "cagnotte",
+   "comparateur",
+   "selection",
+   "avis",
+   "VIDE"
+  ],
+  [
+   "boutique",
+   "billetterie",
+   "facture",
+   "formation",
+   "quiz",
+   "fiche",
+   "VIDE"
+  ]
+ ],
+ "familles": {
+  "Commencer": [
+   "#E4DAFF",
+   "#F3EEFF"
+  ],
+  "Créer": [
+   "#FFD9B0",
+   "#FFEEDC"
+  ],
+  "Montrer": [
+   "#FFC9E3",
+   "#FFE6F2"
+  ],
+  "Réunir": [
+   "#C9DDFF",
+   "#E6EFFF"
+  ],
+  "Organiser": [
+   "#B9EBD6",
+   "#DFF6EC"
+  ],
+  "Échanger": [
+   "#FFE98F",
+   "#FFF5CC"
+  ],
+  "Compter": [
+   "#D6F0AE",
+   "#ECF8D8"
+  ],
+  "Choisir": [
+   "#F2CCB3",
+   "#F9E6DA"
+  ],
+  "Apprendre": [
+   "#BFE9F5",
+   "#E2F5FA"
+  ],
+  "Garder": [
+   "#E2D8C4",
+   "#F1ECE2"
+  ],
+  "Situer": [
+   "#CBD3FF",
+   "#E7EAFF"
+  ],
+  "Métier": [
+   "#EAD6FF",
+   "#F5ECFF"
+  ]
+ }
+}
