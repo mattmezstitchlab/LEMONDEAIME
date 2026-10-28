@@ -5,13 +5,16 @@ import { readFileSync } from 'node:fs';
 import { autorise } from '../../api/maintenance.mjs';
 import { reprendre, _stockage } from '../../api/_auth/effacements.mjs';
 import { choisirAEffacer } from '../../src/lib/ouvragesAppareil.ts';
+import { masquer } from '../../api/_auth/anonymiser.mjs';
+import { moisConservation } from '../../api/maintenance.mjs';
+import Q from '../../api/_auth/quotas.cjs';
 
 const lire = f => readFileSync(new URL('../../' + f, import.meta.url), 'utf8');
 
 test('S1 : la suppression de compte couvre la musique, le Réseau, et inscrit les fichiers pour effacement', () => {
   const a = lire('api/_auth/auth.mjs');
   for (const t of ['musiques', 'reseau_dates', 'reseau_questions', 'reseau_demandes where a_user', 'profils', 'ouvrages', 'space_members']) assert.ok(a.includes(t), t);
-  assert.match(a, /update reseau_demandes set de_user = '', de_nom = 'Compte supprimé', de_email = ''/);
+  assert.match(a, /update reseau_demandes set de_user = '', de_nom = 'Compte supprimé', de_email = '', message = \$2/);
   assert.match(a, /prefixes: \['musique\/' \+ u\.id \+ '\/'\]/);
   assert.match(a, /afterDelete: \(\) => reprendreEffacements/);
 });
@@ -63,10 +66,45 @@ test('S3 : /api/analyse exige une session, la garde commune et les quotas partag
   assert.match(a, /if \(!g\.partage\)/, 'sans compteur partagé, aucune dépense');
   assert.ok(!/ANALYSE_ALLOWED_ORIGINS|Access-Control-Allow-Origin/.test(a), 'plus d’ouverture à d’autres sites');
   const q = lire('api/_auth/quotas.cjs');
-  assert.match(q, /'analyse:personne': \{ max: 20, fenetre: 3600 \}/);
-  assert.match(q, /'analyse:tous': \{ max: 300, fenetre: 3600 \}/);
+  assert.match(q, /'analyse:personne': \{ get max\(\) \{ return entier\(process\.env\.ANALYSE_QUOTA_PERSONNE, 20\)/);
+  assert.match(q, /'analyse:tous': \{ get max\(\) \{ return entier\(process\.env\.ANALYSE_PLAFOND_HEURE, 300\)/);
 });
 
 test('S4 : la lecture publique du Réseau exclut tout événement', () => {
   assert.match(lire('api/reseau.mjs'), /from spaces where owner_id = \$1 and kind <> 'evenement' and coalesce\(data->>'visibilite','prive'\) = 'public'/);
+});
+
+test('S1 : le texte libre d’une demande perd ce qui identifie son auteur, garde ce qui sert au destinataire', () => {
+  const t = masquer('Ici Élodie MARTIN (elodie.m@exemple.fr), 06 12 34 56 78 / +33 6 12 34 56 78, https://elodie.fr, IBAN FR76 3000 6000 0112 3456 7890 189. Le 12/06/2027, 80 invités, 2 500 €.', { nom: 'Élodie Martin', email: 'elodie.m@exemple.fr' });
+  assert.ok(!/Élodie|MARTIN|elodie|06 12|\+33|https|FR76/.test(t), t);
+  assert.match(t, /12\/06\/2027/); assert.match(t, /80 invités/); assert.match(t, /2 500 €/);
+  assert.equal(masquer('Bonjour', {}), 'Bonjour');
+});
+
+test('S1 : la conservation des demandes anonymisées se règle (12 mois par défaut, de 1 à 120)', () => {
+  assert.equal(moisConservation({}), 12);
+  assert.equal(moisConservation({ DEMANDES_ANONYMES_MOIS: '6' }), 6);
+  assert.equal(moisConservation({ DEMANDES_ANONYMES_MOIS: '0' }), 12);
+  assert.equal(moisConservation({ DEMANDES_ANONYMES_MOIS: 'abc' }), 12);
+});
+
+test('S1 : la file vient d’une migration explicite, idempotente, avec son retour arrière', () => {
+  const m = lire('db/migrations/2026-10-28-01-effacements-fichiers.sql'), r = lire('db/migrations/2026-10-28-01-effacements-fichiers.retour.sql');
+  assert.match(m, /create table if not exists effacements_fichiers/); assert.match(m, /create unique index if not exists effacements_fichiers_cible on effacements_fichiers \(genre, cible\)/);
+  assert.match(r, /n''est pas vide : retour arrière refusé/);
+  const e = lire('api/_auth/effacements.mjs');
+  assert.ok(!/create table/i.test(e), 'le code ne crée plus la table');
+  assert.match(e, /on conflict \(genre, cible\) do nothing/);
+});
+
+test('S3 : les quotas de l’analyse se règlent par l’environnement (20 et 300 par défaut)', () => {
+  const avant = [process.env.ANALYSE_QUOTA_PERSONNE, process.env.ANALYSE_PLAFOND_HEURE];
+  try {
+    delete process.env.ANALYSE_QUOTA_PERSONNE; delete process.env.ANALYSE_PLAFOND_HEURE;
+    assert.equal(Q.QUOTAS['analyse:personne'].max, 20); assert.equal(Q.QUOTAS['analyse:tous'].max, 300);
+    process.env.ANALYSE_QUOTA_PERSONNE = '5'; process.env.ANALYSE_PLAFOND_HEURE = '1000';
+    assert.equal(Q.QUOTAS['analyse:personne'].max, 5); assert.equal(Q.QUOTAS['analyse:tous'].max, 1000);
+    process.env.ANALYSE_PLAFOND_HEURE = '-3';
+    assert.equal(Q.QUOTAS['analyse:tous'].max, 300, 'une valeur invalide garde le défaut');
+  } finally { for (const [k, v] of [['ANALYSE_QUOTA_PERSONNE', avant[0]], ['ANALYSE_PLAFOND_HEURE', avant[1]]]) { if (v === undefined) delete process.env[k]; else process.env[k] = v; } }
 });

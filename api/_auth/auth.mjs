@@ -6,7 +6,8 @@ import { magicLink } from 'better-auth/plugins/magic-link';
 import { passkey } from '@better-auth/passkey';
 import pg from 'pg';
 import { APIError } from 'better-auth/api';
-import { inscrire as inscrireEffacements, reprendre as reprendreEffacements } from './effacements.mjs';
+import { masquer } from './anonymiser.mjs';
+import { inscrire as inscrireEffacements, reprendre as reprendreEffacements, FileAbsente } from './effacements.mjs';
 
 /* l'adresse publique : fixée par l'environnement, sinon l'adresse de la branche Vercel, sinon le local */
 export function adresse(env = process.env) {
@@ -128,7 +129,9 @@ export async function effacerTraces(db, u) {
       await c.query('delete from reseau_dates where user_id = $1', [u.id]);
       await c.query('delete from reseau_questions where user_id = $1', [u.id]);
       await c.query('delete from reseau_demandes where a_user = $1', [u.id]);
-      await c.query("update reseau_demandes set de_user = '', de_nom = 'Compte supprimé', de_email = '' where de_user = $1", [u.id]);
+      /* son texte libre aussi : adresses, téléphones, liens et son nom en sont retirés (voir anonymiser.mjs) */
+      const envoyees = (await c.query('select id, message, de_nom, de_email from reseau_demandes where de_user = $1', [u.id])).rows;
+      for (const d of envoyees) await c.query("update reseau_demandes set de_user = '', de_nom = 'Compte supprimé', de_email = '', message = $2 where id = $1", [d.id, masquer(d.message, { nom: [d.de_nom, u.name].filter(Boolean).join(' '), email: d.de_email || u.email })]);
     }
     /* sa musique : les morceaux, et les fichiers envoyés (même jamais rattachés à un morceau), inscrits pour effacement avec reprise */
     const mu = await c.query("select to_regclass('public.musiques') as t");
@@ -137,6 +140,7 @@ export async function effacerTraces(db, u) {
     await c.query('commit');
   } catch (e) {
     await c.query('rollback').catch(() => {});
+    if (e instanceof FileAbsente) throw new APIError('INTERNAL_SERVER_ERROR', { code: 'SUPPRESSION_INDISPONIBLE', message: 'La suppression de compte est momentanément indisponible : rien n\'a été effacé. Réessayez plus tard.' });
     if (e instanceof EspacesPartages) throw new APIError('BAD_REQUEST', { code: 'ESPACES_PARTAGES', message: 'Vous êtes propriétaire d\'espaces où d\'autres personnes sont membres (' + e.titres.slice(0, 3).join(', ') + (e.titres.length > 3 ? '…' : '') + ') : retirez-les d\'abord, rien de ce qu\'elles y ont mis ne sera effacé.' });
     throw e;
   }

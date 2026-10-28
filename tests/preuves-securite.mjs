@@ -18,7 +18,7 @@ await new Promise((ok, ko) => {
   flux.on('test:pass', d => note(d, true)); flux.on('test:fail', d => note(d, false)); flux.on('end', ok); flux.on('error', ko); flux.resume();
 });
 let vitest = { testResults: [] };
-try { vitest = JSON.parse(execFileSync('npx', ['vitest', 'run', '--reporter=json', 'src/__tests__/cloisonnement.test.ts', 'src/__tests__/cloisonnementBibliotheque.test.ts', 'src/__tests__/aimeSync.test.ts'], { cwd: join(RACINE, 'studio'), encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })); }
+try { vitest = JSON.parse(execFileSync('npx', ['vitest', 'run', '--reporter=json', 'src/__tests__/cloisonnement.test.ts', 'src/__tests__/cloisonnementBibliotheque.test.ts', 'src/__tests__/anciensPartages.test.ts', 'src/__tests__/aimeSync.test.ts'], { cwd: join(RACINE, 'studio'), encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })); }
 catch (e) { try { vitest = JSON.parse(e.stdout); } catch { /* rien */ } }
 for (const f of vitest.testResults || []) par['studio/src/__tests__/' + f.name.split('/').pop()] = f.assertionResults.map(a => ({ test: a.title, ok: a.status === 'passed' }));
 const dossier = join(RACINE, 'docs/securite'); mkdirSync(dossier, { recursive: true });

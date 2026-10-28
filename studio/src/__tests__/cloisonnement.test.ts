@@ -25,7 +25,7 @@ describe("StudiO — cloisonnement des ouvrages par compte", () => {
     vi.useFakeTimers(); vi.stubEnv("BASE_URL", "/studio/");
     const { envois } = serveur("B");
     const m = await import("../lib/aimeSync");
-    await m.tirer(async () => [rec("de-A", "A"), rec("sans-proprio")] as never, async () => {});
+    await m.tirer(async () => [rec("de-A", "A"), { ...rec("sans-proprio"), appareil: true }] as never, async () => {});
     await vi.advanceTimersByTimeAsync(10000);
     expect(envois.map(e => e.id)).toEqual([]);
   });
@@ -41,12 +41,12 @@ describe("StudiO — cloisonnement des ouvrages par compte", () => {
     expect(envois.map(e => e.id).sort()).toEqual(["a-envoyer", "local-plus-recent"]);
   });
 
-  it("un ouvrage sans propriétaire déjà présent dans le compte lui est rattaché (c'est le sien), sans rien envoyer d'autre", async () => {
+  it("un ouvrage de l'appareil déjà présent dans le compte lui est rattaché (c'est le sien), sans rien envoyer d'autre", async () => {
     vi.useFakeTimers(); vi.stubEnv("BASE_URL", "/studio/");
     serveur("B", [{ id: "deja", maj: 1000 }]);
     const m = await import("../lib/aimeSync");
     const ecrits: Rec[] = [];
-    await m.tirer(async () => [rec("deja", undefined, 1000)] as never, async (x) => { ecrits.push(x as Rec); });
+    await m.tirer(async () => [{ ...rec("deja", undefined, 1000), appareil: true }] as never, async (x) => { ecrits.push(x as Rec); });
     expect(ecrits.map(e => [e.id, e.compte])).toEqual([["deja", "B"]]);
   });
 
@@ -55,30 +55,33 @@ describe("StudiO — cloisonnement des ouvrages par compte", () => {
     const { envois } = serveur("B");
     const m = await import("../lib/aimeSync");
     expect(await m.envoyer(rec("de-A", "A") as never)).toBe(false);
-    expect(await m.envoyer(rec("sans") as never)).toBe(false);
+    expect(await m.envoyer({ ...rec("sans"), appareil: true } as never)).toBe(false);
     expect(await m.envoyer(rec("de-B", "B") as never)).toBe(true);
     expect(envois.map(e => e.id)).toEqual(["de-B"]);
   });
 
-  it("l'affichage : chacun voit les siens et ceux sans propriétaire ; personne ne voit ceux d'un autre", async () => {
+  it("l'affichage : chacun voit les siens et ceux de l'appareil ; personne ne voit ceux d'un autre ni les anciens non vérifiés", async () => {
     vi.stubEnv("BASE_URL", "/studio/");
     const m = await import("../lib/aimeSync");
-    const tous = [rec("de-A", "A"), rec("de-B", "B"), rec("sans")];
-    expect(m.visibles(tous, "B").map(r => r.id)).toEqual(["de-B", "sans"]);
-    expect(m.visibles(tous, null).map(r => r.id)).toEqual(["sans"]);
+    const tous = [rec("de-A", "A"), rec("de-B", "B"), { ...rec("appareil"), appareil: true }, rec("ancien"), { ...rec("autre"), autreCompte: true }];
+    expect(m.visibles(tous, "B").map(r => r.id)).toEqual(["de-B", "appareil"]);
+    expect(m.visibles(tous, null).map(r => r.id)).toEqual(["appareil"]);
+    vi.stubEnv("BASE_URL", "/");
+    expect(m.visibles(tous, null).length).toBe(5);   // hors d'AIME (atelier seul) : rien ne change, tout reste visible
   });
 
-  it("rattacher un ouvrage sans propriétaire : seulement par un geste, au compte connecté", async () => {
+  it("rattacher un ouvrage de l'appareil : seulement par un geste, au compte connecté ; jamais un ancien non vérifié", async () => {
     vi.stubEnv("BASE_URL", "/studio/");
     const { envois } = serveur("B");
     const m = await import("../lib/aimeSync");
-    const r = await m.rattacher(rec("sans") as never);
+    const r = await m.rattacher({ ...rec("sans"), appareil: true } as never);
     expect(r && r.compte).toBe("B");
     expect(envois.map(e => e.id)).toEqual(["sans"]);
+    expect(await m.rattacher(rec("ancien-non-verifie") as never)).toBeNull();
     serveur(null);
     vi.resetModules();
     const m2 = await import("../lib/aimeSync");
-    expect(await m2.rattacher(rec("sans") as never)).toBeNull();
+    expect(await m2.rattacher({ ...rec("sans"), appareil: true } as never)).toBeNull();
   });
 
   it("effacer à la déconnexion : seulement les ouvrages de ce compte, jamais ceux sans propriétaire ni d'un autre", async () => {

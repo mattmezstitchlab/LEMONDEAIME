@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from "vitest";
 
 /* Sécurité S2, la bibliothèque de l'appareil : B ne voit ni ne supprime les ouvrages de A ; un ouvrage sans propriétaire
    n'est rattaché à un compte que par un geste. Une petite base IndexedDB en mémoire suffit à le vérifier. */
-type R = { id: string; compte?: string; name: string; data: string; versions: unknown[]; folder: string; updated: number; w: number; h: number; progress: number };
+type R = { id: string; compte?: string; appareil?: boolean; autreCompte?: boolean; name: string; data: string; versions: unknown[]; folder: string; updated: number; w: number; h: number; progress: number };
 function base(initial: R[]) {
   const donnees = new Map(initial.map(r => [r.id, r]));
   const store = {
@@ -30,7 +30,7 @@ afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.resetModules(); 
 
 it("B ne voit que ses ouvrages et ceux sans propriétaire ; sans compte, seulement ceux sans propriétaire", async () => {
   vi.stubEnv("BASE_URL", "/studio/");
-  base([r("de-A", "A"), r("de-B", "B"), r("sans")]); session("B");
+  base([r("de-A", "A"), r("de-B", "B"), { ...r("sans"), appareil: true } as R]); session("B");
   const L = await import("../lib/library");
   expect((await L.listProjects()).map(x => x.id).sort()).toEqual(["de-B", "sans"]);
   vi.resetModules(); session(null);
@@ -48,10 +48,10 @@ it("B ne peut pas supprimer l'ouvrage de A, ni sur l'appareil ni dans un compte"
 
 it("rattacher un ouvrage sans propriétaire : au compte connecté, envoyé une fois, jamais celui d'un autre", async () => {
   vi.stubEnv("BASE_URL", "/studio/");
-  const d = base([r("sans"), r("de-A", "A")]); const envois = session("B");
+  const d = base([{ ...r("sans"), appareil: true } as R, r("de-A", "A")]); const envois = session("B");
   const L = await import("../lib/library");
-  expect(await L.rattacherProjet("sans")).toBe(true);
+  expect(await L.rattacherProjet("sans")).toBe("rattache");
   expect(d.get("sans")?.compte).toBe("B"); expect(envois).toEqual(["sans"]);
-  expect(await L.rattacherProjet("de-A")).toBe(false);
+  expect(await L.rattacherProjet("de-A")).toBe("impossible");
   expect(d.get("de-A")?.compte).toBe("A");
 });

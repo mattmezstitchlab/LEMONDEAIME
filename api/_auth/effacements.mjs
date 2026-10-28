@@ -5,9 +5,10 @@
 // (après la suppression suivante, et chaque jour par /api/maintenance). Un fichier déjà absent compte comme effacé.
 // genre « url » : un fichier précis ; genre « prefixe » : tout un dossier (musique/<compte>/), y compris les envois jamais rattachés à un morceau.
 
-export const TABLE_EFFACEMENTS = `create table if not exists effacements_fichiers (
-  id bigserial primary key, genre text not null check (genre in ('url', 'prefixe')), cible text not null,
-  essais integer not null default 0, erreur text not null default '', cree_le timestamptz not null default now(), essai_le timestamptz)`;
+/* La table vient de la migration db/migrations/2026-10-28-01-effacements-fichiers.sql, appliquée avant le déploiement.
+   Absente : on refuse d'inscrire (et donc de supprimer le compte) plutôt que de perdre la trace d'un fichier. */
+export class FileAbsente extends Error { constructor() { super('file d\'effacement absente : migration 2026-10-28-01 à appliquer'); this.code = 'EFFACEMENTS_ABSENTS'; } }
+async function presente(db) { return !!(await db.query("select to_regclass('public.effacements_fichiers') as t")).rows[0].t; }
 
 /* le stockage : Vercel Blob en vrai, injectable pour les tests */
 let stockage = null;
@@ -21,18 +22,18 @@ async function blob() {
 
 /** Inscrit les fichiers d'un compte dans la file (dans la transaction de l'appelant). */
 export async function inscrire(c, { urls = [], prefixes = [] }) {
-  await c.query(TABLE_EFFACEMENTS);
-  for (const u of [...new Set(urls)]) await c.query(`insert into effacements_fichiers (genre, cible) values ('url', $1)`, [u]);
-  for (const p of [...new Set(prefixes)]) await c.query(`insert into effacements_fichiers (genre, cible) values ('prefixe', $1)`, [p]);
+  if (!(await presente(c))) throw new FileAbsente();
+  for (const u of [...new Set(urls)]) await c.query(`insert into effacements_fichiers (genre, cible) values ('url', $1) on conflict (genre, cible) do nothing`, [u]);
+  for (const p of [...new Set(prefixes)]) await c.query(`insert into effacements_fichiers (genre, cible) values ('prefixe', $1) on conflict (genre, cible) do nothing`, [p]);
 }
 
 /** Vide la file, au plus `max` entrées. Renvoie { effaces, echecs, restants }. Sans stockage configuré : rien n'est tenté, tout reste. */
 export async function reprendre(db, { max = 50 } = {}) {
   const s = await blob();
-  const existe = await db.query("select to_regclass('public.effacements_fichiers') as t");
-  if (!existe.rows[0].t) return { effaces: 0, echecs: 0, restants: 0 };
+  if (!(await presente(db))) return { effaces: 0, echecs: 0, restants: 0, bloques: 0, table: false };
   const rest = async () => (await db.query('select count(*)::int as n from effacements_fichiers')).rows[0].n;
-  if (!s) return { effaces: 0, echecs: 0, restants: await rest() };
+  const bloques = async () => (await db.query('select count(*)::int as n from effacements_fichiers where essais >= 5')).rows[0].n;   /* à surveiller : 5 échecs ou plus */
+  if (!s) return { effaces: 0, echecs: 0, restants: await rest(), bloques: await bloques(), stockage: false };
   const { rows } = await db.query('select id, genre, cible from effacements_fichiers order by essais, id limit $1', [max]);
   let effaces = 0, echecs = 0;
   for (const r of rows) {
@@ -54,5 +55,5 @@ export async function reprendre(db, { max = 50 } = {}) {
       echecs++;
     }
   }
-  return { effaces, echecs, restants: await rest() };
+  return { effaces, echecs, restants: await rest(), bloques: await bloques() };
 }
