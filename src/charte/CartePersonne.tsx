@@ -31,8 +31,8 @@ function Dos({ c, retourner, ouvert }: { c: Carte; retourner: () => void; ouvert
   useEffect(() => { if (c.musiques) setSons(c.musiques); }, [c.musiques]);
   useEffect(() => { if (ouvert && c.ref && !c.musiques) musiquesDe(c.ref).then(r => { if (r.ok) setSons(r.musiques || []); }); }, [ouvert, c.ref, c.musiques]);
   const lect = useLecteur();
-  const jouables = sons.filter(m => m.deezer);
-  const sienne = lect.pistes.length > 0 && jouables.some(m => m.deezer === lect.pistes[lect.i]?.deezer);
+  const jouables = sons.filter(m => !!m.deezer || m.source === 'fichier');
+  const pc = lect.pistes[lect.i], sienne = !!pc && jouables.some(m => m.deezer ? m.deezer === pc.deezer : m.lien === pc.url);
   useEffect(() => { bas.current?.scrollTo({ top: bas.current.scrollHeight }); }, [fil]);
   const idees = c.idees || [c.date ? 'Libre le ' + court(c.date) + ' ?' : 'Libre le 12 juin ?', 'Quelles prestations ?', 'Où intervenez-vous ?'];
   const demander = async (question: string) => {
