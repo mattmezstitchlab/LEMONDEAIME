@@ -8,6 +8,9 @@
     },
     "api/orbe.mjs": {
       "maxDuration": 20
+    },
+    "api/maintenance.mjs": {
+      "maxDuration": 60
     }
   },
   "rewrites": [
@@ -58,6 +61,12 @@
       "source": "/studio",
       "destination": "/studio/",
       "permanent": false
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/maintenance",
+      "schedule": "17 3 * * *"
     }
   ]
 }
