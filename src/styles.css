@@ -178,6 +178,7 @@ html.calme *, html.calme *::before, html.calme *::after { transition: none !impo
 .cartes.ligne { display: flex; grid-template-columns: none; gap: 28px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px var(--marge) 24px; margin: 0 calc(-1 * var(--marge)); scrollbar-width: thin; }
 .cartes.ligne > li { flex: 0 0 min(82vw, 440px); scroll-snap-align: start; scroll-margin-left: var(--marge); }
 .cartes.ligne:focus-visible { outline-offset: -2px; }
+.cartes.ligne.defile { scroll-snap-type: none; }
 @keyframes orbe-tourne { to { transform: rotate(360deg); } }
 .orbe-tourne { animation: orbe-tourne 6s linear infinite; }
 
@@ -282,7 +283,10 @@ img.avatar { background: var(--doux); }
 .carte-flip.retournee > .dos { transform: rotateY(0); }
 html.calme .carte-flip > .face { transition: opacity .2s ease; transform: none !important; }
 html.calme .carte-flip > .dos { opacity: 0; } html.calme .carte-flip.retournee > .dos { opacity: 1; } html.calme .carte-flip.retournee > .avant { opacity: 0; }
-.carte-orbe { position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,.94); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,.12); }
+.carte-orbe { position: absolute; top: 10px; right: 10px; width: 44px; height: 44px; padding: 0; border-radius: 50%; border: 0; background: transparent; display: grid; place-items: center; cursor: pointer; filter: drop-shadow(0 3px 8px rgba(0,0,0,.25)); }
+.carte-orbe > * { grid-area: 1 / 1; }
+.carte-orbe .picto-retourner { color: #0B0B0C; opacity: .78; }
+.carte-orbe:hover .picto-retourner { opacity: 1; }
 .carte-orbe:hover { transform: scale(1.06); }
 .carte-orbe:focus-visible { outline: 2px solid #0B0B0C; outline-offset: 2px; }
 .pastille-date { position: absolute; left: 10px; bottom: 10px; padding: 5px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; background: #fff; color: #0B0B0C; }
@@ -293,9 +297,10 @@ html.calme .carte-flip > .dos { opacity: 0; } html.calme .carte-flip.retournee >
 .dos-haut { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .dos-titre { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
 .dos-retour { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); background: transparent; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; flex: none; }
-.dos-fil { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-.dos-orbe { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 8px; }
-.dos-orbe p { margin: 0; font-size: 14px; line-height: 1.4; color: rgba(255,255,255,.78); }
+.dos-fil { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #3A3A42 transparent; display: flex; flex-direction: column; gap: 10px; }
+.dos-orbe { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 4px 6px; }
+.dos-fil::-webkit-scrollbar { width: 6px; } .dos-fil::-webkit-scrollbar-track { background: transparent; } .dos-fil::-webkit-scrollbar-thumb { background: #3A3A42; border-radius: 3px; }
+.dos-orbe p { margin: 0; font-size: 13.5px; line-height: 1.4; color: rgba(255,255,255,.78); }
 .dos-echange { display: flex; flex-direction: column; gap: 6px; }
 .dos-q { align-self: flex-end; margin: 0; max-width: 88%; padding: 7px 11px; border-radius: 14px 14px 4px 14px; background: #fff; color: #0B0B0C; font-size: 14px; }
 .dos-r { margin: 0; max-width: 94%; padding: 8px 11px; border-radius: 14px 14px 14px 4px; background: #24242A; font-size: 14px; line-height: 1.4; }

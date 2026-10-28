@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Tete, VerbesSite, DockBas, Pied, Orbe } from '../charte/Charte';
 import { ApercuEspace } from '../charte/ApercuEspace';
 import { Metamorphose, type UniversM } from '../charte/Metamorphose';
@@ -23,20 +23,20 @@ const DIAPOS = [
   { src: '/media/facade.jpg', who: 'Le chauffeur', where: 'Las Vegas, 23 h 59', alt: 'Une limousine blanche devant une chapelle de mariage illuminée à Las Vegas' },
 ];
 const UNIONS = [
-  { nom: UNION_EXEMPLE, ou: 'Motel dans le désert', src: W('union-camille-gabriel'), alt: 'Un couple danse sous les étoiles devant un motel du désert' },
-  { nom: 'Inès & Hugo', ou: 'Toits de Paris', src: W('union-ines-hugo'), alt: 'Un couple sur un balcon face aux toits de Paris et à la tour Eiffel' },
-  { nom: 'Lou & Marius', ou: 'Cinéma de quartier', src: W('union-lou-marius'), alt: 'Un couple de mariés sur la scène d’un cinéma au rideau rouge' },
+  { nom: UNION_EXEMPLE, ou: 'Motel dans le désert', univers: 'desert', src: W('union-camille-gabriel'), alt: 'Un couple danse sous les étoiles devant un motel du désert' },
+  { nom: 'Inès & Hugo', ou: 'Toits de Paris', univers: 'paris', src: W('union-ines-hugo'), alt: 'Un couple sur un balcon face aux toits de Paris et à la tour Eiffel' },
+  { nom: 'Lou & Marius', ou: 'Cinéma de quartier', univers: 'insolite', src: W('union-lou-marius'), alt: 'Un couple de mariés sur la scène d’un cinéma au rideau rouge' },
 ];
 const INVITES = [
-  { nom: 'Les témoins', ou: 'Ceux qui étaient là depuis le début', src: W('invites-temoins'), alt: 'Des invités trinquent dans une cour éclairée de guirlandes' },
-  { nom: 'La table 7', ou: 'Vue sur la mer', src: W('invites-table-7'), alt: 'Une longue table dressée sur une terrasse face à la mer' },
-  { nom: 'Les copains de fac', ou: 'Arrivés à la dernière minute', src: W('invites-copains'), alt: 'Un groupe d’amis rit dans une rue pavée' },
+  { nom: 'Les témoins', ou: 'Ceux qui étaient là depuis le début', texte: 'Ils gardent les alliances, préparent le discours et le secret du dessert.', src: W('invites-temoins'), alt: 'Des invités trinquent dans une cour éclairée de guirlandes' },
+  { nom: 'La table 7', ou: 'Vue sur la mer', texte: 'Huit amis d’enfance, placés face à la mer, tout près de la piste.', src: W('invites-table-7'), alt: 'Une longue table dressée sur une terrasse face à la mer' },
+  { nom: 'Les copains de fac', ou: 'Arrivés à la dernière minute', texte: 'Ils ont promis trois chansons pour la fin de soirée.', src: W('invites-copains'), alt: 'Un groupe d’amis rit dans une rue pavée' },
 ];
 const COLLECTIONS = [
-  { nom: 'Châteaux & bals', ou: 'Pierre, lustres et feux de Bengale', src: W('collection-chateaux'), alt: 'Un bal de mariage devant un château illuminé' },
-  { nom: 'Nuits électro', ou: 'Jusqu’au lever du jour', src: W('collection-electro'), alt: 'Des mariés s’embrassent sur une piste de danse aux néons' },
-  { nom: 'Bord de mer', ou: 'Falaises, vent et sel', src: W('collection-mer'), alt: 'Une table de mariage près d’une bergerie au-dessus de la mer' },
-  { nom: 'Forêts & jardins', ou: 'Sous les arbres', src: W('collection-forets'), alt: 'Une cérémonie dans l’allée de tilleuls d’un château' },
+  { nom: 'Châteaux & bals', ou: 'Pierre, lustres et feux de Bengale', univers: 'chateau', src: W('collection-chateaux'), alt: 'Un bal de mariage devant un château illuminé' },
+  { nom: 'Nuits électro', ou: 'Jusqu’au lever du jour', univers: 'electro', src: W('collection-electro'), alt: 'Des mariés s’embrassent sur une piste de danse aux néons' },
+  { nom: 'Bord de mer', ou: 'Falaises, vent et sel', univers: 'mer', src: W('collection-mer'), alt: 'Une table de mariage près d’une bergerie au-dessus de la mer' },
+  { nom: 'Forêts & jardins', ou: 'Sous les arbres', univers: 'foret', src: W('collection-forets'), alt: 'Une cérémonie dans l’allée de tilleuls d’un château' },
 ];
 const PLACES = [
   ['01', 'J’organise', 'Les mariés', 'La page de votre union : votre histoire, votre jour, et tout ce que vous voulez partager.'],
@@ -46,13 +46,39 @@ const PLACES = [
 ];
 const FAMILLES = ['La cérémonie', 'La table', 'La musique', 'L’image', 'La scène'];
 
-function Figure({ x, ratio = '4 / 5' }: { x: { nom: string; ou: string; src: string; alt: string }; ratio?: string }) {
+function Figure({ x, ratio = '4 / 5', action }: { x: { nom: string; ou: string; src: string; alt: string }; ratio?: string; action?: ReactNode }) {
   return (
     <figure style={{ margin: 0 }}>
       <div style={{ aspectRatio: ratio, borderRadius: 10, overflow: 'hidden', background: '#E4E4E1' }}><img src={x.src} alt={x.alt} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /></div>
-      <figcaption style={{ marginTop: 14 }}><span style={{ display: 'block', fontSize: 22, fontWeight: 600, letterSpacing: '-0.03em' }}>{x.nom}</span><span style={{ fontSize: 15, color: '#55555A' }}>{x.ou}</span></figcaption>
+      <figcaption style={{ marginTop: 14, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+        <span><span style={{ display: 'block', fontSize: 22, fontWeight: 600, letterSpacing: '-0.03em' }}>{x.nom}</span><span style={{ fontSize: 15, color: '#55555A' }}>{x.ou}</span></span>
+        {action}
+      </figcaption>
     </figure>
   );
+}
+/* Une bande horizontale qui défile lentement d'elle-même ; elle s'arrête dès qu'on la survole, la touche ou y entre au clavier,
+   et ne bouge pas avec l'orbe Calme (mouvement réduit). */
+function Bande({ label, calme, children }: { label: string; calme: boolean; children: ReactNode }) {
+  const ref = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    const el = ref.current; if (!el || calme) return;
+    let pause = false, attente = 0, raf = 0, reste = 0;
+    const arreter = () => { pause = true; window.clearTimeout(attente); el.classList.remove('defile'); };
+    const reprendre = () => { window.clearTimeout(attente); attente = window.setTimeout(() => { if (!el.matches(':hover, :focus-within')) { pause = false; el.classList.add('defile'); } }, 3500); };
+    const pas = () => {
+      if (!pause && el.scrollWidth > el.clientWidth + 4) {
+        reste += 0.35; const n = Math.floor(reste); reste -= n;
+        if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 2) el.scrollLeft = 0; else el.scrollLeft += n;
+      }
+      raf = requestAnimationFrame(pas);
+    };
+    el.classList.add('defile'); raf = requestAnimationFrame(pas);
+    const evts: [string, () => void][] = [['mouseenter', arreter], ['mouseleave', reprendre], ['focusin', arreter], ['focusout', reprendre], ['pointerdown', arreter], ['pointerup', reprendre], ['wheel', () => { arreter(); reprendre(); }], ['touchstart', arreter], ['touchend', reprendre]];
+    evts.forEach(([e, f]) => el.addEventListener(e, f, { passive: true }));
+    return () => { cancelAnimationFrame(raf); window.clearTimeout(attente); el.classList.remove('defile'); evts.forEach(([e, f]) => el.removeEventListener(e, f)); };
+  }, [calme]);
+  return <ul ref={ref} className="cartes ligne" tabIndex={0} aria-label={label + ', à faire défiler'}>{children}</ul>;
 }
 /* L'en-tête d'une section, comme sur la maquette : le grand mot au centre, une phrase dessous. */
 function Entete({ id, sur, texte, lien }: { id: string; sur: string; titre?: string; texte: string; lien?: [string, string] }) {
@@ -157,7 +183,7 @@ export default function LeMondeAime() {
   const SECTION: Record<SectionId, (classe: string) => ReactNode> = {
     unions: c => <section id="unions" aria-labelledby="titre-unions" className={c}>
       <Entete id="titre-unions" sur="Unions" texte="Les pages des mariés. Chaque couple raconte son union à sa façon." lien={['Créer la page de notre union', '/point-zero?q=Nous%20nous%20marions']} />
-      <div className="grille-auto" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '40px 24px' }}>{UNIONS.map(u => <Figure key={u.nom} x={u} />)}</div>
+      <div className="grille-auto" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '40px 24px' }}>{UNIONS.map(x => <Figure key={x.nom} x={x} action={<button type="button" className="bouton" onClick={() => { setMeta({ ...meta, univers: x.univers }); window.scrollTo({ top: 0, behavior: confort.mouvement === 'reduit' ? 'auto' : 'smooth' }); }}>Essayer leur univers</button>} />)}</div>
     </section>,
     prestataires: c => <section id="prestataires" aria-labelledby="titre-presta" className={c}>
       <Entete id="titre-presta" sur="Prestataires" texte={meta.presta.length ? 'Les prestataires que vous cherchez, avec leur page vitrine et leur module.' : 'Une page vitrine et un module pensé pour chaque métier de l’union.'} lien={['Tous les prestataires', '/reseau?domaine=mariage']} />
@@ -165,9 +191,9 @@ export default function LeMondeAime() {
         {[null, ...FAMILLES].map(f => { const on = famille === f, n = cherches.filter(e => !f || e.famille === f).length; if (f && !n) return null;
           return <button key={f || 'tous'} type="button" aria-pressed={on} onClick={() => setFamille(f)} style={{ flex: 'none', minHeight: 44, padding: '0 18px', borderRadius: 999, border: '1px solid #0B0B0C', background: on ? '#0B0B0C' : '#fff', color: on ? '#fff' : '#0B0B0C', fontSize: 15, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>{f || 'Tous'}<span style={{ fontSize: 12 }}>{n}</span></button>; })}
       </div>
-      <ul className="cartes ligne" tabIndex={0} aria-label="Les prestataires, à faire défiler">
+      <Bande label="Les prestataires" calme={confort.mouvement === 'reduit'}>
         {presta.map(e => <li key={e.slug} style={{ flexBasis: 'min(70vw, 280px)' }}><CarteReseau c={{ href: '/reseau/' + e.slug, nom: e.nom, etiquette: e.famille, photo: e.photo, alt: e.alt, exemple: true, fiche: { nom: e.nom, bio: e.texte }, credit: e.union ? 'Crédité dans ' + UNION_EXEMPLE : null }} /></li>)}
-      </ul>
+      </Bande>
     </section>,
     studio: c => <section id="studio" aria-labelledby="titre-studio" className={c}>
       <Entete id="titre-studio" sur="Studio" texte="Le Studio d’AIME : tout se crée dans une grille. Il commence par la broderie, du premier motif à la dernière croix." />
@@ -188,15 +214,15 @@ export default function LeMondeAime() {
     </section>,
     invites: c => <section id="invites" aria-labelledby="titre-invites" className={c}>
       <Entete id="titre-invites" sur="Invités" texte="Les témoins, la table 7, les copains de fac. Chaque invité a sa page, ses souvenirs et sa place dans l’histoire." />
-      <div className="grille-auto" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '40px 24px' }}>{INVITES.map(u => <Figure key={u.nom} x={u} ratio="4 / 3" />)}</div>
+      <div className="grille-auto" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '40px 24px' }}>{INVITES.map(x => <CarteReseau key={x.nom} c={{ href: '/#invites', nom: x.nom, etiquette: 'Invités · ' + UNION_EXEMPLE, photo: x.src, alt: x.alt, exemple: true, fiche: { nom: x.nom, bio: x.ou + '. ' + x.texte }, idees: ['Qui sont-ils ?', 'Quelle est leur place ?', 'Leur chanson ?'] }} />)}</div>
     </section>,
     collections: c => <section id="collections" aria-labelledby="titre-collections" className={c}>
       <Entete id="titre-collections" sur="Collections" texte="Explorer les unions par univers." />
-      <ul className="cartes ligne" tabIndex={0} aria-label="Les collections, à faire défiler">{COLLECTIONS.map(x => <li key={x.nom}><Figure x={x} ratio="4 / 3" /></li>)}</ul>
+      <Bande label="Les collections" calme={confort.mouvement === 'reduit'}>{COLLECTIONS.map(x => <li key={x.nom}><Figure x={x} ratio="4 / 3" action={<button type="button" className="bouton" onClick={() => { setMeta({ ...meta, univers: x.univers }); window.scrollTo({ top: 0, behavior: confort.mouvement === 'reduit' ? 'auto' : 'smooth' }); }}>Essayer cet univers</button>} /></li>)}</Bande>
     </section>,
     boutique: c => <section id="boutique" aria-labelledby="titre-boutique-acc" className={c}>
       <Entete id="titre-boutique-acc" sur="Boutique" texte="Ce que les artisans de l’union créent, vendent ou louent." lien={['Toute la boutique', '/boutique']} />
-      <ul className="cartes ligne" tabIndex={0} aria-label="Des créations, à faire défiler">{CREATIONS.filter((_, k) => k % 2 === 0).map(x => <li key={x.id} style={{ flexBasis: 'min(70vw, 280px)' }}><CarteCreation c={x} /></li>)}</ul>
+      <Bande label="Des créations" calme={confort.mouvement === 'reduit'}>{CREATIONS.filter((_, k) => k % 2 === 0).map(x => <li key={x.id} style={{ flexBasis: 'min(70vw, 280px)' }}><CarteCreation c={x} /></li>)}</Bande>
     </section>,
     chacun: c => <section id="chacun" aria-labelledby="titre-chacun" className={c}>
       <p className="surtitre">Une page pour chacun</p>
