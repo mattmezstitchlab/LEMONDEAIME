@@ -2360,3 +2360,24 @@ html[data-pz-motion="reduce"] .pz-guided-lens { transition: none; }
 .pzs-resultats button > .pzs-swatch { grid-row: span 2; }
 .pzs-resultats button:hover, .pzs-resultats button:focus-visible { background: #f1f1ee; }
 @media (max-width: 720px) { .pzs-top.pzs-ouvert { width: calc(100vw - 16px); } .pzs-marque { display: none; } .pzs-bloc-corps { max-height: calc(100dvh - 230px); } }
+
+/* Mes ouvrages, sous le rond du profil : dossiers, fichiers à ouvrir ou glisser sur la grille, case de dépôt */
+.pzs-dossiers { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 8px 0 10px; }
+.pzs-dossiers button { flex: 0 0 auto; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #CFCFCB; background: #fff; color: #0B0B0C; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.pzs-dossiers button[aria-pressed="true"] { background: #0B0B0C; border-color: #0B0B0C; color: #fff; }
+.pzs-dossiers button span { margin-left: 4px; font-size: 12px; opacity: .7; }
+.pzs-fichiers { list-style: none; margin: 0; padding: 2px 2px 8px; display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity; }
+.pzs-fichiers > li { flex: 0 0 132px; scroll-snap-align: start; }
+.pzs-fichier, .pzs-depot { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 8px; border-radius: 12px; border: 1px solid #E4E4E1; background: #fff; color: #0B0B0C; font: inherit; text-align: left; cursor: pointer; }
+.pzs-fichier:hover, .pzs-depot:hover { border-color: #0B0B0C; }
+.pzs-fichier[draggable="true"] { cursor: grab; }
+.pzs-fichier[aria-current="true"] { border: 2px solid #0B0B0C; padding: 7px; }
+.pzs-fichier-image { display: block; width: 100%; aspect-ratio: 108 / 84; border-radius: 8px; overflow: hidden; background: #f8f4ee; }
+.pzs-fichier-image canvas { width: 100% !important; height: 100% !important; display: block; }
+.pzs-fichier-vide { display: block; width: 100%; height: 100%; }
+.pzs-fichier b, .pzs-depot b { font-size: 14px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.pzs-fichier span:not(.pzs-fichier-image), .pzs-depot span { font-size: 12px; color: #55555A; }
+.pzs-depot { justify-content: center; align-items: center; text-align: center; border-style: dashed; border-color: #9A9A96; min-height: 150px; }
+.pzs-depot.survol { background: #F1EEFF; border-color: #0B0B0C; }
+.pzs-depot-voile { position: fixed; inset: 0; z-index: 90; display: flex; align-items: center; justify-content: center; background: rgba(11,11,12,.28); pointer-events: none; }
+.pzs-depot-voile span { padding: 16px 22px; border-radius: 16px; background: #0B0B0C; color: #fff; font-size: 17px; font-weight: 600; outline: 2px dashed #fff; outline-offset: -8px; }

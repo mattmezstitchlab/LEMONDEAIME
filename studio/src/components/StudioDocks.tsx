@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import OuvragesBloc from "./OuvragesBloc";
 import { ArrowLeft, Redo2, Search, Undo2, X } from "lucide-react";
 import { FLOSS } from "../lib/dmc";
 import { dansAime } from "../lib/aimeSync";
@@ -46,6 +47,8 @@ interface Props {
   readOnly?: boolean;
   /** le mode Fils du dock du bas : les pastilles DMC (FlossRail en variante dock) */
   fils?: ReactNode;
+  /** le rond du profil : mes ouvrages (ouvrir d'un clic ou glisser sur la grille) et déposer un fichier */
+  ouvrages?: { courant?: string; ouvrir: (id: string) => void; importer: (f: File) => void };
   /** la progression du patron : le cercle du dock et le mode Progression */
   progression?: { total: number; done: number; couleurs: { idx: number; hex: string; code: string; cells: number; done: number }[] };
   onCouleur?: (idx: number) => void;
@@ -197,7 +200,7 @@ export default function StudioDocks(p: Props) {
           <button type="button" className="pzs-tool pzs-icon pzs-loupe" aria-label={bloc === "chercher" ? "Fermer la recherche" : "Chercher un fil, un outil ou une fonction de la grille"} title="Chercher dans la grille" aria-expanded={bloc === "chercher"} aria-controls="pzs-bloc" onClick={() => ouvrir("chercher")}>
             {bloc === "chercher" ? <X size={17} aria-hidden="true" /> : <Search size={18} aria-hidden="true" />}
           </button>
-          <button type="button" className="pzs-tool pzs-icon pzs-profil" aria-label={"Inviter quelqu’un à rejoindre la grille" + (moi?.name ? ", " + moi.name : "")} title="Inviter à rejoindre la grille" aria-expanded={bloc === "inviter"} aria-controls="pzs-bloc" onClick={() => ouvrir("inviter")}>
+          <button type="button" className="pzs-tool pzs-icon pzs-profil" aria-label={"Mes ouvrages, et inviter quelqu’un à rejoindre la grille" + (moi?.name ? ", " + moi.name : "")} title="Mes ouvrages et inviter" aria-expanded={bloc === "inviter"} aria-controls="pzs-bloc" onClick={() => ouvrir("inviter")}>
             {moi?.image ? <img className="pzs-avatar" src={moi.image} alt="" /> : <span className="pzs-avatar" aria-hidden="true">{moi ? initiales(moi.name || moi.email || "") : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="9" r="3.6" /><path d="M5 19.5c1.4-3.2 4-4.7 7-4.7s5.6 1.5 7 4.7" /></svg>}</span>}
             <span className="pzs-plus" aria-hidden="true">+</span>
           </button>
@@ -236,11 +239,12 @@ export default function StudioDocks(p: Props) {
           </>}
           {bloc === "inviter" && <>
             <div className="pzs-bloc-corps">
-              <p className="pzs-titre">Inviter à rejoindre la grille</p>
-              <p className="pzs-note">Quelqu’un regarde l’ouvrage en direct, depuis son appareil, pendant que vous brodez. {moi ? "Vous êtes entré" + (moi.name ? " : " + moi.name : "") + "." : aime ? "Entrez dans AIME pour retrouver vos ouvrages partout." : ""}</p>
+              <p className="pzs-titre">Mes ouvrages{moi?.name ? " · " + moi.name.split(" ")[0] : ""}</p>
+              {p.ouvrages && <OuvragesBloc courant={p.ouvrages.courant} ouvrir={id => { setBloc(null); p.ouvrages!.ouvrir(id); }} importer={f => { setBloc(null); p.ouvrages!.importer(f); }} />}
+              <p className="pzs-note">Inviter : quelqu’un regarde l’ouvrage en direct, depuis son appareil, pendant que vous brodez.{!moi && aime ? " Entrez dans AIME pour retrouver vos ouvrages sur tous vos appareils." : ""}</p>
             </div>
             <div className="pzs-mini" role="group" aria-label="Inviter et votre espace">
-              <button type="button" aria-pressed="true" onClick={() => { setBloc(null); p.actions.share(); }}>Inviter à regarder</button>
+              <button type="button" onClick={() => { setBloc(null); p.actions.share(); }}>+ Inviter à rejoindre la grille</button>
               {aime && <a href={moi ? "/buro" : "/entrer"}>{moi ? "Votre espace AIME" : "Entrer"}</a>}
               <button type="button" onClick={() => { setBloc(null); p.actions.buro(); }}>BurO</button>
             </div>

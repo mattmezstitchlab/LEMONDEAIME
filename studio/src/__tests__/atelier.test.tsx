@@ -401,8 +401,9 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     await click(res);
     expect(container?.querySelector("#pzs-cherche")).toBeNull();
     expect(category("Gomme")?.getAttribute("aria-pressed")).toBe("true");
-    await click(button("Inviter quelqu’un à rejoindre la grille"));
-    expect([...(container?.querySelectorAll(".pzs-bloc button") ?? [])].some(b => b.textContent === "Inviter à regarder")).toBe(true);
+    await click(button("Mes ouvrages, et inviter quelqu’un à rejoindre la grille"));
+    expect([...(container?.querySelectorAll(".pzs-bloc button") ?? [])].some(b => b.textContent === "+ Inviter à rejoindre la grille")).toBe(true);
+    expect(container?.querySelector(".pzs-bloc .pzs-depot")).toBeTruthy();
   });
   it("ouvre et ferme le panneau Calques sans masquer la grille", async () => {
     await mount();
