@@ -1,0 +1,190 @@
+{
+ "tests/base/projets.mjs": {
+  "date": "2026-10-28",
+  "commit": "4ae5f94",
+  "code_modifie_depuis_le_commit": false,
+  "environnement": "vraie base : branche Neon de test « test/unions-2026-10-28 » (WebSocket Neon), vrai Better Auth ; stockage d’images non utilisé",
+  "resultats": [
+   {
+    "test": "migration : le retour arrière retire la table",
+    "ok": true
+   },
+   {
+    "test": "base : deux comptes de test, connectés par le vrai lien de connexion",
+    "ok": true
+   },
+   {
+    "test": "sans la table : le public voit les deux projets d’origine",
+    "ok": true
+   },
+   {
+    "test": "sans la table : l’administration répond qu’il faut la migration (503), rien n’est écrit",
+    "ok": true
+   },
+   {
+    "test": "migration appliquée deux fois : la table et ses deux projets d’origine, sans doublon",
+    "ok": true
+   },
+   {
+    "test": "public : les projets lus dans la table, Brode Way à la une",
+    "ok": true
+   },
+   {
+    "test": "droits : seule l’adresse de AIME_ADMIN administre (vérifiée sur la vraie session)",
+    "ok": true
+   },
+   {
+    "test": "droits : un autre compte (403) ou personne (401) ne peut rien écrire",
+    "ok": true
+   },
+   {
+    "test": "droits : un autre compte ne peut pas supprimer un projet",
+    "ok": true
+   },
+   {
+    "test": "administration : un projet créé, en brouillon, écrit une fois en base",
+    "ok": true
+   },
+   {
+    "test": "public : un brouillon n’apparaît nulle part",
+    "ok": true
+   },
+   {
+    "test": "administration : elle voit son brouillon",
+    "ok": true
+   },
+   {
+    "test": "administration : publié, il apparaît au public, à sa place",
+    "ok": true
+   },
+   {
+    "test": "à la une : un seul projet à la fois",
+    "ok": true
+   },
+   {
+    "test": "administration : l’ordre est enregistré et relu",
+    "ok": true
+   },
+   {
+    "test": "administration : une adresse déjà prise est refusée (409), Brode Way intact",
+    "ok": true
+   },
+   {
+    "test": "administration : changer l’adresse déplace le projet, sans doublon",
+    "ok": true
+   },
+   {
+    "test": "administration : un lien dangereux est refusé, rien n’est écrit",
+    "ok": true
+   },
+   {
+    "test": "administration : supprimer retire le projet",
+    "ok": true
+   },
+   {
+    "test": "à la fin : les deux projets d’origine, comme après la migration",
+    "ok": true
+   }
+  ]
+ },
+ "tests/e2e/portfolio.py": {
+  "date": "2026-10-28",
+  "commit": "4ae5f94",
+  "code_modifie_depuis_le_commit": false,
+  "environnement": "aperçu local (vite preview) : sans serveur pour l’accueil et les pages projet, API SIMULÉES pour l’administration",
+  "resultats": [
+   {
+    "test": "accueil : le titre LE MONDE AIME",
+    "ok": true
+   },
+   {
+    "test": "accueil : Brode Way à la une (sans serveur : les projets d’origine)",
+    "ok": true
+   },
+   {
+    "test": "accueil : deux projets en cartes, dans l’ordre",
+    "ok": true
+   },
+   {
+    "test": "accueil : le filtre « Mariage » ne garde qu’AIME Wedding",
+    "ok": true
+   },
+   {
+    "test": "carte → la page du projet",
+    "ok": true
+   },
+   {
+    "test": "page projet : la fiche (état) et le titre de l’onglet",
+    "ok": true
+   },
+   {
+    "test": "page projet : « Visiter le site » mène à /aime-wedding",
+    "ok": true
+   },
+   {
+    "test": "page projet : le projet suivant",
+    "ok": true
+   },
+   {
+    "test": "AIME Wedding garde son site sur /aime-wedding (unions comprises)",
+    "ok": true
+   },
+   {
+    "test": "Brode Way : « Visiter le site » ouvre l’atelier",
+    "ok": true
+   },
+   {
+    "test": "un projet inconnu : la page le dit",
+    "ok": true
+   },
+   {
+    "test": "téléphone (390 px) : / ne déborde pas",
+    "ok": true
+   },
+   {
+    "test": "téléphone (390 px) : /projets/brode-way ne déborde pas",
+    "ok": true
+   },
+   {
+    "test": "administration sans compte : invitée à entrer, rien d’autre",
+    "ok": true
+   },
+   {
+    "test": "administration, autre compte : refusée, aucun formulaire",
+    "ok": true
+   },
+   {
+    "test": "accueil, autre compte : pas de lien d’administration",
+    "ok": true
+   },
+   {
+    "test": "accueil, administration : le lien « Administrer les projets »",
+    "ok": true
+   },
+   {
+    "test": "administration : les deux projets, dans l’ordre",
+    "ok": true
+   },
+   {
+    "test": "nouveau projet : l’adresse se déduit du titre",
+    "ok": true
+   },
+   {
+    "test": "enregistrer : un nouveau projet, en brouillon par défaut",
+    "ok": true
+   },
+   {
+    "test": "supprimer demande une confirmation, rien n’est envoyé avant",
+    "ok": true
+   },
+   {
+    "test": "table absente : l’administration le dit, Enregistrer est désactivé",
+    "ok": true
+   },
+   {
+    "test": "aucune erreur dans la page",
+    "ok": true
+   }
+  ]
+ }
+}

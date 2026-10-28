@@ -7,7 +7,7 @@ import { FICHES, domaine } from '../lib/reseau-exemples';
 type Entree = { label: string; meta: string; href: string; groupe: string };
 const B = data.briques as unknown as Record<string, { name: string; fam: string; does: string }>;
 const PLAN: Entree[] = [
-  ...[['Accueil', 'Le Monde AIME, le site officiel de l’union', '/'], ['Les unions', 'Les pages des mariés', '/#unions'], ['Prestataires', 'Les métiers de l’union', '/reseau?domaine=mariage'], ['Invités', 'Chaque invité a sa page', '/#invites'], ['Collections', 'Les unions par univers', '/#collections']]
+  ...[['Accueil', 'Le Monde AIME, les projets d’AIME', '/'], ['AIME Wedding', 'Le site officiel de l’union', '/aime-wedding'], ['Les unions', 'Les pages des mariés', '/aime-wedding#unions'], ['Prestataires', 'Les métiers de l’union', '/reseau?domaine=mariage'], ['Invités', 'Chaque invité a sa page', '/aime-wedding#invites'], ['Collections', 'Les unions par univers', '/aime-wedding#collections']]
     .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Le Monde AIME' })),
   ...[['Studio', 'Créer : broderie d’abord', '/studio/atelier'], ['Boutique', 'Créations à acheter, louer, broder', '/boutique'], ['Musique', 'La journée en musique, moment par moment', '/musique'], ['Atelier de broderie', 'Dessiner, broder, importer', '/studio/atelier'], ['Point Zéro', 'Commencer quelque chose', '/point-zero']]
     .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Créer' })),

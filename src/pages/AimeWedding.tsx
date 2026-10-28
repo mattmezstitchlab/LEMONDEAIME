@@ -10,7 +10,7 @@ import { Lien } from '../lib/router';
 import { EXEMPLES, UNION_EXEMPLE } from '../lib/reseau-exemples';
 import { CarteReseau } from './Reseau';
 
-/* LE MONDE AIME : l'accueil du site, le site officiel de l'union (la planche Main de la maquette). Une page pour chaque personne qui la fait vivre : les mariés, les prestataires, les invités. */
+/* AIME Wedding (/aime-wedding) : le site officiel de l'union, l'un des projets présentés par LE MONDE AIME (la planche Main de la maquette). Une page pour chaque personne qui la fait vivre : les mariés, les prestataires, les invités. */
 const W = (s: string) => '/media/wedding/' + s + '.jpg';
 const DIAPOS = [
   { src: W('piscine'), who: 'Camille & Gabriel', where: 'Piscine du motel, 18 h 12', alt: 'Un couple de mariés au bord de la piscine d’un motel dans le désert' },
@@ -156,7 +156,7 @@ function CarrouselStudio({ reduit }: { reduit: boolean }) {
   );
 }
 
-export default function LeMondeAime() {
+export default function AimeWedding() {
   const [meta, setMeta] = useMeta();
   const [panneau, setPanneau] = useState(false);
   const perso = estTransformee(meta);
@@ -173,7 +173,7 @@ export default function LeMondeAime() {
   const cherches = meta.presta.length ? EXEMPLES.filter(e => meta.presta.includes(e.slug)) : EXEMPLES.filter(e => e.domaine === 'mariage');
   const presta = cherches.filter(e => !famille || e.famille === famille);
   const noms = [meta.a.trim(), meta.b.trim()].filter(Boolean).join(' & ');
-  const titre = noms || 'Le Monde AIME';
+  const titre = noms || 'AIME Wedding';
   const taille = titre.length <= 14 ? 'clamp(52px, 11.6vw, 200px)' : 'clamp(40px, ' + Math.max(5, 162 / titre.length).toFixed(1) + 'vw, 200px)';
   const bouton = { width: 48, height: 48, padding: 0, borderRadius: '50%', border: '1px solid rgba(255,255,255,.7)', background: 'rgba(255,255,255,.08)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' } as const;
   const cle = meta.ordre.filter(id => !meta.cachees.includes(id)).join(',');
@@ -214,7 +214,7 @@ export default function LeMondeAime() {
     </section>,
     invites: c => <section id="invites" aria-labelledby="titre-invites" className={c}>
       <Entete id="titre-invites" sur="Invités" texte="Les témoins, la table 7, les copains de fac. Chaque invité a sa page, ses souvenirs et sa place dans l’histoire." />
-      <div className="grille-auto" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '40px 24px' }}>{INVITES.map(x => <CarteReseau key={x.nom} c={{ href: '/#invites', nom: x.nom, etiquette: 'Invités · ' + UNION_EXEMPLE, photo: x.src, alt: x.alt, exemple: true, fiche: { nom: x.nom, bio: x.ou + '. ' + x.texte }, idees: ['Qui sont-ils ?', 'Quelle est leur place ?', 'Leur chanson ?'] }} />)}</div>
+      <div className="grille-auto" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '40px 24px' }}>{INVITES.map(x => <CarteReseau key={x.nom} c={{ href: '/aime-wedding#invites', nom: x.nom, etiquette: 'Invités · ' + UNION_EXEMPLE, photo: x.src, alt: x.alt, exemple: true, fiche: { nom: x.nom, bio: x.ou + '. ' + x.texte }, idees: ['Qui sont-ils ?', 'Quelle est leur place ?', 'Leur chanson ?'] }} />)}</div>
     </section>,
     collections: c => <section id="collections" aria-labelledby="titre-collections" className={c}>
       <Entete id="titre-collections" sur="Collections" texte="Explorer les unions par univers." />
@@ -249,7 +249,7 @@ export default function LeMondeAime() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/" verbes={<VerbesSite />} />
+      <Tete courant="/aime-wedding" verbes={<VerbesSite />} />
       <main id="contenu">
         <section aria-labelledby="titre-wedding" style={{ padding: '40px var(--marge) 0', textAlign: 'center' }}>
           <p style={{ margin: '0 0 18px', fontSize: 16 }}>{noms ? <><b style={{ fontWeight: 600 }}>Notre union</b>{meta.date.trim() && <> · {meta.date.trim()}</>}</> : <>Une union d’exemple · <b style={{ fontWeight: 600 }}>{UNION_EXEMPLE}</b></>}</p>
