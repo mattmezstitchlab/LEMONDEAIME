@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Tete, DockBas, Pied, Orbe } from '../charte/Charte';
 import { Lien, useRecherche } from '../lib/router';
 import { useSession } from '../lib/session';
-import { lireBuro, ecrireBuro, type Projet } from '../lib/buro';
+import { lireBuro, ecrireBuro, nomUnion, type Projet } from '../lib/buro';
+import { FicheUnion } from '../charte/FicheUnion';
 import MonProfil from './MonProfil';
 import data from '../lib/briques.json';
 import { clesPossibles, creerCle, nombreDeCles } from '../lib/cles';
@@ -19,7 +20,7 @@ export default function Buro() {
   const [lieu, setLieu] = useState<Lieu>(() => { const l = new URLSearchParams(window.location.search).get('lieu'); return l === 'profil' || l === 'partages' || l === 'archives' ? l : 'projets'; });
   const recherche = useRecherche();
   useEffect(() => { const l = new URLSearchParams(recherche).get('lieu'); setLieu(l === 'profil' || l === 'partages' || l === 'archives' ? l : 'projets'); }, [recherche]);
-  const [choisi, setChoisi] = useState<string | null>(null);
+  const [choisi, setChoisi] = useState<string | null>(() => new URLSearchParams(window.location.search).get('union'));
   const [msg, setMsg] = useState('');
   const [proposerCle, setProposerCle] = useState(false);
   useEffect(() => {
@@ -28,6 +29,8 @@ export default function Buro() {
     if (!refus) nombreDeCles().then(n => setProposerCle(n === 0));
   }, [session]);
   const charger = () => lireBuro().then(r => { if (r.ok) setProjets(r.projets || []); else { setProjets([]); setRaison(r.raison || ''); } });
+  /* une union ouverte par son adresse (?union=…) : on se place là où elle est rangée (Projets, Partagés ou Archives) */
+  useEffect(() => { const x = (projets || []).find(p => p.id === choisi); if (x && !dans(x, lieu) && lieu !== 'profil') setLieu(x.archive ? 'archives' : x.role === 'owner' ? 'projets' : 'partages'); }, [projets]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (session) charger(); }, [session]);
   const dans = (p: Projet, l: Lieu) => l === 'archives' ? p.archive : l === 'partages' ? (p.role !== 'owner' && !p.archive) : (p.role === 'owner' && !p.archive);
   const liste = (projets || []).filter(p => dans(p, lieu));
@@ -37,7 +40,7 @@ export default function Buro() {
   const verbes = sel && sel.role === 'owner'
     ? <>
       {sel.ouvrage && <a className="outil" href={'/studio/atelier?ouvrage=' + encodeURIComponent(sel.ouvrage)} style={{ fontWeight: 600 }}>Ouvrir dans le Studio</a>}
-      <button className="outil" type="button" onClick={() => maj({ visibilite: ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4] }, '« ' + sel.titre + ' » : ' + VIS[ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4]] + '.')}>Partager · {VIS[sel.visibilite] || 'Privé'}</button>
+      {!sel.union && <button className="outil" type="button" onClick={() => maj({ visibilite: ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4] }, '« ' + sel.titre + ' » : ' + VIS[ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4]] + '.')}>Partager · {VIS[sel.visibilite] || 'Privé'}</button>}
       <button className="outil" type="button" onClick={() => { maj({ archive: !sel.archive }, sel.archive ? '« ' + sel.titre + ' » restauré.' : '« ' + sel.titre + ' » rangé aux archives.'); setChoisi(null); }}>{sel.archive ? 'Restaurer' : 'Archiver'}</button>
     </>
     : <>{['Rejoindre', 'Échanger', 'Modèles'].map(v => <span key={v} className="outil" aria-disabled="true" style={{ color: '#55555A' }}>{v}<span className="bientot">Bientôt</span></span>)}</>;
@@ -66,13 +69,14 @@ export default function Buro() {
             {projets === null ? <li style={{ fontSize: 18 }}>Chargement…</li> : liste.map(p => {
               const on = p.id === choisi;
               return <li key={p.id}><button type="button" aria-pressed={on} onClick={() => setChoisi(on ? null : p.id)} style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%', height: '100%', minHeight: 240, padding: 20, borderRadius: 22, border: on ? '2px solid #0B0B0C' : '1px solid #E2E2DE', background: '#fff', textAlign: 'left' }}>
-                <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: '#55555A' }}>{p.studio || p.genre}</span>
-                <span style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.015em' }}>{p.titre}</span>
+                <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: '#55555A' }}>{p.union ? 'Union' : p.studio || p.genre}</span>
+                <span style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.015em' }}>{(p.union && nomUnion(p.union)) || p.titre}</span>
                 <span style={{ fontSize: 15, color: '#3A3A3F' }}>{p.briques.length ? p.briques.slice(0, 5).map(b => B[b]?.name || b).join(' · ') + (p.briques.length > 5 ? '…' : '') : ''}</span>
-                <span style={{ marginTop: 'auto', fontSize: 15, color: '#3A3A3F' }}>{VIS[p.visibilite] || 'Privé'} · {p.briques.length} briques</span>
+                <span style={{ marginTop: 'auto', fontSize: 15, color: '#3A3A3F' }}>{p.union ? (p.union.a && p.union.b && p.union.date ? 'Privé · date officielle fixée' : 'Privé · à compléter') : (VIS[p.visibilite] || 'Privé') + ' · ' + p.briques.length + ' briques'}</span>
               </button></li>;
             })}
           </ul>
+          {sel && sel.union && dans(sel, lieu) && <FicheUnion p={sel} apres={charger} />}
           {projets && !liste.length && lieu !== 'projets' && <p style={{ fontSize: 18, color: '#3A3A3F' }}>{lieu === 'archives' ? 'Rien aux archives.' : 'Personne ne vous a encore partagé de projet.'}</p>}
         </>}
       </main>

@@ -125,7 +125,9 @@ function tests() {
   const e2e = fichiers('tests/e2e', ['.py']).map(f => ({ fichier: f, tests: [...lire(f).matchAll(/\bok\((?:[^()']|'(?:[^'\\]|\\.)*'|\((?:[^()]|\([^()]*\))*\))*?,\s*'((?:[^'\\]|\\.)+)'(?:\s*%[^)]*)?\)/g)].map(m => m[1]).filter(n => !/^\(|^%/.test(n)) }));
   const studio = fichiers('studio/src', ['.test.ts', '.test.tsx']).map(f => ({ fichier: f, nombre: (lire(f).match(/^\s*(it|test)\(/gm) || []).length }));
   const deploiement = fichiers('tests/deploiement', ['.mjs']).map(f => ({ fichier: f, tests: [...lire(f).matchAll(/\bok\([^;]*?,\s*'((?:[^'\\]|\\.)+)'\)/g)].map(m => m[1]) }));
-  return { serveur: serveurs, e2e, deploiement, studio };
+  /* sur une vraie base (branche Neon de test isolée) : mêmes conventions que les vérifications déployées */
+  const base = fichiers('tests/base', ['.mjs']).map(f => ({ fichier: f, tests: [...lire(f).matchAll(/\bok\([^;]*?,\s*'((?:[^'\\]|\\.)+)'\)/g)].map(m => m[1]) })).filter(f => f.tests.length);
+  return { serveur: serveurs, e2e, deploiement, base, studio };
 }
 
 export function scanner() {

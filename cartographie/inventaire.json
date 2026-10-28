@@ -48,7 +48,7 @@
    },
    {
     "route": "/moments",
-    "composant": "Moments",
+    "composant": "() => <ProgrammeUnion><Moments /></ProgrammeUnion>",
     "titre": "LE MONDE AIME — Les moments de l’union"
    },
    {
@@ -380,11 +380,19 @@
    "composant": "Pied"
   },
   {
+   "cible": "/moments?union=",
+   "route": "/moments",
+   "libelle": "Voir notre programme",
+   "fichier": "src/charte/FicheUnion.tsx",
+   "ligne": 42,
+   "composant": "FicheUnion"
+  },
+  {
    "cible": "/moments/",
    "route": "/moments",
    "libelle": null,
    "fichier": "src/charte/LecturesMoment.tsx",
-   "ligne": 44,
+   "ligne": 45,
    "composant": "LienMoment"
   },
   {
@@ -392,7 +400,7 @@
    "route": "/musique",
    "libelle": "composer la journée en musique",
    "fichier": "src/charte/LecturesMoment.tsx",
-   "ligne": 75,
+   "ligne": 76,
    "composant": "LectureMusique"
   },
   {
@@ -400,7 +408,7 @@
    "route": "/musique",
    "libelle": "Composer ma journée en musique",
    "fichier": "src/charte/LecturesMoment.tsx",
-   "ligne": 84,
+   "ligne": 85,
    "composant": "LectureMusique"
   },
   {
@@ -408,7 +416,7 @@
    "route": "/musique",
    "libelle": "la journée en musique",
    "fichier": "src/charte/LecturesMoment.tsx",
-   "ligne": 92,
+   "ligne": 93,
    "composant": "LectureMusique"
   },
   {
@@ -416,7 +424,7 @@
    "route": "/reseau",
    "libelle": null,
    "fichier": "src/charte/LecturesMoment.tsx",
-   "ligne": 107,
+   "ligne": 108,
    "composant": "LectureMetiers"
   },
   {
@@ -424,7 +432,7 @@
    "route": "/moments",
    "libelle": null,
    "fichier": "src/charte/LecturesMoment.tsx",
-   "ligne": 108,
+   "ligne": 109,
    "composant": "LectureMetiers"
   },
   {
@@ -432,7 +440,7 @@
    "route": "/studio",
    "libelle": "Ouvrir le Studio",
    "fichier": "src/charte/LecturesMoment.tsx",
-   "ligne": 135,
+   "ligne": 136,
    "composant": "LecturePatron"
   },
   {
@@ -440,7 +448,7 @@
    "route": "/moments",
    "libelle": null,
    "fichier": "src/charte/LecturesMoment.tsx",
-   "ligne": 149,
+   "ligne": 150,
    "composant": "LecturePersonnes"
   },
   {
@@ -450,6 +458,30 @@
    "fichier": "src/charte/Programme.tsx",
    "ligne": 13,
    "composant": "BandeEtapes"
+  },
+  {
+   "cible": "/entrer",
+   "route": "/entrer",
+   "libelle": "+ Entrer",
+   "fichier": "src/charte/ProgrammeUnion.tsx",
+   "ligne": 39,
+   "composant": "ProgrammeUnion"
+  },
+  {
+   "cible": "/buro",
+   "route": "/buro",
+   "libelle": "Mon espace",
+   "fichier": "src/charte/ProgrammeUnion.tsx",
+   "ligne": 39,
+   "composant": "ProgrammeUnion"
+  },
+  {
+   "cible": "/moments",
+   "route": "/moments",
+   "libelle": "La Grille 200 de référence",
+   "fichier": "src/charte/ProgrammeUnion.tsx",
+   "ligne": 39,
+   "composant": "ProgrammeUnion"
   },
   {
    "cible": "/",
@@ -590,17 +622,17 @@
   {
    "cible": "/moments",
    "route": "/moments",
-   "libelle": "‹ Les moments",
+   "libelle": null,
    "fichier": "src/charte/Support.tsx",
-   "ligne": 29,
+   "ligne": 30,
    "composant": "SupportImprimable"
   },
   {
    "cible": "/moments",
    "route": "/moments",
-   "libelle": "‹ Les moments",
+   "libelle": null,
    "fichier": "src/charte/Support.tsx",
-   "ligne": 32,
+   "ligne": 33,
    "composant": "SupportImprimable"
   },
   {
@@ -656,7 +688,7 @@
    "route": "/studio",
    "libelle": "Ouvrir dans le Studio",
    "fichier": "src/pages/Buro.tsx",
-   "ligne": 39,
+   "ligne": 42,
    "composant": "Buro"
   },
   {
@@ -664,7 +696,7 @@
    "route": "/buro",
    "libelle": null,
    "fichier": "src/pages/Buro.tsx",
-   "ligne": 47,
+   "ligne": 50,
    "composant": "Buro"
   },
   {
@@ -672,7 +704,7 @@
    "route": "/entrer",
    "libelle": "+ Entrer",
    "fichier": "src/pages/Buro.tsx",
-   "ligne": 50,
+   "ligne": 53,
    "composant": "Buro"
   },
   {
@@ -680,7 +712,7 @@
    "route": "/point-zero",
    "libelle": null,
    "fichier": "src/pages/Buro.tsx",
-   "ligne": 63,
+   "ligne": 66,
    "composant": "Buro"
   },
   {
@@ -806,7 +838,7 @@
   {
    "cible": "/point-zero?q=Nous%20nous%20marions",
    "route": "/point-zero",
-   "libelle": "Créer la page de notre union",
+   "libelle": "Commencer notre union",
    "fichier": "src/pages/LeMondeAime.tsx",
    "ligne": 185,
    "composant": "LeMondeAime"
@@ -904,7 +936,7 @@
    "route": "/moments",
    "libelle": null,
    "fichier": "src/pages/Moments.tsx",
-   "ligne": 79,
+   "ligne": 80,
    "composant": "TousLesMoments"
   },
   {
@@ -912,7 +944,7 @@
    "route": "/moments",
    "libelle": null,
    "fichier": "src/pages/Moments.tsx",
-   "ligne": 149,
+   "ligne": 150,
    "composant": "Ligne"
   },
   {
@@ -920,23 +952,31 @@
    "route": "/musique",
    "libelle": null,
    "fichier": "src/pages/Moments.tsx",
-   "ligne": 168,
+   "ligne": 169,
    "composant": "SegmentMusique"
   },
   {
    "cible": "/point-zero?q=Nous%20nous%20marions",
    "route": "/point-zero",
-   "libelle": "Commencer mon union",
+   "libelle": "Commencer notre union",
    "fichier": "src/pages/Moments.tsx",
-   "ligne": 183,
+   "ligne": 185,
+   "composant": "Aside"
+  },
+  {
+   "cible": "/buro?union=",
+   "route": "/buro",
+   "libelle": "Notre union dans mon espace",
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 185,
    "composant": "Aside"
   },
   {
    "cible": "/moments/support?pour=",
    "route": "/moments",
-   "libelle": "Version imprimable",
+   "libelle": null,
    "fichier": "src/pages/Moments.tsx",
-   "ligne": 195,
+   "ligne": 197,
    "composant": "Aside"
   },
   {
@@ -944,7 +984,7 @@
    "route": "/moments",
    "libelle": null,
    "fichier": "src/pages/Moments.tsx",
-   "ligne": 212,
+   "ligne": 214,
    "composant": "UnMoment"
   },
   {
@@ -952,7 +992,7 @@
    "route": "/moments",
    "libelle": null,
    "fichier": "src/pages/Moments.tsx",
-   "ligne": 215,
+   "ligne": 217,
    "composant": "UnMoment"
   },
   {
@@ -960,7 +1000,7 @@
    "route": "/moments",
    "libelle": null,
    "fichier": "src/pages/Moments.tsx",
-   "ligne": 215,
+   "ligne": 217,
    "composant": "UnMoment"
   },
   {
@@ -968,31 +1008,7 @@
    "route": "/moments",
    "libelle": null,
    "fichier": "src/pages/Moments.tsx",
-   "ligne": 223,
-   "composant": "UnMoment"
-  },
-  {
-   "cible": "/moments/",
-   "route": "/moments",
-   "libelle": null,
-   "fichier": "src/pages/Moments.tsx",
-   "ligne": 232,
-   "composant": "UnMoment"
-  },
-  {
-   "cible": "/moments#",
-   "route": "/moments",
-   "libelle": null,
-   "fichier": "src/pages/Moments.tsx",
-   "ligne": 233,
-   "composant": "UnMoment"
-  },
-  {
-   "cible": "/moments#",
-   "route": "/moments",
-   "libelle": null,
-   "fichier": "src/pages/Moments.tsx",
-   "ligne": 233,
+   "ligne": 225,
    "composant": "UnMoment"
   },
   {
@@ -1004,11 +1020,35 @@
    "composant": "UnMoment"
   },
   {
+   "cible": "/moments#",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 235,
+   "composant": "UnMoment"
+  },
+  {
+   "cible": "/moments#",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 235,
+   "composant": "UnMoment"
+  },
+  {
+   "cible": "/moments/",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 236,
+   "composant": "UnMoment"
+  },
+  {
    "cible": "/moments",
    "route": "/moments",
    "libelle": null,
    "fichier": "src/pages/Moments.tsx",
-   "ligne": 244,
+   "ligne": 246,
    "composant": "Introuvable"
   },
   {
@@ -1016,7 +1056,7 @@
    "route": "/moments",
    "libelle": "Voir les moments",
    "fichier": "src/pages/Moments.tsx",
-   "ligne": 248,
+   "ligne": 250,
    "composant": "Introuvable"
   },
   {
@@ -1120,7 +1160,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 88,
+   "ligne": 95,
    "composant": "PointZero"
   },
   {
@@ -1128,7 +1168,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 88,
+   "ligne": 95,
    "composant": "PointZero"
   },
   {
@@ -1136,7 +1176,7 @@
    "route": "/point-zero",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 93,
+   "ligne": 100,
    "composant": "PointZero"
   },
   {
@@ -1144,7 +1184,15 @@
    "route": "/studio",
    "libelle": "Point Zéro : importer une image ou un PDF dans le Studio",
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 120,
+   "ligne": 127,
+   "composant": "PointZero"
+  },
+  {
+   "cible": "/buro?union=",
+   "route": "/buro",
+   "libelle": "Compléter notre union",
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 173,
    "composant": "PointZero"
   },
   {
@@ -1152,7 +1200,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 166,
+   "ligne": 175,
    "composant": "PointZero"
   },
   {
@@ -1160,7 +1208,7 @@
    "route": "/studio",
    "libelle": null,
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 166,
+   "ligne": 175,
    "composant": "PointZero"
   },
   {
@@ -1168,7 +1216,7 @@
    "route": "/entrer",
    "libelle": "+ Entrer",
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 168,
+   "ligne": 177,
    "composant": "PointZero"
   },
   {
@@ -1288,15 +1336,15 @@
    "route": "/systeme-nerveux",
    "libelle": "Voir sur la carte",
    "fichier": "src/pages/SystemeNerveux.tsx",
-   "ligne": 202,
-   "composant": "Parcours"
+   "ligne": 204,
+   "composant": "UnParcours"
   },
   {
    "cible": "/moments/support?pour=",
    "route": "/moments",
    "libelle": null,
    "fichier": "src/pages/SystemeNerveux.tsx",
-   "ligne": 231,
+   "ligne": 233,
    "composant": "Causalite"
   },
   {
@@ -1304,7 +1352,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/SystemeNerveux.tsx",
-   "ligne": 247,
+   "ligne": 249,
    "composant": "Inventaire"
   },
   {
@@ -1312,7 +1360,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/SystemeNerveux.tsx",
-   "ligne": 251,
+   "ligne": 253,
    "composant": "Inventaire"
   },
   {
@@ -1320,7 +1368,7 @@
    "route": "/blob",
    "libelle": null,
    "fichier": "src/pages/SystemeNerveux.tsx",
-   "ligne": 258,
+   "ligne": 260,
    "composant": "Inventaire"
   },
   {
@@ -1328,7 +1376,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/SystemeNerveux.tsx",
-   "ligne": 258,
+   "ligne": 260,
    "composant": "Inventaire"
   }
  ],
@@ -1470,12 +1518,12 @@
   {
    "api": "/api/buro",
    "fichier": "src/lib/buro.ts",
-   "ligne": 4
+   "ligne": 7
   },
   {
    "api": "/api/buro",
    "fichier": "src/lib/buro.ts",
-   "ligne": 8
+   "ligne": 11
   },
   {
    "api": "/api/auth",
@@ -1600,7 +1648,7 @@
   {
    "api": "/api/analyse",
    "fichier": "src/pages/PointZero.tsx",
-   "ligne": 49
+   "ligne": 50
   },
   {
    "api": "/api/systeme",
@@ -1668,7 +1716,9 @@
     "POST"
    ],
    "actions": [
-    "maj"
+    "maj",
+    "union",
+    "union-maj"
    ],
    "parametres": [],
    "tables": [
@@ -2029,6 +2079,18 @@
      "S1 : la file vient d’une migration explicite, idempotente, avec son retour arrière",
      "S3 : les quotas de l’analyse se règlent par l’environnement (20 et 300 par défaut)"
     ]
+   },
+   {
+    "fichier": "tests/server/unions.test.mjs",
+    "tests": [
+     "union : la date officielle est une vraie date AAAA-MM-JJ",
+     "union : seuls les champs envoyés sont retenus, nettoyés ; une valeur invalide refuse tout",
+     "union : un mariage incomplet se lit avec des champs vides ; un autre espace n’est pas une union",
+     "programme d’une union : tiré de la référence, sans rien de l’union d’exemple, à sa date",
+     "programme d’une union : ses moments choisis et ses horaires",
+     "union : aucun nouveau kind, aucune nouvelle table ; la forme canonique d’AIMESTUDIO",
+     "union : à cette étape, ni invitation, ni partage public"
+    ]
    }
   ],
   "e2e": [
@@ -2176,6 +2238,7 @@
      "fiche : un lien mène au point voisin",
      "parcours : chaque étape avec son état",
      "parcours : l’écriture en base reste annoncée « à vérifier »",
+     "parcours : l’union, de l’intention à la base, entièrement vérifiée",
      "causalité : la chaîne des conséquences, notifications annoncées comme prévues",
      "causalité : avancer ne repousse personne",
      "lecture publique : pas d’inventaire",
@@ -2189,6 +2252,36 @@
      "diagnostic seulement : la page n’envoie aucune écriture",
      "aucune erreur dans la console"
     ]
+   },
+   {
+    "fichier": "tests/e2e/unions.py",
+    "tests": [
+     "entrée : l’accueil propose « Commencer notre union », vers le Point Zéro",
+     "entrée : la Grille 200 de référence propose le même « Commencer notre union »",
+     "Point Zéro : « Nous nous marions » propose « Ranger notre union dans mon espace »",
+     "Point Zéro : l’union est rangée par l’action « union » (une seule par personne)",
+     "Point Zéro : ensuite, « Compléter notre union » mène à cette union dans Mon espace",
+     "Point Zéro : ranger à nouveau retrouve la même union, sans doublon",
+     "Mon espace : l’union est choisie, marquée « à compléter »",
+     "Mon espace : la fiche de l’union s’ouvre",
+     "Mon espace : pas de partage public pour une union",
+     "Mon espace : « Enregistrer » envoie les prénoms, la date officielle et le lieu de cette union",
+     "Mon espace : la fiche montre l’union complétée",
+     "Mon espace : après rechargement, la même union, relue telle qu’enregistrée",
+     "programme : « Voir notre programme » ouvre le programme de cette union",
+     "programme : rien de Camille & Gabriel (ni nom, ni photo, ni bouton de démonstration)",
+     "programme : il se dit tiré de la Grille 200, pas « de démonstration »",
+     "programme : les liens vers un moment gardent l’union",
+     "programme : la page d’un moment reste celle de l’union",
+     "programme : une union qui n’est pas dans l’espace n’affiche rien (ni la référence à sa place)",
+     "programme : sans union, la Grille 200 de référence est inchangée",
+     "permissions : un membre non propriétaire voit l’union sans pouvoir la modifier",
+     "sans compte : le Point Zéro invite à entrer, rien n’est envoyé",
+     "sans compte : le programme d’une union demande d’entrer",
+     "téléphone : la fiche de l’union tient dans l’écran",
+     "téléphone : le programme de l’union s’affiche sans déborder",
+     "aucune erreur dans la console"
+    ]
    }
   ],
   "deploiement": [
@@ -2200,6 +2293,63 @@
      "déploiement : une fausse session est refusée (401)",
      "déploiement : /api/systeme ne fait que lire (405 pour une écriture)",
      "déploiement : le code public ne contient rien de l’inspection"
+    ]
+   }
+  ],
+  "base": [
+   {
+    "fichier": "tests/base/securite.mjs",
+    "tests": [
+     "base : trois comptes de test, connectés par le vrai lien de connexion",
+     "S1 : sans la migration de la file d’effacement, la suppression est refusée et rien n’est effacé",
+     "S1 : inscrire deux fois ne double rien ; deux reprises simultanées et un fichier déjà absent ne font aucune erreur",
+     "S1 : le compte est supprimé par le vrai flux de suppression (200)",
+     "S1 : aucune ligne du compte ne reste (musique, Réseau, profil, adhésions, sessions)",
+     "S1 : une demande envoyée reste chez son destinataire, sans le nom, l’adresse ni le compte de son auteur",
+     "S1 : son texte libre est nettoyé (adresses, téléphones, liens, son nom) ; la date et le nombre d’invités restent",
+     "S1 : les données des autres comptes et l’espace partagé sont intacts",
+     "S1 : stockage en panne, les fichiers restent inscrits dans la file d’effacement, avec l’erreur",
+     "S1 : la reprise (tâche quotidienne protégée) efface le fichier et les envois jamais rattachés, puis vide la file",
+     "S1 : conservation : une demande d’un compte supprimé de plus de 12 mois est effacée, une récente reste",
+     "S1 : propriétaire d’un espace où d’autres sont membres : suppression refusée, rien n’est effacé",
+     "S3 : sans compte, refusé (401) et rien n’est dépensé",
+     "S3 : même connecté, une requête sans origine ou d’un autre site est refusée",
+     "S3 : connecté, l’analyse passe (Claude simulé, un appel)",
+     "S3 : une demande invalide est refusée avant tout : ni appel à Claude, ni quota consommé",
+     "S3 : Claude en erreur : une seule tentative, pas de nouvel essai automatique, le moteur local prend le relais",
+     "S3 : les quotas se règlent par l’environnement (ANALYSE_QUOTA_PERSONNE=1 : la 2e analyse de l’heure est refusée)",
+     "S3 : au quota de la personne, refusé (429) sans appel à Claude",
+     "S3 : plafond global atteint, refusé pour tous (429) sans appel à Claude",
+     "S3 : la clé n’apparaît jamais dans une réponse",
+     "S4 : la fiche publique ne montre jamais une union ni un événement, même marqués « public »",
+     "S4 : la liste publique du Réseau ne montre aucun espace",
+     "S2 : un ouvrage déjà rangé dans un autre compte est refusé (409) : aucune copie d’un compte à l’autre",
+     "S2 : vérifier des anciens ne rend que des identifiants : « à un autre compte » pour l’un, « à moi » pour son propriétaire, jamais de nom ni de contenu"
+    ]
+   },
+   {
+    "fichier": "tests/base/unions.mjs",
+    "tests": [
+     "base : deux comptes de test, connectés par le vrai lien de connexion",
+     "union : créée et rangée dans l’espace de son propriétaire (201)",
+     "union : écrite une fois en base, sous la forme canonique (evenement + mariage + data.union)",
+     "union : son seul membre est son propriétaire",
+     "union : ranger à nouveau retrouve la même union (aucun doublon)",
+     "union : trois envois simultanés d’un nouveau compte ne créent qu’une union",
+     "union : relue après rechargement, avec ses prénoms, sa date officielle et son lieu",
+     "union : le propriétaire modifie ses informations, relues telles quelles",
+     "union : une date officielle invalide est refusée, rien n’est écrit",
+     "permissions : un autre compte ne voit pas l’union",
+     "permissions : un autre compte ne peut ni modifier ni archiver l’union (404)",
+     "permissions : pas de partage public d’une union à cette étape",
+     "existant : un mariage d’AIMESTUDIO sans prénoms apparaît comme union à compléter",
+     "existant : ranger depuis le Point Zéro retrouve ce mariage, sans en créer un second",
+     "existant : complété par son propriétaire, ses champs d’origine (titre, modèle, origine) intacts",
+     "programme : les choix de l’union sont enregistrés avec elle et relus",
+     "programme : personnaliser() donne le programme de cette union (ses moments, son nom, sa date)",
+     "programme : rien de Camille & Gabriel dans le programme personnel ; les moments du jour tombent à sa date",
+     "programme : la Grille 200 de référence (Camille & Gabriel) n’a pas changé",
+     "schéma : aucun nouveau kind, aucune migration (contrainte d’origine intacte)"
     ]
    }
   ],

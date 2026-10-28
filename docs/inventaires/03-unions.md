@@ -1,96 +1,147 @@
-# Sujet n° 3 — Unions : inventaire (aucune modification)
+# Sujet n° 3 — Unions : première étape
 
-État au 28 octobre 2026. Ce document prépare le sujet : rien n'a été changé. Les décisions attendent la validation de Matt.
+Faite le 28 octobre 2026, sur les décisions validées par Matt.
 
-## Le constat principal
+**Objectif :**
+- qu'une union créée existe réellement ;
+- qu'elle soit enregistrée une seule fois ;
+- qu'on la retrouve après rechargement.
 
-**Il n'existe pas encore d'« union » dans la base.**
+> Une union, une source canonique, plusieurs vues.
 
-Le mot désigne au moins sept choses, dans le site et le Studio :
-- des exemples ;
-- un programme de référence ;
-- une intention du Point Zéro ;
-- un projet d'espace ;
-- des brouillons locaux.
+## La source canonique : celle qui existait déjà
 
-Aucune d'elles ne porte un identifiant d'union que les autres pourraient lire.
+- **Le constat.** La base Neon est partagée avec AIMESTUDIO. Sa contrainte `spaces_kind_check` n'autorise que trois `kind` : `evenement`, `projet`, `atelier`.
+  - AIMESTUDIO range déjà un mariage en `kind = 'evenement'` avec `data.modele = 'mariage'` (`api/_auth/espaces.mjs`, `api/_temps/moteur.mjs`).
+  - La production contient deux mariages de cette forme.
+- **La décision de Matt** : réutiliser cette forme. Pas de `kind = 'union'`, pas de nouvelle table, **aucune migration**.
+- **Ce qui s'ajoute dans `data`**, seulement là :
+  - `data.union = { a, b, date, lieu, programme }` ;
+  - les prénoms, la date officielle au format AAAA-MM-JJ et le lieu facultatif ;
+  - les choix du programme : les moments retenus et les horaires changés.
 
-Le seul couple partagé par tous est l'union d'exemple **Camille & Gabriel**, donnée canonique de la Grille 200 (PR #14).
+Compatibilité vérifiée avec AIMESTUDIO, en lisant son dépôt sans le modifier :
+- il ne lit que `kind`, `title` et `data->>'modele'`, et n'écrit jamais `spaces.data` après la création ;
+- `data.union` ne gêne donc aucun de ses lecteurs ni de ses écrivains ;
+- l'index unique `spaces_origine_unique (owner_id, data->>'origine')` sert à empêcher les doublons simultanés : une union créée ici porte l'origine `lemondeaime-union`.
 
-## Les formes d'« union », une par une
+## Problèmes confirmés et décisions
 
-| | Où | Ce que c'est | Donnée | Statut |
-|---|---|---|---|---|
-| A | Accueil, section « Unions » (`src/pages/LeMondeAime.tsx`, `UNIONS`) | Trois couples d'exemple. « Essayer leur univers » applique leur univers à la Métamorphose. | Écrits dans le code. Camille & Gabriel vient de `UNION_EXEMPLE` (`src/lib/reseau-exemples.ts`). | Exemples, en production |
-| B | Grille 200, `/moments` (`src/lib/programme.ts`, `programme-outils.mjs`) | Le programme de référence, celui de l'union d'exemple. `personnaliser()` sait en tirer le programme d'une vraie union. | `src/data/programme.json` (canonique) | `personnaliser()` n'est appelé par **aucune page**, seulement par `tests/server/programme.test.mjs` |
-| C | Point Zéro (`src/pages/PointZero.tsx`, `api/analyse.mjs`) | « Nous nous marions » est reconnu comme domaine `union` (studio « AIME Wedding »). | Rien tant qu'on ne range pas | Le lien de suite du domaine `union` mène à `/` (l'accueil), pas à une page d'union |
-| D | « Ranger dans mon espace » (`api/buro.mjs`) | Crée un projet dans « Mon espace ». | Table `spaces`, toujours `kind = 'projet'`, et `space_members` (`owner`) | Une union rangée est un projet comme les autres ; rien ne la distingue |
-| E | Réseau (`src/pages/Reseau.tsx`, `CartePersonne.tsx`, `LecturesMoment.tsx`) | « Crédité dans Camille & Gabriel » sur les fiches d'exemple ; « Pas encore crédité dans une union » sur les vrais profils. | Aucune table de crédits | Le crédit n'existe que pour l'exemple |
-| F | Métamorphose (sujet n° 2) | Les deux prénoms et la phrase de date, gardés sur l'appareil. | `aime-metamorphose` (local) | Décidé : pas de lien avec une union avant ce sujet |
-| G | Studio : Mon Espace (`oneSpaceCore.ts`), Dossier universel (`universalDossier.ts`), Mini-site (`miniSiteCore.ts`) | Un espace « mariage », un dossier « mariage » (démo « Camille & Gabriel — mariage fictif »), un mini-site « mariage » (Camille & Gabriel par défaut). | Local : `pointzero:one-space:v1`, `aime:universal-dossier`, `pointzero:minisite:v1` | Brouillons sur l'appareil, sans lien avec `spaces` |
+| # | Problème | Décision | État |
+|---|---|---|---|
+| 1 | Aucune union en base : « Nous nous marions » devenait un `projet` sans nom, sans date, sans lieu | L'action `union` de `/api/buro` range l'union sous la forme canonique. Une seule union par personne : si elle en a déjà une (y compris un mariage d'AIMESTUDIO), elle la retrouve. | Résolu |
+| 2 | Deux boutons d'entrée promettaient « la page de notre union », qui n'existe pas | Un seul libellé, « Commencer notre union », vers le Point Zéro. Puis « Ranger notre union dans mon espace », puis « Compléter notre union ». | Résolu |
+| 3 | `personnaliser()` était prêt mais aucune page ne l'appelait | Les choix du programme sont enregistrés avec l'union. `/moments?union=…` en tire le programme, à ses prénoms et à sa date, sans rien de Camille & Gabriel. La Grille 200 de référence est inchangée. | Résolu |
+| 4 | Permissions | Seul le propriétaire modifie l'union. Un autre compte ne la voit pas, et ne peut ni la modifier ni l'archiver. Sa visibilité ne change pas : le bouton « Partager » est masqué. | Résolu |
+| 5 | Les mariages déjà en base, incomplets | Ils restent intacts et apparaissent « à compléter ». Leur propriétaire peut les compléter : titre, modèle et origine sont gardés. | Résolu |
+| 6 | Invitations, crédits de prestataires, partage public | Non activés : prévus après leur propre audit | À vérifier / prévus |
+| 7 | Brouillons « mariage » du StudiO (local) | Inchangés, en attente de l'audit du StudiO | Décidé |
+| 8 | Métamorphose | Reste locale à l'appareil | Inchangé |
 
-S'y ajoute un aperçu : `src/charte/ApercuEspace.tsx` montre un projet « Notre union » dans l'aperçu de l'espace. C'est une illustration.
+## Le parcours
 
-## Points d'entrée vers « commencer une union »
+1. Point Zéro, « Nous nous marions » → « Ranger notre union dans mon espace ».
+2. L'union est rangée en base, une seule fois.
+3. « Compléter notre union » mène à Mon espace (`/buro?union=…`).
+4. On y saisit les prénoms, la date officielle et le lieu, puis on enregistre.
+5. Après rechargement, on retrouve la même union.
+6. « Voir notre programme » ouvre `/moments?union=…` : le programme personnel, tiré de la Grille 200 de référence.
 
-Ce sont des accès utiles à un même moteur, pas forcément des doublons (règle du sujet n° 1) :
+Rien de nouveau dans l'interface, hors la fiche de l'union dans Mon espace, qui reprend les champs et les boutons existants du profil. Pas de nouvelle page, pas de refonte.
 
-| Libellé | Où | Vers |
-|---|---|---|
-| « Créer la page de notre union » | Accueil, en-tête de la section Unions | `/point-zero?q=Nous nous marions` |
-| « Commencer mon union » | `/moments`, colonne de l'union | `/point-zero?q=Nous nous marions` |
-| « Point Zéro » | Mon espace, carte de création | `/point-zero` |
+## Fichiers et dépendances
 
-Deux verbes (« Créer la page », « Commencer ») mènent au même endroit. Ils promettent une page qui n'existe pas encore : le Point Zéro range un projet, il ne crée pas de page d'union.
+- `api/buro.mjs` : la même fonction serveur, avec deux actions de plus (`union`, `union-maj`).
+  - Les lectures ajoutent `union`.
+  - La visibilité d'une union ne change pas.
+- `src/lib/programme-outils.mjs` : `programmeDUnion()`.
+  - Il appelle `personnaliser()`, met les prénoms et nomme les témoins par leur place (« Témoin 1 »).
+  - Il décale les dates à la date officielle.
+  - La référence n'est pas touchée.
+- `src/charte/FicheUnion.tsx` (fiche dans Mon espace) et `src/charte/ProgrammeUnion.tsx` (le programme de l'union donné aux pages des moments ; les liens gardent l'union).
+- `src/pages/PointZero.tsx`, `Buro.tsx`, `Moments.tsx`, `LeMondeAime.tsx`, `src/charte/LecturesMoment.tsx`, `Support.tsx`, `src/App.tsx`, `src/lib/buro.ts`, `src/styles.css` (une ligne).
+- Système nerveux :
+  - `cartographie/scanner.mjs` et `outils.mjs` lisent les tests sur base réelle (`tests/base`) ;
+  - `SystemeNerveux.tsx` affiche tous les parcours, plus seulement le premier.
+- Inchangés :
+  - le schéma ;
+  - la Grille 200 et Camille & Gabriel ;
+  - la Métamorphose ;
+  - les brouillons du StudiO ;
+  - AIMESTUDIO ;
+  - la production.
 
-Ce point avait été renvoyé ici par le sujet n° 1 (point 9).
+## Tests avant / après
 
-## Données en base qui touchent les unions
+- **`tests/base/unions.mjs`**, 20 vérifications sur une **vraie base**.
+  - **Avant** les corrections : 4 réussies, 16 en échec.
+  - **Après** : 20 sur 20.
+  - Base : la branche Neon isolée `test/unions-2026-10-28`, jamais la production.
+  - Il passe par le vrai Better Auth (lien de connexion capturé, aucun e-mail envoyé) et la vraie fonction `/api/buro`. Quatre comptes de test y sont créés, puis effacés à la fin.
+  - Garde-fou : il refuse de tourner sur une base sans la table `aime_base_de_test`, qui n'existe que sur cette branche.
+  - Il prouve :
+    - la création ;
+    - l'absence de doublon, y compris pour trois envois simultanés ;
+    - la relecture après rechargement ;
+    - la modification par le propriétaire ;
+    - le refus d'une date invalide ;
+    - le refus d'accès pour un autre compte ;
+    - pas de partage public ;
+    - un mariage d'AIMESTUDIO retrouvé puis complété sans perte ;
+    - le programme enregistré et personnalisé, la référence intacte ;
+    - la contrainte de schéma intacte.
+- **`tests/e2e/unions.py`**, 25 vérifications de l'interface, avec des API **simulées** : ce n'est pas une preuve d'écriture en base.
+  - **Avant** les corrections : 2 réussies sur 25.
+  - **Après** : 25 sur 25.
+  - Ordinateur, téléphone, sans compte, membre non propriétaire.
+- **`tests/server/unions.test.mjs`** (7 tests) : la date, le nettoyage, la lecture d'un mariage incomplet, le programme personnel.
+- Non-régression :
+  - docks 31/31 ;
+  - Métamorphose 27/27 ;
+  - moments 42/42 ;
+  - navigation 15/15 ;
+  - système 22/22 ;
+  - tests serveur 60/60 ;
+  - Studio 540/540.
 
-- `spaces` : `kind`, `title`, `owner_id`, `data` (`briques`, `studio`, `intention`, `visibilite`, `archive`, `ouvrage`).
-- `space_members` : `space_id`, `user_id`, `role`.
-  - `api/buro.mjs` n'écrit que `owner`.
-  - L'onglet « Partagés » de Mon espace lit les autres rôles.
-- `invitations` : lue et nettoyée à la suppression d'un compte (`api/_auth/auth.mjs`). **Aucune fonction de ce dépôt n'en crée** : à vérifier si une autre application l'alimente.
-- `live_journal`, `matiere`, `identite` : nettoyées à la suppression d'un compte. Leur lien avec une union est à vérifier.
-- `visibilite` (privé → …, quatre états, bouton « Partager » de Mon espace) : **le Réseau la lit**. *Correction du 28 octobre 2026 : la première version de cet inventaire disait, à tort, qu'aucune page publique ne la lisait.*
-  - `api/reseau.mjs` (fiche publique d'un profil, `?ref=…`) montre le titre et les briques des espaces de son propriétaire marqués `public` et non archivés.
-  - Elle ne filtre pas le genre d'espace : un mariage (`evenement` + `mariage`) passé en `public` y apparaîtrait. Or « Partager » de Mon espace peut le faire sur tout espace dont on est propriétaire.
+Rejouer le test sur base réelle :
+```
+BASE_TEST_URL=<branche Neon de test, jamais la production> node tests/base/unions.mjs
+# si le port 5432 est fermé : NEON_WS_MODULES=<dossier avec ws et https-proxy-agent> (passage par WebSocket)
+```
 
-Aucune requête n'a été faite sur la base de production pour cet inventaire : ce qui précède se lit dans le code. Le nombre réel de projets « union » rangés n'est pas connu.
+## Dans le système nerveux
 
-## Constats à vérifier avant toute décision
+- **Vérifiés** (avec preuves), et le second parcours, « Une union, de l'intention à la base », 7 étapes sur 7 vérifiées :
+  - Point Zéro, ranger notre union ;
+  - fiche de l'union ;
+  - programme de l'union ;
+  - ranger et modifier une union ;
+  - la fonction serveur de Mon espace ;
+  - l'union en base ;
+  - le propriétaire de l'union.
+- **Prévus** : invitations à une union, crédits des prestataires, partage public.
+- **Audit** :
+  - résolus : `union-sans-entite`, `boutons-union`, `personnaliser-branche` ;
+  - décidé : `brouillons-studio-mariage` ;
+  - à vérifier : `invitations-credits-partage`.
 
-1. **Pas d'entité union.** Une union rangée depuis le Point Zéro est un `projet` : son nom, sa date et ses personnes ne sont pas des champs, seulement une phrase d'intention.
-2. **Trois dates possibles, aucune officielle** :
-   - la phrase de la Métamorphose (appareil) ;
-   - les dates lues par le Point Zéro (non gardées) ;
-   - le programme de référence.
-   Le Réseau dit maintenant que sa date n'est pas « la date officielle d'une union » : cette date officielle n'existe nulle part.
-3. **`personnaliser()` est prêt mais non branché.** La Grille 200 sait produire le programme d'une vraie union, mais aucune union ne lui fournit ses choix.
-4. **Les rôles.** La maquette parle de mariés, de prestataires crédités et d'invités. La base ne connaît que `owner` et des rôles lus dans « Partagés ». Rien ne crée de membre ni d'invitation dans ce dépôt.
-5. **Les brouillons du Studio.** Espace, dossier et mini-site « mariage » vivent sur l'appareil, chacun avec sa clé, sans lien entre eux ni avec `spaces`.
-6. **Les tests.** Il n'en existe aucun pour une union de bout en bout. Ce qui est prouvé :
-   - le programme de référence et `personnaliser()` (serveur) ;
-   - les cartes d'exemple et la Grille 200 (`moments.py`) ;
-   - pour le rangement d'un projet, `tests/server/buro.test.mjs` ne vérifie que le nettoyage des champs et les refus (sans base, autre site). Aucune écriture n'est testée, même simulée.
+## Correction et vérification : le Réseau et la visibilité
 
-## Questions pour Matt (rien n'est décidé)
+**Correction de l'inventaire.** La première version disait qu'aucune page publique ne lisait `visibilite` : c'est faux.
+- La fiche publique d'un profil du Réseau (`api/reseau.mjs`, `?ref=…`) montre le titre et les briques des espaces de son propriétaire marqués `public`.
 
-- **Qu'est-ce qu'une union, dans la base ?**
-  - Un `spaces.kind = 'union'`, avec des champs propres (les deux noms, la date officielle, le lieu) ?
-  - Ou un `projet` portant `domaine: 'union'` dans `data` ?
-  - Le premier est plus clair. Le second ne touche pas le schéma.
-- **Qui fixe la date officielle**, et où ? Les propriétaires seulement, depuis Mon espace ? Une fois fixée, le Réseau doit-il la proposer avant celle de la Métamorphose ?
-- **Que deviennent les trois boutons** « Créer la page de notre union », « Commencer mon union » et « Point Zéro » ? Faut-il un seul verbe ? Et vers quoi mènent-ils tant qu'il n'y a pas de page d'union : le Point Zéro, puis Mon espace ?
-- **Une page d'union publique** est-elle dans le périmètre de la cristallisation (« terminer les parcours existants ») ? Ou est-ce une nouvelle fonction, donc gelée ?
-- **Les rôles** : mariés (propriétaires), prestataires crédités, invités. Faut-il les poser maintenant, ou seulement les propriétaires ?
-- **La Métamorphose d'une personne connectée** : doit-elle devenir le réglage de la page de son union ? (Question reportée du sujet n° 2.)
-- **Les brouillons « mariage » du Studio** : à relier à l'union, ou à laisser au sujet StudiO ?
+**Vérifié sur la branche Neon de test** (28 octobre, script ponctuel, comptes de test effacés) :
+1. Avec cette PR, une union ne peut pas passer en `public` par Mon espace (404). La fiche publique ne montre que les projets publics, pas l'union.
+2. La liste publique du Réseau ne montre aucun espace.
+3. Mais si un autre écrivain (une autre application, une écriture directe) marquait l'union `public`, la fiche publique l'afficherait. La lecture du Réseau ne filtre pas le genre d'espace.
+4. Sur `main`, avant cette PR, « Partager » de Mon espace peut passer un mariage existant en `public`.
 
-## Tests à écrire avant de modifier (proposition)
+**Correctif proposé**, hors de cette PR, dans la PR de sécurité indépendante : la lecture publique du Réseau exclut toujours les unions (`evenement` + `mariage`), quelle que soit leur visibilité.
 
-- **Parcours.** Le chemin est : « Nous nous marions » au Point Zéro → ranger → Mon espace. On vérifie ce que la personne voit à chaque étape, et où mène chaque bouton « union ».
-- **Base.** Une écriture réelle sur une branche Neon de test, jamais en production. Une union rangée est relue, avec son propriétaire, et elle n'est visible de personne d'autre.
-- **Programme.** `personnaliser()` est appelé par la page d'une union de test, et la Grille 200 de référence reste intacte.
-- **Carte.** On ajoute les nœuds A à G, leurs données et leurs liens, en « à vérifier » tant que ces tests ne sont pas enregistrés. `invitations` et `visibilite` sont marquées « à vérifier ».
+## Limites
+
+- La production n'a reçu aucune écriture : le code n'y sera qu'après fusion des PR.
+- Les deux mariages existants y apparaîtront alors comme unions « à compléter » dans l'espace de leur propriétaire.
+- La branche Neon `test/unions-2026-10-28` reste à supprimer quand Matt le décide.
+- Les horaires du programme personnel restent ceux de la référence, sauf ceux que l'union a changés. Il n'existe pas encore d'écran pour choisir les moments : l'enregistrement et la lecture sont prêts, et prouvés.

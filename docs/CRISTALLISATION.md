@@ -31,7 +31,7 @@ Un sujet à la fois : son audit, ses décisions, sa petite PR, ses tests. On cl�
 
 1. Docks et navigation : clos le 28 octobre 2026 (voir `docs/inventaires/01-docks-navigation.md`).
 2. Métamorphose : corrigé le 28 octobre 2026, PR en revue (voir `docs/inventaires/02-metamorphose.md`).
-3. Unions : inventaire prêt (`docs/inventaires/03-unions.md`), modifications en attente de validation.
+3. Unions : première étape faite le 28 octobre 2026, PR en revue (voir `docs/inventaires/03-unions.md`) ; invitations, crédits et partage public restent prévus.
 4. Grille 200.
 5. Réseau et cartes métiers.
 6. StudiO.
@@ -60,5 +60,6 @@ npm run build && npx vite preview --port 4610
 python3 tests/e2e/navigation.py           # puis docks.py, moments.py, metamorphose.py, systeme.py
 npm run carte                             # inventaire + preuves des tests serveur
 # ou tout d'un coup : npm run carte:tout
+BASE_TEST_URL=<branche Neon de test> node tests/base/unions.mjs   # sur une vraie base, jamais la production
 npm test                                  # la carte doit rester vraie
 ```

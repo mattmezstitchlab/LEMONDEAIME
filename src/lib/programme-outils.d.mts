@@ -22,6 +22,8 @@ export function plageMusique(p: Programme, cle: string): string;
 export function chercher(p: Programme, q: string): MomentP[];
 export function personnaliser(ref: Programme, choix: { union?: Partial<Programme['union']>; moments: string[]; horaires?: Record<string, string> }): Programme;
 export function estReference(p: Programme): boolean;
+export type UnionEnregistree = { a: string; b: string; date: string; lieu: string; programme: { moments: string[] | null; horaires: Record<string, string> } | null };
+export function programmeDUnion(ref: Programme, u: UnionEnregistree | null): Programme;
 export const CHAMPS: Record<'tous' | 'maries' | 'prestataire', string[]>;
 export const CONTENUS: Record<'jour' | 'autour' | 'tout', string[] | null>;
 export const COULISSES: string[];

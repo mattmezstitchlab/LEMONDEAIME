@@ -183,9 +183,11 @@ function InspectionNoeud({ R, n, ins }: { R: Reseau; n: Noeud; ins: Inspection }
   </>;
 }
 
-/* ——— Le parcours : une branche réelle, du dock du haut à la donnée ——— */
+/* ——— Les parcours : des branches réelles, de l'interface à la donnée ——— */
 function Parcours({ R, ins }: { R: Reseau; ins: Inspection | null }) {
-  const p = R.parcours[0];
+  return <>{R.parcours.map(p => <UnParcours key={p.id} R={R} p={p} ins={ins} />)}</>;
+}
+function UnParcours({ R, p, ins }: { R: Reseau; p: Reseau['parcours'][number]; ins: Inspection | null }) {
   const etapes = p.etapes.map(id => noeud(R, id)!);
   const ok = etapes.filter(n => n.etat === 'verifie').length;
   return <div className="sn-parcours">

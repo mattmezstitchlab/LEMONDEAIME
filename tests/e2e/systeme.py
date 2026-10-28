@@ -48,8 +48,12 @@ with sync_playwright() as p:
     pg.locator('.sn-fiche .sn-lien-noeud', has_text='Loupe').click(); pg.wait_for_timeout(500)
     ok(pg.locator('.sn-fiche h3').inner_text().startswith('Loupe'), 'fiche : un lien mène au point voisin')
     pg.get_by_role('tab', name='Parcours').click(); pg.wait_for_timeout(300)
-    ok(pg.locator('.sn-etapes > li').count() == len(RESEAU['parcours'][0]['etapes']) and 'étapes vérifiées' in pg.locator('.sn-bilan').inner_text(), 'parcours : chaque étape avec son état')
-    ok('les morceaux de chacun' in pg.locator('.sn-bilan').inner_text().lower(), 'parcours : l’écriture en base reste annoncée « à vérifier »')
+    premier = pg.locator('.sn-parcours').first
+    ok(premier.locator('.sn-etapes > li').count() == len(RESEAU['parcours'][0]['etapes']) and 'étapes vérifiées' in premier.locator('.sn-bilan').inner_text(), 'parcours : chaque étape avec son état')
+    ok('les morceaux de chacun' in premier.locator('.sn-bilan').inner_text().lower(), 'parcours : l’écriture en base reste annoncée « à vérifier »')
+    union = pg.locator('.sn-parcours').nth(1)
+    n = len(RESEAU['parcours'][1]['etapes']) if len(RESEAU['parcours']) > 1 else -1
+    ok(union.count() == 1 and union.locator('.sn-etapes > li').count() == n and (str(n) + ' étapes vérifiées sur ' + str(n)) in union.locator('.sn-bilan').inner_text(), 'parcours : l’union, de l’intention à la base, entièrement vérifiée')
     pg.screenshot(path=OUT + 'parcours.png', full_page=True)
     pg.get_by_role('tab', name='Causalité').click(); pg.wait_for_timeout(300)
     ok(pg.locator('.sn-decales li').count() > 5 and 'n’existe pas encore' in pg.locator('.sn-chaine').inner_text(), 'causalité : la chaîne des conséquences, notifications annoncées comme prévues')
