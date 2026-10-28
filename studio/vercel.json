@@ -1,0 +1,60 @@
+{
+  "functions": {
+    "api/pattern-generate.mjs": {
+      "maxDuration": 60
+    },
+    "api/analyse.mjs": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/pointzero",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/boutique",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/buro",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/aime",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/atelier",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/le-monde-aime",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/univers",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/univers/:slug",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/studios/:slug",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/vision",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/dossier",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/espace",
+      "destination": "/index.html"
+    }
+  ]
+}

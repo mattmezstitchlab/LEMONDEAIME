@@ -9,6 +9,10 @@
   },
   "rewrites": [
     {
+      "source": "/studio/:chemin*",
+      "destination": "/studio/index.html"
+    },
+    {
       "source": "/api/auth/:chemin*",
       "destination": "/api/comptes?__chemin=:chemin*"
     },
@@ -17,7 +21,7 @@
       "destination": "/api/comptes?__lien=:chemin*"
     },
     {
-      "source": "/((?!api/|media/|assets/).*)",
+      "source": "/((?!api/|media/|assets/|studio/).*)",
       "destination": "/index.html"
     }
   ],
@@ -30,6 +34,27 @@
           "value": "public, max-age=604800"
         }
       ]
+    },
+    {
+      "source": "/studio/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        },
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/studio/"
+        }
+      ]
+    }
+  ],
+  "installCommand": "npm ci && npm ci --prefix studio",
+  "redirects": [
+    {
+      "source": "/studio",
+      "destination": "/studio/",
+      "permanent": false
     }
   ]
 }

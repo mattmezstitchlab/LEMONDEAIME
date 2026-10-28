@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# `vite.dev.config.ts` (développement derrière un mandataire, `allowedHosts`)
+# n'est volontairement PAS suivi par git, mais n'est pas ignoré non plus : un
+# fichier ignoré disparaît au moindre rafraîchissement de l'espace de travail,
+# et le serveur de développement ne redémarre plus.
+

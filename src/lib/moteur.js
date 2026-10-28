@@ -17,9 +17,9 @@ const Moteur = (function () {
   var DOMAINES = {
     union: { label: 'Union', studio: 'AIME Wedding', href: '/aime-wedding', mots: { mari: 4, noce: 3, wedding: 3, fianc: 2, '=pacs': 3, pacse: 3, temoin: 2, epou: 2, '=union': 2, 'liste de mariage': 3, 'lune de miel': 2, 'faire part': 1, 'jour j': 1, ceremonie: 1, 'vin d honneur': 2 },
       chemin: ['intention', 'calendrier', 'budget', 'comparateur', 'devis', 'personnes', 'annonce', 'invitation', 'placement', 'programme', 'page', 'cagnotte', 'galerie', 'livreor', 'capsule'] },
-    sal: { label: 'SAL', studio: 'Brode Way', href: 'https://pointzero-zeta.vercel.app/', mots: { '=sal': 4, 'stitch along': 4, 'a plusieurs': 1, ensemble: 1, collecti: 1 },
+    sal: { label: 'SAL', studio: 'Brode Way', href: '/studio/', mots: { '=sal': 4, 'stitch along': 4, 'a plusieurs': 1, ensemble: 1, collecti: 1 },
       chemin: ['annonce', 'invitation', 'calendrier', 'rappels', 'messages', 'suivi'] },
-    broderie: { label: 'Broderie', studio: 'Brode Way', href: 'https://pointzero-zeta.vercel.app/', mots: { brod: 3, 'point de croix': 4, canevas: 2, aiguille: 2, '=dmc': 2, patron: 2, tambour: 2, '=aida': 2, ouvrage: 1, 'grille de points': 2, motif: 1, '=fils': 1 },
+    broderie: { label: 'Broderie', studio: 'Brode Way', href: '/studio/', mots: { brod: 3, 'point de croix': 4, canevas: 2, aiguille: 2, '=dmc': 2, patron: 2, tambour: 2, '=aida': 2, ouvrage: 1, 'grille de points': 2, motif: 1, '=fils': 1 },
       chemin: ['import', 'conversion', 'grille', 'palette', 'atelier', 'suivi', 'journal', 'galerie', 'boutique'] },
     formation: { label: 'Formation', studio: 'Formation', href: 'Formation.dc.html', mots: { formation: 3, former: 2, '=cours': 2, apprendre: 2, enseign: 2, eleve: 2, apprenant: 3, stagiaire: 3, module: 2, lecon: 2, initiation: 2, tutoriel: 1, '=atelier': 1, pedagog: 2 },
       chemin: ['document', 'formation', 'quiz', 'personnes', 'suivi'] },

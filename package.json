@@ -6,10 +6,12 @@
   "description": "LE MONDE AIME — le site officiel (lemondeaime.com) : AIME, Le Monde AIME, Point Zéro, BurO, la Charte AIME.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && npm run build:studio",
     "preview": "vite preview",
     "test": "node --test tests/server/*.test.mjs",
-    "verify": "npm run test && npm run build"
+    "verify": "npm run test && npm run build",
+    "build:studio": "cd studio && AIME_BASE=/studio/ npm run build && rm -rf ../dist/studio && cp -r dist ../dist/studio",
+    "test:studio": "cd studio && npm run test:api && npx vitest run"
   },
   "dependencies": {
     "@better-auth/passkey": "1.7.7",

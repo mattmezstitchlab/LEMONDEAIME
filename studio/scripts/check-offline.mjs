@@ -1,0 +1,10 @@
+import {readFileSync,existsSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const sw=readFileSync('dist/sw.js','utf8'),html=readFileSync('dist/index.html','utf8');
+const assets=JSON.parse(sw.match(/const BUILD_ASSETS = (\[[^\n]*\]);/)[1]);
+assert(assets.length>0,'No precached assets');
+for(const file of assets)assert(existsSync('dist/'+file.replace(/^\.\//,'')),file);
+for(const [,file] of html.matchAll(/(?:src|href)="(\/assets\/[^" ]+\.(?:js|css))"/g))assert(assets.includes('.'+file),file);
+assert.match(sw,/point-zero-aime-web-[a-f0-9]{12}/);
+assert.match(sw,/pathname.startsWith\("\/api\/"\)/);
+console.log('Offline manifest verified:',assets.length,'assets; API cache exclusion retained. Browser offline/update recipe still required.');

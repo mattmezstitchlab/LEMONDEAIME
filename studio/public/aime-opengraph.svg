@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img">
+<rect width="1200" height="630" fill="#faf9f7"/>
+<g opacity=".7" stroke="#e8e0df" stroke-width="1" fill="none">
+ <path d="M710 0V630M780 0V630M850 0V630M920 0V630M990 0V630M1060 0V630M1130 0V630"/>
+ <path d="M680 85H1200M680 155H1200M680 225H1200M680 295H1200M680 365H1200M680 435H1200M680 505H1200M680 575H1200"/>
+</g>
+<text x="76" y="84" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="24" fill="#b18c9c">UNE ARCHITECTURE EN DEVENIR</text>
+<text x="59" y="363" font-family="Arial,Helvetica,sans-serif" font-size="285" letter-spacing="-27" font-weight="600" fill="#242225">AIME</text>
+<text x="79" y="428" font-family="Arial,Helvetica,sans-serif" font-size="27" fill="#635b60">Architecture Intelligente de la Mémoire Ensemble</text>
+<text x="79" y="550" font-family="Arial,Helvetica,sans-serif" font-size="22" fill="#93868b">Le passé n'est pas effacé. Le présent organise. Le futur se prépare.</text>
+<g transform="translate(918 298)"><path d="M0-122V122M-122 0H122M-86-86L86 86M86-86L-86 86" stroke="#af899b" stroke-width="8"/><circle r="32" fill="#faf9f7" stroke="#af899b" stroke-width="8"/></g>
+</svg>

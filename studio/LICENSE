@@ -1,0 +1,57 @@
+MIT License
+
+Copyright (c) 2026 Matt Mez Stitch Lab et les contributeurs de Point Zéro
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Cette licence couvre le code de Point Zéro. Elle ne couvre pas les données
+couleur, qui viennent d'un tiers et restent sous leur propre licence.
+
+Données couleur : craft-color-codes, MakeBead (makebead.com)
+  https://github.com/makebead/craft-color-codes
+  Code : MIT
+
+Les tables publiées par ce dépôt n'ont pas toutes la même licence, et chaque
+table porte la sienne :
+
+  CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
+    dmc-floss, dmc-diamond, miyuki-delica, mard-185/221/291, lego,
+    minecraft-blocks, minecraft-map, pixel-art-256, red-heart-super-saver
+
+  MIT (maxcleme/beadcolors, Copyright (c) 2020 maxcleme)
+    https://github.com/maxcleme/beadcolors
+    perler-midi, hama-midi, artkal-s, nabbi
+
+Point Zéro emploie dmc-floss et miyuki-delica (CC BY 4.0) ainsi que, pour les
+correspondances multi-marques, dmc-diamond (CC BY 4.0) et perler-midi,
+hama-midi, artkal-s, mard-291, nabbi. L'application et les fichiers exportés
+affichent la licence de la table réellement utilisée.
+
+Conformément à la clause d'attribution de la CC BY 4.0, les fichiers produits
+par Point Zéro (page de couverture du PDF, pied de page de la page d'ornements,
+pied de page du SVG, panneau de l'atelier) portent la mention :
+« Données couleur : craft-color-codes par MakeBead (makebead.com), licence CC BY 4.0 ».
+Cette mention ne doit pas être retirée des exports redistribués.
+
+Les valeurs de couleur DMC et Miyuki sont des approximations destinées à
+l'écran. Les marques DMC (Dollfus-Mieg & Cie) et Miyuki appartiennent à leurs
+titulaires respectifs ; ce projet n'est affilié à aucun des deux et ne
+redistribue aucune photographie de produit.

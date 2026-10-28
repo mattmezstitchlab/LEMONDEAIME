@@ -5,7 +5,7 @@ import { MEDIAS } from '../lib/medias';
 const PROJETS = [
   { nom: 'Point Zéro', genre: 'L’étape 0', href: '/point-zero', texte: 'Là où tout projet commence : importer, décrire, annoncer. Les briques s’allument sous vos yeux, puis se rangent dans votre espace.', noir: true },
   { nom: 'AIME Wedding', genre: 'Studio', href: '/aime-wedding', media: MEDIAS.union, texte: 'Le site de l’union : les couples, les prestataires, les invités, et un espace pour tout préparer.' },
-  { nom: 'Brode Way', genre: 'Studio', href: 'https://pointzero-zeta.vercel.app/', media: MEDIAS.broderie, texte: 'Le studio de la broderie : importer, dessiner sa grille point par point, broder et partager.' },
+  { nom: 'Brode Way', genre: 'Studio', href: '/studio/', media: MEDIAS.broderie, texte: 'Le studio de la broderie : importer, dessiner sa grille point par point, broder et partager.' },
   { nom: 'Présentation', genre: 'Charte · doc', href: null, media: MEDIAS.scene, texte: 'D’un document à une présentation en deux docks : les diapositives en bas, le Point qui accompagne l’orateur.' },
   { nom: 'Habillage', genre: 'Charte · site', href: null, media: MEDIAS.facade, texte: 'Votre site, tel qu’il est, habillé des deux docks et du Point qui guide. Ou refait de zéro.' },
 ];

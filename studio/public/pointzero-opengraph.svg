@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="t d">
+<title id="t">POINTZERO .0 — Le temps retrouvé.</title>
+<desc id="d">Un univers de studios reliés par une grille universelle, fond blanc et typographie noire.</desc>
+<defs>
+ <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#e9e6e6" stroke-width="1"/></pattern>
+ <linearGradient id="wash" x1="0" x2="1"><stop stop-color="#fbfaf9"/><stop offset="1" stop-color="#f4f0f0"/></linearGradient>
+</defs>
+<rect width="1200" height="630" fill="url(#wash)"/>
+<rect x="700" y="0" width="500" height="630" fill="url(#grid)"/>
+<text x="90" y="95" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#27272b" letter-spacing="1">× POINTZERO <tspan fill="#9b999a">.0</tspan></text>
+<text x="90" y="205" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="600" letter-spacing="4" fill="#b2969f">UN NOUVEAU POINT DE DÉPART</text>
+<text x="83" y="341" font-family="Arial, Helvetica, sans-serif" font-size="104" font-weight="700" letter-spacing="-7" fill="#202023">Le temps</text>
+<text x="83" y="455" font-family="Arial, Helvetica, sans-serif" font-size="104" font-weight="700" letter-spacing="-7" fill="#202023">retrouvé.</text>
+<text x="90" y="543" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#777374">Apprendre · Créer · Comprendre · Transmettre</text>
+<g transform="translate(815 165)">
+ <g fill="none" stroke="#c9bfc3" stroke-width="2"><path d="M0 0L170 0L170 170L0 170Z"/><path d="M0 0L170 170M170 0L0 170M85-85L85 255M-85 85L255 85"/></g>
+ <g fill="#fff" stroke="#d4c8cd" stroke-width="2"><rect x="-16" y="-16" width="94" height="94" rx="8"/><rect x="99" y="-16" width="94" height="94" rx="8"/><rect x="-16" y="99" width="94" height="94" rx="8"/><rect x="99" y="99" width="94" height="94" rx="8"/></g>
+ <circle cx="32" cy="32" r="21" fill="#cfabb9"/><circle cx="145" cy="32" r="21" fill="#a9bab4"/><circle cx="32" cy="145" r="21" fill="#ddcaab"/><circle cx="145" cy="145" r="21" fill="#9d9abf"/>
+</g>
+</svg>
