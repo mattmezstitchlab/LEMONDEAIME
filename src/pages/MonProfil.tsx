@@ -163,6 +163,7 @@ export default function MonProfil() {
             <div className="demande-tete"><b>{d.de_nom || 'Quelqu’un'}</b><span>{new Date(d.cree_le).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}</span></div>
             <p className="profil-note" style={{ margin: 0 }}>{[d.jour ? 'Le ' + new Date(d.jour + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '', d.lieu, d.invites ? d.invites + ' invités' : ''].filter(Boolean).join(' · ')}</p>
             <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{d.message}</p>
+            {!d.de_email && d.de_nom === 'Compte supprimé' && <p className="profil-note" style={{ margin: 0 }}>Son auteur a supprimé son compte : son nom et son adresse ont été retirés, et son message a été nettoyé automatiquement. Ce nettoyage n’est pas garanti : le message peut encore permettre de le reconnaître. Elle sera effacée à la fin de sa durée de conservation.</p>}
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {d.de_email && <a className="bouton noir" href={'mailto:' + d.de_email + '?subject=' + encodeURIComponent('Votre demande sur AIME')}>Répondre par e-mail</a>}
               {!d.lue && <button type="button" className="opt" onClick={async () => { await marquerLue(d.id); setDemandes(ds => ds.map(x => x.id === d.id ? { ...x, lue: true } : x)); }}>Marquer comme lue</button>}

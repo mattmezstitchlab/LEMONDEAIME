@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { autorise } from '../../api/maintenance.mjs';
 import { reprendre, _stockage } from '../../api/_auth/effacements.mjs';
 import { choisirAEffacer } from '../../src/lib/ouvragesAppareil.ts';
-import { masquer } from '../../api/_auth/anonymiser.mjs';
+import { masquer } from '../../api/_auth/nettoyer-texte.mjs';
 import { moisConservation } from '../../api/maintenance.mjs';
 import Q from '../../api/_auth/quotas.cjs';
 
@@ -74,18 +74,18 @@ test('S4 : la lecture publique du Réseau exclut tout événement', () => {
   assert.match(lire('api/reseau.mjs'), /from spaces where owner_id = \$1 and kind <> 'evenement' and coalesce\(data->>'visibilite','prive'\) = 'public'/);
 });
 
-test('S1 : le texte libre d’une demande perd ce qui identifie son auteur, garde ce qui sert au destinataire', () => {
+test('S1 : le nettoyage automatique du texte libre retire ce qui se reconnaît à coup sûr, garde ce qui sert au destinataire', () => {
   const t = masquer('Ici Élodie MARTIN (elodie.m@exemple.fr), 06 12 34 56 78 / +33 6 12 34 56 78, https://elodie.fr, IBAN FR76 3000 6000 0112 3456 7890 189. Le 12/06/2027, 80 invités, 2 500 €.', { nom: 'Élodie Martin', email: 'elodie.m@exemple.fr' });
   assert.ok(!/Élodie|MARTIN|elodie|06 12|\+33|https|FR76/.test(t), t);
   assert.match(t, /12\/06\/2027/); assert.match(t, /80 invités/); assert.match(t, /2 500 €/);
   assert.equal(masquer('Bonjour', {}), 'Bonjour');
 });
 
-test('S1 : la conservation des demandes anonymisées se règle (12 mois par défaut, de 1 à 120)', () => {
+test('S1 : la conservation des demandes d’un compte supprimé se règle (12 mois par défaut, de 1 à 120)', () => {
   assert.equal(moisConservation({}), 12);
-  assert.equal(moisConservation({ DEMANDES_ANONYMES_MOIS: '6' }), 6);
-  assert.equal(moisConservation({ DEMANDES_ANONYMES_MOIS: '0' }), 12);
-  assert.equal(moisConservation({ DEMANDES_ANONYMES_MOIS: 'abc' }), 12);
+  assert.equal(moisConservation({ DEMANDES_COMPTE_SUPPRIME_MOIS: '6' }), 6);
+  assert.equal(moisConservation({ DEMANDES_COMPTE_SUPPRIME_MOIS: '0' }), 12);
+  assert.equal(moisConservation({ DEMANDES_COMPTE_SUPPRIME_MOIS: 'abc' }), 12);
 });
 
 test('S1 : la file vient d’une migration explicite, idempotente, avec son retour arrière', () => {

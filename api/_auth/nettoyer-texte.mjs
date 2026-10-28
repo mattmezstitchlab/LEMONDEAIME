@@ -1,4 +1,6 @@
-// AIME · retirer d'un texte libre ce qui identifie son auteur, quand son compte est supprimé (sécurité S1, demandes envoyées).
+// AIME · nettoyage automatique d'un texte libre quand le compte de son auteur est supprimé (sécurité S1, demandes envoyées).
+// Ce n'est PAS une anonymisation garantie : c'est un retrait de ce qui se reconnaît à coup sûr. L'identification reste possible
+// par le contenu (adresse postale, surnom, nom d'un proche, détails de l'événement…). Les champs d'identité, eux, sont vidés.
 // Ce qui est retiré : adresses e-mail, numéros de téléphone (et longues suites de chiffres : IBAN, numéros de compte),
 // liens, et le nom de l'auteur (son nom affiché et le début de son adresse). Le reste du message est gardé pour son destinataire.
 // Limite assumée : un nom de rue, un surnom ou une information écrite autrement ne peuvent pas être reconnus à coup sûr.

@@ -35,16 +35,30 @@ Un espace dont il est propriétaire et où d'autres sont membres bloque la suppr
   - deux reprises simultanées ne causent aucune erreur.
 - **Reprise** : `/api/maintenance` reprend la file chaque jour, par une tâche planifiée Vercel (`17 3 * * *` UTC, `vercel.json`). Il répond 401 avec un mauvais secret, et reste fermé (503) sans `CRON_SECRET`. Il rend un bilan chiffré : effacés, échecs, restants, bloqués (5 échecs ou plus, à surveiller).
 
-**Les demandes envoyées : une politique de conservation.**
+**Les demandes envoyées : ce qui est vraiment retiré, et ce qui ne l'est pas.**
+
+Il faut distinguer deux niveaux :
+
+- **Retiré de façon certaine** : les champs d'identité de l'auteur.
+  - Son compte (`de_user`), son nom (`de_nom` devient « Compte supprimé ») et son adresse (`de_email`) sont vidés.
+  - Plus rien ne relie la demande à son compte, ni ne permet de lui répondre.
+- **Nettoyé automatiquement, sans garantie** : le texte libre du message.
+  - On en retire ce qui se reconnaît à coup sûr : adresses e-mail, téléphones, IBAN et longues suites de chiffres, liens, et son nom (son nom affiché et le début de son adresse).
+  - **Ce n'est pas une anonymisation.** L'auteur peut encore être reconnu par le contenu : une adresse postale, un surnom, un nom écrit autrement ou le nom d'un proche, un numéro écrit en lettres. Il peut l'être aussi par le contexte : la date, le lieu et le nombre d'invités, qui restent.
+  - Ces demandes sont donc des données **pseudonymisées**, encore personnelles, et traitées comme telles.
+
+Le destinataire en est informé dans sa boîte. Sous la demande, une note dit que l'auteur a supprimé son compte, que le message a été nettoyé automatiquement **sans garantie**, et qu'il sera effacé à la fin de sa durée de conservation.
+
+**Politique de conservation proposée**
 
 | Donnée | Ce qui en reste | Pourquoi |
 |---|---|---|
 | Identité de l'auteur (compte, nom, adresse) | Retirée (« Compte supprimé ») | Elle ne doit plus être exposée |
-| Texte libre | Gardé, mais **sans** adresses e-mail, téléphones, IBAN et longues suites de chiffres, liens, ni son nom (son nom affiché et le début de son adresse) | Le destinataire garde le contexte de la demande |
-| Date, lieu, nombre d'invités | Gardés | Utiles au destinataire, sans identifier l'auteur |
-| Durée | **12 mois** après la demande, puis effacée par la tâche quotidienne. Réglable avec `DEMANDES_ANONYMES_MOIS`, de 1 à 120. | Une conservation limitée et justifiée |
+| Texte libre | Gardé, **nettoyé automatiquement, identification encore possible** | Le destinataire garde le contexte de la demande |
+| Date, lieu, nombre d'invités | Gardés | Utiles au destinataire, mais ils peuvent aider à reconnaître l'auteur |
+| Durée | **12 mois** après la demande, puis effacée par la tâche quotidienne. Réglable avec `DEMANDES_COMPTE_SUPPRIME_MOIS`, de 1 à 120. | Limiter dans le temps ce qui reste identifiable |
 
-**Limite du retrait automatique.** Une information écrite autrement ne peut pas être reconnue à coup sûr : une adresse postale, un surnom, le nom d'un proche, un numéro écrit en lettres. La durée de 12 mois borne ce risque. Une suppression sur demande du destinataire est à prévoir avec le sujet Réseau.
+À prévoir avec le sujet Réseau : une suppression à la demande du destinataire. Une option plus stricte serait aussi possible, l'effacement immédiat du texte à la suppression du compte : à décider.
 
 ### S2 : le StudiO cloisonne strictement les ouvrages par compte
 
@@ -61,6 +75,17 @@ Chaque ouvrage de l'appareil a un état. Rien n'est jamais effacé par le cloiso
 - La vérification (`action: 'verifier'`) ne rend que des identifiants aléatoires : jamais un nom, un contenu ou un compte.
 - **Hors d'AIME** (l'atelier seul, sans comptes), rien ne change.
 - **À la déconnexion**, la case « Effacer les ouvrages de cet appareil » est proposée et n'est jamais cochée. Cochée, elle n'efface que les ouvrages de ce compte **déjà rangés** dans son espace, en version au moins aussi récente. Ils restent sur le compte.
+
+**Limite assumée : les ouvrages locaux sans compte sur un navigateur partagé.**
+
+Un ouvrage créé sur un appareil **sans être connecté** n'appartient à aucun compte. C'est l'état « appareil », ou un ancien ouvrage vérifié comme rangé dans aucun compte. Personne ne peut prouver à qui il est.
+
+- **Visibilité.** Sur un navigateur partagé, il est visible par toute personne qui utilise cet appareil, connectée ou non.
+- **Rattachement.** N'importe laquelle de ces personnes peut le ranger dans son propre compte, par un geste explicite (« Ranger dans mon espace »).
+- **Premier qui range.** Une fois rangé dans un compte, il quitte l'état « appareil » : le serveur refuse que d'autres comptes le rangent (409), et il disparaît de leur vue.
+- **Aucune perte.** Rien n'est effacé, et aucune synchronisation ne l'envoie toute seule.
+
+C'est la situation de tout fichier gardé sur un appareil partagé sans compte, déjà vraie avant ce correctif. La protection consiste à se connecter avant de créer : un ouvrage créé connecté appartient à ce compte, n'est visible que de lui sur l'appareil, et n'est envoyé qu'à lui. L'interface le signale avec la mention « sur cet appareil seulement » et le bouton de rangement.
 
 ### S3 : `/api/analyse` est réservé aux personnes connectées
 
@@ -98,7 +123,7 @@ Elle exclut tout `kind = 'evenement'` (unions, mariages, séminaires), quelle qu
 Ce que le test sur base réelle prouve en plus depuis la revue :
 - sans migration, la suppression est refusée ;
 - inscriptions et reprises idempotentes ;
-- texte libre anonymisé ;
+- texte libre nettoyé (pas anonymisé) ;
 - conservation de 12 mois appliquée ;
 - demande invalide sans appel ni quota ;
 - Claude en erreur : une seule tentative ;
@@ -121,7 +146,7 @@ Les preuves datées (commit, environnement) sont dans `docs/securite/preuves.jso
 - Tâches planifiées : notre configuration est compatible avec le plan Hobby (une exécution par jour au plus, à l'heure près). La prévisualisation de cette PR s'est construite avec la tâche déclarée.
 - **`CRON_SECRET` est absent** (vérifié par la liste des variables, sans lire leurs valeurs). À créer en Production, en « Sensitive », avec au moins 16 caractères. Vercel l'envoie seul à la tâche planifiée (`Authorization: Bearer …`).
 - Déjà présents : `BLOB_READ_WRITE_TOKEN` (le stockage des fichiers), `ANTHROPIC_API_KEY`, `DATABASE_URL`, `BETTER_AUTH_SECRET`.
-- Facultatifs : `ANALYSE_QUOTA_PERSONNE`, `ANALYSE_PLAFOND_HEURE`, `DEMANDES_ANONYMES_MOIS` (sinon 20, 300 et 12).
+- Facultatifs : `ANALYSE_QUOTA_PERSONNE`, `ANALYSE_PLAFOND_HEURE`, `DEMANDES_COMPTE_SUPPRIME_MOIS` (sinon 20, 300 et 12).
 
 **Neon** (base partagée avec AIMESTUDIO)
 - La migration `2026-10-28-01` est un ajout pur : aucune table existante ne change.
@@ -152,7 +177,7 @@ Les preuves datées (commit, environnement) sont dans `docs/securite/preuves.jso
 
 ## Derniers risques et limites
 
-- **Le retrait automatique du texte libre n'est pas exhaustif** : adresse postale, surnom, nom d'un proche. La durée de 12 mois le borne. Une suppression à la demande du destinataire reste à prévoir (sujet Réseau).
+- **Les demandes d'un compte supprimé ne sont pas anonymes** : seuls les champs d'identité sont retirés à coup sûr. Le texte est nettoyé sans garantie : adresse postale, surnom, nom d'un proche. La durée de 12 mois le borne. Une suppression à la demande du destinataire reste à prévoir (sujet Réseau).
 - **Tables d'AIMESTUDIO non traitées ici** : `demandes` et `liste_attente` (par adresse), `audit` (journal de sécurité), `live_journal` des espaces partagés. Elles sont à trancher avec AIMESTUDIO.
 - **Les fichiers audio sont publics par leur adresse** tant qu'ils ne sont pas effacés : c'est le fonctionnement du stockage public de Vercel Blob.
 - **Un ancien ouvrage dont le propriétaire a supprimé son compte (ou l'ouvrage)** après qu'il a été vu dans son compte reste à l'écart (`autreCompte`) : il n'est donné à personne. Un ancien jamais rangé dans aucun compte devient « de l'appareil » : sur un navigateur partagé, n'importe qui sur cet appareil peut le voir et le ranger par un geste. C'est la situation d'avant les comptes pour un ouvrage créé sans compte.

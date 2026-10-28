@@ -1,7 +1,7 @@
 // /api/maintenance : la reprise des effacements de fichiers en attente (comptes supprimés dont le stockage n'a pas répondu).
 // Appelée chaque jour par la tâche planifiée de Vercel (vercel.json, « crons »), qui envoie « Authorization: Bearer <CRON_SECRET> ».
 // Sans CRON_SECRET dans l'environnement, elle reste fermée (503). Elle ne lit ni ne montre aucune donnée : un simple bilan chiffré.
-// Elle applique aussi la durée de conservation des demandes anonymisées (comptes supprimés) : DEMANDES_ANONYMES_MOIS, 12 par défaut.
+// Elle applique aussi la durée de conservation des demandes envoyées par un compte supprimé : DEMANDES_COMPTE_SUPPRIME_MOIS, 12 par défaut.
 import { auth, _pool } from './_auth/auth.mjs';
 import { reprendre } from './_auth/effacements.mjs';
 import { timingSafeEqual } from 'node:crypto';
@@ -12,8 +12,9 @@ export function autorise(entete, secret) {
   const a = Buffer.from(String(entete || '')), b = Buffer.from('Bearer ' + secret);
   return a.length === b.length && timingSafeEqual(a, b);
 }
-/** Les demandes reçues d'un compte supprimé (déjà anonymisées) sont gardées pour leur destinataire, puis effacées après N mois. */
-export const moisConservation = (env = process.env) => { const n = parseInt(env.DEMANDES_ANONYMES_MOIS, 10); return Number.isInteger(n) && n >= 1 && n <= 120 ? n : 12; };
+/** Les demandes envoyées par un compte supprimé (sans identité de compte, texte nettoyé mais pas anonyme à coup sûr) sont gardées
+ *  pour leur destinataire, puis effacées après N mois. */
+export const moisConservation = (env = process.env) => { const n = parseInt(env.DEMANDES_COMPTE_SUPPRIME_MOIS, 10); return Number.isInteger(n) && n >= 1 && n <= 120 ? n : 12; };
 export async function purgerDemandes(db) {
   if (!(await db.query("select to_regclass('public.reseau_demandes') as t")).rows[0].t) return 0;
   const r = await db.query(`delete from reseau_demandes where de_user = '' and de_nom = 'Compte supprimé' and cree_le < now() - make_interval(months => $1)`, [moisConservation()]);

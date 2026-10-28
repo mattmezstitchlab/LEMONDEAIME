@@ -108,7 +108,7 @@ try {
   ok(chez.length === 1 && chez[0].de_user === '' && chez[0].de_nom === 'Compte supprimé' && chez[0].de_email === '' && chez[0].message.includes('Bonjour'), 'S1 : une demande envoyée reste chez son destinataire, sans le nom, l’adresse ni le compte de son auteur');
   const m = (chez[0] && chez[0].message) || '';
   console.log('  message gardé :', m);
-  ok(!/06 12|parti\.personne@|https:|Parti|Personne/.test(m) && m.includes('12/06/2027') && m.includes('80 invités'), 'S1 : son texte libre perd ses adresses, téléphones, liens et son nom ; la date et le nombre d’invités restent');
+  ok(!/06 12|parti\.personne@|https:|Parti|Personne/.test(m) && m.includes('12/06/2027') && m.includes('80 invités'), 'S1 : son texte libre est nettoyé (adresses, téléphones, liens, son nom) ; la date et le nombre d’invités restent');
   ok((await compter('musiques', 'user_id', reste.id)) === 1 && (await compter('reseau_dates', 'user_id', reste.id)) === 1 && (await compter('spaces', 'id::text', sp.rows[0].id)) === 1, 'S1 : les données des autres comptes et l’espace partagé sont intacts');
   const file = E ? (await db.query("select genre, cible, essais, erreur from effacements_fichiers where cible like $1", ['%' + parti.id + '%']).catch(() => ({ rows: [] }))).rows : [];
   ok(file.length === 2 && file.some(f => f.genre === 'url' && f.cible === fichier) && file.some(f => f.genre === 'prefixe' && f.cible === 'musique/' + parti.id + '/') && file.every(f => f.essais === 1 && /injoignable/.test(f.erreur)), 'S1 : stockage en panne, les fichiers restent inscrits dans la file d’effacement, avec l’erreur');
@@ -121,7 +121,7 @@ try {
     await db.query("insert into reseau_demandes (a_user, de_user, de_nom, de_email, message, cree_le) values ($1, '', 'Compte supprimé', '', 'ancienne ' || $2, now() - interval '13 months'), ($1, '', 'Compte supprimé', '', 'récente ' || $2, now() - interval '2 months')", [reste.id, jeton]);
     const p = await appel(maintenance, { headers: { authorization: 'Bearer ' + process.env.CRON_SECRET } });
     const msgs = (await db.query('select message from reseau_demandes where a_user = $1 and message like $2', [reste.id, '%' + jeton])).rows.map(x => x.message);
-    ok(p.code === 200 && p.j.demandesPurgees >= 1 && msgs.length === 1 && msgs[0].startsWith('récente'), 'S1 : conservation : une demande anonymisée de plus de 12 mois est effacée, une récente reste');
+    ok(p.code === 200 && p.j.demandesPurgees >= 1 && msgs.length === 1 && msgs[0].startsWith('récente'), 'S1 : conservation : une demande d’un compte supprimé de plus de 12 mois est effacée, une récente reste');
   }
   const avecMembre = await compte('proprio');
   const sp2 = await db.query("insert into spaces (kind, title, owner_id, data) values ('projet', 'Espace partagé', $1, '{}') returning id::text as id", [avecMembre.id]);

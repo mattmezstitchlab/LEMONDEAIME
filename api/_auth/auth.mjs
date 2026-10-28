@@ -6,7 +6,7 @@ import { magicLink } from 'better-auth/plugins/magic-link';
 import { passkey } from '@better-auth/passkey';
 import pg from 'pg';
 import { APIError } from 'better-auth/api';
-import { masquer } from './anonymiser.mjs';
+import { masquer } from './nettoyer-texte.mjs';
 import { inscrire as inscrireEffacements, reprendre as reprendreEffacements, FileAbsente } from './effacements.mjs';
 
 /* l'adresse publique : fixée par l'environnement, sinon l'adresse de la branche Vercel, sinon le local */
@@ -129,7 +129,7 @@ export async function effacerTraces(db, u) {
       await c.query('delete from reseau_dates where user_id = $1', [u.id]);
       await c.query('delete from reseau_questions where user_id = $1', [u.id]);
       await c.query('delete from reseau_demandes where a_user = $1', [u.id]);
-      /* son texte libre aussi : adresses, téléphones, liens et son nom en sont retirés (voir anonymiser.mjs) */
+      /* son texte libre : nettoyé automatiquement (adresses, téléphones, liens, son nom) ; ce n'est pas une anonymisation garantie (voir nettoyer-texte.mjs) */
       const envoyees = (await c.query('select id, message, de_nom, de_email from reseau_demandes where de_user = $1', [u.id])).rows;
       for (const d of envoyees) await c.query("update reseau_demandes set de_user = '', de_nom = 'Compte supprimé', de_email = '', message = $2 where id = $1", [d.id, masquer(d.message, { nom: [d.de_nom, u.name].filter(Boolean).join(' '), email: d.de_email || u.email })]);
     }
