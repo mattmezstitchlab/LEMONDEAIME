@@ -3,7 +3,7 @@ import { Tete, Verbe, BoutonBuro, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { initiales, lireReseau, type Profil } from '../lib/reseau';
-import { DOMAINES, EXEMPLES, UNION_EXEMPLE, domaine } from '../lib/reseau-exemples';
+import { DOMAINES, FICHES, UNION_EXEMPLE, domaine } from '../lib/reseau-exemples';
 
 /* Une carte du Réseau : la même que l'Annuaire d'AIME Wedding (photo 4:5, famille, nom, crédit). */
 export type Carte = { href: string; nom: string; etiquette: string; photo?: string; alt?: string; exemple?: boolean; credit?: string | null };
@@ -36,8 +36,9 @@ export default function Reseau() {
   const [filtre, setFiltre] = useState<string | null>(null);
   useEffect(() => { lireReseau().then(r => setProfils(r.ok ? r.profils || [] : [])); }, []);
   const cartes = [
+    ...FICHES.filter(e => e.vrai).map(e => ({ href: '/reseau/' + e.slug, nom: e.nom, etiquette: domaine(e.domaine)!.label + ' · ' + e.famille, photo: e.photo, alt: e.alt, domaine: e.domaine })),
     ...(profils || []).filter(p => p.ref).map(deProfil),
-    ...EXEMPLES.map(e => ({ href: '/reseau/' + e.slug, nom: e.nom, etiquette: e.famille, photo: e.photo, alt: e.alt, exemple: true, credit: e.domaine === 'mariage' ? (e.union ? 'Crédité dans ' + UNION_EXEMPLE : null) : undefined, domaine: e.domaine })),
+    ...FICHES.filter(e => !e.vrai).map(e => ({ href: '/reseau/' + e.slug, nom: e.nom, etiquette: e.famille, photo: e.photo, alt: e.alt, exemple: true, credit: e.domaine === 'mariage' ? (e.union ? 'Crédité dans ' + UNION_EXEMPLE : null) : undefined, domaine: e.domaine })),
   ];
   const liste = cartes.filter(c => !filtre || c.domaine === filtre);
   const d = filtre ? domaine(filtre) : null;

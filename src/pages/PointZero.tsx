@@ -13,7 +13,7 @@ type Analyse = { domaine: string; label: string; studio: string; certitude: numb
 const D = data.briques as unknown as Record<string, Brique>;
 const G = data.grille as string[][];
 const FEEDS = Object.fromEntries(Object.entries(D).map(([k, v]) => [k, v.feeds]));
-const HREF: Record<string, string> = { union: '/monde', broderie: 'https://pointzero-zeta.vercel.app/', sal: 'https://pointzero-zeta.vercel.app/', formation: '/monde', presentation: '/monde', site: '/monde' };
+const HREF: Record<string, string> = { union: '/monde', formation: '/monde', presentation: '/monde', site: '/monde' };
 const EXEMPLES = ['Nous nous marions en juin, à la campagne', 'Je veux broder le portrait de mon chat', 'Je prépare une formation sur le point de croix', 'J’organise un concert entre amis'];
 const reduit = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -154,7 +154,7 @@ export default function PointZero() {
               </div>}
               {an && fini && <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 18 }}>
                 <button className="bouton noir" type="button" onClick={ranger} style={{ height: 48 }}>Ranger dans mon espace</button>
-                <Lien className="bouton" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener" style={{ height: 48 }}>Ouvrir {an.studio}</Lien>
+                <Lien className="bouton" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener" style={{ height: 48 }}>{an.studio === 'Le Monde AIME' ? 'Voir Le Monde AIME' : 'Voir ' + an.studio + ' dans Le Monde AIME'}</Lien>
               </div>}
               <p role="status" style={{ margin: '10px 0 0', minHeight: 20, fontSize: 14, fontWeight: 600 }}>{msg}{msg.startsWith('Entrez') && <> <Lien href="/entrer">+ Entrer</Lien></>}</p>
             </aside>

@@ -3,7 +3,7 @@ import { Tete, Verbe, BoutonBuro, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import data from '../lib/briques.json';
 import { initiales, lireProfil, type Profil, type ProjetPublic } from '../lib/reseau';
-import { EXEMPLES, UNION_EXEMPLE, domaine, exemple, type Exemple } from '../lib/reseau-exemples';
+import { EXEMPLES, FICHES, UNION_EXEMPLE, domaine, exemple, type Exemple } from '../lib/reseau-exemples';
 
 type Brique = { n: string; name: string; fam: string; does: string; w: string; b: string; c: string; cl: string };
 const B = data.briques as unknown as Record<string, Brique>;
@@ -54,8 +54,26 @@ function Module({ titre, colonnes, monde }: { titre: string; colonnes: [string, 
   );
 }
 
+/* Le parcours d'un vrai profil : son texte, ses domaines, sa phrase. */
+function Parcours({ e }: { e: Exemple }) {
+  return (
+    <section aria-labelledby="titre-parcours" style={{ marginTop: 'clamp(64px, 8vw, 120px)' }}>
+      <div className="grille-auto" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 420px), 1fr))', gap: '32px 64px' }}>
+        <div><p className="surtitre">Parcours</p><h2 id="titre-parcours" className="titre">{e.titre}</h2></div>
+        <div style={{ display: 'grid', gap: 16 }}>{e.paragraphes!.map((t, k) => <p key={k} className="texte">{t}</p>)}</div>
+      </div>
+      {e.points && <ul style={{ listStyle: 'none', margin: '56px 0 0', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: 16 }}>
+        {e.points.map(([t, d]) => <li key={t} style={{ padding: '22px 22px 24px', borderRadius: 20, background: '#fff', border: '1px solid #E2E2DE' }}><h3 style={{ margin: '0 0 10px', fontSize: 20, fontWeight: 600 }}>{t}</h3><p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: '#3A3A3F' }}>{d}</p></li>)}
+      </ul>}
+      {e.citation && <figure style={{ margin: '24px 0 0', padding: 'clamp(28px, 4vw, 56px)', borderRadius: 24, background: '#0B0B0C', color: '#fff' }}>
+        <blockquote style={{ margin: 0, fontSize: 'clamp(24px, 2.8vw, 40px)', lineHeight: 1.2, fontWeight: 600, letterSpacing: '-0.025em' }}>« {e.citation} »</blockquote>
+        <figcaption style={{ marginTop: 22, fontSize: 13, fontWeight: 600, letterSpacing: '.14em', textTransform: 'uppercase', color: '#BDBDB8' }}>{e.nom}</figcaption>
+      </figure>}
+    </section>
+  );
+}
 function FicheExemple({ e }: { e: Exemple }) {
-  const i = EXEMPLES.indexOf(e), suivant = EXEMPLES[(i + 1) % EXEMPLES.length];
+  const i = EXEMPLES.indexOf(e), suivant = FICHES[(FICHES.indexOf(e) + 1) % FICHES.length];
   const d = domaine(e.domaine)!, pr = e.elle ? 'elle' : 'il', Pr = e.elle ? 'Elle' : 'Il';
   const qu = 'Ce qu’' + pr + ' ';
   useEffect(() => { document.title = 'AIME — Réseau · ' + e.nom; }, [e]);
@@ -66,21 +84,22 @@ function FicheExemple({ e }: { e: Exemple }) {
           <img src={e.photo} alt={e.alt} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 28%' }} />
         </div>
         <div>
-          <p className="surtitre">{d.label} · {e.famille} · {String(i + 1).padStart(2, '0')} / {EXEMPLES.length}</p>
+          <p className="surtitre">{d.label} · {e.famille}{e.vrai ? '' : ' · ' + String(i + 1).padStart(2, '0') + ' / ' + EXEMPLES.length}</p>
           <h1 className="titre" style={{ fontSize: 'clamp(48px, 7vw, 112px)', lineHeight: .9 }}>{e.nom}</h1>
-          <p className="chapeau">{e.texte}</p>
+          <p className="chapeau">{e.titre || e.texte}</p>
           <dl style={{ margin: '36px 0 0', display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '12px 24px', fontSize: 17 }}>
-            <dt style={{ fontWeight: 600 }}>Profil</dt><dd style={{ margin: 0 }}><span className="bientot" style={{ background: '#fff', color: '#0B0B0C', border: '1px solid #0B0B0C' }}>Exemple</span> <span style={{ color: '#3A3A3F' }}>ce que verra {e.nom.toLowerCase()} dans AIME</span></dd>
+            {!e.vrai && <><dt style={{ fontWeight: 600 }}>Profil</dt><dd style={{ margin: 0 }}><span className="bientot" style={{ background: '#fff', color: '#0B0B0C', border: '1px solid #0B0B0C' }}>Exemple</span> <span style={{ color: '#3A3A3F' }}>ce que verra {e.nom.toLowerCase()} dans AIME</span></dd></>}
             <dt style={{ fontWeight: 600 }}>Domaine</dt><dd style={{ margin: 0 }}>{d.label} · {e.famille}</dd>
             {e.avec.length > 0 && <><dt style={{ fontWeight: 600 }}>Travaille avec</dt><dd style={{ margin: 0 }}>{e.domaine === 'mariage' ? 'Les mariés · ' : ''}{e.avec.map((s, k) => { const x = exemple(s)!; return <span key={s}>{k > 0 && ' · '}<Lien href={'/reseau/' + s}>{x.nom}</Lien></span>; })}</dd></>}
             {e.domaine === 'mariage' && <><dt style={{ fontWeight: 600 }}>Ses unions</dt><dd style={{ margin: 0 }}>{e.union ? <>{e.elle ? 'Créditée' : 'Crédité'} dans <b style={{ fontWeight: 600 }}>{UNION_EXEMPLE}</b> · {e.union}</> : <span style={{ color: '#55555A' }}>Pas encore {e.elle ? 'créditée' : 'crédité'} dans une union</span>}</dd></>}
           </dl>
           <div style={{ marginTop: 32, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <a className="bouton noir" href="#module">Voir son module</a>
-            <Lien className="bouton" href={'/point-zero?q=' + encodeURIComponent(e.texte)}>Commencer au Point Zéro</Lien>
+            {!e.vrai && <Lien className="bouton" href={'/point-zero?q=' + encodeURIComponent(e.texte)}>Commencer au Point Zéro</Lien>}
           </div>
         </div>
       </div>
+      {e.paragraphes && <Parcours e={e} />}
       <Module titre={'Son module · ' + Pr + ' voit, ' + pr + ' fait, ' + pr + ' partage'} monde={e.domaine === 'broderie' ? 'b' : 'w'}
         colonnes={[[qu + 'voit', e.voit], [qu + 'fait', e.fait], [qu + 'partage', e.partage]]} />
       <nav aria-label="Profil suivant" style={{ marginTop: 64, display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>

@@ -3,6 +3,8 @@ import { Tete, Verbe, DockBas, BoutonBuro, Pied, Visuel, Orbe } from '../charte/
 import { aller, Lien } from '../lib/router';
 import { MEDIAS } from '../lib/medias';
 import { Projets } from './Projets';
+import { CarteReseau } from './Reseau';
+import { FONDATEUR } from '../lib/reseau-exemples';
 
 /* AIME : la toute première page. L'orbe quitte le logo, se pose sous le titre et devient le champ « Tout commence ici… ». */
 export default function Aime() {
@@ -62,27 +64,18 @@ export default function Aime() {
         </section>
 
         <section id="fondateur" aria-labelledby="titre-fondateur" className="section blanche">
-          <div style={{ maxWidth: 1320, marginBottom: 56 }}><Visuel m={MEDIAS['aime-fondateur']} hauteur="clamp(24rem, 56vw, 52rem)" /></div>
-          <div className="grille-auto" style={{ maxWidth: 1320, gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 420px), 1fr))', gap: '32px 64px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '40px clamp(32px, 6vw, 96px)', alignItems: 'center', maxWidth: 1100 }}>
+            <div style={{ maxWidth: 340 }}><CarteReseau c={{ href: '/reseau/' + FONDATEUR.slug, nom: FONDATEUR.nom, etiquette: FONDATEUR.famille, photo: FONDATEUR.photo, alt: FONDATEUR.alt }} /></div>
             <div>
               <p className="surtitre">Le fondateur</p>
-              <h2 id="titre-fondateur" className="titre">Concepteur d’applications, directeur artistique</h2>
-              <p style={{ margin: '14px 0 0', fontSize: 19, fontWeight: 600, color: '#3A3A3F' }}>Matthieu Lecointre</p>
-            </div>
-            <div style={{ display: 'grid', gap: 16 }}>
-              <p className={P}>Créateur de l’écosystème AIME®, il conçoit des applications numériques et dirige leur identité visuelle depuis de nombreuses années. Sa conviction : un outil n’a de valeur que s’il reste compréhensible par la personne qui l’utilise.</p>
-              <p className={P}>Depuis deux ans, il explore concrètement les modèles d’intelligence artificielle : ce qu’ils savent faire, ce qu’ils ratent, et surtout la manière de les mettre au service d’une intention humaine sans jamais leur céder la décision finale.</p>
-              <p className={P}>AIME est né de cette envie simple : transmettre cette expérience à celles et ceux qui n’ont jamais osé franchir la porte du numérique.</p>
+              <h2 id="titre-fondateur" className="titre" style={{ maxWidth: '16ch' }}>{FONDATEUR.titre}</h2>
+              <p className="chapeau">{FONDATEUR.texte} Son parcours, ses domaines et son module sont sur son profil, dans le Réseau.</p>
+              <div style={{ marginTop: 28, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                <Lien className="bouton noir" href={'/reseau/' + FONDATEUR.slug}>Voir son profil</Lien>
+                <Lien className="bouton" href="/reseau">Tout le Réseau</Lien>
+              </div>
             </div>
           </div>
-          <ul style={{ listStyle: 'none', margin: '64px 0 0', padding: 0, maxWidth: 1320, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: 16 }}>
-            {[['Applications conçues', 'Outils métiers, carnets associatifs, interfaces sobres et lisibles.'], ['Direction artistique', 'Identités visuelles, mises en page éditoriales, supports de présentation.'], ['Expérimentation IA', 'Deux années de tests sur des cas réels, documentés sans complaisance.'], ['Transmission', 'Une pédagogie patiente, en français courant, adaptée aux débutants et aux seniors.']].map(([t, d]) =>
-              <li key={t} style={{ padding: '22px 22px 24px', borderRadius: 20, background: '#F6F6F4', border: '1px solid #E2E2DE' }}><h3 style={{ margin: '0 0 10px', fontSize: 20, fontWeight: 600 }}>{t}</h3><p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: '#3A3A3F' }}>{d}</p></li>)}
-          </ul>
-          <figure style={{ margin: '24px 0 0', maxWidth: 1320, padding: 'clamp(28px, 4vw, 56px)', borderRadius: 24, background: '#0B0B0C', color: '#fff' }}>
-            <blockquote style={{ margin: 0, fontSize: 'clamp(24px, 2.8vw, 40px)', lineHeight: 1.2, fontWeight: 600, letterSpacing: '-0.025em' }}>« Une personne qui ne connaît rien à l’intelligence artificielle peut passer de “Je ne sais pas comment faire” à “Je l’ai fait moi-même”. C’est la seule promesse que je veux tenir. »</blockquote>
-            <figcaption style={{ marginTop: 22, fontSize: 13, fontWeight: 600, letterSpacing: '.14em', textTransform: 'uppercase', color: '#BDBDB8' }}>Le fondateur d’AIME</figcaption>
-          </figure>
         </section>
 
         <section id="vision" aria-labelledby="titre-vision" className="section">

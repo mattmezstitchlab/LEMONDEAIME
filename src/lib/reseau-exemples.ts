@@ -14,8 +14,25 @@ export const domaine = (id: string) => DOMAINES.find(d => d.id === id);
 export type Exemple = {
   slug: string; nom: string; domaine: string; famille: string; elle: boolean; photo: string; alt: string;
   texte: string; voit: string[]; fait: string[]; partage: string[]; avec: string[]; union: string | null;
+  /* un vrai profil (pas un exemple) : le fondateur */
+  vrai?: boolean; titre?: string; paragraphes?: string[]; points?: [string, string][]; citation?: string;
 };
 const P = (s: string) => '/media/reseau/' + s + '.jpg';
+/* Le fondateur : un vrai profil, le premier du Réseau. Son texte vient de l'ancienne section « Fondateur » de l'accueil. */
+export const FONDATEUR: Exemple = {
+  slug: 'matthieu-lecointre', nom: 'Matthieu Lecointre', domaine: 'numerique', famille: 'Fondateur d’AIME', elle: false, vrai: true,
+  photo: '/media/fondateur-portrait.jpg', alt: 'Matthieu Lecointre à son bureau, devant un écran et des croquis d’interfaces',
+  titre: 'Concepteur d’applications, directeur artistique',
+  texte: 'Créateur de l’écosystème AIME®, il conçoit des applications numériques et dirige leur identité visuelle.',
+  paragraphes: [
+    'Créateur de l’écosystème AIME®, il conçoit des applications numériques et dirige leur identité visuelle depuis de nombreuses années. Sa conviction : un outil n’a de valeur que s’il reste compréhensible par la personne qui l’utilise.',
+    'Depuis deux ans, il explore concrètement les modèles d’intelligence artificielle : ce qu’ils savent faire, ce qu’ils ratent, et surtout la manière de les mettre au service d’une intention humaine sans jamais leur céder la décision finale.',
+    'AIME est né de cette envie simple : transmettre cette expérience à celles et ceux qui n’ont jamais osé franchir la porte du numérique.',
+  ],
+  points: [['Applications conçues', 'Outils métiers, carnets associatifs, interfaces sobres et lisibles.'], ['Direction artistique', 'Identités visuelles, mises en page éditoriales, supports de présentation.'], ['Expérimentation IA', 'Deux années de tests sur des cas réels, documentés sans complaisance.'], ['Transmission', 'Une pédagogie patiente, en français courant, adaptée aux débutants et aux seniors.']],
+  citation: 'Une personne qui ne connaît rien à l’intelligence artificielle peut passer de “Je ne sais pas comment faire” à “Je l’ai fait moi-même”. C’est la seule promesse que je veux tenir.',
+  voit: ['intention', 'personnes', 'import'], fait: ['modele', 'site', 'habillage', 'presentation'], partage: ['formation', 'atelier', 'capsule'], avec: [], union: null,
+};
 export const EXEMPLES: Exemple[] = [
   { slug: 'la-fleuriste', nom: 'La fleuriste', domaine: 'mariage', famille: 'La scène', elle: true, photo: P('fleuriste'), alt: 'Une fleuriste tient un bouquet de fleurs séchées',
     texte: 'Elle arrive avant tout le monde et repart quand la salle s’éteint. Bouquet, arches, centres de table : elle donne sa couleur à la journée.',
@@ -66,6 +83,8 @@ export const EXEMPLES: Exemple[] = [
     texte: 'Elle part d’une image, en fait une grille, la brode point par point, puis la partage ou la vend en patron.',
     voit: ['import', 'palette', 'grille'], fait: ['atelier', 'journal', 'modele'], partage: ['boutique', 'galerie', 'formation'], avec: [], union: null },
 ];
-export const exemple = (slug: string) => EXEMPLES.find(e => e.slug === slug);
+/* tout le Réseau statique : le fondateur d'abord, puis les exemples */
+export const FICHES: Exemple[] = [FONDATEUR, ...EXEMPLES];
+export const exemple = (slug: string) => FICHES.find(e => e.slug === slug);
 /* l'union d'exemple de l'Annuaire AIME Wedding */
 export const UNION_EXEMPLE = 'Camille & Gabriel';
