@@ -3,7 +3,6 @@ import Buro from "./components/Buro";
 import { VISIBILITY, visibilityOf, writeVisibility } from "./lib/visibility";
 import { readInterfaceLevel, INTERFACE_LEVEL_KEY, type InterfaceLevel } from "./lib/interfaceLevel";
 import CrossStitchHome, { type StitchEntry } from "./components/CrossStitchHome";
-import PatternBoutique from "./components/PatternBoutique";
 import {writeStoredJSON} from "./lib/storageSafety";
 import { useCallback, useDeferredValue, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { BASE_FLOSS, FLOSS, flossIndex } from "./lib/dmc";
@@ -18,34 +17,7 @@ import { useMedia } from "./lib/useMedia";
 import type { Tool } from "./lib/stitch";
 import { runChecks } from "./lib/checks";
 import Canvas, { type Insets, type ViewMode } from "./components/Canvas";
-import DesignStudio from "./components/DesignStudio";
-import ManifestLanding from "./components/ManifestLanding";
-import AimeEcosystem from "./components/AimeEcosystem";
-import AimeDossier from "./components/AimeDossier";
 import { avecBase, entryStudio, publicPathFor, type StudioRoute } from "./lib/entryNavigation";
-import ManifestAdminStudio from "./components/ManifestAdminStudio";
-import MetamorphoseStudio from "./components/MetamorphoseStudio";
-import RippleCircleStudio from "./components/RippleCircleStudio";
-import GameStudio from "./components/GameStudio";
-import PhotoStudio from "./components/PhotoStudio";
-import FashionStudio from "./components/FashionStudio";
-import BudgetStudio from "./components/BudgetStudio";
-import ProgrammeStudio from "./components/ProgrammeStudio";
-import AdminStudio from "./components/AdminStudio";
-import MiniSiteStudio from "./components/MiniSiteStudio";
-import PDFStudio from "./components/PDFStudio";
-import GenerationStudio from "./components/GenerationStudio";
-import MusicStudio from "./components/MusicStudio";
-import MusicProductionStudio from "./components/MusicProductionStudio";
-import AccessibilityStudio from "./components/AccessibilityStudio";
-import AcademyStudio from "./components/AcademyStudio";
-import UniversalDossierStudio from "./components/UniversalDossierStudio";
-import OneSpaceStudio from "./components/OneSpaceStudio";
-import LegalStudio from "./components/LegalStudio";
-import ArtWorldStudio from "./components/ArtWorldStudio";
-import AimeLanding from "./components/AimeLanding";
-import type { MiniSite } from "./lib/miniSiteCore";
-import { loadProjectOptions } from "./lib/budgetCore";
 import AtelierCreate from "./components/AtelierCreate";
 import { type AtelierCategory } from "./components/CategoryBar";
 import MotifLibrary from "./components/MotifLibrary";
@@ -66,6 +38,7 @@ import AutomaticImageImport from "./components/AutomaticImageImport";
 import ExportStudio from "./components/ExportStudio";
 import ErrorBoundary from "./components/ErrorBoundary";
 import PeerShare from "./components/PeerShare";
+import OrbeGuide, { VISITE_CLE, visiteVue } from "./components/OrbeGuide";
 
 type Panel = "palette" | "library" | "share" | "export" | null;
 type RightSection = "properties" | "motifs" | "edit" | "prepare" | "follow" | "settings";
@@ -101,22 +74,9 @@ export default function App() {
     catch { return "stitch-home"; }
   });
   useEffect(()=>{
-    if(studioMode==="pattern-boutique")document.title="Point Zéro — Éditions de patrons";
-    else if(studioMode==="stitch-home")document.title="Point Zéro — Studio de point de croix";
+    if(studioMode==="stitch-home")document.title="Point Zéro — Studio de point de croix";
     else if(studioMode==="buro")document.title="BurO — Point Zéro";
-    else if(studioMode==="manifest")document.title="POINTZERO .0 — Le temps retrouvé.";
-    else if(studioMode==="universal-dossier")document.title="Dossier Universel · AIME®";
-    else if(studioMode==="reference-dossier")document.title="Dossier de référence · AIME®";
-    else if(studioMode==="aime-landing")document.title="LE MONDE AIME — Association";
-    else if(studioMode==="design")document.title="Atelier — POINTZERO";
-    else if(!["buro","stitch-home","aime-home","vision","universe-index","universe-detail","studio-detail","reference-dossier","universal-dossier"].includes(studioMode)){
-      document.title="Studios — POINTZERO";
-    }
   },[studioMode]);
-  const [photoHandoff, setPhotoHandoff] = useState<{id:string;dataUrl:string}|null>(null);
-  const [miniSiteHandoff,setMiniSiteHandoff] = useState<MiniSite|null>(null);
-  const [openPrivateGallery,setOpenPrivateGallery]=useState(false);
-  const [linkedProject,setLinkedProject] = useState<{id:string;name:string}|null>(null);
   // Public pages are addressable and reversible with browser back/forward.
   // Workspace data remains in its original localStorage keys, untouched.
   const navigatePage=(path:string,transientIntention?:string)=>{
@@ -134,20 +94,7 @@ export default function App() {
     window.addEventListener("popstate",restoreRoute);
     return()=>window.removeEventListener("popstate",restoreRoute);
   },[]);
-  const switchStudio = (mode: StudioRoute) => {
-    if(mode==="buro"||mode==="stitch-home"||mode==="pattern-boutique"||mode==="aime-home"||mode==="manifest"||mode==="aime-landing"||mode==="vision"||
-      mode==="universe-index"||mode==="reference-dossier"||mode==="universal-dossier"||mode==="design"){
-      navigatePage(publicPathFor(mode));
-    }else if(mode==="manifest-admin") {
-      setStudioMode(mode); // private admin overlay, no navigable public route
-    }else{
-      if(mode==="budget"||mode==="programme"||mode==="admin"||mode==="music-production")setLinkedProject(loadProjectOptions()[0]??null);
-      navigatePage(publicPathFor(mode));
-    }
-    if(!["buro","stitch-home","aime-home","manifest","aime-landing","vision","universe-index","studio-detail","universe-detail","reference-dossier","universal-dossier","manifest-admin"].includes(mode)){
-      try { localStorage.setItem("pointzero:workspace", mode); } catch { /* keep existing data */ }
-    }
-  };
+  const switchStudio = (mode: StudioRoute) => navigatePage(publicPathFor(mode));
   const [store, dispatch] = useReducer(reducer, boot, (v) => initState(v ?? blankPattern()));
   const [remote, setRemote] = useState<Pattern | null>(null);
   const [activeCategory, setActiveCategory] = useState<AtelierCategory>("compose");
@@ -414,6 +361,9 @@ export default function App() {
   const deposeRef = useRef({ ouvrir: ouvrirOuvrage, importer: importAnyFile });
   deposeRef.current = { ouvrir: ouvrirOuvrage, importer: importAnyFile };
   const atelierLibre = studioMode === "embroidery" && !pdfFile && !promptOpen && !compositionInput && !file && !autoImage;
+  /* l'orbe qui guide : à la première ouverture de l'atelier, elle présente les deux docks, outil par outil */
+  const [visite, setVisite] = useState(false);
+  useEffect(() => { if (atelierLibre && !panel && !showWelcome && !visiteVue()) setVisite(true); }, [atelierLibre, panel, showWelcome]);
   useEffect(() => {
     if (!atelierLibre) return;
     const utile = (e: DragEvent) => { const t = Array.from(e.dataTransfer?.types ?? []); return t.includes(OUVRAGE_DRAG_TYPE) || t.includes("Files"); };
@@ -556,122 +506,15 @@ export default function App() {
         onNew={() => { panelActions.new(80, 80); setShowWelcome(false); setActiveCategory("compose"); setDockPath("dessiner"); switchStudio("embroidery"); }}
         onImport={f => { importAnyFile(f); switchStudio("embroidery"); }}
         onGenerate={() => { setShowWelcome(false); switchStudio("embroidery"); setPromptOpen(true); }}
-        onModels={() => switchStudio("pattern-boutique")}
         onWatch={() => { setShowWelcome(false); switchStudio("embroidery"); setPanel("share"); }}
         onInvite={p => { void loadPattern(p).then(ok => { if (ok) { setShowWelcome(false); switchStudio("embroidery"); setPanel("share"); } }); }}
         onHome={() => switchStudio("stitch-home")} />
-    : studioMode === "pattern-boutique"
-    ? <PatternBoutique onBack={() => switchStudio("stitch-home")} onCreate={() => { switchStudio("embroidery"); setShowWelcome(true); }} onGenerate={() => { switchStudio("embroidery"); setShowWelcome(false); setPromptOpen(true); }} onOpenPattern={p => { void loadPattern(p).then(ok => { if (ok) { switchStudio("embroidery"); setTool("hand"); } }); }} />
     : studioMode === "stitch-home"
     ? <CrossStitchHome projectName={P.name} onOpen={enterStitchStudio}
-        onShop={() => switchStudio("pattern-boutique")}
         onBuro={() => switchStudio("buro")}
         onShare={() => { switchStudio("embroidery"); setPanel("share"); }}
-        onImport={chosen => { switchStudio("embroidery"); importAnyFile(chosen); }}/>
-    : studioMode === "universal-dossier"
-    ? <UniversalDossierStudio onBack={()=>navigatePage("/")} onOpenAcademy={id=>navigatePage("/atelier?studio=academy&dossier="+encodeURIComponent(id))} onOpenMiniSite={site=>{setMiniSiteHandoff(site);switchStudio("mini-site")}}/>
-    : studioMode === "reference-dossier"
-    ? <AimeDossier onNavigate={navigatePage}/>
-    : studioMode === "aime-home" || studioMode === "universe-index" ||
-    studioMode === "universe-detail" || studioMode === "studio-detail" || studioMode === "vision"
-    ? <AimeEcosystem page={studioMode} onNavigate={navigatePage} onOpenStudio={route=>switchStudio(route as StudioRoute)}/>
-    : studioMode === "manifest"
-    ? <ManifestLanding onDetails={id => navigatePage("/studios/"+id)} onAime={() => navigatePage("/")}
-        onOpenAtelier={() => switchStudio("design")} onUniversal={() => switchStudio("universal-dossier")} onAdmin={() => switchStudio("manifest-admin")}/>
-    : studioMode === "manifest-admin"
-    ? <ManifestAdminStudio onBack={() => switchStudio("manifest")}/>
-    : studioMode === "design"
-    ? <DesignStudio onEmbroidery={() => switchStudio("embroidery")}
-        onPhoto={() => switchStudio("photo")} onFashion={() => switchStudio("fashion")}
-        onBudget={() => switchStudio("budget")} onProgramme={() => switchStudio("programme")} onAdmin={() => switchStudio("admin")}
-        onMiniSite={() => switchStudio("mini-site")} onPDF={() => switchStudio("pdf")}
-        onGeneration={() => switchStudio("generation")} onMusic={() => switchStudio("music")} onMusicProduction={() => switchStudio("music-production")} onAccessibility={() => switchStudio("accessibility")} onAcademy={() => switchStudio("academy")} onSpace={() => switchStudio("one-space")} onCausal={() => switchStudio("causal")} onLegal={() => switchStudio("legal")}
-        onArtWorld={() => {setOpenPrivateGallery(false);switchStudio("art-world");}}
-        onManifest={() => switchStudio("manifest")} onUniversal={() => switchStudio("universal-dossier")}
-        onMetamorphose={() => switchStudio("metamorphose")} onRippleCircle={() => switchStudio("ripplecircle")} onGame={() => switchStudio("game")}
-        incomingPhoto={photoHandoff} onPhotoConsumed={() => setPhotoHandoff(null)} />
-    : studioMode === "metamorphose"
-    ? <MetamorphoseStudio onBack={() => switchStudio("design")} onCircle={() => switchStudio("ripplecircle")} onGame={() => switchStudio("game")}/>
-    : studioMode === "ripplecircle"
-    ? <RippleCircleStudio onBack={() => switchStudio("design")} onMetamorphose={() => switchStudio("metamorphose")} onGame={() => switchStudio("game")}/>
-    : studioMode === "game"
-    ? <GameStudio onBack={() => switchStudio("design")} onMetamorphose={() => switchStudio("metamorphose")} onCircle={() => switchStudio("ripplecircle")}/>
-    : studioMode === "photo"
-    ? <PhotoStudio onBack={() => switchStudio("design")} onUse={dataUrl => {
-        setPhotoHandoff({id:crypto.randomUUID?.()??String(Date.now()),dataUrl});
-        switchStudio("design");
-      }} />
-    : studioMode === "fashion"
-    ? <FashionStudio onBack={() => switchStudio("design")} onUse={dataUrl => {
-        setPhotoHandoff({id:crypto.randomUUID?.()??String(Date.now()),dataUrl});
-        switchStudio("design");
-      }} />
-    : studioMode === "budget"
-    ? <BudgetStudio onBack={() => switchStudio("design")} linkedProject={linkedProject} />
-    : studioMode === "programme"
-    ? <ProgrammeStudio onBack={() => switchStudio("design")} linkedProject={linkedProject} />
-    : studioMode === "admin"
-    ? <AdminStudio onBack={() => switchStudio("design")} linkedProject={linkedProject} />
-    : studioMode === "mini-site"
-    ? <MiniSiteStudio onBack={() => {setMiniSiteHandoff(null);switchStudio("design");}} incomingDraft={miniSiteHandoff} onLegal={() => switchStudio("legal")} />
-    : studioMode === "pdf"
-    ? <PDFStudio onBack={() => switchStudio("design")} onConvertToPattern={file => {
-        setPdfFile(file);switchStudio("embroidery");
-      }} onUsePattern={p=>{
-        setWorkspace("create");setView("pattern");
-        void loadPattern(p);switchStudio("embroidery");
-        notify("Grille magnétique assemblée et importée dans l'atelier.");
-      }} />
-    : studioMode === "music"
-    ? <MusicStudio onBack={() => switchStudio("design")} />
-    : studioMode === "music-production"
-    ? <MusicProductionStudio onBack={() => switchStudio("design")} linkedProject={linkedProject} />
-    : studioMode === "accessibility"
-    ? <AccessibilityStudio onBack={() => switchStudio("design")} />
-    : studioMode === "academy"
-    ? <AcademyStudio linkedDossierId={new URLSearchParams(window.location.search).get("dossier")||undefined}
-        onBack={() => {const id=new URLSearchParams(window.location.search).get("dossier");
-          if(id)navigatePage("/espace?id="+encodeURIComponent(id));else switchStudio("design");}}
-        onAccessibility={() => switchStudio("accessibility")} onLegal={() => switchStudio("legal")} />
-    : studioMode === "legal"
-    ? <LegalStudio onBack={() => switchStudio("design")} onMiniSite={() => switchStudio("mini-site")} onAcademy={() => switchStudio("academy")} />
-    : studioMode === "one-space" || studioMode === "causal"
-    ? <OneSpaceStudio initialScreen={studioMode === "causal" ? "causal" : "espace"}
-        onBack={() => switchStudio("design")} onStudio={target => {
-          if(target === "academy" || target === "embroidery" || target === "music-production" ||
-             target === "programme" || target === "mini-site" || target === "admin" ||
-             target === "art-world" || target === "photo" || target === "design" || target === "causal"){
-            switchStudio(target);
-          }
-        }} />
-    : studioMode === "aime-landing"
-    ? <AimeLanding onBack={() => switchStudio("aime-home")} onPointzero={() => switchStudio("manifest")}
-        onCreate={()=>{setOpenPrivateGallery(false);switchStudio("art-world");}}
-        onGallery={()=>{setOpenPrivateGallery(true);switchStudio("art-world");}}
-        onMusic={()=>switchStudio("music")}/>
-    : studioMode === "art-world"
-    ? <ArtWorldStudio startInGallery={openPrivateGallery} onBack={() => {setOpenPrivateGallery(false);switchStudio("design");}}
-        onDesign={dataUrl=>{
-          setPhotoHandoff({id:crypto.randomUUID?.()??String(Date.now()),dataUrl});
-          switchStudio("design");
-        }}
-        onPattern={p=>{
-          setWorkspace("create");setView("pattern");
-          void loadPattern(p);switchStudio("embroidery");
-        }} />
-    : studioMode === "generation"
-    ? <GenerationStudio onBack={() => switchStudio("design")}
-        onImage={dataUrl=>{
-          setPhotoHandoff({id:crypto.randomUUID?.()??String(Date.now()),dataUrl});
-          switchStudio("design");
-        }}
-        onPattern={p=>{
-          setWorkspace("create");setView("pattern");
-          void loadPattern(p);switchStudio("embroidery");
-        }}
-        onMiniSite={site=>{
-          setMiniSiteHandoff(site);switchStudio("mini-site");
-        }} />
+        onImport={chosen => { switchStudio("embroidery"); importAnyFile(chosen); }}
+        onVisite={() => { try { localStorage.removeItem(VISITE_CLE); } catch { /* la visite s'ouvrira quand même */ } setPanel(null); setDockPath(null); setShowWelcome(false); setVisite(true); switchStudio("embroidery"); }}/>
     : <div data-interface-level={interfaceLevel} className={`pz-atelier pz-embroidery-studio fixed inset-0 h-[100dvh] w-full overflow-hidden bg-[#faf9f7] ${prefs.largeText ? "large-text" : ""} ${prefs.highContrast ? "high-contrast" : ""}`}>
     <input
       ref={imageInputRef}
@@ -727,7 +570,6 @@ export default function App() {
       actions={{
         buro: () => switchStudio("buro"),
         home: () => switchStudio("stitch-home"),
-        shop: () => switchStudio("pattern-boutique"),
         settings: () => openRightPanel("settings"),
         share: () => setPanel("share"),
         motifs: () => openRightPanel("motifs"),
@@ -738,6 +580,7 @@ export default function App() {
         follow: () => openRightPanel("follow"),
         drawSettings: () => { setActiveCategory("compose"); openRightPanel("edit"); },
         layers: () => { if (mobileInspectorOpen && rightSection === "properties") setMobileInspectorOpen(false); else openRightPanel("properties"); },
+        visite: () => setVisite(true),
       }}
       zoom={{
         zoomIn: () => window.dispatchEvent(new CustomEvent("pointzero:canvas", { detail: { action: "zoomIn" } })),
@@ -748,6 +591,7 @@ export default function App() {
       progression={progression} onCouleur={pickColor}
       ouvrages={{ courant: P.id, ouvrir: id => { void ouvrirOuvrage(id); }, importer: importAnyFile }}
       fils={<FlossRail dock pattern={P} active={color} onActive={pickColor} onPattern={(p) => setPattern(p)} onSupply={updateSupply} onBrowse={() => setPanel("palette")} stitching={workspace === "stitch"} hidden={showWelcome || !!file} />} />}
+    {atelierLibre && <OrbeGuide ouverte={visite} onFermer={() => setVisite(false)} onChemin={setDockPath} />}
     <aside aria-label="Inspecteur de broderie"
       hidden={!mobileInspectorOpen}
       className="pz-embroidery-right pzs-panel thin-scroll fixed bottom-[96px] right-3 top-[112px] z-30 w-[min(300px,calc(100vw-24px))] overflow-y-auto rounded-[18px] border border-white/15 bg-[#09090b] text-white shadow-2xl">

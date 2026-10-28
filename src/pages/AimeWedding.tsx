@@ -198,7 +198,7 @@ export default function AimeWedding() {
     studio: c => <section id="studio" aria-labelledby="titre-studio" className={c}>
       <Entete id="titre-studio" sur="Studio" texte="Le Studio d’AIME : tout se crée dans une grille. Il commence par la broderie, du premier motif à la dernière croix." />
       <CarrouselStudio reduit={confort.mouvement === 'reduit'} />
-      <div style={{ marginTop: 28, display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}><Lien className="bouton noir" href="/studio/atelier">Ouvrir le Studio</Lien><Lien className="bouton" href="/studio/boutique">Les patrons à broder</Lien></div>
+      <div style={{ marginTop: 28, display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}><Lien className="bouton noir" href="/studio/atelier">Ouvrir le Studio</Lien><Lien className="bouton" href="/studio/">Découvrir le studio</Lien></div>
       <div className="bande-sombre">
         <p className="surtitre" style={{ color: 'rgba(255,255,255,.65)' }}>Le fil qui relie</p>
         <h3 className="titre" style={{ maxWidth: '18ch', color: '#fff' }}>Brodez votre mariage ensemble.</h3>
