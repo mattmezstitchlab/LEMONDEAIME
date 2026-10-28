@@ -14,6 +14,8 @@ export function adresse(env = process.env) {
   if (env.VERCEL_URL) return 'https://' + env.VERCEL_URL;
   return 'http://localhost:8773';
 }
+/* Google : seulement si l'identifiant et le secret OAuth sont posés dans l'environnement */
+export function googlePret(env = process.env) { return !!(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET); }
 export function pret(env = process.env) { return !!(env.DATABASE_URL && env.BETTER_AUTH_SECRET && env.BETTER_AUTH_SECRET.length >= 32); }
 
 const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
@@ -59,6 +61,9 @@ export function auth(env = process.env) {
     database: pool,
     trustedOrigins: [base],
     emailAndPassword: { enabled: false },
+    /* « Continuer avec Google » ; une adresse déjà inscrite (lien e-mail, clé d'accès) retrouve son compte */
+    socialProviders: googlePret(env) ? { google: { clientId: env.GOOGLE_CLIENT_ID, clientSecret: env.GOOGLE_CLIENT_SECRET, prompt: 'select_account' } } : {},
+    account: { accountLinking: { enabled: true, trustedProviders: ['google'] } },
     advanced: { cookiePrefix: 'aime', useSecureCookies: base.startsWith('https://'), ipAddress: { ipAddressHeaders: ['x-forwarded-for', 'x-real-ip'] } },
     session: { expiresIn: 60 * 60 * 24 * 30, updateAge: 60 * 60 * 24, freshAge: 60 * 60 * 24 },
     /* supprimer son compte : session de moins de 24 h exigée ; ses espaces, ses adhésions et ses invitations partent avec */

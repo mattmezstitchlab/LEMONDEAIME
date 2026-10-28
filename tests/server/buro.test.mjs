@@ -21,3 +21,10 @@ test('comptes : /api/auth/<chemin> reconstruit depuis la réécriture Vercel', (
   assert.equal(adresseOrigine('/api/comptes?__chemin=sign-in/magic-link'), '/api/auth/sign-in/magic-link');
   assert.equal(adresseOrigine('/api/comptes?__chemin=../x'), null);
 });
+test('fournisseurs : rien d’ouvert sans base, Google seulement avec ses deux variables', async () => {
+  const { default: f } = await import('../../api/fournisseurs.mjs');
+  const { googlePret } = await import('../../api/_auth/auth.mjs');
+  const r = res(); f({}, r); assert.deepEqual(JSON.parse(r.body), { comptes: false, google: false, lien: false, cle: false });
+  assert.equal(googlePret({ GOOGLE_CLIENT_ID: 'x' }), false);
+  assert.equal(googlePret({ GOOGLE_CLIENT_ID: 'x', GOOGLE_CLIENT_SECRET: 'y' }), true);
+});
