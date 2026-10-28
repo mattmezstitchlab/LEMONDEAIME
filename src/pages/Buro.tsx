@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Tete, BoutonBuro, Pied, Orbe } from '../charte/Charte';
-import { Lien } from '../lib/router';
+import { Tete, DockBas, Pied, Orbe } from '../charte/Charte';
+import { Lien, useRecherche } from '../lib/router';
 import { useSession } from '../lib/session';
 import { lireBuro, ecrireBuro, type Projet } from '../lib/buro';
 import MonProfil from './MonProfil';
@@ -16,7 +16,9 @@ export default function Buro() {
   const session = useSession();
   const [projets, setProjets] = useState<Projet[] | null>(null);
   const [raison, setRaison] = useState('');
-  const [lieu, setLieu] = useState<Lieu>(() => new URLSearchParams(window.location.search).get('lieu') === 'profil' ? 'profil' : 'projets');
+  const [lieu, setLieu] = useState<Lieu>(() => { const l = new URLSearchParams(window.location.search).get('lieu'); return l === 'profil' || l === 'partages' || l === 'archives' ? l : 'projets'; });
+  const recherche = useRecherche();
+  useEffect(() => { const l = new URLSearchParams(recherche).get('lieu'); setLieu(l === 'profil' || l === 'partages' || l === 'archives' ? l : 'projets'); }, [recherche]);
   const [choisi, setChoisi] = useState<string | null>(null);
   const [msg, setMsg] = useState('');
   const [proposerCle, setProposerCle] = useState(false);
@@ -34,7 +36,7 @@ export default function Buro() {
   const B = data.briques as Record<string, { name: string }>;
   const verbes = sel && sel.role === 'owner'
     ? <>
-      {sel.ouvrage && <a className="outil" href={'/studio/atelier?ouvrage=' + encodeURIComponent(sel.ouvrage)} style={{ fontWeight: 600 }}>Ouvrir dans le StudiO</a>}
+      {sel.ouvrage && <a className="outil" href={'/studio/atelier?ouvrage=' + encodeURIComponent(sel.ouvrage)} style={{ fontWeight: 600 }}>Ouvrir dans le Studio</a>}
       <button className="outil" type="button" onClick={() => maj({ visibilite: ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4] }, '« ' + sel.titre + ' » : ' + VIS[ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4]] + '.')}>Partager · {VIS[sel.visibilite] || 'Privé'}</button>
       <button className="outil" type="button" onClick={() => { maj({ archive: !sel.archive }, sel.archive ? '« ' + sel.titre + ' » restauré.' : '« ' + sel.titre + ' » rangé aux archives.'); setChoisi(null); }}>{sel.archive ? 'Restaurer' : 'Archiver'}</button>
     </>
@@ -74,12 +76,11 @@ export default function Buro() {
           {projets && !liste.length && lieu !== 'projets' && <p style={{ fontSize: 18, color: '#3A3A3F' }}>{lieu === 'archives' ? 'Rien aux archives.' : 'Personne ne vous a encore partagé de projet.'}</p>}
         </>}
       </main>
-      {session && <nav className="dock-bas" aria-label="Lieux de votre espace"><div>
+      <DockBas label="Lieux de votre espace">{session ? <>
         {([['projets', 'Projets'], ['partages', 'Partagés avec moi'], ['archives', 'Archives'], ['profil', 'Profil']] as [Lieu, string][]).map(([k, l]) =>
           <button key={k} type="button" className="lieu" aria-current={lieu === k ? 'true' : 'false'} onClick={() => { setLieu(k); setChoisi(null); setMsg(''); }}>{l}{k !== 'profil' && <span style={{ marginLeft: 8, fontSize: 13, opacity: .8 }}>{(projets || []).filter(p => dans(p, k)).length}</span>}</button>)}
-      </div></nav>}
+      </> : undefined}</DockBas>
       <Pied />
-      <BoutonBuro courant />
     </>
   );
 }

@@ -1,11 +1,11 @@
-import { Tete, BoutonBuro, Pied } from '../charte/Charte';
+import { Tete, DockBas, VerbesSite, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 
 export function APlus() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/a-plus" />
+      <Tete courant="/a-plus" verbes={<VerbesSite />} />
       <main id="contenu" style={{ padding: 'clamp(64px, 10vw, 140px) var(--marge) 140px', maxWidth: 900 }}>
         <p className="surtitre">Pour celles et ceux qui en font leur métier</p>
         <h1 className="titre" style={{ fontSize: 'clamp(64px, 13vw, 220px)', lineHeight: .84, textTransform: 'uppercase' }}>A+</h1>
@@ -13,7 +13,7 @@ export function APlus() {
         <Lien className="bouton noir" href="/point-zero" style={{ marginTop: 32 }}>Commencer au Point Zéro</Lien>
       </main>
       <Pied />
-      <BoutonBuro />
+      <DockBas />
     </>
   );
 }
@@ -25,7 +25,7 @@ export function Introuvable() {
       <main id="contenu" style={{ padding: 'clamp(64px, 10vw, 140px) var(--marge) 140px' }}>
         <p className="surtitre">Page introuvable</p>
         <h1 className="titre">Cette page n’existe pas, ou plus.</h1>
-        <p className="chapeau"><Lien href="/">Revenir à l’accueil</Lien> ou <Lien href="/monde">découvrir Le Monde AIME</Lien>.</p>
+        <p className="chapeau"><Lien href="/">Revenir à l’accueil</Lien> ou <Lien href="/#unions">voir les unions</Lien>.</p>
       </main>
       <Pied />
     </>

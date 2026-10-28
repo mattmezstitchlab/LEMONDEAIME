@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import { Tete, BoutonBuro, Pied, Visuel } from '../charte/Charte';
+import { Tete, DockBas, VerbesSite, Pied, Visuel } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { ecrireBuro } from '../lib/buro';
@@ -13,7 +13,7 @@ type Analyse = { domaine: string; label: string; studio: string; certitude: numb
 const D = data.briques as unknown as Record<string, Brique>;
 const G = data.grille as string[][];
 const FEEDS = Object.fromEntries(Object.entries(D).map(([k, v]) => [k, v.feeds]));
-const HREF: Record<string, string> = { union: '/aime-wedding', broderie: '/studio/', sal: '/studio/', formation: '/monde', presentation: '/monde', site: '/monde' };
+const HREF: Record<string, string> = { union: '/', broderie: '/studio/atelier', sal: '/studio/atelier', formation: '/studio/', presentation: '/studio/', site: '/studio/' };
 const EXEMPLES = ['Nous nous marions en juin, à la campagne', 'Je veux broder le portrait de mon chat', 'Je prépare une formation sur le point de croix', 'J’organise un concert entre amis'];
 const reduit = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -76,12 +76,12 @@ export default function PointZero() {
   const pourquoi = !s || !an ? '' : an.raisons[sel!] ? 'Pourquoi : « ' + [...new Set(an.raisons[sel!].map(r => r.q))].slice(0, 4).join(' », « ') + ' »' : decoule[sel!] ? 'Découle de : ' + decoule[sel!].map(k => D[k].name).join(', ') : an.chemin.includes(sel!) ? 'Fait partie de la recette « ' + an.label + ' »' : an.ecartees[sel!] ? 'Écartée : « ' + an.ecartees[sel!] + ' »' : 'Pas concernée par ce projet.';
   const cert = !an ? '' : an.certitude >= 1 ? 'sûr' : an.certitude >= .6 ? 'probable' : an.certitude > 0 ? 'à confirmer' : 'à préciser';
   const ents = !an ? [] : [['Date', 'dates'], ['Montant', 'montants'], ['Personnes', 'personnes'], ['Lieu', 'lieux'], ['Lien', 'liens']].flatMap(([k, f]) => (an.entites[f] || []).map(x => [k, f === 'montants' ? Math.round(Number(x.v)).toLocaleString('fr-FR') + ' €' : String(x.v)]));
-  const href = an ? HREF[an.domaine] || '/monde' : '/monde';
+  const href = an ? HREF[an.domaine] || '/' : '/';
 
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/point-zero" />
+      <Tete courant="/point-zero" verbes={<VerbesSite />} />
       <main id="contenu" style={{ padding: 'clamp(48px, 7vw, 96px) var(--marge) 160px' }}>
         <p className="surtitre">L’étape 0 · au centre de la grille</p>
         <h1 className="signature" style={{ fontSize: 'clamp(56px, 12vw, 200px)' }}>Point Zéro</h1>
@@ -108,11 +108,11 @@ export default function PointZero() {
             <div style={{ position: 'relative', maxWidth: 820, aspectRatio: '1 / 1' }}>
               <ul aria-label="Les briques, rangées autour du Point Zéro" style={{ listStyle: 'none', margin: 0, padding: 0, position: 'absolute', inset: 0, display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gridTemplateRows: 'repeat(7, minmax(0, 1fr))', gap: 6 }}>
                 {G.flat().map((k, i) => {
-                  if (k === 'PZ') return <li key={i}><button type="button" onClick={() => champ.current?.focus()} aria-label="Point Zéro : écrire" style={{ width: '100%', height: '100%', borderRadius: '50%', border: '2px solid #0B0B0C', background: '#0B0B0C', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4 }}><span className="orbe" style={{ width: '44%', height: 'auto', aspectRatio: '1 / 1' }} /><span className="g44-nom" style={{ fontSize: 'clamp(9px, .9vw, 12px)', fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase' }}>Point Zéro</span></button></li>;
+                  if (k === 'PZ') return <li key={i}><a href="/studio/atelier" aria-label="Point Zéro : importer une image ou un PDF dans le Studio" className="pz-import" style={{ width: '100%', height: '100%', borderRadius: 10, background: '#fff', boxShadow: 'inset 0 0 0 1px #DCDCD8', color: '#0B0B0C', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6, textDecoration: 'none' }}><svg width="40%" height="40%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14" /></svg><span className="g44-nom" style={{ fontSize: 'clamp(9px, .9vw, 12px)', fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase' }}>Importer</span></a></li>;
                   if (k === 'VIDE') return <li key={i}><div style={{ width: '100%', height: '100%', borderRadius: 10, border: '1px dashed #CFCFCB', display: 'flex', alignItems: 'flex-end', padding: '6px 7px' }}><span className="g44-nom" style={{ fontSize: 11, fontWeight: 600, color: '#55555A' }}>Bientôt</span></div></li>;
                   const d = D[k], allume = an ? chemin.includes(k) : false, eclaire = eclairees.includes(k), on = sel === k, etape = chemin.indexOf(k) + 1, bg = allume ? d.c : eclaire ? d.cl : an ? '#F1F1EE' : '#FFFFFF';
                   return <li key={i}><button type="button" aria-pressed={on} onClick={() => setSel(k)} aria-label={d.n + ' ' + d.name + ', ' + d.fam + (allume ? ', allumée' : eclaire ? ', éclairée par conséquence' : '') + (etape ? ', étape ' + etape : '')}
-                    style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', padding: '6px 7px', borderRadius: 10, border: on ? '3px solid #0B0B0C' : allume ? '2px solid #0B0B0C' : eclaire ? '1px dashed #55555A' : '1px solid #E2E2DE', background: bg, color: allume || eclaire || !an ? '#0B0B0C' : '#55555A', boxShadow: allume ? '0 0 0 4px ' + d.c + ', 0 10px 24px rgba(11,11,12,.18)' : 'none', textAlign: 'left', overflow: 'hidden', transition: 'background-color .35s, box-shadow .35s' }}>
+                    style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', padding: '6px 7px', borderRadius: 10, border: allume || on ? '1px solid transparent' : eclaire ? '1px dashed #8A8A86' : '1px solid #E2E2DE', background: bg, color: allume || eclaire || !an ? '#0B0B0C' : '#55555A', boxShadow: on ? '0 0 0 3px #fff, 0 0 0 6px ' + d.c + ', 0 14px 30px rgba(11,11,12,.22)' : allume ? '0 0 0 4px ' + d.c + ', 0 10px 24px rgba(11,11,12,.16)' : 'none', textAlign: 'left', overflow: 'hidden', transition: 'background-color .35s, box-shadow .35s' }}>
                     {!allume && !eclaire && <span aria-hidden="true" style={{ position: 'absolute', inset: '0 0 auto 0', height: 5, background: d.c }} />}
                     <span aria-hidden="true" style={{ position: 'relative', zIndex: 2, marginTop: 3, fontSize: 11, fontWeight: 700, background: bg, padding: '0 3px', marginLeft: -3, borderRadius: 4 }}>{d.n}</span>
                     <span className="g44-nom" aria-hidden="true" style={{ position: 'relative', zIndex: 2, fontSize: 'clamp(10px, 1.05vw, 13.5px)', fontWeight: allume ? 700 : 500, lineHeight: 1.1, background: bg, padding: '1px 3px', marginLeft: -3, borderRadius: 4, maxWidth: '100%' }}>{d.name}</span>
@@ -154,7 +154,7 @@ export default function PointZero() {
               </div>}
               {an && fini && <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 18 }}>
                 <button className="bouton noir" type="button" onClick={ranger} style={{ height: 48 }}>Ranger dans mon espace</button>
-                <Lien className="bouton" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener" style={{ height: 48 }}>{href !== '/monde' ? 'Ouvrir ' + an.studio : an.studio === 'Le Monde AIME' ? 'Voir Le Monde AIME' : 'Voir ' + an.studio + ' dans Le Monde AIME'}{href.startsWith('http') && <span className="sr-only"> (nouvel onglet)</span>}</Lien>
+                <Lien className="bouton" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener" style={{ height: 48 }}>{href === '/' ? 'Voir Le Monde AIME' : href === '/studio/atelier' ? 'Ouvrir l’atelier de broderie' : 'Ouvrir le Studio'}{href.startsWith('http') && <span className="sr-only"> (nouvel onglet)</span>}</Lien>
               </div>}
               <p role="status" style={{ margin: '10px 0 0', minHeight: 20, fontSize: 14, fontWeight: 600 }}>{msg}{msg.startsWith('Entrez') && <> <Lien href="/entrer">+ Entrer</Lien></>}</p>
             </aside>
@@ -162,7 +162,7 @@ export default function PointZero() {
         </section>
       </main>
       <Pied />
-      <BoutonBuro />
+      <DockBas />
     </>
   );
 }

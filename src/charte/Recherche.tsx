@@ -7,29 +7,31 @@ import { FICHES, domaine } from '../lib/reseau-exemples';
 type Entree = { label: string; meta: string; href: string; groupe: string };
 const B = data.briques as unknown as Record<string, { name: string; fam: string; does: string }>;
 const PLAN: Entree[] = [
-  ...[['AIME', 'L’accueil, le concept', '/'], ['AIME Wedding', 'Le studio de l’union', '/aime-wedding'], ['Brode Way', 'Le studio de la broderie', '/studio/'], ['Le Monde AIME', 'Tous les studios et projets', '/monde'], ['Réseau', 'Les personnes et leurs modules', '/reseau'], ['Point Zéro', 'Commencer quelque chose', '/point-zero']]
-    .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Studios et pages' })),
-  ...[['Le studio', 'Une info, une seule fois', '/#studio'], ['Deux docks', 'Faire en haut, aller en bas', '/#docks'], ['Le Point', 'Le guide et ses neuf états', '/#point'], ['Principes', 'La Charte AIME', '/#principes'], ['Fondateur', 'Matthieu Lecointre', '/#fondateur']]
-    .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Le concept' })),
-  ...[['Votre espace', 'Projets, partagés, archives', '/buro'], ['Mon profil', 'Ce que le Réseau montre de moi', '/buro?lieu=profil'], ['Entrer', 'Google, clé d’accès ou lien e-mail', '/entrer'], ['A+', 'Aller plus loin', '/a-plus']]
+  ...[['Accueil', 'Le Monde AIME, le site officiel de l’union', '/'], ['Les unions', 'Les pages des mariés', '/#unions'], ['Prestataires', 'Les métiers de l’union', '/reseau?domaine=mariage'], ['Invités', 'Chaque invité a sa page', '/#invites'], ['Collections', 'Les unions par univers', '/#collections']]
+    .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Le Monde AIME' })),
+  ...[['Studio', 'Créer : broderie d’abord', '/studio/'], ['Boutique', 'Créations à acheter, louer, broder', '/boutique'], ['Atelier de broderie', 'Dessiner, broder, importer', '/studio/atelier'], ['Point Zéro', 'Commencer quelque chose', '/point-zero']]
+    .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Créer' })),
+  ...[['Votre espace', 'Projets, ouvrages, partagés, archives', '/buro'], ['Mon profil', 'Ce que le Réseau montre de moi', '/buro?lieu=profil'], ['Entrer', 'Google, clé d’accès ou lien e-mail', '/entrer'], ['A+', 'Aller plus loin', '/a-plus'], ['À propos d’AIME', 'La marque, l’association, le fondateur', '/a-propos']]
     .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Votre espace' })),
 ];
 const RESEAU: Entree[] = FICHES.map(f => ({ label: f.nom, meta: domaine(f.domaine)!.label + ' · ' + f.famille, href: '/reseau/' + f.slug, groupe: 'Réseau' }));
 const BRIQUES: Entree[] = Object.values(B).map(b => ({ label: b.name, meta: b.fam + ' · ' + b.does, href: '/point-zero?q=' + encodeURIComponent(b.name), groupe: 'Briques' }));
 const sans = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
-export function Recherche({ fermer }: { fermer: () => void }) {
+export const GROUPES = ['Le Monde AIME', 'Créer', 'Votre espace', 'Réseau', 'Briques'];
+export function Recherche({ fermer, groupe }: { fermer: () => void; groupe?: string | null }) {
   const [q, setQ] = useState('');
   const champ = useRef<HTMLInputElement>(null);
   useEffect(() => { champ.current?.focus(); }, []);
   const res = useMemo(() => {
     const t = sans(q.trim());
-    if (!t) return PLAN;
-    return [...PLAN, ...RESEAU, ...BRIQUES].filter(e => sans(e.label + ' ' + e.meta).includes(t)).slice(0, 30);
-  }, [q]);
+    const tout = [...PLAN, ...RESEAU, ...BRIQUES].filter(e => !groupe || e.groupe === groupe);
+    if (!t) return groupe ? tout.slice(0, 30) : PLAN;
+    return tout.filter(e => sans(e.label + ' ' + e.meta).includes(t)).slice(0, 30);
+  }, [q, groupe]);
   const groupes = [...new Set(res.map(r => r.groupe))];
   return (
-    <div className="recherche" role="dialog" aria-modal="false" aria-label="Chercher dans tout AIME" onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); fermer(); } }}>
+    <div className="recherche-bloc" role="search" aria-label="Chercher dans tout AIME" onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); fermer(); } }}>
       <label htmlFor="champ-recherche" className="sr-only">Chercher dans tout AIME</label>
       <div style={{ display: 'flex', gap: 8 }}>
         <input id="champ-recherche" ref={champ} className="champ" type="search" autoComplete="off" placeholder="Chercher : une page, une personne, une brique…" value={q} onChange={e => setQ(e.target.value)} />

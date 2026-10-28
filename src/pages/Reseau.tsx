@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Tete, Verbe, BoutonBuro, Pied } from '../charte/Charte';
+import { Tete, DockBas, VerbesSite, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { initiales, lireReseau, type Profil } from '../lib/reseau';
@@ -45,7 +45,7 @@ export default function Reseau() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/reseau" verbes={<><Verbe href="/monde">Découvrir</Verbe><Verbe href="/reseau" actif>Réseau</Verbe></>} />
+      <Tete courant="/reseau" verbes={<VerbesSite actif="prestataires" />} />
       <main id="contenu" style={{ padding: '40px var(--marge) 140px' }}>
         <h1 style={{ margin: 0, textAlign: 'center', fontSize: 'clamp(56px, 12vw, 200px)', lineHeight: .86, fontWeight: 600, letterSpacing: '-0.045em', textTransform: 'uppercase' }}>Réseau</h1>
         <p style={{ margin: '20px auto 0', maxWidth: '36rem', textAlign: 'center', fontSize: 'clamp(18px, 1.7vw, 24px)', lineHeight: 1.35 }}>Les personnes et les studios du Monde AIME. Chaque page montre son module : les briques qu’elle utilise, et avec qui.</p>
@@ -68,7 +68,7 @@ export default function Reseau() {
           </div>}
       </main>
       <Pied />
-      <BoutonBuro />
+      <DockBas />
     </>
   );
 }

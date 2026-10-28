@@ -16,6 +16,8 @@ interface Props {
   hidden?: boolean;
   fullWidth?: boolean;
   onSupply?: (code: string, supply: Supply) => void;
+  /** dans le dock du bas (mode Fils) : des pastilles avec l'anneau de progression de chaque fil */
+  dock?: boolean;
 }
 
 const fmt = (n: number) => n.toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
@@ -24,7 +26,7 @@ const fmt = (n: number) => n.toLocaleString("fr-FR", { minimumFractionDigits: 1,
  * Palette de projet compacte : chaque carré combine couleur, symbole, stock et état.
  * Les 489 DMC ne sont affichés que dans le sélecteur de recherche, sur demande.
  */
-export default function FlossRail({ pattern, active, onActive, onPattern, onBrowse, stitching, hidden, fullWidth = false, onSupply }: Props) {
+export default function FlossRail({ pattern, active, onActive, onPattern, onBrowse, stitching, hidden, fullWidth = false, onSupply, dock = false }: Props) {
   // Compter les points parcourt toutes les cases du motif. Pendant un trait de
   // stylet le rail est redescendu à chaque échantillon : sur un grand motif, ce
   // recomptage prenait le pas sur le dessin. La valeur différée laisse React
@@ -60,6 +62,36 @@ export default function FlossRail({ pattern, active, onActive, onPattern, onBrow
   };
 
   if (hidden) return null;
+
+  const fiche = row && <FicheFil row={row} pattern={pattern} active={active} stitching={stitching} choosingSymbol={choosingSymbol} setChoosingSymbol={setChoosingSymbol} supply={supply} stock={stock} onActive={onActive} onPattern={onPattern} close={() => setDetail(null)}
+    className="pz-surface thin-scroll fixed bottom-[92px] left-1/2 z-40 max-h-[min(60dvh,520px)] w-[min(320px,calc(100vw-24px))] -translate-x-1/2 overflow-y-auto p-4" />;
+
+  if (dock) return <div className="pzs-fils" role="group" aria-label="Fils du motif">
+    <div className="pzs-seg" role="group" aria-label="Filtres des fils DMC">
+      {([["project", "Projet"], ["used", "Utilisés"], ["stock", "En stock"], ["missing", "Manquants"]] as const).map(([id, label]) =>
+        <button key={id} type="button" aria-pressed={filter === id} onClick={() => setFilter(id)}>{label}</button>)}
+    </div>
+    <span className="pzs-sep" aria-hidden="true" />
+    <button type="button" className="pzs-btm pzs-sq" onClick={onBrowse} aria-label="Ajouter ou rechercher un fil DMC" title="Ajouter un fil DMC"><Plus size={17} aria-hidden="true" /></button>
+    {displayed.map((s) => {
+      const selected = s.idx === active, enough = s.owned >= s.skeins, part = s.cells > 0 ? s.done / s.cells : 0, c = 2 * Math.PI * 20;
+      return <button key={s.idx} type="button" className="pzs-fil" aria-pressed={selected}
+        onClick={() => { onActive(s.idx); setDetail((v) => (v === s.idx ? null : s.idx)); }}
+        aria-label={`DMC ${s.code}, ${s.name}, ${Math.round(part * 100)} % brodé, ${s.owned >= s.skeins ? "stock suffisant" : "stock à compléter"}`}
+        title={`DMC ${s.code} · ${s.name} · ${Math.round(part * 100)} % brodé`}>
+        <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+          <circle cx="23" cy="23" r="20" fill="none" stroke="rgba(255,255,255,.16)" strokeWidth="3" />
+          <circle cx="23" cy="23" r="20" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeDasharray={`${(c * part).toFixed(1)} ${c.toFixed(1)}`} transform="rotate(-90 23 23)" />
+          <circle cx="23" cy="23" r="15" fill={s.hex} />
+        </svg>
+        <span className="pzs-fil-sym"><SymbolIcon sym={s.pos} size={13} color={contrastOn(s.hex)} /></span>
+        <span className="pzs-fil-code">{FLOSS[s.idx].blend ? "Mix" : s.code}</span>
+        <span className={`pzs-fil-stock ${enough ? "bg-ok" : "bg-warn"}`} aria-hidden="true" />
+      </button>;
+    })}
+    {!displayed.length && <button type="button" className="pzs-btm" onClick={onBrowse}>{stats.length ? "Aucun fil dans ce filtre" : "Ajouter une couleur DMC"}</button>}
+    {fiche}
+  </div>;
 
   return (
     <>
@@ -130,12 +162,23 @@ export default function FlossRail({ pattern, active, onActive, onPattern, onBrow
         </div>
       </aside>
 
-      {row && (
+      {row && <FicheFil row={row} pattern={pattern} active={active} stitching={stitching} choosingSymbol={choosingSymbol} setChoosingSymbol={setChoosingSymbol} supply={supply} stock={stock} onActive={onActive} onPattern={onPattern} close={() => setDetail(null)}
+        className={fullWidth ? "pz-surface thin-scroll fixed bottom-[168px] right-3 z-40 max-h-[min(55dvh,500px)] w-[min(310px,calc(100vw-24px))] overflow-y-auto p-4" : "pz-surface thin-scroll fixed right-3 bottom-[160px] z-40 max-h-[calc(100dvh-250px)] w-[300px] overflow-y-auto p-4 lg:right-auto lg:bottom-[88px] lg:left-1/2 lg:max-h-[calc(100dvh-180px)] lg:-translate-x-1/2"} />}
+    </>
+  );
+}
+
+/* la fiche d'un fil : éléments, progression, stock, perles, symbole ; la même dans le rail et dans le dock */
+function FicheFil({ row, pattern, active, stitching, choosingSymbol, setChoosingSymbol, supply, stock, onActive, onPattern, close, className }: {
+  row: ColorStat; pattern: Pattern; active: number; stitching: boolean; choosingSymbol: boolean; setChoosingSymbol: (v: boolean) => void;
+  supply: (code: string) => Supply; stock: (code: string, value: Supply) => void; onActive: (idx: number) => void; onPattern: (p: Pattern) => void; close: () => void; className: string;
+}) {
+  return (
         <section
-          className={fullWidth ? "pz-surface thin-scroll fixed bottom-[168px] right-3 z-40 max-h-[min(55dvh,500px)] w-[min(310px,calc(100vw-24px))] overflow-y-auto p-4" : "pz-surface thin-scroll fixed right-3 bottom-[160px] z-40 max-h-[calc(100dvh-250px)] w-[300px] overflow-y-auto p-4 lg:right-auto lg:bottom-[88px] lg:left-1/2 lg:max-h-[calc(100dvh-180px)] lg:-translate-x-1/2"}
+          className={className}
           aria-label={`Informations DMC ${row.code}`}
         >
-          <button type="button" onClick={() => setDetail(null)} className="btn-icon absolute top-2 right-2 h-8 w-8 rounded-full bg-white/[0.07]" aria-label="Fermer">
+          <button type="button" onClick={() => close()} className="btn-icon absolute top-2 right-2 h-8 w-8 rounded-full bg-white/[0.07]" aria-label="Fermer">
             <X className="h-4 w-4" />
           </button>
           <div className="flex items-center gap-3 pr-8">
@@ -203,8 +246,6 @@ export default function FlossRail({ pattern, active, onActive, onPattern, onBrow
             {active === row.idx ? "Fil actif" : "Utiliser ce fil"}
           </button>
         </section>
-      )}
-    </>
   );
 }
 

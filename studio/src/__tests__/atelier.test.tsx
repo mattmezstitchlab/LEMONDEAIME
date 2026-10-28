@@ -363,10 +363,11 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     expect(category("Dessiner")?.getAttribute("aria-pressed")).toBe("true");
     expect(inBottom("Revenir au BurO")).toBeTruthy();
   });
-  it("déploie les fils au-dessus du dock du bas et garde les filtres DMC", async () => {
+  it("range les fils DMC dans le dock du bas, avec leurs filtres", async () => {
     await mount();
     await click(category("Fils"));
     const rail=container?.querySelector('[aria-label="Fils du motif"]');
+    expect(rail?.closest(".pzs-bottom")).toBeTruthy();
     expect(rail?.querySelector('[aria-label="Filtres des fils DMC"]')).toBeTruthy();
     const used=[...(rail?.querySelectorAll("button")??[])].find(x=>x.textContent?.includes("Utilisés"));
     await click(used);
@@ -375,6 +376,18 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     expect(dialog("Nuancier DMC")?.classList.contains("is-open")).toBe(true);
     await click(button("Remonter d’un niveau"));
     expect(container?.querySelector('[aria-label="Fils du motif"]')).toBeNull();
+  });
+  it("change le dock du bas depuis son cercle : Progression, puis retour aux repères", async () => {
+    await mount();
+    const cercle = () => bottom()?.querySelector(".pzs-cercle") as HTMLButtonElement | null;
+    await click(cercle());
+    expect(cercle()?.getAttribute("aria-expanded")).toBe("true");
+    await click(inBottom("Progression"));
+    expect(bottom()?.textContent).toContain("Rien à broder");
+    expect(inBottom("Revenir au BurO")).toBeUndefined();
+    await click(cercle());
+    await click(inBottom("Repères"));
+    expect(inBottom("Revenir au BurO")).toBeTruthy();
   });
   it("ouvre et ferme le panneau Calques sans masquer la grille", async () => {
     await mount();

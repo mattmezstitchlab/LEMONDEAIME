@@ -5,7 +5,7 @@ import { readInterfaceLevel, INTERFACE_LEVEL_KEY, type InterfaceLevel } from "./
 import CrossStitchHome, { type StitchEntry } from "./components/CrossStitchHome";
 import PatternBoutique from "./components/PatternBoutique";
 import {writeStoredJSON} from "./lib/storageSafety";
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { BASE_FLOSS, FLOSS, flossIndex } from "./lib/dmc";
 import { blankPattern, initState, loadStored, reducer, saveStored } from "./lib/store";
 import { clonePattern, compositePattern, computeStats, createPattern, ensurePalette, toObject, fromObject, type Pattern, type Supply } from "./lib/pattern";
@@ -164,6 +164,10 @@ export default function App() {
   const [compositionInput, setCompositionInput] = useState<Pattern | null>(null);
   const [autoImage, setAutoImage] = useState<File | null>(null);
   const P = remote ?? store.present;
+  /* la progression du patron pour le dock du bas (le cercle et la timeline) ; différée pour ne pas freiner le tracé */
+  const Pdiffere = useDeferredValue(P);
+  const progression = useMemo(() => { const st = computeStats(Pdiffere);
+    return { total: st.rows.reduce((n, r) => n + r.cells, 0), done: st.rows.reduce((n, r) => n + r.done, 0), couleurs: st.rows.map(r => ({ idx: r.idx, hex: r.hex, code: r.code, cells: r.cells, done: r.done })) }; }, [Pdiffere]);
   const [tool, setTool] = useState<Tool>("cross"), [color, setColor] = useState(Math.max(0, flossIndex("3801"))), [view, setView] = useState<ViewMode>("real"), [workspace, setWorkspace] = useState<Workspace>("create");
   const [symbols, setSymbols] = useState(false), [panel, setPanel] = useState<Panel>(null), [file, setFile] = useState<File | null>(null), [pdfFile, setPdfFile] = useState<File | null>(null), [promptOpen, setPromptOpen] = useState(false), [selection, setSelection] = useState<Selection | null>(null), [clipboard, setClipboard] = useState<Pattern | null>(null);
   const [prefs, setPrefs] = useState(initialPreferences), [inventory, setInventory] = useState(readInventory), [saving, setSaving] = useState("Sauvegarde locale"), [toast, setToast] = useState("");
@@ -711,7 +715,9 @@ export default function App() {
         zoomOut: () => window.dispatchEvent(new CustomEvent("pointzero:canvas", { detail: { action: "zoomOut" } })),
         magnify: () => window.dispatchEvent(new CustomEvent("pointzero:canvas", { detail: { action: "magnify" } })),
         fit: () => setFitKey(k => k + 1),
-      }} />}
+      }}
+      progression={progression} onCouleur={pickColor}
+      fils={<FlossRail dock pattern={P} active={color} onActive={pickColor} onPattern={(p) => setPattern(p)} onSupply={updateSupply} onBrowse={() => setPanel("palette")} stitching={workspace === "stitch"} hidden={showWelcome || !!file} />} />}
     <aside aria-label="Inspecteur de broderie"
       hidden={!mobileInspectorOpen}
       className="pz-embroidery-right pzs-panel thin-scroll fixed bottom-[96px] right-3 top-[112px] z-30 w-[min(300px,calc(100vw-24px))] overflow-y-auto rounded-[18px] border border-white/15 bg-[#09090b] text-white shadow-2xl">
@@ -756,7 +762,6 @@ export default function App() {
     </aside>
     {showWelcome && !remote && <div className="pointer-events-none fixed inset-0 z-[28] flex items-center justify-center px-3 pb-12 pt-12"><div className="pointer-events-auto"><AtelierCreate {...createActions} /></div></div>}
     {!showWelcome && selection && workspace === "create" && !remote && <SelectionBar selection={selection} hasClipboard={!!clipboard} onAction={selectionAction} />}
-    <FlossRail fullWidth pattern={P} active={color} onActive={pickColor} onPattern={(p) => setPattern(p)} onSupply={updateSupply} onBrowse={() => setPanel("palette")} stitching={workspace === "stitch"} hidden={showWelcome || !!file || dockPath !== "fils"} />
     <PaletteSheet open={panel === "palette"} onClose={closePanel} pattern={P} color={color} onPick={pickColor} />
     <LibrarySheet compte={compteAime} open={panel === "library"} onClose={closePanel} onLoad={(p) => void loadPattern(p)} onNew={() => panelActions.new(80, 80)} inventory={inventory} />
     {autoImage && <AutomaticImageImport file={autoImage}

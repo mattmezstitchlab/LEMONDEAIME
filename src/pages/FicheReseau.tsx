@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Tete, Verbe, BoutonBuro, Pied } from '../charte/Charte';
+import { Tete, DockBas, VerbesSite, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import data from '../lib/briques.json';
 import { initiales, lireProfil, type Profil, type ProjetPublic } from '../lib/reseau';
@@ -17,9 +17,9 @@ export function MiniGrille({ allumees, label }: { allumees: Record<string, Role 
     <div role="img" aria-label={label + ' : ' + n + ' brique' + (n > 1 ? 's' : '') + ' allumée' + (n > 1 ? 's' : '') + ' sur 44.'} style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: 'clamp(3px, .5vw, 6px)', width: '100%', maxWidth: 520 }}>
       {G.flat().map((id, i) => {
         if (id === 'VIDE') return <span key={i} />;
-        if (id === 'PZ') return <span key={i} style={{ aspectRatio: '1', borderRadius: '50%', background: '#0B0B0C', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ width: '46%', height: '46%', borderRadius: '50%', background: 'var(--nacre)' }} /></span>;
+        if (id === 'PZ') return <span key={i} title="Point Zéro : importer" style={{ aspectRatio: '1', borderRadius: 'clamp(4px, .8vw, 9px)', background: '#fff', boxShadow: 'inset 0 0 0 1px #DCDCD8', color: '#0B0B0C', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="46%" height="46%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14" /></svg></span>;
         const b = B[id], on = !!allumees[id];
-        return <span key={i} title={b?.name} style={{ aspectRatio: '1', borderRadius: 'clamp(4px, .8vw, 9px)', background: on ? b.c : '#ECECE8', border: on ? '1.5px solid #0B0B0C' : '1px solid transparent', display: 'flex', alignItems: 'flex-end', padding: 'clamp(2px, .4vw, 5px)', overflow: 'hidden', transition: 'background .4s ease' }}>
+        return <span key={i} title={b?.name} style={{ aspectRatio: '1', borderRadius: 'clamp(4px, .8vw, 9px)', background: on ? b.c : '#ECECE8', display: 'flex', alignItems: 'flex-end', padding: 'clamp(2px, .4vw, 5px)', overflow: 'hidden', transition: 'background .4s ease' }}>
           <span className="mini-nom" style={{ fontSize: 'clamp(7px, .75vw, 10.5px)', lineHeight: 1.05, fontWeight: 600, color: on ? '#0B0B0C' : '#8A8A86', overflowWrap: 'anywhere' }}>{on ? b.name : b.n}</span>
         </span>;
       })}
@@ -146,13 +146,13 @@ export default function FicheReseau({ cle }: { cle: string }) {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/reseau" verbes={<><Verbe href="/monde">Découvrir</Verbe><Verbe href="/reseau" actif>Réseau</Verbe></>} />
+      <Tete courant="/reseau" verbes={<VerbesSite actif="prestataires" />} />
       <main id="contenu" style={{ padding: '32px var(--marge) 140px' }}>
         <nav aria-label="Fil d’Ariane" style={{ marginBottom: 32, fontSize: 15, fontWeight: 600 }}><Lien href="/reseau">Réseau</Lien> <span aria-hidden="true" style={{ color: '#8A8A86' }}>›</span> <span aria-current="page">{e ? e.nom : 'Profil'}</span></nav>
         {e ? <FicheExemple e={e} /> : /^[a-f0-9]{12}$/.test(cle) ? <FicheProfil refPublique={cle} /> : <><h1 className="titre">Profil introuvable</h1><p className="chapeau"><Lien href="/reseau">Retour au Réseau</Lien></p></>}
       </main>
       <Pied />
-      <BoutonBuro />
+      <DockBas />
     </>
   );
 }
