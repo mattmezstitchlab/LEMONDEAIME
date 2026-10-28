@@ -116,3 +116,10 @@ img, video { display: block; max-width: 100%; }
 .hero a { color: #fff; }
 .hero a:hover { color: #E2E2DE; }
 .hero :focus-visible { outline-color: #fff; }
+
+/* les studios sur une seule ligne, qui défile à l'horizontale */
+.cartes.ligne { display: flex; grid-template-columns: none; gap: 28px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px var(--marge) 24px; margin: 0 calc(-1 * var(--marge)); scrollbar-width: thin; }
+.cartes.ligne > li { flex: 0 0 min(82vw, 440px); scroll-snap-align: start; scroll-margin-left: var(--marge); }
+.cartes.ligne:focus-visible { outline-offset: -2px; }
+@keyframes orbe-tourne { to { transform: rotate(360deg); } }
+.orbe-tourne { animation: orbe-tourne 6s linear infinite; }

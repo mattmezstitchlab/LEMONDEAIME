@@ -7,7 +7,7 @@ export default function Monde() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/monde" verbes={<><Verbe href="/monde" actif>Découvrir</Verbe><Verbe href="/charte">La Charte</Verbe></>} />
+      <Tete courant="/monde" verbes={<><Verbe href="/monde" actif>Découvrir</Verbe><Verbe href="/reseau">Réseau</Verbe></>} />
       <main id="contenu">
         <section aria-labelledby="titre-monde" style={{ padding: 'clamp(64px, 10vw, 140px) var(--marge) 48px' }}>
           <p className="surtitre">Les studios et projets d’AIME®</p>
@@ -28,7 +28,7 @@ export default function Monde() {
             <p style={{ margin: 0 }}>AIME® est la marque mère. LE MONDE AIME est l’association qui réunit ses studios et ceux qui les font vivre.</p>
             <p style={{ margin: 0 }}>Un seul compte ouvre tous les studios. Le « + » vous fait entrer, votre espace garde vos projets, quel que soit le métier.</p>
           </div>
-          <Lien className="bouton" href="/charte" style={{ marginTop: 40, border: 0 }}>Lire la Charte AIME</Lien>
+          <Lien className="bouton" href="/#docks" style={{ marginTop: 40, border: 0 }}>Découvrir le concept AIME</Lien>
         </section>
       </main>
       <DockBas lieux={[['projets', 'Projets'], ['association', 'L’association']]} />

@@ -18,7 +18,7 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
   useEffect(() => { if (ouvert) menu.current?.querySelector('a')?.focus(); }, [ouvert]);
   const fermer = () => { setOuvert(false); bouton.current?.focus(); };
   /* le menu AIME® : la marque mère, ses studios, puis Le Monde AIME qui les rassemble */
-  const items: [string | null, string][] = [['/', 'AIME'], [null, 'AIME Wedding'], [null, 'Brode Way'], ['/monde', 'Le Monde AIME']];
+  const items: [string | null, string][] = [['/', 'AIME'], [null, 'AIME Wedding'], ['https://pointzero-zeta.vercel.app/', 'Brode Way'], ['/monde', 'Le Monde AIME']];
   return (
     <header className="tete">
       <span aria-hidden="true" />
@@ -98,9 +98,9 @@ export function Pied() {
       <Lien href="/" aria-label="AIME, accueil" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}><Orbe taille={28} /><span className="marque" style={{ fontSize: 22 }}>AIME<sup aria-hidden="true">®</sup></span></Lien>
       <nav aria-label="Plan du site">
         {col('AIME', [['Manifeste', '/#manifeste'], ['Fondateur', '/#fondateur'], ['Vision', '/#vision']])}
-        {col('Le Monde AIME', [['Tous les projets', '/monde'], ['Réseau', '/reseau'], ['Point Zéro', '/point-zero'], ['AIME Wedding', null], ['Brode Way', null]])}
+        {col('Le Monde AIME', [['Tous les projets', '/monde'], ['Réseau', '/reseau'], ['Point Zéro', '/point-zero'], ['AIME Wedding', null], ['Brode Way', 'https://pointzero-zeta.vercel.app/']])}
         {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil'], ['A+', '/a-plus']])}
-        {col('La maison', [['La Charte AIME', '/charte'], ['Contact et presse', null], ['Mentions légales', null]])}
+        {col('La maison', [['La Charte AIME', '/#docks'], ['Contact et presse', null], ['Mentions légales', null]])}
       </nav>
       <div className="bas"><p style={{ margin: 0 }}>AIME® est la marque mère. LE MONDE AIME est une association.</p><p style={{ margin: 0 }}>© 2026 AIME®</p></div>
     </footer>

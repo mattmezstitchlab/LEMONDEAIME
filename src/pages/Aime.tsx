@@ -3,6 +3,7 @@ import { Tete, Verbe, DockBas, BoutonBuro, Pied, Visuel, Orbe } from '../charte/
 import { aller, Lien } from '../lib/router';
 import { MEDIAS } from '../lib/medias';
 import { Projets } from './Projets';
+import { DemoDocks, Orbes, PRINCIPES, VISIBILITES } from './Concept';
 import { CarteReseau } from './Reseau';
 import { FONDATEUR } from '../lib/reseau-exemples';
 
@@ -26,7 +27,7 @@ export default function Aime() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/" verbes={<><Verbe href="/monde">Découvrir</Verbe><Verbe href="/reseau">Réseau</Verbe><Verbe href="/charte">La Charte</Verbe></>} />
+      <Tete courant="/" verbes={<><Verbe href="/monde">Découvrir</Verbe><Verbe href="/reseau">Réseau</Verbe></>} />
       <main id="contenu">
         <section aria-labelledby="titre-aime" style={{ padding: '14px clamp(8px, 1.4vw, 20px) 0' }}>
           <div className="hero">
@@ -57,13 +58,36 @@ export default function Aime() {
             <p className={P}>Les outils doivent s’effacer devant ce qu’on vit. Deux docks, des mots simples, un seul bouton pour entrer.</p>
             <p className={P}>Chaque studio sert un métier, tous parlent la même langue. Ce que vous créez vous appartient : vous choisissez qui le voit.</p>
           </div>
-          <ul style={{ listStyle: 'none', margin: '56px 0 0', padding: 0, display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            {['Des mots, pas des pictos', 'Un seul « + » pour entrer', 'Accessible à toutes et à tous'].map(t => <li key={t} style={{ padding: '10px 16px', borderRadius: 999, border: '1px solid #0B0B0C', fontSize: 16, fontWeight: 600 }}>{t}</li>)}
-          </ul>
           <div style={{ marginTop: 72 }}><Visuel m={MEDIAS['aime-manifeste']} hauteur="clamp(18rem, 38vw, 34rem)" /></div>
         </section>
 
-        <section id="fondateur" aria-labelledby="titre-fondateur" className="section blanche">
+        <section id="docks" aria-labelledby="titre-docks" className="section blanche">
+          <p className="surtitre">Le concept · deux docks</p>
+          <h2 id="titre-docks" className="titre" style={{ maxWidth: '18ch' }}>Faire en haut, aller en bas.</h2>
+          <p className="chapeau">Un seul langage pour tous les studios et projets d’AIME : deux docks, une famille d’orbes, des mots plutôt que des pictos. Essayez :</p>
+          <DemoDocks />
+        </section>
+
+        <section id="orbe" aria-labelledby="titre-orbe" className="section">
+          <p className="surtitre">Le concept · l’orbe</p>
+          <h2 id="titre-orbe" className="titre" style={{ maxWidth: '18ch' }}>Une orbe qui guide, et qui dit où l’on en est.</h2>
+          <p className="chapeau">L’orbe du logo se détache et montre ce qu’il faut voir, une phrase à la fois, puis revient près de AIME. Neuf états, une seule liste pour tout AIME : chacun change de forme et porte un mot, jamais la couleur seule.</p>
+          <Orbes />
+        </section>
+
+        <section id="principes" aria-labelledby="titre-principes" className="section blanche">
+          <p className="surtitre">Le concept · la Charte AIME</p>
+          <h2 id="titre-principes" className="titre" style={{ maxWidth: '18ch' }}>Sept règles avant tout le reste.</h2>
+          <ol style={{ listStyle: 'none', margin: '56px 0 0', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '40px 32px', maxWidth: 1200 }}>
+            {PRINCIPES.map(([t, d], i) => <li key={t} style={{ borderTop: '1px solid #0B0B0C', paddingTop: 18 }}><p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#55555A' }}>{String(i + 1).padStart(2, '0')}</p><h3 style={{ margin: '6px 0 10px', fontSize: 24, fontWeight: 600 }}>{t}</h3><p className={P}>{d}</p></li>)}
+          </ol>
+          <h3 style={{ margin: '96px 0 0', fontSize: 'clamp(26px, 3vw, 40px)', fontWeight: 600, letterSpacing: '-0.03em' }}>Qui peut voir ? C’est vous qui décidez.</h3>
+          <ul style={{ listStyle: 'none', margin: '24px 0 0', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 12, maxWidth: 1000 }}>
+            {VISIBILITES.map(([t, d]) => <li key={t} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderRadius: 16, background: '#F6F6F4', border: '1px solid #E2E2DE' }}><Orbe taille={26} /><span><b style={{ display: 'block', fontWeight: 600 }}>{t}</b><span style={{ fontSize: 15, color: '#3A3A3F' }}>{d}</span></span></li>)}
+          </ul>
+        </section>
+
+        <section id="fondateur" aria-labelledby="titre-fondateur" className="section">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '40px clamp(32px, 6vw, 96px)', alignItems: 'center', maxWidth: 1100 }}>
             <div style={{ maxWidth: 340 }}><CarteReseau c={{ href: '/reseau/' + FONDATEUR.slug, nom: FONDATEUR.nom, etiquette: FONDATEUR.famille, photo: FONDATEUR.photo, alt: FONDATEUR.alt }} /></div>
             <div>
@@ -78,24 +102,16 @@ export default function Aime() {
           </div>
         </section>
 
-        <section id="vision" aria-labelledby="titre-vision" className="section">
-          <p className="surtitre">Vision</p>
-          <h2 id="titre-vision" className="titre" style={{ maxWidth: '18ch' }}>Un studio pour chaque façon de vivre.</h2>
-          <ol style={{ listStyle: 'none', margin: '56px 0 0', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '40px 32px' }}>
-            {[['Aujourd’hui', 'Point Zéro pour commencer ; AIME Wedding pour l’union ; Brode Way pour la broderie.'], ['Demain', 'D’autres studios rejoignent Le Monde AIME. Même compte, même espace, même Charte.'], ['Toujours', 'Vos projets restent à vous : privé, restreint, par lien ou public, c’est vous qui décidez.']].map(([t, d]) =>
-              <li key={t} style={{ borderTop: '1px solid #0B0B0C', paddingTop: 18 }}><h3 style={{ margin: '0 0 10px', fontSize: 24, fontWeight: 600 }}>{t}</h3><p className={P}>{d}</p></li>)}
-          </ol>
-        </section>
-
-        <section id="monde" aria-labelledby="titre-monde-aime" className="section blanche" style={{ paddingBottom: 150 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 24, flexWrap: 'wrap', marginBottom: 48 }}>
-            <div><p className="surtitre">Les studios</p><h2 id="titre-monde-aime" className="titre">Le Monde AIME</h2></div>
+        <section id="studios" aria-labelledby="titre-studios" className="section blanche" style={{ paddingBottom: 150 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 24, flexWrap: 'wrap', marginBottom: 40 }}>
+            <div><p className="surtitre">Les studios</p><h2 id="titre-studios" className="titre">Le Monde AIME</h2>
+              <p className="chapeau" style={{ marginTop: 16 }}>Point Zéro pour commencer, AIME Wedding pour l’union, Brode Way pour la broderie. D’autres studios suivront : même compte, même espace, même Charte.</p></div>
             <Lien className="bouton" href="/monde">Voir tous les projets</Lien>
           </div>
-          <Projets />
+          <Projets ligne />
         </section>
       </main>
-      <DockBas lieux={[['manifeste', 'Manifeste'], ['fondateur', 'Fondateur'], ['vision', 'Vision'], ['monde', 'Projets']]} />
+      <DockBas lieux={[['manifeste', 'Manifeste'], ['docks', 'Docks'], ['orbe', 'Orbe'], ['principes', 'Principes'], ['fondateur', 'Fondateur'], ['studios', 'Studios']]} />
       <Pied />
       <BoutonBuro />
     </>
