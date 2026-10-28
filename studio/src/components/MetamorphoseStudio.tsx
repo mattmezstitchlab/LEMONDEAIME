@@ -6,6 +6,10 @@ import { allowedFragmentUrl, demoFragments, readFragments, type FragmentCollecti
 
 interface ScanObservation {id:string;title:string;evidence:string;status:string}
 interface ScanResult {title:string;url:string;fragments:unknown[];findings:ScanObservation[];limitations:string[]}
+/* L'analyse d'une page par le serveur n'est pas ouverte : sa fonction (studio/api/metamorphose-scan.mjs) n'est pas déployée
+   et attend un audit de sécurité. On le dit, au lieu de laisser croire qu'elle répond. Fragments et compositions restent locaux. */
+const ANALYSE_OUVERTE=false;
+const ANALYSE_FERMEE="L’analyse d’une page n’est pas encore ouverte : elle attend un audit de sécurité. Vos fragments et vos compositions restent sur cet appareil.";
 const field="w-full rounded-[5px] border border-white/20 bg-[#242427] px-3 py-2 text-xs text-white placeholder:text-white/40 outline-none focus:border-white/60";
 export default function MetamorphoseStudio({onBack,onCircle,onGame}:{onBack:()=>void;onCircle:()=>void;onGame:()=>void}){
  const [url,setUrl]=useState("");
@@ -37,6 +41,7 @@ export default function MetamorphoseStudio({onBack,onCircle,onGame}:{onBack:()=>
  },[workspaceMode,pendingFocus]);
  async function scan(e:FormEvent){
   e.preventDefault();
+  if(!ANALYSE_OUVERTE){setError(ANALYSE_FERMEE);return}
   if(!allowedFragmentUrl(url)){setError("URL HTTPS publique requise.");return}
   if(!consent){setError("Confirmez votre autorisation d'inspecter ce site.");return}
   if(!code){setError("Le code du scanner privé est nécessaire.");return}
@@ -46,7 +51,7 @@ export default function MetamorphoseStudio({onBack,onCircle,onGame}:{onBack:()=>
      method:"POST",headers:{"Content-Type":"application/json","X-Pointzero-Scan-Code":code},
      body:JSON.stringify({url,authorized:true})
    });
-   const data=await res.json() as ScanResult & {error?:string};
+   const data=await res.json().catch(()=>({error:res.status===404?ANALYSE_FERMEE:"Analyse non disponible."})) as ScanResult & {error?:string};
    if(!res.ok)throw Error(data.error||"Analyse non disponible.");
    const parsed=readFragments({name:data.title,version:1,fragments:data.fragments});
    if(!parsed)throw Error("Le serveur a renvoyé des fragments non reconnus.");
@@ -58,7 +63,7 @@ export default function MetamorphoseStudio({onBack,onCircle,onGame}:{onBack:()=>
   <header className="flex h-[58px] shrink-0 items-center justify-between gap-3 border-b border-white/15 px-3">
    <div className="flex min-w-0 items-center gap-2">
     <button aria-label="Retour aux studios" onClick={onBack} className="grid size-9 place-items-center rounded-[5px] border border-white/20"><ArrowLeft size={17}/></button>
-    <div className="min-w-0"><h1 className="truncate text-[14px] font-semibold">× POINTZERO / MÉTAMORPHOSE</h1>
+    <div className="min-w-0"><h1 className="truncate text-[14px] font-semibold">× POINTZERO / FRAGMENTS</h1>
      <p className="hidden text-[11px] text-white/50 sm:block">Une URL · Des fragments · Des transformations · Des preuves</p></div>
    </div>
    <div className="flex shrink-0 gap-2">
@@ -67,7 +72,7 @@ export default function MetamorphoseStudio({onBack,onCircle,onGame}:{onBack:()=>
    </div>
   </header>
   <div className="flex min-h-0 flex-1">
-   <aside aria-label="Point Zéro Métamorphose" className="thin-scroll hidden w-[252px] shrink-0 overflow-y-auto border-r border-white/15 p-3 text-white lg:block">
+   <aside aria-label="Fragments" className="thin-scroll hidden w-[252px] shrink-0 overflow-y-auto border-r border-white/15 p-3 text-white lg:block">
     <div className="mb-4 flex items-center justify-between"><h2 className="text-[12px] font-semibold">EXPLORER</h2><Grid2X2 size={15} className="text-white/50"/></div>
     <div className="mb-4 flex gap-1">
       <button aria-pressed={section==="explore"} onClick={()=>setSection("explore")} className={"flex-1 rounded-[4px] px-2 py-2 text-xs "+(section==="explore"?"bg-white text-black":"border border-white/20")}>Objets</button>
@@ -85,7 +90,7 @@ export default function MetamorphoseStudio({onBack,onCircle,onGame}:{onBack:()=>
       <p className="mt-4 text-[10px] leading-relaxed text-white/50">Design, Broderie et Documents conservent leurs données spécialisées. L'Atelier référence uniquement les capacités déjà compatibles.</p>
      </nav>:section==="source"?<form className="space-y-3" onSubmit={e=>void scan(e)}>
       <p className="text-[11px] leading-relaxed text-white/60">Entrez l'adresse de votre site. Le titre et les en-têtes HTML reconnus deviennent des fragments ; ce n’est pas une copie des composants interactifs.</p>
-      <p className="text-xs leading-relaxed text-white/80">Activation requise en Preview : POINTZERO_SCAN_ACCESS_CODE (secret) et POINTZERO_SCAN_ALLOWED_HOSTS (domaines possédés). À configurer par le propriétaire dans Vercel Settings → Environment Variables, puis reconstruire uniquement cette preview. Ne partagez pas votre code.</p>
+      <p role="status" className="analyse-fermee rounded-[5px] border border-dashed border-white/40 p-3 text-xs leading-relaxed text-white/85"><strong className="block">Expérimental · indisponible</strong>{ANALYSE_FERMEE}</p>
       <label className="block text-[11px] text-white/70">URL du site
         <input aria-label="URL à décomposer" className={field+" mt-1"} type="url" placeholder="https://mon-site.fr" value={url} onChange={e=>setUrl(e.target.value)} required/>
       </label>
@@ -93,8 +98,8 @@ export default function MetamorphoseStudio({onBack,onCircle,onGame}:{onBack:()=>
         <input aria-label="Code de scan privé" className={field+" mt-1"} type="password" autoComplete="off" value={code} onChange={e=>setCode(e.target.value)}/>
       </label>
       <label className="flex gap-2 text-[11px] leading-relaxed text-white/70"><input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>Je suis autorisé à inspecter ce site.</label>
-      <button type="submit" disabled={busy} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-[5px] bg-white px-3 text-xs font-semibold text-black disabled:opacity-50">
-        <FileSearch size={15}/>{busy?"Propagation en cours…":"Propager dans la grille"}
+      <button type="submit" disabled={busy||!ANALYSE_OUVERTE} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-[5px] bg-white px-3 text-xs font-semibold text-black disabled:opacity-50">
+        <FileSearch size={15}/>{!ANALYSE_OUVERTE?"Analyse indisponible":busy?"Propagation en cours…":"Propager dans la grille"}
       </button>
       {error&&<p role="alert" className="rounded-[5px] bg-red-950/30 p-3 text-xs text-red-100">{error}</p>}
       <p className="text-[10px] leading-relaxed text-white/45">Scanner serveur de laboratoire : HTML statique, une page. Il ne remplace ni un navigateur ni un audit juridique.</p>
@@ -121,12 +126,13 @@ export default function MetamorphoseStudio({onBack,onCircle,onGame}:{onBack:()=>
         onClick={()=>{setWorkspaceMode("composition");setPendingFocus(f.id)}}>{f.title}</button>)}
        </nav>
       </details>
-      <details className="rounded-[5px] border border-white/15 p-2"><summary className="cursor-pointer text-xs">Point Zéro · Scanner une URL</summary>
+      <details className="rounded-[5px] border border-white/15 p-2"><summary className="cursor-pointer text-xs">Analyser une page · indisponible</summary>
+      <p role="status" className="analyse-fermee mt-2 text-xs text-white/80">{ANALYSE_FERMEE}</p>
       <form className="mt-3 grid gap-2" onSubmit={e=>void scan(e)}>
        <input aria-label="URL à décomposer" className={field} type="url" placeholder="https://mon-site.fr" value={url} onChange={e=>setUrl(e.target.value)}/>
        <input aria-label="Code de scan privé" className={field} type="password" value={code} onChange={e=>setCode(e.target.value)} placeholder="Code privé"/>
        <label className="flex gap-2 text-xs"><input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>Site autorisé</label>
-       <button disabled={busy} className="rounded-[5px] bg-white p-2 text-xs text-black">Propager</button>{error&&<p role="alert" className="text-xs text-red-200">{error}</p>}
+       <button disabled={busy||!ANALYSE_OUVERTE} className="rounded-[5px] bg-white p-2 text-xs text-black disabled:opacity-50">{ANALYSE_OUVERTE?"Propager":"Indisponible"}</button>{error&&<p role="alert" className="text-xs text-red-200">{error}</p>}
       </form></details>
     </div>
     <div className="flex flex-wrap gap-2 border-b border-white/15 p-2" role="group" aria-label="Mode d'Atelier">

@@ -1,6 +1,6 @@
 {
  "titre": "Le système nerveux de LE MONDE AIME",
- "perimetre": "Sujet n° 1, clos : les docks et la navigation, jusqu'à la page /musique, sa fonctionnalité « ajouter un morceau » et sa donnée. Prochain sujet : la Métamorphose (inventaire seulement).",
+ "perimetre": "Sujet n° 1, clos : les docks et la navigation, jusqu’à la page /musique. Sujet n° 2, Métamorphose : l’accueil personnel, la date de recherche du Réseau et l’outil Fragments du Studio. Prochain sujet : les Unions (inventaire seulement).",
  "depot": "https://github.com/mattmezstitchlab/LEMONDEAIME",
  "branche": "main",
  "familles": [
@@ -1314,6 +1314,357 @@
    "tests": [],
    "etat": "prevu",
    "note": "N'existe pas : aucune notification n'est envoyée aujourd'hui. La simulation de causalité montre seulement qui le serait."
+  },
+  {
+   "id": "panneau-metamorphose",
+   "famille": "interfaces",
+   "nom": "Métamorphose (accueil)",
+   "fonction": "Le panneau « Métamorphoser la page » : chacun transforme l’accueil pour soi (noms, date ou lieu, univers, prestataires, ordre et visibilité des sections). Personne d’autre ne voit ces changements.",
+   "pages": [
+    "/"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/Metamorphose.tsx",
+     "symbole": "export function Metamorphose"
+    },
+    {
+     "fichier": "src/pages/LeMondeAime.tsx",
+     "symbole": "bouton-meta"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "meta-appareil"
+    ],
+    "ecrit": [
+     "meta-appareil"
+    ]
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Métamorphose : le bouton ouvre le panneau"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Métamorphose : Échap ferme et rend le focus au bouton"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Métamorphose : le titre devient les noms"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Métamorphose : « Revenir à la page de tous » efface tout"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "téléphone : le panneau tient dans l’écran"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "critere-date-reseau",
+   "famille": "interfaces",
+   "nom": "Date de recherche du Réseau",
+   "fonction": "Sur le Réseau et les fiches : dit d’où vient la date de recherche (la Métamorphose, ou un choix fait ici), précise que ce n’est pas la date officielle d’une union, et permet de la changer, de l’effacer ou de la reprendre.",
+   "pages": [
+    "/reseau",
+    "/reseau/:id"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/CritereDate.tsx",
+     "symbole": "export function CritereDate"
+    },
+    {
+     "fichier": "src/pages/Reseau.tsx",
+     "symbole": "<CritereDate />"
+    },
+    {
+     "fichier": "src/pages/FicheReseau.tsx",
+     "symbole": "<CritereDate />"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "meta-appareil"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Réseau : la date reprise de la Métamorphose est expliquée"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Réseau : changer la date ne touche pas la Métamorphose"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Réseau : on peut chercher sans date"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Réseau : on peut reprendre la date de la Métamorphose"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "téléphone : le Réseau et sa date ne débordent pas"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "fragments-studio",
+   "famille": "interfaces",
+   "nom": "Fragments (Studio)",
+   "fonction": "L’outil du Studio qui range des fragments et compose une grille (anciennement « MÉTAMORPHOSE · Grille »). Fragments et compositions restent sur l’appareil ; l’analyse d’une page est annoncée indisponible.",
+   "pages": [
+    "/studio/*"
+   ],
+   "sources": [
+    {
+     "fichier": "studio/src/components/MetamorphoseStudio.tsx",
+     "symbole": "FRAGMENTS"
+    },
+    {
+     "fichier": "studio/src/components/AimeUnifiedHome.tsx",
+     "symbole": "Ouvrir Fragments"
+    },
+    {
+     "fichier": "studio/src/components/DesignStudio.tsx",
+     "symbole": "Fragments · Grille"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "fragments-appareil"
+    ],
+    "ecrit": [
+     "fragments-appareil"
+    ]
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Fragments : les liens portent la vraie adresse (5)"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Fragments : le lien ouvre l’outil dans le Studio"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Fragments : l’analyse est annoncée indisponible, le bouton désactivé"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Fragments : l’outil du Studio Design s’appelle « Fragments · Grille »"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "téléphone : Fragments s’ouvre et dit que l’analyse est indisponible"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "moteur-metamorphose",
+   "famille": "moteurs",
+   "nom": "Moteur de la Métamorphose",
+   "fonction": "Lit, écrit et diffuse le réglage personnel de l’accueil (useMeta, lireMeta, ecrireMeta, SECTIONS). Rien n’est envoyé au serveur.",
+   "pages": [
+    "/"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/metamorphose.ts",
+     "symbole": "export function useMeta"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "meta-appareil"
+    ],
+    "ecrit": [
+     "meta-appareil"
+    ]
+   },
+   "roles": [],
+   "tests": [
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Métamorphose : tout est gardé sur l’appareil après rechargement"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Métamorphose : l’ordre des sections suit le choix (unions,moments)"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "critere-date",
+   "famille": "moteurs",
+   "nom": "Critère de date",
+   "fonction": "Décide la date de recherche du Réseau : celle choisie dans l’adresse (?date=…, ou « aucune ») passe avant celle lue dans la phrase de la Métamorphose. Ne modifie jamais la Métamorphose.",
+   "pages": [
+    "/reseau",
+    "/reseau/:id"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/critere-date-outils.mjs",
+     "symbole": "export function critereDepuis"
+    },
+    {
+     "fichier": "src/lib/critereDate.ts",
+     "symbole": "export function useCritereDate"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "meta-appareil"
+    ],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [
+    {
+     "fichier": "tests/server/metamorphose.test.mjs",
+     "nom": "critère de date : sans paramètre, la date vient de la Métamorphose"
+    },
+    {
+     "fichier": "tests/server/metamorphose.test.mjs",
+     "nom": "critère de date : une date choisie dans le Réseau passe avant, la phrase reste intacte"
+    },
+    {
+     "fichier": "tests/server/metamorphose.test.mjs",
+     "nom": "critère de date : « aucune » efface le critère sans effacer la Métamorphose"
+    },
+    {
+     "fichier": "tests/server/metamorphose.test.mjs",
+     "nom": "critère de date : le Réseau ne modifie jamais la Métamorphose"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Réseau : la recherche utilise cette date (2027-06-12)"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "analyse-page",
+   "famille": "moteurs",
+   "nom": "Analyse d’une page (Fragments)",
+   "fonction": "La fonction serveur qui découperait une page en fragments. Elle existe dans studio/api mais n’est pas déployée : elle attend un audit de sécurité (c’est un analyseur de pages externes).",
+   "pages": [],
+   "sources": [
+    {
+     "fichier": "studio/api/metamorphose-scan.mjs",
+     "symbole": "export"
+    },
+    {
+     "fichier": "studio/src/components/MetamorphoseStudio.tsx",
+     "symbole": "const ANALYSE_OUVERTE=false"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [],
+   "etat": "prevu"
+  },
+  {
+   "id": "meta-appareil",
+   "famille": "donnees",
+   "nom": "Réglage de la Métamorphose",
+   "fonction": "Stockage local aime-metamorphose : noms, phrase de date ou de lieu, univers, prestataires, sections. Sur cet appareil seulement ; ni compte, ni projet, ni union.",
+   "pages": [],
+   "sources": [
+    {
+     "fichier": "src/lib/metamorphose.ts",
+     "symbole": "'aime-metamorphose'"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Métamorphose : tout est gardé sur l’appareil après rechargement"
+    },
+    {
+     "fichier": "tests/e2e/metamorphose.py",
+     "nom": "Métamorphose : « Revenir à la page de tous » efface tout"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "fragments-appareil",
+   "famille": "donnees",
+   "nom": "Fragments et compositions",
+   "fonction": "Stockage local pointzero:universal-fragments:v1 du Studio : les fragments et les compositions de l’outil Fragments. Clé inchangée par le renommage.",
+   "pages": [],
+   "sources": [
+    {
+     "fichier": "studio/src/components/MetamorphoseStudio.tsx",
+     "symbole": "pointzero:universal-fragments:v1"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [
+    {
+     "fichier": "tests/server/metamorphose.test.mjs",
+     "nom": "Fragments : l’analyse d’une page reste fermée et non déployée"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "evt-metamorphose",
+   "famille": "evenements",
+   "nom": "aime:metamorphose",
+   "fonction": "Prévient les autres parties de la même page qu’une Métamorphose a changé (l’accueil se redessine). Pas de test qui l’isole : à vérifier.",
+   "pages": [
+    "/"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/metamorphose.ts",
+     "symbole": "'aime:metamorphose'"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [],
+   "etat": "a-verifier"
   }
  ],
  "liens": [
@@ -1549,6 +1900,51 @@
    "vers": "naviguer",
    "nature": "declenche",
    "etat": "a-verifier"
+  },
+  {
+   "de": "panneau-metamorphose",
+   "vers": "moteur-metamorphose",
+   "nature": "appelle"
+  },
+  {
+   "de": "moteur-metamorphose",
+   "vers": "meta-appareil",
+   "nature": "ecrit"
+  },
+  {
+   "de": "moteur-metamorphose",
+   "vers": "evt-metamorphose",
+   "nature": "emet"
+  },
+  {
+   "de": "critere-date-reseau",
+   "vers": "critere-date",
+   "nature": "appelle"
+  },
+  {
+   "de": "critere-date",
+   "vers": "meta-appareil",
+   "nature": "lit"
+  },
+  {
+   "de": "fragments-studio",
+   "vers": "fragments-appareil",
+   "nature": "ecrit"
+  },
+  {
+   "de": "fragments-studio",
+   "vers": "analyse-page",
+   "nature": "appelle"
+  },
+  {
+   "de": "docks-studio",
+   "vers": "fragments-studio",
+   "nature": "ouvre"
+  },
+  {
+   "de": "routeur-studio",
+   "vers": "fragments-studio",
+   "nature": "affiche"
   }
  ],
  "audit": [
@@ -1851,6 +2247,217 @@
      }
     ],
     "fichiers": []
+   }
+  },
+  {
+   "id": "deux-metamorphoses",
+   "fonction": "Deux fonctions portent le nom « Métamorphose »",
+   "moteur": "moteur-metamorphose",
+   "donnees": [
+    "meta-appareil",
+    "fragments-appareil"
+   ],
+   "destinations": [
+    "/",
+    "/studio/atelier?studio=metamorphose"
+   ],
+   "points": [
+    {
+     "fichier": "src/charte/Metamorphose.tsx",
+     "texte": "Métamorphose"
+    },
+    {
+     "fichier": "studio/src/components/AimeUnifiedHome.tsx",
+     "texte": "Fragments"
+    }
+   ],
+   "statut": "simplifier",
+   "raison": "L’accueil personnel et l’outil de grille du Studio n’ont ni le même moteur ni la même donnée : un même nom pour deux choses.",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "« Métamorphose » reste le nom de l’accueil personnel ; l’outil du Studio s’appelle « Fragments » à chacun de ses points d’entrée. Moteur, route et clé de stockage inchangés.",
+    "tests": [
+     {
+      "fichier": "tests/e2e/metamorphose.py",
+      "nom": "Fragments : les points d’entrée disent « Fragments »"
+     },
+     {
+      "fichier": "tests/e2e/metamorphose.py",
+      "nom": "Fragments : l’outil du Studio Design s’appelle « Fragments · Grille »"
+     }
+    ],
+    "fichiers": [
+     "studio/src/components/AimeEcosystem.tsx",
+     "studio/src/components/AimeUnifiedHome.tsx",
+     "studio/src/components/DesignStudio.tsx",
+     "studio/src/components/GameStudio.tsx",
+     "studio/src/components/RippleCircleStudio.tsx",
+     "studio/src/lib/launchManifest.ts",
+     "studio/src/lib/aimeDomains.ts"
+    ]
+   }
+  },
+  {
+   "id": "analyse-sans-serveur",
+   "fonction": "L’analyse d’une page appelle une fonction non déployée",
+   "moteur": "analyse-page",
+   "donnees": [],
+   "destinations": [
+    "/api/metamorphose-scan"
+   ],
+   "points": [
+    {
+     "fichier": "studio/src/components/MetamorphoseStudio.tsx",
+     "texte": "ANALYSE_FERMEE"
+    }
+   ],
+   "statut": "conserver",
+   "raison": "En production, /api/metamorphose-scan répond 404 : le bouton « Analyser » échouait sans le dire, et l’écran affichait des noms de variables serveur.",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "Pas de déploiement avant un audit de sécurité. L’outil dit « Expérimental · indisponible », le bouton est désactivé, aucune requête ne part, aucun nom de variable n’est affiché ; fragments et compositions restent. L’audit reste à faire (sujet StudiO).",
+    "tests": [
+     {
+      "fichier": "tests/e2e/metamorphose.py",
+      "nom": "Fragments : l’analyse est annoncée indisponible, le bouton désactivé"
+     },
+     {
+      "fichier": "tests/e2e/metamorphose.py",
+      "nom": "Fragments : aucune requête vers l’analyse non déployée"
+     },
+     {
+      "fichier": "tests/e2e/metamorphose.py",
+      "nom": "Fragments : aucun nom de variable serveur affiché"
+     },
+     {
+      "fichier": "tests/server/metamorphose.test.mjs",
+      "nom": "Fragments : l’analyse d’une page reste fermée et non déployée"
+     }
+    ],
+    "fichiers": [
+     "studio/src/components/MetamorphoseStudio.tsx"
+    ]
+   }
+  },
+  {
+   "id": "liens-sans-prefixe",
+   "fonction": "Des liens du Studio sans le préfixe /studio",
+   "moteur": "routeur-studio",
+   "donnees": [],
+   "destinations": [
+    "/studio/atelier?studio=metamorphose"
+   ],
+   "points": [
+    {
+     "fichier": "studio/src/components/AimeUnifiedHome.tsx",
+     "texte": "avecBase("
+    }
+   ],
+   "statut": "simplifier",
+   "raison": "Les liens écrits « /atelier?studio=metamorphose » menaient, ouverts dans un nouvel onglet ou rechargés, vers la page du site « introuvable ».",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "Les liens et l’aperçu passent par avecBase, comme la navigation interne du Studio : l’adresse réelle est /studio/atelier?studio=metamorphose.",
+    "tests": [
+     {
+      "fichier": "tests/e2e/metamorphose.py",
+      "nom": "Fragments : les liens portent la vraie adresse (5)"
+     },
+     {
+      "fichier": "tests/e2e/metamorphose.py",
+      "nom": "Fragments : le lien ouvre l’outil dans le Studio"
+     },
+     {
+      "fichier": "tests/server/metamorphose.test.mjs",
+      "nom": "Fragments : les points d’entrée du Studio passent par le préfixe /studio"
+     }
+    ],
+    "fichiers": [
+     "studio/src/components/AimeEcosystem.tsx",
+     "studio/src/components/AimeUnifiedHome.tsx"
+    ]
+   }
+  },
+  {
+   "id": "date-partagee",
+   "fonction": "La date de la Métamorphose sert de critère au Réseau",
+   "moteur": "critere-date",
+   "donnees": [
+    "meta-appareil"
+   ],
+   "destinations": [
+    "/reseau",
+    "/reseau/:id"
+   ],
+   "points": [
+    {
+     "fichier": "src/charte/CritereDate.tsx",
+     "texte": "pas la date officielle"
+    }
+   ],
+   "statut": "conserver",
+   "raison": "Utile, mais rien ne disait à la personne que sa phrase servait de critère, ni comment l’enlever ; risque de confusion avec la date d’une vraie union.",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "Gardée et dite : le Réseau et les fiches expliquent d’où vient la date, qu’elle n’est pas la date officielle d’une union, et permettent de la changer, de l’effacer ou de la reprendre, sans toucher la Métamorphose. Le panneau le dit aussi.",
+    "tests": [
+     {
+      "fichier": "tests/e2e/metamorphose.py",
+      "nom": "Réseau : la date reprise de la Métamorphose est expliquée"
+     },
+     {
+      "fichier": "tests/e2e/metamorphose.py",
+      "nom": "Réseau : changer la date ne touche pas la Métamorphose"
+     },
+     {
+      "fichier": "tests/e2e/metamorphose.py",
+      "nom": "Réseau : on peut chercher sans date"
+     },
+     {
+      "fichier": "tests/e2e/metamorphose.py",
+      "nom": "Métamorphose : le panneau dit que le Réseau reprend la date"
+     }
+    ],
+    "fichiers": [
+     "src/charte/CritereDate.tsx",
+     "src/lib/critereDate.ts",
+     "src/lib/critere-date-outils.mjs",
+     "src/pages/Reseau.tsx",
+     "src/pages/FicheReseau.tsx",
+     "src/charte/Metamorphose.tsx"
+    ]
+   }
+  },
+  {
+   "id": "stockage-metamorphose",
+   "fonction": "La Métamorphose reste sur l’appareil",
+   "moteur": "moteur-metamorphose",
+   "donnees": [
+    "meta-appareil"
+   ],
+   "destinations": [
+    "/"
+   ],
+   "points": [
+    {
+     "fichier": "src/lib/metamorphose.ts",
+     "texte": "localStorage"
+    }
+   ],
+   "statut": "conserver",
+   "raison": "Elle ne suit pas la personne sur un autre appareil et n’est reliée à aucune union.",
+   "resolution": {
+    "etat": "decide",
+    "decision": "Gardée sur l’appareil, sans synchronisation avec un compte ou un projet. Le lien avec une vraie union est reporté au sujet n° 3, Unions.",
+    "tests": [
+     {
+      "fichier": "tests/e2e/metamorphose.py",
+      "nom": "Métamorphose : tout est gardé sur l’appareil après rechargement"
+     }
+    ],
+    "fichiers": [
+     "src/lib/metamorphose.ts"
+    ]
    }
   }
  ]

@@ -78,7 +78,7 @@ export default function RippleCircleStudio({onBack,onMetamorphose,onGame}:{onBac
    Réutilisation des principes de cadran 2D et de propagation causale. Les données et validations utilisent le modèle natif POINTZERO — pas d'iframe, ni de deuxième compte.
   </div>
   <div className="grid grid-cols-2 gap-2">
-   <button className={studioButton} onClick={onMetamorphose}>Métamorphose ↗</button>
+   <button className={studioButton} onClick={onMetamorphose}>Fragments ↗</button>
    <button className={studioButton} onClick={onGame}>Studio Game ↗</button>
   </div>
  </div>;

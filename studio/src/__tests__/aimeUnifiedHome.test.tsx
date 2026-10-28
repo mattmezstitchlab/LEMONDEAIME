@@ -31,7 +31,7 @@ describe("AIME — une landing MÉTAMORPHOSE, sans migration",()=>{
   await act(async()=>button.click());
   const frame=view.querySelector("iframe")!;
   expect(frame.getAttribute("src")).toBe("/atelier?studio=metamorphose");
-  expect(frame.getAttribute("title")).toContain("MÉTAMORPHOSE");
+  expect(frame.getAttribute("title")).toContain("Fragments");
   const design=[...view.querySelectorAll("button")].find(v=>v.textContent==="Design")!;
   await act(async()=>design.click());
   expect(view.querySelector("iframe")).toBeNull();

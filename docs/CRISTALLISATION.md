@@ -30,8 +30,8 @@ Autorisé : corrections, raccordements, consolidation, accessibilité, et ce qu'
 Un sujet à la fois : son audit, ses décisions, sa petite PR, ses tests. On clôture un sujet avant d'en ouvrir un autre.
 
 1. Docks et navigation : clos le 28 octobre 2026 (voir `docs/inventaires/01-docks-navigation.md`).
-2. Métamorphose : inventaire prêt (`docs/inventaires/02-metamorphose.md`), modifications en attente de validation.
-3. Unions.
+2. Métamorphose : corrigé le 28 octobre 2026, PR en revue (voir `docs/inventaires/02-metamorphose.md`).
+3. Unions : inventaire prêt (`docs/inventaires/03-unions.md`), modifications en attente de validation.
 4. Grille 200.
 5. Réseau et cartes métiers.
 6. StudiO.
@@ -57,7 +57,8 @@ Mettre la carte à jour :
 ```
 node cartographie/scanner.mjs             # l'inventaire et la lecture publique
 npm run build && npx vite preview --port 4610
-python3 tests/e2e/navigation.py           # puis moments.py, systeme.py
+python3 tests/e2e/navigation.py           # puis docks.py, moments.py, metamorphose.py, systeme.py
 npm run carte                             # inventaire + preuves des tests serveur
+# ou tout d'un coup : npm run carte:tout
 npm test                                  # la carte doit rester vraie
 ```

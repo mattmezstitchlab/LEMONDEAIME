@@ -154,6 +154,7 @@ function CarrouselStudio({ reduit }: { reduit: boolean }) {
 export default function LeMondeAime() {
   const [meta, setMeta] = useMeta();
   const [panneau, setPanneau] = useState(false);
+  const boutonMeta = useRef<HTMLButtonElement>(null);   /* en fermant le panneau, le focus revient au bouton qui l'a ouvert */
   const perso = estTransformee(meta);
   const theme = UNIVERS_M.find(u => u.id === meta.univers);
   const diapos = useMemo(() => { const t = theme ? theme.diapos : []; return [...t, ...DIAPOS.filter(x => !t.some(y => y.src === x.src))]; }, [theme]);
@@ -260,7 +261,7 @@ export default function LeMondeAime() {
               <a href="#prestataires" style={{ fontSize: 18, fontWeight: 600, textUnderlineOffset: 4 }}>Les mariés et toute l’équipe de l’union</a>
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <button type="button" className="bouton-meta" aria-expanded={panneau} onClick={() => setPanneau(o => !o)}><Orbe taille={32} />{perso ? 'Ma version · modifier' : 'Métamorphoser la page'}</button>
+              <button ref={boutonMeta} type="button" className="bouton-meta" aria-expanded={panneau} onClick={() => setPanneau(o => !o)}><Orbe taille={32} />{perso ? 'Ma version · modifier' : 'Métamorphoser la page'}</button>
               {perso && <button type="button" className="opt" style={{ fontWeight: 600 }} onClick={() => setMeta(null)}>Page de tous</button>}
             </span>
           </div>
@@ -288,7 +289,7 @@ export default function LeMondeAime() {
         </button>)}
       </> }]} />
       <Pied />
-      {panneau && <Metamorphose m={meta} set={setMeta} univers={UNIVERS_M} fermer={() => setPanneau(false)} />}
+      {panneau && <Metamorphose m={meta} set={setMeta} univers={UNIVERS_M} fermer={() => { setPanneau(false); requestAnimationFrame(() => boutonMeta.current?.focus()); }} />}
     </>
   );
 }

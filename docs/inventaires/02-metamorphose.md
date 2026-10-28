@@ -1,76 +1,109 @@
-# Sujet n° 2 — Métamorphose : inventaire (aucune modification)
+# Sujet n° 2 — Métamorphose : clôture
 
-État au 28 octobre 2026. Ce document prépare le sujet : rien n'a été changé. Les décisions attendent la validation de Matt.
+Corrections faites le 28 octobre 2026, sur les décisions validées par Matt. Les preuves sont dans `cartographie/preuves.json`. L'audit et ses résolutions se lisent dans `/systeme-nerveux` (lecture d'inspection, onglet Inventaire).
 
-## Le constat principal
+Règle suivie : ne plus ajouter, faire fonctionner ensemble. Aucun moteur métier modifié, aucune donnée existante touchée, pas de refonte graphique.
 
-Le nom « Métamorphose » désigne **deux fonctions différentes**, dans deux applications.
+## Le constat de départ
 
-| | A. Site — « Métamorphoser la page » | B. Studio — « MÉTAMORPHOSE · Grille » |
-|---|---|---|
-| Ce que ça fait | Chacun transforme l'accueil pour soi : les noms à la place du titre, une date ou un lieu, un univers en tête du diaporama, les prestataires cherchés, l'ordre et la visibilité des sections. | Une source (page, HTML) devient des fragments, puis de nouvelles compositions dans une grille. |
-| Interface | `src/charte/Metamorphose.tsx` (panneau) | `studio/src/components/MetamorphoseStudio.tsx` |
-| Moteur | `src/lib/metamorphose.ts` : `useMeta`, `lireMeta`, `ecrireMeta`, `SECTIONS`, `DEFAUT`, `estTransformee` | Un appel serveur `/api/metamorphose-scan` + `readFragments` / `demoFragments` |
-| Données | Navigateur seulement : stockage local `aime-metamorphose`, événement `aime:metamorphose`. Rien sur le serveur. | Navigateur : stockage local `pointzero:universal-fragments:v1`. Serveur : `studio/api/metamorphose-scan.mjs`. |
-| Statut annoncé | En production sur l'accueil | « expérimental, scanner privé à configurer » (`studio/src/lib/aimeDomains.ts`) |
+Le nom « Métamorphose » désignait deux fonctions différentes :
+- **sur le site**, l'accueil que chacun transforme pour soi ;
+- **dans le Studio**, un outil qui range des fragments dans une grille.
 
-## A. Site — points d'entrée
+Elles n'ont ni le même moteur, ni la même donnée.
 
-- `src/pages/LeMondeAime.tsx` :
-  - le bouton « Métamorphoser la page » (« Ma version · modifier » une fois transformée) ;
-  - le bouton « Page de tous », qui remet l'accueil de tous ;
-  - les boutons « Essayer leur univers » (Unions) et « Essayer cet univers » (Collections) ;
-  - le registre des sections (`SECTIONS`), qui contient maintenant « Les moments ».
-- Lecteurs de la même donnée hors de l'accueil :
-  - `src/pages/Reseau.tsx` et `src/pages/FicheReseau.tsx` lisent `meta.date` avec `lireDate` pour chercher les prestataires libres ce jour-là.
-  - La date libre de la Métamorphose (« Le 12 juin, au bord de la mer ») devient ainsi le critère de disponibilité du Réseau.
-- Pas de dock dédié. Le panneau s'ouvre par-dessus l'accueil et se ferme avec Échap.
+## Problèmes confirmés et décisions
 
-## B. Studio — points d'entrée
+| # | Problème confirmé | Décision | État |
+|---|---|---|---|
+| 1 | Un même nom pour deux fonctions | « Métamorphose » reste le nom de l'accueil personnel. L'outil du Studio s'appelle « Fragments » à chacun de ses points d'entrée : en-tête, accueil du Studio, Studio Design (« Fragments · Grille »), Game, Ripple, manifeste. Moteur, route (`?studio=metamorphose`) et clé de stockage inchangés. | Résolu |
+| 2 | L'analyse d'une page appelle `/api/metamorphose-scan`, qui n'est pas déployé (404 en production). Le bouton échouait sans le dire, et l'écran montrait des noms de variables serveur. | Pas de déploiement avant un audit de sécurité. L'outil affiche « Expérimental · indisponible », le bouton est désactivé, aucune requête ne part, plus aucun nom de variable n'apparaît. Fragments et compositions restent. | Résolu (l'audit reste à faire, sujet StudiO) |
+| 3 | Liens du Studio écrits sans `/studio` : ouverts dans un nouvel onglet, ils menaient à « Page introuvable » | Liens et aperçu passent par `avecBase`, comme la navigation interne : l'adresse réelle est `/studio/atelier?studio=metamorphose` | Résolu |
+| 4 | La date libre de la Métamorphose servait de critère au Réseau sans le dire | Gardée, et dite. Le Réseau et les fiches expliquent d'où vient la date et précisent qu'elle n'est pas la date officielle d'une union. On peut la changer, chercher sans date ou la reprendre : le choix va dans l'adresse (`?date=…`) et ne touche jamais la Métamorphose. Le panneau prévient aussi. | Résolu |
+| 5 | La Métamorphose reste sur l'appareil | Choix confirmé : pas de synchronisation avec un compte ou un projet. Le lien avec une vraie union est reporté au sujet n° 3. | Décidé |
+| 6 | Échap fermait le panneau sans rendre le focus au bouton | Le focus revient au bouton « Métamorphoser la page » | Résolu |
 
-- `studio/src/components/AimeEcosystem.tsx` : « L'Atelier » et le bouton d'en-tête « MÉTAMORPHOSE », vers `/atelier?studio=metamorphose`.
-- `studio/src/components/AimeUnifiedHome.tsx` : la carte « MÉTAMORPHOSE » et deux liens « Explorer ».
-- `studio/src/components/DesignStudio.tsx` : l'outil « AIME MÉTAMORPHOSE · Grille ».
-- `studio/src/components/GameStudio.tsx` et `RippleCircleStudio.tsx` : les boutons « Métamorphose ».
-- `studio/src/lib/launchManifest.ts` (n° 11, « experiment ») et `studio/src/lib/entryNavigation.ts` (route `metamorphose`).
+## Fichiers modifiés et dépendances
 
-## Constats à vérifier avant toute décision
+### Site
 
-1. **L'analyse du Studio n'a pas de serveur en production.**
-   - `MetamorphoseStudio` appelle `/api/metamorphose-scan`.
-   - Cette fonction n'existe que dans `studio/api/`, qui n'est pas déployé : seul `api/` à la racine l'est.
-   - Vérifié le 28/10 : `GET https://www.lemondeaime.com/api/metamorphose-scan` répond 404.
-2. **Des liens du Studio sans le préfixe `/studio`.**
-   - `/atelier?studio=metamorphose` répond par la page du site (qui n'a pas de route `/atelier`), et non par le Studio.
-   - Ces liens passent peut-être par le routeur interne du Studio (`onNavigate`), sans recharger la page : **à vérifier** en parcours réel.
-3. **Une donnée partagée sans contrat.** La date libre de la Métamorphose sert de date de recherche dans le Réseau. C'est utile, mais rien ne dit à la personne que sa phrase sert de critère.
-4. **Le réglage reste sur l'appareil.**
-   - La Métamorphose ne suit pas la personne sur un autre appareil.
-   - Elle n'est pas reliée au programme d'une vraie union (Grille 200 personnalisée).
-   - C'est conforme à son texte (« Personne d'autre ne voit ces changements »), mais à confirmer comme choix.
-5. **Les tests.**
-   - Site : aucun test dédié. Le parcours `moments.py` voit seulement l'accueil (diapo raccordée, bande des étapes).
-   - Studio : `atelierUltime`, `immersiveHome`, `aimeUnifiedHome`, `storageSafety` (vitest), plus `studio/tests/server/scanner.test.mjs` et `launch.test.mjs` pour le scanner.
+- `src/charte/Metamorphose.tsx` : une phrase sous le champ date (le Réseau la reprend ; ce n'est pas la date d'une union).
+- `src/pages/LeMondeAime.tsx` : le focus revient au bouton à la fermeture.
+- `src/lib/critere-date-outils.mjs` : nouveau moteur pur. Il dit quelle date chercher et d'où elle vient. Il réutilise `lireDate` (`api/_orbe-local.mjs`), sans le modifier.
+- `src/lib/critereDate.ts` : le crochet du critère. Il lit la Métamorphose et l'adresse, et n'écrit que l'adresse.
+- `src/charte/CritereDate.tsx` : le bandeau « Date de recherche ».
+- `src/pages/Reseau.tsx` et `src/pages/FicheReseau.tsx` : affichent le bandeau. Le critère suit le lien vers une fiche.
+- `src/styles.css` : `.meta-note`, `.critere-date`, dans les styles existants.
 
-## Questions pour Matt (rien n'est décidé)
+### Studio
 
-- **Le nom.** Les deux fonctions peuvent-elles garder le même nom ? Proposition à discuter : « Métamorphose » pour l'accueil personnel ; un autre nom (par exemple « Fragments ») pour l'outil du Studio. Ou l'inverse.
-- **L'outil du Studio sans serveur.** Trois choix :
-  - le marquer clairement « hors ligne » ;
-  - déplacer sa fonction serveur dans `api/`, ce qui demande un audit de sécurité, car c'est un analyseur de pages ;
-  - le retirer des entrées tant qu'il n'est pas configuré.
-- **La date.** Garder la date de la Métamorphose comme critère du Réseau, en le disant ? Ou la séparer en un champ « date de l'union » explicite ?
-- **Le lien avec une vraie union.** Faut-il, plus tard, que la Métamorphose d'une personne connectée devienne le réglage de la page de son union ? Cela touche le sujet Unions et ne se décide pas maintenant.
+- `AimeEcosystem.tsx`, `AimeUnifiedHome.tsx`, `DesignStudio.tsx`, `GameStudio.tsx`, `RippleCircleStudio.tsx` : libellés « Fragments ».
+- `launchManifest.ts`, `aimeDomains.ts` : libellés « Fragments », et `avecBase` dans les deux premiers fichiers.
+- `MetamorphoseStudio.tsx` : l'analyse fermée (`ANALYSE_OUVERTE = false`) et annoncée.
+- `__tests__/aimeUnifiedHome.test.tsx` : titre de l'aperçu.
 
-## Tests à écrire avant de modifier (proposition)
+### Inchangés
 
-- Parcours accueil :
-  - ouvrir, taper deux prénoms, choisir un univers, masquer et déplacer une section, fermer avec Échap ;
-  - recharger : tout est gardé ;
-  - « Page de tous » : tout revient ;
-  - au clavier et sur téléphone.
-- Réseau : une date écrite dans la Métamorphose filtre bien les prestataires libres.
-- Studio :
-  - ouvrir « MÉTAMORPHOSE » depuis chaque point d'entrée ;
-  - l'analyse en production répond-elle ou échoue-t-elle proprement ?
-- Carte : ajouter les nœuds A et B, leurs données et leurs liens, avec l'état « à vérifier » tant que ces tests ne sont pas enregistrés.
+- Le moteur de la Métamorphose (`src/lib/metamorphose.ts`), sa clé `aime-metamorphose` et son événement.
+- Le moteur de Fragments, sa clé `pointzero:universal-fragments:v1` et `studio/api/metamorphose-scan.mjs`.
+- L'API du Réseau.
+- La direction artistique.
+
+## Tests avant / après
+
+`tests/e2e/metamorphose.py` (27 vérifications), le même fichier joué sur les deux versions :
+
+- **Avant** (code de la PR #16) : 15 réussies, 12 en échec. Les échecs correspondent exactement aux problèmes 1, 2, 3, 4 et 6.
+- **Après** : 27 sur 27.
+
+Ce qui réussissait déjà, et qui est donc prouvé et gardé :
+- l'ouverture ;
+- la transformation (noms, univers, sections, ordre) ;
+- la persistance après rechargement ;
+- la réinitialisation ;
+- la recherche par date ;
+- l'absence de requête d'analyse ;
+- le téléphone (panneau, Réseau).
+
+Autres tests :
+- `tests/server/metamorphose.test.mjs` (nouveau, 7 tests) : le critère de date dans tous ses cas. Il vérifie aussi par lecture du code :
+  - le Réseau n'écrit pas la Métamorphose ;
+  - l'analyse est fermée et absente de `api/` ;
+  - aucun nom de variable n'est affiché ;
+  - la clé des fragments est inchangée ;
+  - les liens passent par `/studio`.
+- Non-régression :
+  - docks 31/31 ;
+  - moments 42/42 ;
+  - navigation 15/15 ;
+  - système 21/21 ;
+  - tests serveur 53/53 ;
+  - Studio 540/540.
+
+Limites, à dire franchement :
+- Les parcours tournent sur l'aperçu local, avec des API simulées. Ils ne prouvent rien sur les vraies disponibilités en base du Réseau, qui relèvent du sujet n° 5.
+- L'événement `aime:metamorphose` n'a pas de test qui l'isole : il reste « à vérifier ».
+
+## Vérification ordinateur, téléphone, clavier
+
+- **Ordinateur** (1440 px) :
+  - panneau, Réseau, fiches ;
+  - chaque lien vers Fragments, depuis l'accueil du Studio et le Studio Design.
+- **Téléphone** (390 px) :
+  - le panneau tient dans l'écran ;
+  - le Réseau et son bandeau ne débordent pas ;
+  - Fragments dit « Analyser une page · indisponible ».
+- **Clavier** :
+  - le bouton ouvre le panneau, le focus va au titre ;
+  - Échap ferme et rend le focus ;
+  - les boutons du bandeau de date sont de vrais boutons, et le champ date a son libellé.
+
+## Dans le système nerveux
+
+- **Nœuds** :
+  - Métamorphose (accueil), Date de recherche du Réseau, Fragments (Studio) ;
+  - moteur de la Métamorphose, critère de date ;
+  - données `aime-metamorphose` et fragments : « vérifié » ;
+  - analyse d'une page : « prévu » (non déployée) ;
+  - événement `aime:metamorphose` : « à vérifier ».
+- **Audit** : `deux-metamorphoses`, `analyse-sans-serveur`, `liens-sans-prefixe`, `date-partagee` (résolus) et `stockage-metamorphose` (décidé, reporté au sujet Unions).

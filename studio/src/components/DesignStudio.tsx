@@ -265,7 +265,7 @@ export default function DesignStudio({ onEmbroidery, onPhoto, onFashion, onBudge
               {name:"Accessibilité & Design System",icon:<Accessibility size={16}/>,onClick:onAccessibility},
               {name:"POINTZERO Academy · UI/UX & No Code",icon:<GraduationCap size={16}/>,onClick:onAcademy},
               {name:"Mon Espace · Tous les mondes",icon:<Layers3 size={16}/>,onClick:onSpace},
-              {name:"AIME MÉTAMORPHOSE · Grille",icon:<Sparkles size={16}/>,onClick:onMetamorphose},
+              {name:"Fragments · Grille",icon:<Sparkles size={16}/>,onClick:onMetamorphose},
               {name:"RIPPLECIRCLE · Cadran vivant",icon:<GitBranch size={16}/>,onClick:onRippleCircle},
               {name:"Studio Game · Confetti 30",icon:<Gamepad2 size={16}/>,onClick:onGame},
               {name:"Studio Causal · RIPPLE",icon:<GitBranch size={16}/>,onClick:onCausal},
@@ -334,7 +334,7 @@ export default function DesignStudio({ onEmbroidery, onPhoto, onFashion, onBudge
           </>}
           {leftTab==="fragments"&&<>
             <h2 className="mb-3 text-[12px] font-semibold">Grille universelle</h2>
-            <p className="text-[11px] leading-relaxed text-white/65">Importez une collection JSON depuis AIME MÉTAMORPHOSE. Chaque case conserve sa source, son cadrage et son verrouillage.</p>
+            <p className="text-[11px] leading-relaxed text-white/65">Importez une collection JSON depuis Fragments. Chaque case conserve sa source, son cadrage et son verrouillage.</p>
             <p className="mt-3 text-[11px] leading-relaxed text-white/65">La grille se recompose lorsque vous agrandissez un fragment. Ce format reste indépendant des points et des fils DMC.</p>
           </>}
           {leftTab==="documents"&&<>

@@ -37,7 +37,7 @@ export const DEFAULT_LAUNCH:LaunchConfig={
  s("organisation","08","Studio Organisation","Espaces, rôles et responsabilités au service d'un collectif.","experiment","one-space"),
  s("formation","09","Studio Formation","Apprendre à son rythme avec un parcours et des acquis vérifiables.","experiment","academy"),
  s("causalite","10","Studio Causalité","Relier les faits, hypothèses, décisions et conséquences.","experiment","causal"),
- s("metamorphose","11","MÉTAMORPHOSE","Une source devient des fragments puis de nouvelles compositions.","experiment","metamorphose"),
+ s("metamorphose","11","FRAGMENTS","Une source devient des fragments puis de nouvelles compositions.","experiment","metamorphose"),
  s("ripplecircle","12","RIPPLECIRCLE","Un cadran vivant pour relier les personnes, les moments et leurs impacts.","experiment","ripplecircle"),
  s("game","13","Studio Game","Une grille devient une action ludique : confettis, portraits et défis.","experiment","game")
  ],

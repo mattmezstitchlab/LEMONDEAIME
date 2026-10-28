@@ -1,6 +1,6 @@
 {
  "titre": "Le système nerveux de LE MONDE AIME",
- "perimetre": "Sujet n° 1, clos : les docks et la navigation, jusqu'à la page /musique, sa fonctionnalité « ajouter un morceau » et sa donnée. Prochain sujet : la Métamorphose (inventaire seulement).",
+ "perimetre": "Sujet n° 1, clos : les docks et la navigation, jusqu’à la page /musique. Sujet n° 2, Métamorphose : l’accueil personnel, la date de recherche du Réseau et l’outil Fragments du Studio. Prochain sujet : les Unions (inventaire seulement).",
  "familles": [
   {
    "id": "interfaces",
@@ -435,6 +435,90 @@
    "fonction": "Quand un moment change, prévenir les métiers et les personnes qu'il concerne.",
    "pages": [],
    "etat": "prevu"
+  },
+  {
+   "id": "panneau-metamorphose",
+   "famille": "interfaces",
+   "nom": "Métamorphose (accueil)",
+   "fonction": "Le panneau « Métamorphoser la page » : chacun transforme l’accueil pour soi (noms, date ou lieu, univers, prestataires, ordre et visibilité des sections). Personne d’autre ne voit ces changements.",
+   "pages": [
+    "/"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "critere-date-reseau",
+   "famille": "interfaces",
+   "nom": "Date de recherche du Réseau",
+   "fonction": "Sur le Réseau et les fiches : dit d’où vient la date de recherche (la Métamorphose, ou un choix fait ici), précise que ce n’est pas la date officielle d’une union, et permet de la changer, de l’effacer ou de la reprendre.",
+   "pages": [
+    "/reseau"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "fragments-studio",
+   "famille": "interfaces",
+   "nom": "Fragments (Studio)",
+   "fonction": "L’outil du Studio qui range des fragments et compose une grille (anciennement « MÉTAMORPHOSE · Grille »). Fragments et compositions restent sur l’appareil ; l’analyse d’une page est annoncée indisponible.",
+   "pages": [
+    "/studio/*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "moteur-metamorphose",
+   "famille": "moteurs",
+   "nom": "Moteur de la Métamorphose",
+   "fonction": "Lit, écrit et diffuse le réglage personnel de l’accueil (useMeta, lireMeta, ecrireMeta, SECTIONS). Rien n’est envoyé au serveur.",
+   "pages": [
+    "/"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "critere-date",
+   "famille": "moteurs",
+   "nom": "Critère de date",
+   "fonction": "Décide la date de recherche du Réseau : celle choisie dans l’adresse (?date=…, ou « aucune ») passe avant celle lue dans la phrase de la Métamorphose. Ne modifie jamais la Métamorphose.",
+   "pages": [
+    "/reseau"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "analyse-page",
+   "famille": "moteurs",
+   "nom": "Analyse d’une page (Fragments)",
+   "fonction": "La fonction serveur qui découperait une page en fragments. Elle existe dans studio/api mais n’est pas déployée : elle attend un audit de sécurité (c’est un analyseur de pages externes).",
+   "pages": [],
+   "etat": "prevu"
+  },
+  {
+   "id": "meta-appareil",
+   "famille": "donnees",
+   "nom": "Réglage de la Métamorphose",
+   "fonction": "Stockage local aime-metamorphose : noms, phrase de date ou de lieu, univers, prestataires, sections. Sur cet appareil seulement ; ni compte, ni projet, ni union.",
+   "pages": [],
+   "etat": "verifie"
+  },
+  {
+   "id": "fragments-appareil",
+   "famille": "donnees",
+   "nom": "Fragments et compositions",
+   "fonction": "Stockage local pointzero:universal-fragments:v1 du Studio : les fragments et les compositions de l’outil Fragments. Clé inchangée par le renommage.",
+   "pages": [],
+   "etat": "verifie"
+  },
+  {
+   "id": "evt-metamorphose",
+   "famille": "evenements",
+   "nom": "aime:metamorphose",
+   "fonction": "Prévient les autres parties de la même page qu’une Métamorphose a changé (l’accueil se redessine). Pas de test qui l’isole : à vérifier.",
+   "pages": [
+    "/"
+   ],
+   "etat": "a-verifier"
   }
  ],
  "liens": [
@@ -713,6 +797,60 @@
    "vers": "naviguer",
    "nature": "declenche",
    "etat": "a-verifier"
+  },
+  {
+   "de": "panneau-metamorphose",
+   "vers": "moteur-metamorphose",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "moteur-metamorphose",
+   "vers": "meta-appareil",
+   "nature": "ecrit",
+   "etat": "verifie"
+  },
+  {
+   "de": "moteur-metamorphose",
+   "vers": "evt-metamorphose",
+   "nature": "emet",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "critere-date-reseau",
+   "vers": "critere-date",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "critere-date",
+   "vers": "meta-appareil",
+   "nature": "lit",
+   "etat": "verifie"
+  },
+  {
+   "de": "fragments-studio",
+   "vers": "fragments-appareil",
+   "nature": "ecrit",
+   "etat": "verifie"
+  },
+  {
+   "de": "fragments-studio",
+   "vers": "analyse-page",
+   "nature": "appelle",
+   "etat": "prevu"
+  },
+  {
+   "de": "docks-studio",
+   "vers": "fragments-studio",
+   "nature": "ouvre",
+   "etat": "verifie"
+  },
+  {
+   "de": "routeur-studio",
+   "vers": "fragments-studio",
+   "nature": "affiche",
+   "etat": "verifie"
   }
  ]
 }

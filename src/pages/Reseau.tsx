@@ -4,8 +4,8 @@ import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { lireReseau, photoProfil, type Profil } from '../lib/reseau';
 import { CarteReseau, type Carte } from '../charte/CartePersonne';
-import { useMeta } from '../lib/metamorphose';
-import { lireDate } from '../../api/_orbe-local.mjs';
+import { useCritereDate } from '../lib/critereDate';
+import { CritereDate } from '../charte/CritereDate';
 import { DOMAINES, FICHES, UNION_EXEMPLE, domaine } from '../lib/reseau-exemples';
 
 export { CarteReseau, type Carte } from '../charte/CartePersonne';
@@ -16,12 +16,12 @@ export default function Reseau() {
   const session = useSession();
   const [profils, setProfils] = useState<Profil[] | null>(null);
   const [filtre, setFiltre] = useState<string | null>(() => { const d = new URLSearchParams(window.location.search).get('domaine'); return d && domaine(d) ? d : null; });
-  const [meta] = useMeta();
-  const date = lireDate(meta.date);
+  const critere = useCritereDate();
+  const date = critere.date;
   useEffect(() => { lireReseau(date).then(r => setProfils(r.ok ? r.profils || [] : [])); }, [date]);
   const cartes = [
     ...FICHES.filter(e => e.vrai).map(e => ({ href: '/reseau/' + e.slug, nom: e.nom, etiquette: domaine(e.domaine)!.label + ' · ' + e.famille, photo: e.photo, alt: e.alt, domaine: e.domaine, fiche: { nom: e.nom, metier: e.titre, bio: e.texte } })),
-    ...(profils || []).filter(p => p.ref).map(p => deProfil(p, date)),
+    ...(profils || []).filter(p => p.ref).map(p => ({ ...deProfil(p, date), href: deProfil(p, date).href + critere.suffixe })),
     ...FICHES.filter(e => !e.vrai).map(e => ({ href: '/reseau/' + e.slug, nom: e.nom, etiquette: e.famille, photo: e.photo, alt: e.alt, exemple: true, fiche: { nom: e.nom, bio: e.texte }, credit: e.domaine === 'mariage' ? (e.union ? 'Crédité dans ' + UNION_EXEMPLE : null) : undefined, domaine: e.domaine })),
   ];
   const liste = cartes.filter(c => !filtre || c.domaine === filtre);
@@ -43,6 +43,7 @@ export default function Reseau() {
           })}
         </div>
         <p style={{ margin: '0 auto 40px', textAlign: 'center', maxWidth: '40rem', fontSize: 16, color: '#3A3A3F', minHeight: 24 }}>{d ? d.texte : 'Un filtre par domaine, le plus large possible : chaque domaine réunit tous ses métiers.'}</p>
+        <CritereDate />
         <p aria-live="polite" style={{ margin: '0 0 20px', fontSize: 15, color: '#55555A' }}>{profils === null ? 'Chargement…' : liste.length + (liste.length > 1 ? ' profils' : ' profil')}</p>
         {liste.length
           ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 250px), 1fr))', gap: '44px 24px' }}>{liste.map(c => <CarteReseau key={c.href} c={c} />)}</div>
