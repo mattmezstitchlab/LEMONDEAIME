@@ -1,6 +1,6 @@
 {
  "titre": "Le système nerveux de LE MONDE AIME",
- "perimetre": "Première branche : les docks et la navigation, jusqu'à la page /musique, sa fonctionnalité « ajouter un morceau » et sa donnée. Les autres sujets viendront un par un.",
+ "perimetre": "Sujet n° 1, clos : les docks et la navigation, jusqu'à la page /musique, sa fonctionnalité « ajouter un morceau » et sa donnée. Prochain sujet : la Métamorphose (inventaire seulement).",
  "depot": "https://github.com/mattmezstitchlab/LEMONDEAIME",
  "branche": "main",
  "familles": [
@@ -87,6 +87,10 @@
     {
      "fichier": "tests/e2e/navigation.py",
      "nom": "dock du haut : le rond du profil ouvre les dossiers de l’espace"
+    },
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "clavier, dock du haut : loupe s’ouvre au clavier, Échap ferme et rend le focus"
     }
    ],
    "etat": "verifie"
@@ -112,14 +116,23 @@
    "roles": [
     "visiteur"
    ],
-   "tests": [],
-   "etat": "a-verifier"
+   "tests": [
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "téléphone : les rubriques défilent jusqu’à la dernière"
+    },
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "téléphone : les rubriques qui dépassent sont signalées par un fondu"
+    }
+   ],
+   "etat": "verifie"
   },
   {
    "id": "bloc-aime",
    "famille": "interfaces",
    "nom": "Orbe : menu et Mon confort",
-   "fonction": "L'orbe ouvre le menu (accueil, à propos, déconnexion) et le choix de l'orbe : chaque orbe règle la taille du texte, l'espacement, le contraste, le mouvement et les sons.",
+   "fonction": "L'orbe ouvre le menu (accueil, à propos) et le choix de l'orbe : chaque orbe règle la taille du texte, l'espacement, le contraste, le mouvement et les sons.",
    "pages": [
     "*"
    ],
@@ -148,6 +161,10 @@
     {
      "fichier": "tests/e2e/navigation.py",
      "nom": "orbe : choisir une orbe enregistre Mon confort sur l’appareil"
+    },
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "déconnexion : absente du menu de l’orbe"
     }
    ],
    "etat": "verifie"
@@ -177,6 +194,10 @@
     {
      "fichier": "tests/e2e/navigation.py",
      "nom": "recherche : « musique » mène à /musique sans recharger"
+    },
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "loupe : le plan du site propose le Studio une seule fois"
     }
    ],
    "etat": "verifie"
@@ -185,7 +206,7 @@
    "id": "bloc-espace",
    "famille": "interfaces",
    "nom": "Rond du profil : l'espace",
-   "fonction": "Sans compte : entrer dans AIME sans quitter la page. Avec un compte : les dossiers de l'espace (projets, partagés, archives, profil).",
+   "fonction": "Sans compte : entrer dans AIME sans quitter la page. Avec un compte : « Mon espace » et ses quatre dossiers (projets, partagés, archives, profil), et la seule « Déconnexion » du site.",
    "pages": [
     "*"
    ],
@@ -213,6 +234,14 @@
     {
      "fichier": "tests/e2e/navigation.py",
      "nom": "dock du haut : le rond du profil ouvre les dossiers de l’espace"
+    },
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "déconnexion : une seule, dans le bloc de l’espace"
+    },
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "espace : les quatre dossiers restent des raccourcis"
     }
    ],
    "etat": "verifie"
@@ -248,6 +277,10 @@
     {
      "fichier": "tests/e2e/navigation.py",
      "nom": "dock du bas : les lieux de /musique sont ses dix moments"
+    },
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "clavier, dock du bas : le cercle ouvre les modes, Échap ferme et rend le focus"
     }
    ],
    "etat": "verifie"
@@ -285,7 +318,7 @@
    "id": "mode-musique",
    "famille": "interfaces",
    "nom": "Dock du bas · Musique",
-   "fonction": "Écouter sans quitter la page : les fichiers choisis sur l'appareil, ou les extraits lancés depuis le site ; un lien vers la journée en musique.",
+   "fonction": "Écouter sans quitter la page. Deux sources, jamais confondues : « Fichier de cet appareil » (lu ici, rien n'est envoyé) et « Mes morceaux », la bibliothèque du compte sur la journée en musique.",
    "pages": [
     "*"
    ],
@@ -308,7 +341,11 @@
    "tests": [
     {
      "fichier": "tests/e2e/navigation.py",
-     "nom": "dock du bas, mode Musique : fichiers de l’appareil et lien vers la journée en musique"
+     "nom": "dock du bas, mode Musique : fichier de l’appareil et mes morceaux, séparés"
+    },
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "dock, Musique : un fichier local est marqué « Sur cet appareil »"
     }
    ],
    "etat": "verifie"
@@ -334,8 +371,46 @@
    "roles": [
     "visiteur"
    ],
-   "tests": [],
-   "etat": "a-verifier"
+   "tests": [
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "espace : le pied dit « Mon espace », « Ouvrir mon espace », « Mon profil »"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "docks-studio",
+   "famille": "interfaces",
+   "nom": "Docks du Studio",
+   "fonction": "Le Studio a ses propres docks (outils, fils, progression), avec la même grammaire que ceux du site : un dock en haut, un dock en bas, une orbe.",
+   "pages": [
+    "/studio/*"
+   ],
+   "sources": [
+    {
+     "fichier": "studio/src/components/StudioDocks.tsx",
+     "symbole": "StudioDocks"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "session-compte"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur",
+    "personne-connectee"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "Studio : ses docks sont les siens (pas ceux du site)"
+    }
+   ],
+   "etat": "verifie",
+   "note": "Deux familles de docks : examinées, gardées séparées pour l'instant. Seul le libellé de l'espace a été aligné (« Ouvrir mon espace »)."
   },
   {
    "id": "page-musique",
@@ -370,6 +445,10 @@
     {
      "fichier": "tests/e2e/moments.py",
      "nom": "/musique : mes morceaux affichés"
+    },
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "/musique : la page dit que ses morceaux sont ceux du compte, pas ceux de l’appareil"
     }
    ],
    "etat": "verifie"
@@ -498,6 +577,10 @@
     {
      "fichier": "tests/e2e/navigation.py",
      "nom": "retour : la flèche revient en arrière (ici, à l’accueil)"
+    },
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "retour : pas de flèche sur l’accueil sans historique"
     }
    ],
    "etat": "verifie"
@@ -696,8 +779,14 @@
    "roles": [
     "visiteur"
    ],
-   "tests": [],
-   "etat": "a-verifier"
+   "tests": [
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "Studio : un lien ramène au Monde AIME"
+    }
+   ],
+   "etat": "verifie",
+   "note": "Examiné, pas fusionné : le Studio garde son routeur (application séparée, rechargement complet en entrant et en sortant). Un lien ramène au site. La fusion éventuelle se décidera avec le sujet StudiO."
   },
   {
    "id": "confort",
@@ -760,8 +849,13 @@
    "roles": [
     "visiteur"
    ],
-   "tests": [],
-   "etat": "a-verifier"
+   "tests": [
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "dock, Musique : un fichier local est marqué « Sur cet appareil »"
+    }
+   ],
+   "etat": "verifie"
   },
   {
    "id": "session",
@@ -931,8 +1025,17 @@
    "roles": [
     "visiteur"
    ],
-   "tests": [],
-   "etat": "a-verifier"
+   "tests": [
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "dock, Musique : « Fichier de cet appareil », rien n’est envoyé"
+    },
+    {
+     "fichier": "tests/e2e/docks.py",
+     "nom": "dock, Musique : un fichier local est marqué « Sur cet appareil »"
+    }
+   ],
+   "etat": "verifie"
   },
   {
    "id": "extraits-deezer",
@@ -1435,6 +1538,17 @@
    "vers": "notifications",
    "nature": "emet",
    "etat": "prevu"
+  },
+  {
+   "de": "routeur-studio",
+   "vers": "docks-studio",
+   "nature": "affiche"
+  },
+  {
+   "de": "docks-studio",
+   "vers": "naviguer",
+   "nature": "declenche",
+   "etat": "a-verifier"
   }
  ],
  "audit": [
@@ -1449,7 +1563,38 @@
     "/buro"
    ],
    "statut": "simplifier",
-   "raison": "L'espace s'ouvre depuis le rond du profil (ses quatre dossiers), puis encore depuis « Ouvrir mon espace » dans le même bloc, la loupe et le pied. Le rond du profil suffit comme entrée canonique ; garder la loupe et le pied comme plan du site."
+   "raison": "L'espace s'ouvre depuis le rond du profil (ses quatre dossiers), puis encore depuis « Ouvrir mon espace » dans le même bloc, la loupe et le pied. Le rond du profil suffit comme entrée canonique ; garder la loupe et le pied comme plan du site.",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "Un seul nom : « Mon espace » nomme le lieu partout (rond du profil, loupe, pied, titre de la page, Studio) ; « Ouvrir mon espace » est l'action. Les quatre dossiers du rond du profil, la loupe et le pied restent : ce sont des accès utiles, pas des doublons. Les phrases continuent de dire « votre espace ».",
+    "tests": [
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "espace : le rond du profil s’appelle « Mon espace »"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "espace : le pied dit « Mon espace », « Ouvrir mon espace », « Mon profil »"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "loupe : « Mon espace », comme partout"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "espace : les quatre dossiers restent des raccourcis"
+     }
+    ],
+    "fichiers": [
+     "src/charte/Charte.tsx",
+     "src/charte/Recherche.tsx",
+     "src/pages/Buro.tsx",
+     "src/App.tsx",
+     "src/charte/ApercuEspace.tsx",
+     "studio/src/components/StudioDocks.tsx",
+     "studio/src/components/LibrarySheet.tsx"
+    ]
+   }
   },
   {
    "id": "deconnexion",
@@ -1466,7 +1611,24 @@
     }
    ],
    "statut": "simplifier",
-   "raison": "Deux boutons « Déconnexion » dans le même dock du haut : dans le menu de l'orbe et dans le bloc de l'espace. Le garder dans l'espace, là où l'on gère son compte."
+   "raison": "Deux boutons « Déconnexion » dans le même dock du haut : dans le menu de l'orbe et dans le bloc de l'espace. Le garder dans l'espace, là où l'on gère son compte.",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "Retirée du menu de l'orbe ; gardée dans le bloc « Mon espace », là où l'on gère son compte. Un seul bouton, toujours au même endroit.",
+    "tests": [
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "déconnexion : absente du menu de l’orbe"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "déconnexion : une seule, dans le bloc de l’espace"
+     }
+    ],
+    "fichiers": [
+     "src/charte/Charte.tsx"
+    ]
+   }
   },
   {
    "id": "studio",
@@ -1477,7 +1639,28 @@
     "/studio"
    ],
    "statut": "mutualiser",
-   "raison": "La loupe propose « Studio » et « Atelier de broderie », qui mènent à la même adresse ; le Studio s'ouvre aussi depuis les rubriques, le pied, l'accueil et Point Zéro. Une seule entrée dans la loupe."
+   "raison": "La loupe propose « Studio » et « Atelier de broderie », qui mènent à la même adresse ; le Studio s'ouvre aussi depuis les rubriques, le pied, l'accueil et Point Zéro. Une seule entrée dans la loupe.",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "La loupe ne propose plus qu'une entrée « Studio », décrite comme l'atelier de broderie : « studio », « atelier » et « broderie » la trouvent. Les autres accès au Studio (rubrique, pied, accueil, Point Zéro) sont utiles et restent.",
+    "tests": [
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "loupe : le plan du site propose le Studio une seule fois"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "loupe : « atelier » trouve le Studio, une fois"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "loupe : « broderie » trouve le Studio, une fois"
+     }
+    ],
+    "fichiers": [
+     "src/charte/Recherche.tsx"
+    ]
+   }
   },
   {
    "id": "point-zero",
@@ -1488,7 +1671,13 @@
     "/point-zero"
    ],
    "statut": "conserver",
-   "raison": "Point d'entrée de création, présent à plusieurs endroits à dessein ; harmoniser seulement les libellés (« Point Zéro », « Commencer au Point Zéro », « Créer la page de notre union »)."
+   "raison": "Point d'entrée de création, présent à plusieurs endroits à dessein ; harmoniser seulement les libellés (« Point Zéro », « Commencer au Point Zéro », « Créer la page de notre union »).",
+   "resolution": {
+    "etat": "decide",
+    "decision": "Conservé tel quel : plusieurs accès à un même point de départ, à dessein. Les libellés seront revus avec le sujet Unions.",
+    "tests": [],
+    "fichiers": []
+   }
   },
   {
    "id": "ma-musique",
@@ -1502,7 +1691,33 @@
     "/musique"
    ],
    "statut": "mutualiser",
-   "raison": "Deux sens de « ma musique » : le mode Musique du dock lit des fichiers de l'appareil (rien n'est envoyé), la journée en musique lit les morceaux du compte. Le lecteur est déjà commun ; décider si le dock propose aussi la playlist du compte quand on est connecté."
+   "raison": "Deux sens de « ma musique » : le mode Musique du dock lit des fichiers de l'appareil (rien n'est envoyé), la journée en musique lit les morceaux du compte. Le lecteur est déjà commun ; décider si le dock propose aussi la playlist du compte quand on est connecté.",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "Pas de fusion : deux sources différentes, rendues lisibles. Le dock dit « Fichier de cet appareil » (rien n'est envoyé) et « Mes morceaux » (le compte) ; une piste locale est marquée « Sur cet appareil » ; /musique dit que ses morceaux sont ceux du compte.",
+    "tests": [
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "dock, Musique : « Fichier de cet appareil », rien n’est envoyé"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "dock, Musique : « Mes morceaux » mène à la bibliothèque du compte"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "dock, Musique : un fichier local est marqué « Sur cet appareil »"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "/musique : la page dit que ses morceaux sont ceux du compte, pas ceux de l’appareil"
+     }
+    ],
+    "fichiers": [
+     "src/charte/Charte.tsx",
+     "src/pages/Musique.tsx"
+    ]
+   }
   },
   {
    "id": "normaliser-recherche",
@@ -1521,7 +1736,13 @@
     }
    ],
    "statut": "mutualiser",
-   "raison": "La loupe du site et la recherche des moments ont chacune leur fonction pour retirer les accents. Une seule fonction, partagée."
+   "raison": "La loupe du site et la recherche des moments ont chacune leur fonction pour retirer les accents. Une seule fonction, partagée.",
+   "resolution": {
+    "etat": "a-verifier",
+    "decision": "Reporté : les deux fonctions appartiennent à deux moteurs (la loupe du site, le programme). Les rassembler touche le moteur du programme : à traiter avec le sujet Grille 200.",
+    "tests": [],
+    "fichiers": []
+   }
   },
   {
    "id": "deux-routeurs",
@@ -1539,8 +1760,98 @@
      "texte": "entryStudio"
     }
    ],
-   "statut": "deplacer",
-   "raison": "Le site et le Studio ont chacun leur routeur et leurs docks. Hors de cette première branche : à examiner avec le sujet « StudiO », sans rien fusionner avant l'audit."
+   "statut": "conserver",
+   "raison": "Le site et le Studio ont chacun leur routeur et leurs docks. Hors de cette première branche : à examiner avec le sujet « StudiO », sans rien fusionner avant l'audit.",
+   "resolution": {
+    "etat": "decide",
+    "decision": "Examinés, pas fusionnés : le Studio est une application séparée (son routeur, ses docks, la même grammaire), on y entre et on en sort par un rechargement. Un lien ramène au site. La question reviendra avec le sujet StudiO.",
+    "tests": [
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "Studio : un lien ramène au Monde AIME"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "Studio : ses docks sont les siens (pas ceux du site)"
+     }
+    ],
+    "fichiers": []
+   }
+  },
+  {
+   "id": "rubriques-telephone",
+   "fonction": "Voir les rubriques sur téléphone",
+   "moteur": "routeur",
+   "donnees": [],
+   "destinations": [],
+   "points": [
+    {
+     "fichier": "src/styles.css",
+     "texte": ".dock-haut .rangee"
+    }
+   ],
+   "statut": "simplifier",
+   "raison": "Sur téléphone, les rubriques du dock du haut défilent horizontalement sans le montrer : seule la première est visible.",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "Un fondu discret à droite signale les rubriques qui restent ; il disparaît en fin de défilement. Rien d'autre ne change dans le dock.",
+    "tests": [
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "téléphone : les rubriques qui dépassent sont signalées par un fondu"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "téléphone : les rubriques défilent jusqu’à la dernière"
+     }
+    ],
+    "fichiers": [
+     "src/charte/Charte.tsx",
+     "src/styles.css"
+    ]
+   }
+  },
+  {
+   "id": "clavier-docks",
+   "fonction": "Utiliser les docks au clavier",
+   "moteur": "routeur",
+   "donnees": [],
+   "destinations": [],
+   "points": [
+    {
+     "fichier": "src/charte/Charte.tsx",
+     "texte": "Escape"
+    }
+   ],
+   "statut": "conserver",
+   "raison": "Examen des états et des retours : chaque bloc s'ouvre au clavier, Échap le ferme et rend le focus au bouton qui l'a ouvert ; le cercle du dock du bas aussi ; la flèche retour n'apparaît que lorsqu'elle sert.",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "Rien à corriger : le comportement est prouvé et gardé.",
+    "tests": [
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "clavier, dock du haut : orbe s’ouvre au clavier, Échap ferme et rend le focus"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "clavier, dock du haut : profil s’ouvre au clavier, Échap ferme et rend le focus"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "clavier, dock du bas : le cercle ouvre les modes, Échap ferme et rend le focus"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "retour : la flèche est là hors de l’accueil"
+     },
+     {
+      "fichier": "tests/e2e/docks.py",
+      "nom": "téléphone : chaque commande des docks fait au moins 44 px"
+     }
+    ],
+    "fichiers": []
+   }
   }
  ]
 }

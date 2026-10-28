@@ -246,7 +246,7 @@ export default function StudioDocks(p: Props) {
             </div>
             <div className="pzs-mini" role="group" aria-label="Inviter et votre espace">
               <button type="button" onClick={() => { setBloc(null); p.actions.share(); }}>+ Inviter à rejoindre la grille</button>
-              {aime && <a href={moi ? "/buro" : "/entrer"}>{moi ? "Votre espace AIME" : "Entrer"}</a>}
+              {aime && <a href={moi ? "/buro" : "/entrer"}>{moi ? "Ouvrir mon espace" : "Entrer"}</a>}
             </div>
           </>}
         </div>}

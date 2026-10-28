@@ -11,7 +11,7 @@ const VIS: Record<string, string> = { prive: 'Privé', restreint: 'Restreint', l
 const ORDRE = ['prive', 'restreint', 'lien', 'public'];
 type Lieu = 'projets' | 'partages' | 'archives' | 'profil';
 
-/* Votre espace AIME. En bas, les lieux (Projets, Partagés avec moi, Archives, Profil) ; en haut, ce qu'on fait au projet choisi. */
+/* Mon espace AIME. En bas, les lieux (Projets, Partagés avec moi, Archives, Profil) ; en haut, ce qu'on fait au projet choisi. */
 export default function Buro() {
   const session = useSession();
   const [projets, setProjets] = useState<Projet[] | null>(null);
@@ -46,7 +46,7 @@ export default function Buro() {
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
       <Tete courant="/buro" verbes={verbes} />
       <main id="contenu" style={{ padding: 'clamp(48px, 7vw, 96px) var(--marge) 170px' }}>
-        <h1 className="titre" style={{ fontSize: 'clamp(44px, 7vw, 108px)', lineHeight: .92 }}>Votre espace AIME</h1>
+        <h1 className="titre" style={{ fontSize: 'clamp(44px, 7vw, 108px)', lineHeight: .92 }}>Mon espace AIME</h1>
         {session === null && <p className="chapeau">Entrez dans AIME pour retrouver vos projets, sur tous vos appareils. <Lien href="/entrer">+ Entrer</Lien></p>}
         {session === undefined && <p className="chapeau">Ouverture de votre espace…</p>}
         {session && proposerCle && <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', padding: '16px 18px', borderRadius: 16, background: '#fff', border: '1px solid #E2E2DE' }}>
@@ -76,7 +76,7 @@ export default function Buro() {
           {projets && !liste.length && lieu !== 'projets' && <p style={{ fontSize: 18, color: '#3A3A3F' }}>{lieu === 'archives' ? 'Rien aux archives.' : 'Personne ne vous a encore partagé de projet.'}</p>}
         </>}
       </main>
-      <DockBas label="Lieux de votre espace">{session ? <>
+      <DockBas label="Lieux de mon espace">{session ? <>
         {([['projets', 'Projets'], ['partages', 'Partagés avec moi'], ['archives', 'Archives'], ['profil', 'Profil']] as [Lieu, string][]).map(([k, l]) =>
           <button key={k} type="button" className="lieu" aria-current={lieu === k ? 'true' : 'false'} onClick={() => { setLieu(k); setChoisi(null); setMsg(''); }}>{l}{k !== 'profil' && <span style={{ marginLeft: 8, fontSize: 13, opacity: .8 }}>{(projets || []).filter(p => dans(p, k)).length}</span>}</button>)}
       </> : undefined}</DockBas>

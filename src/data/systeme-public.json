@@ -1,6 +1,6 @@
 {
  "titre": "Le système nerveux de LE MONDE AIME",
- "perimetre": "Première branche : les docks et la navigation, jusqu'à la page /musique, sa fonctionnalité « ajouter un morceau » et sa donnée. Les autres sujets viendront un par un.",
+ "perimetre": "Sujet n° 1, clos : les docks et la navigation, jusqu'à la page /musique, sa fonctionnalité « ajouter un morceau » et sa donnée. Prochain sujet : la Métamorphose (inventaire seulement).",
  "familles": [
   {
    "id": "interfaces",
@@ -70,13 +70,13 @@
    "pages": [
     "*"
    ],
-   "etat": "a-verifier"
+   "etat": "verifie"
   },
   {
    "id": "bloc-aime",
    "famille": "interfaces",
    "nom": "Orbe : menu et Mon confort",
-   "fonction": "L'orbe ouvre le menu (accueil, à propos, déconnexion) et le choix de l'orbe : chaque orbe règle la taille du texte, l'espacement, le contraste, le mouvement et les sons.",
+   "fonction": "L'orbe ouvre le menu (accueil, à propos) et le choix de l'orbe : chaque orbe règle la taille du texte, l'espacement, le contraste, le mouvement et les sons.",
    "pages": [
     "*"
    ],
@@ -96,7 +96,7 @@
    "id": "bloc-espace",
    "famille": "interfaces",
    "nom": "Rond du profil : l'espace",
-   "fonction": "Sans compte : entrer dans AIME sans quitter la page. Avec un compte : les dossiers de l'espace (projets, partagés, archives, profil).",
+   "fonction": "Sans compte : entrer dans AIME sans quitter la page. Avec un compte : « Mon espace » et ses quatre dossiers (projets, partagés, archives, profil), et la seule « Déconnexion » du site.",
    "pages": [
     "*"
    ],
@@ -126,7 +126,7 @@
    "id": "mode-musique",
    "famille": "interfaces",
    "nom": "Dock du bas · Musique",
-   "fonction": "Écouter sans quitter la page : les fichiers choisis sur l'appareil, ou les extraits lancés depuis le site ; un lien vers la journée en musique.",
+   "fonction": "Écouter sans quitter la page. Deux sources, jamais confondues : « Fichier de cet appareil » (lu ici, rien n'est envoyé) et « Mes morceaux », la bibliothèque du compte sur la journée en musique.",
    "pages": [
     "*"
    ],
@@ -140,7 +140,17 @@
    "pages": [
     "*"
    ],
-   "etat": "a-verifier"
+   "etat": "verifie"
+  },
+  {
+   "id": "docks-studio",
+   "famille": "interfaces",
+   "nom": "Docks du Studio",
+   "fonction": "Le Studio a ses propres docks (outils, fils, progression), avec la même grammaire que ceux du site : un dock en haut, un dock en bas, une orbe.",
+   "pages": [
+    "/studio/*"
+   ],
+   "etat": "verifie"
   },
   {
    "id": "page-musique",
@@ -250,7 +260,7 @@
    "pages": [
     "/studio/*"
    ],
-   "etat": "a-verifier"
+   "etat": "verifie"
   },
   {
    "id": "confort",
@@ -270,7 +280,7 @@
    "pages": [
     "*"
    ],
-   "etat": "a-verifier"
+   "etat": "verifie"
   },
   {
    "id": "session",
@@ -323,7 +333,7 @@
    "pages": [
     "*"
    ],
-   "etat": "a-verifier"
+   "etat": "verifie"
   },
   {
    "id": "extraits-deezer",
@@ -432,7 +442,7 @@
    "de": "dock-haut",
    "vers": "verbes",
    "nature": "contient",
-   "etat": "a-verifier"
+   "etat": "verifie"
   },
   {
    "de": "dock-haut",
@@ -504,13 +514,13 @@
    "de": "verbes",
    "vers": "naviguer",
    "nature": "declenche",
-   "etat": "a-verifier"
+   "etat": "verifie"
   },
   {
    "de": "pied",
    "vers": "naviguer",
    "nature": "declenche",
-   "etat": "a-verifier"
+   "etat": "verifie"
   },
   {
    "de": "naviguer",
@@ -570,7 +580,7 @@
    "de": "mode-musique",
    "vers": "lecteur",
    "nature": "appelle",
-   "etat": "a-verifier"
+   "etat": "verifie"
   },
   {
    "de": "mode-musique",
@@ -582,7 +592,7 @@
    "de": "lecteur",
    "vers": "fichiers-appareil",
    "nature": "lit",
-   "etat": "a-verifier"
+   "etat": "verifie"
   },
   {
    "de": "page-musique",
@@ -691,6 +701,18 @@
    "vers": "notifications",
    "nature": "emet",
    "etat": "prevu"
+  },
+  {
+   "de": "routeur-studio",
+   "vers": "docks-studio",
+   "nature": "affiche",
+   "etat": "verifie"
+  },
+  {
+   "de": "docks-studio",
+   "vers": "naviguer",
+   "nature": "declenche",
+   "etat": "a-verifier"
   }
  ]
 }

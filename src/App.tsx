@@ -18,7 +18,7 @@ const PAGES: Record<string, [() => React.JSX.Element, string]> = {
   '/': [LeMondeAime, 'LE MONDE AIME — le site officiel de l’union'],
   '/a-propos': [APropos, 'À propos d’AIME'],
   '/point-zero': [PointZero, 'LE MONDE AIME — Point Zéro'],
-  '/buro': [Buro, 'LE MONDE AIME — Votre espace'],
+  '/buro': [Buro, 'LE MONDE AIME — Mon espace'],
   '/reseau': [Reseau, 'LE MONDE AIME — Prestataires et réseau'],
   '/entrer': [Entrer, 'LE MONDE AIME — Entrer'],
   '/a-plus': [APlus, 'LE MONDE AIME — A+'],

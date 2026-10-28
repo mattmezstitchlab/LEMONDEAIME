@@ -132,7 +132,7 @@ export function ApercuEspace() {
   return (
     <div className="ecran" role="region" aria-label="Aperçu de l’Espace">
       <div className="ecran-haut">
-        <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, fontWeight: 700 }}><Orbe taille={22} />Votre espace</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, fontWeight: 700 }}><Orbe taille={22} />Mon espace</span>
         <nav aria-label="Chemin" style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, color: '#55555A', overflow: 'hidden', whiteSpace: 'nowrap' }}>
           {chemin.map(([l, f], k) => <span key={k} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>{k > 0 && <span aria-hidden="true">›</span>}{f ? <button type="button" onClick={f} style={{ border: 0, background: 'none', padding: 0, color: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>{l}</button> : <span style={{ color: k === chemin.length - 1 ? '#0B0B0C' : undefined, fontWeight: k === chemin.length - 1 ? 600 : 400 }}>{l}</span>}</span>)}
         </nav>

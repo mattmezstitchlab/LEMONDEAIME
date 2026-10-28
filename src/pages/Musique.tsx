@@ -23,6 +23,7 @@ export default function Musique() {
       <main id="contenu" style={{ padding: '40px var(--marge) 140px' }}>
         <h1 className="grand-mot" style={{ textAlign: 'center', fontSize: 'clamp(52px, 11vw, 190px)' }}>Musique</h1>
         <p style={{ margin: '18px auto 0', maxWidth: '36rem', textAlign: 'center', fontSize: 'clamp(18px, 1.7vw, 24px)', lineHeight: 1.35 }}>La journée en musique : chaque moment du Jour J, dans l’ordre, avec ses morceaux. La playlist est la timeline.</p>
+        <p className="profil-note musique-ici" style={{ margin: '14px auto 0', maxWidth: '36rem', textAlign: 'center' }}>Ici, les morceaux de votre compte. Un fichier écouté depuis le dock du bas reste sur votre appareil : il n’apparaît pas ici.</p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap', marginTop: 28 }}>
           {journee.length > 0 && <button type="button" className="bouton noir" onClick={() => jouerListe(journee.map(enPiste))}>Écouter toute la journée · {journee.length} extrait{journee.length > 1 ? 's' : ''}</button>}
         </div>

@@ -6,12 +6,14 @@ export type Noeud = { id: string; famille: string; nom: string; fonction: string
   sources?: Ref[]; donnees?: { lit: string[]; ecrit: string[] }; roles?: string[]; tests?: TestRef[]; stockage?: string; note?: string };
 export type Lien = { de: string; vers: string; nature: string; etat?: Etat };
 export type Parcours = { id: string; nom: string; texte: string; etapes: string[] };
-export type Audit = { id: string; fonction: string; moteur: string; donnees: string[]; destinations: string[]; points?: { fichier: string; texte: string }[]; statut: string; raison: string };
+export type Audit = { id: string; fonction: string; moteur: string; donnees: string[]; destinations: string[]; points?: { fichier: string; texte: string }[]; statut: string; raison: string;
+  resolution?: { etat: 'resolu' | 'decide' | 'a-verifier'; decision: string; tests: TestRef[]; fichiers: string[] } };
 export type Reseau = { titre: string; perimetre: string; familles: Famille[]; parcours: Parcours[]; noeuds: Noeud[]; liens: Lien[]; depot?: string; branche?: string; audit?: Audit[] };
 export type Preuve = { date: string; commit: string; environnement: string; code_modifie_depuis_le_commit?: boolean; resultats: { test: string; ok: boolean }[] };
 export type Entree = { cible: string; total: number; docks: number; libelles: string[]; points: { fichier: string; ligne: number; composant: string | null; libelle: string | null }[]; doublonDock: boolean; libellesDifferents: boolean };
 export const ETATS: Record<Etat, string>;
 export const STATUTS: Record<string, string>;
+export const RESOLUTIONS: Record<string, string>;
 export const NATURES: Record<string, string>;
 export function noeud(r: Reseau, id: string): Noeud | null;
 export function etatLien(r: Reseau, l: Lien): Etat;

@@ -69,13 +69,19 @@ test('le premier parcours va du dock du haut à une donnée, chaque étape reli�
   assert.equal(O.noeud(reseau, 'notifications').etat, 'prevu');
 });
 
-test('les doublons signalés sont tirés du code, et rien n’est retiré', () => {
-  const studio = O.entrees(inventaire).find(e => e.cible === '/studio/atelier');
-  assert.ok(studio.libelles.includes('Studio') && studio.libelles.includes('Atelier de broderie'));
-  assert.ok(studio.points.filter(x => x.fichier === 'src/charte/Recherche.tsx').length === 2, 'la loupe propose deux fois le Studio');
-  assert.ok(O.entrees(inventaire).find(e => e.cible === '/buro').doublonDock);
-  assert.equal((lire('src/charte/Charte.tsx').match(/seDeconnecter\(\)/g) || []).length, 2, 'les deux « Déconnexion » sont bien dans le dock du haut');
-  for (const a of reseau.audit) assert.ok(O.STATUTS[a.statut] && a.raison.length > 40, a.id);
+test('les doublons résolus le sont dans le code, et les accès utiles restent', () => {
+  const E = O.entrees(inventaire);
+  const studio = E.find(e => e.cible === '/studio/atelier');
+  assert.equal(studio.points.filter(x => x.fichier === 'src/charte/Recherche.tsx').length, 1, 'la loupe propose le Studio une seule fois');
+  assert.ok(studio.points.filter(x => x.fichier !== 'src/charte/Recherche.tsx').length >= 3, 'les autres accès au Studio restent');
+  assert.equal((lire('src/charte/Charte.tsx').match(/seDeconnecter\(\)/g) || []).length, 1, 'une seule « Déconnexion » dans le dock du haut');
+  assert.ok(!E.some(e => e.libelles.includes('Votre espace')), 'l’espace porte un seul nom : « Mon espace »');
+  assert.ok(E.find(e => e.cible === '/buro').libelles.includes('Ouvrir mon espace'));
+  assert.equal(E.find(e => e.cible.startsWith('/buro?lieu=')).total >= 1, true, 'les dossiers de l’espace restent des raccourcis');
+  for (const a of reseau.audit) {
+    assert.ok(O.STATUTS[a.statut] && a.raison.length > 40, a.id);
+    assert.ok(a.resolution, a.id + ' : pas de décision');
+  }
 });
 
 test('causalité : décaler un moment suit les prérequis, sans rien modifier ni envoyer', () => {
