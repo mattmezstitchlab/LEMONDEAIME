@@ -1,8 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Tete, DockBas, VerbesSite, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import data from '../lib/briques.json';
-import { initiales, lireProfil, type Profil, type ProjetPublic } from '../lib/reseau';
+import { envoyerDemande, lireProfil, photoProfil, type Profil, type ProjetPublic } from '../lib/reseau';
+import { CarteReseau, type Carte } from '../charte/CartePersonne';
+import { EntrerBloc } from '../charte/EntrerBloc';
+import { useSession } from '../lib/session';
+import { useMeta } from '../lib/metamorphose';
+import { dateLisible, lireDate } from '../../api/_orbe-local.mjs';
 import { EXEMPLES, FICHES, UNION_EXEMPLE, domaine, exemple, type Exemple } from '../lib/reseau-exemples';
 
 type Brique = { n: string; name: string; fam: string; does: string; w: string; b: string; c: string; cl: string };
@@ -113,29 +118,79 @@ function FicheExemple({ e }: { e: Exemple }) {
   );
 }
 
+/* Écrire à la personne depuis sa fiche : date, lieu, invités, message. Elle reçoit la demande dans son espace, avec mon nom et mon e-mail. */
+function Demander({ p, dateCherchee }: { p: Profil; dateCherchee: string | null }) {
+  const session = useSession();
+  const [etat, setEtat] = useState<{ envoi?: boolean; ok?: boolean; raison?: string }>({});
+  const prenom = p.nom.split(' ')[0];
+  const envoyer = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); const f = new FormData(e.currentTarget);
+    setEtat({ envoi: true });
+    const r = await envoyerDemande(p.ref!, { jour: String(f.get('jour') || ''), lieu: String(f.get('lieu') || ''), invites: String(f.get('invites') || ''), message: String(f.get('message') || '') });
+    setEtat(r.ok ? { ok: true, raison: 'Demande envoyée : ' + prenom + ' la retrouve dans son espace et vous répond par e-mail.' } : { ok: false, raison: r.raison || 'Envoi impossible.' });
+  };
+  return (
+    <section id="demande" aria-labelledby="titre-demande" className="section blanche" style={{ margin: '80px calc(-1 * var(--marge)) 0' }}>
+      <p className="surtitre">Demande</p>
+      <h2 id="titre-demande" className="titre" style={{ maxWidth: '20ch' }}>Écrire à {prenom}</h2>
+      {!session
+        ? <div style={{ marginTop: 24, maxWidth: 520 }}><p className="chapeau" style={{ marginTop: 0 }}>Entrez dans AIME pour envoyer une demande : {prenom} pourra vous répondre, sans que votre adresse soit publique.</p><EntrerBloc retour={'/reseau/' + p.ref} /></div>
+        : etat.ok ? <p className="chapeau" role="status">{etat.raison}</p>
+        : <form onSubmit={envoyer} style={{ marginTop: 32, display: 'grid', gap: 16, maxWidth: 620 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
+            <label className="etiquette-champ">Date<input className="champ" type="date" name="jour" defaultValue={dateCherchee || ''} /></label>
+            <label className="etiquette-champ">Lieu<input className="champ" name="lieu" maxLength={120} placeholder="Ville, domaine…" /></label>
+            <label className="etiquette-champ">Invités<input className="champ" name="invites" type="number" min={1} max={99999} inputMode="numeric" /></label>
+          </div>
+          <label className="etiquette-champ">Votre message<textarea className="champ" name="message" required minLength={5} maxLength={1000} rows={5} style={{ height: 'auto', padding: 14, lineHeight: 1.5 }} placeholder={'Bonjour ' + prenom + ', …'} /></label>
+          <p className="profil-note">{prenom} verra votre nom et votre adresse e-mail ({session.email}) pour vous répondre.</p>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+            <button className="bouton noir" type="submit" disabled={etat.envoi}>{etat.envoi ? 'Envoi…' : 'Envoyer ma demande'}</button>
+            <p role="status" aria-live="polite" style={{ margin: 0, fontWeight: 600, color: '#A3122A' }}>{etat.ok === false ? etat.raison : ''}</p>
+          </div>
+        </form>}
+    </section>
+  );
+}
+
 function FicheProfil({ refPublique }: { refPublique: string }) {
+  const [meta] = useMeta();
+  const date = lireDate(meta.date);
   const [p, setP] = useState<Profil | null | undefined>(undefined);
   const [projets, setProjets] = useState<ProjetPublic[]>([]);
-  useEffect(() => { lireProfil(refPublique).then(r => { setP(r.ok ? r.profil || null : null); setProjets(r.projets || []); if (r.profil) document.title = 'AIME — Réseau · ' + r.profil.nom; }); }, [refPublique]);
+  useEffect(() => { lireProfil(refPublique, date).then(r => { setP(r.ok ? r.profil || null : null); setProjets(r.projets || []); if (r.profil) document.title = 'AIME — Réseau · ' + r.profil.nom; }); }, [refPublique, date]);
   if (p === undefined) return <p style={{ fontSize: 18 }}>Chargement…</p>;
   if (p === null) return <><h1 className="titre">Profil introuvable</h1><p className="chapeau">Ce profil n’existe pas, ou la personne a choisi de ne plus apparaître. <Lien href="/reseau">Retour au Réseau</Lien></p></>;
   const d = domaine(p.domaine);
   const briques = [...new Set(projets.flatMap(x => x.briques))];
+  const carte: Carte = { href: '/reseau/' + p.ref, nom: p.nom, etiquette: [d?.label, p.metier].filter(Boolean).join(' · '), ref: p.ref, photo: p.photo ? photoProfil(p.ref!) : undefined, alt: 'Photo de ' + p.nom, etat: p.etat || null, date };
+  const prest = p.prestations || [];
   return (
     <>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: 'clamp(28px, 4vw, 64px)', alignItems: 'end' }}>
-        <div aria-hidden="true" style={{ aspectRatio: '4 / 5', borderRadius: 14, background: 'var(--nacre)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'clamp(72px, 12vw, 160px)', fontWeight: 600, letterSpacing: '-0.04em', maxHeight: '78vh' }}>{initiales(p.nom)}</div>
+        <div style={{ maxWidth: 460 }}><CarteReseau c={carte} /></div>
         <div>
           <p className="surtitre">{[d?.label, p.metier, p.ville].filter(Boolean).join(' · ')}</p>
           <h1 className="titre" style={{ fontSize: 'clamp(48px, 7vw, 112px)', lineHeight: .9 }}>{p.nom}</h1>
           {p.bio && <p className="chapeau" style={{ whiteSpace: 'pre-line' }}>{p.bio}</p>}
-          {p.site && <p style={{ marginTop: 24, fontSize: 18, fontWeight: 600 }}><a href={p.site} target="_blank" rel="noopener nofollow ugc">{p.site.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}<span className="sr-only"> (nouvel onglet)</span></a></p>}
-          {projets.length > 0 && <div style={{ marginTop: 32 }}><a className="bouton noir" href="#module">Voir son module</a></div>}
+          {p.etat && date && <p className={'pastille-fiche ' + p.etat}>{{ libre: 'Libre', option: 'En option', prise: 'Pas libre' }[p.etat]} le {dateLisible(date)}</p>}
+          <dl className="fiche-faits">
+            {p.zone && <><dt>Intervient</dt><dd>{p.zone}</dd></>}
+            {p.langues && <><dt>Langues</dt><dd>{p.langues}</dd></>}
+            {p.tarif && <><dt>Tarif</dt><dd>{p.tarif}</dd></>}
+          </dl>
+          {(p.site || (p.liens || []).length > 0) && <p style={{ marginTop: 24, fontSize: 18, fontWeight: 600, display: 'flex', gap: '8px 20px', flexWrap: 'wrap' }}>{[p.site, ...(p.liens || [])].filter(Boolean).map(u => <a key={u} href={u} target="_blank" rel="noopener nofollow ugc">{u!.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}<span className="sr-only"> (nouvel onglet)</span></a>)}</p>}
+          <div style={{ marginTop: 32, display: 'flex', gap: 10, flexWrap: 'wrap' }}><a className="bouton noir" href="#demande">Écrire à {p.nom.split(' ')[0]}</a>{projets.length > 0 && <a className="bouton" href="#module">Voir son module</a>}</div>
         </div>
       </div>
+      {prest.length > 0 && <section aria-labelledby="titre-prest" style={{ marginTop: 'clamp(64px, 8vw, 120px)' }}>
+        <p className="surtitre">Prestations</p><h2 id="titre-prest" className="titre">Ce que {p.nom.split(' ')[0]} propose</h2>
+        <ul className="fiche-prest">{prest.map(x => <li key={x.titre}><b>{x.titre}</b>{x.texte && <span>{x.texte}</span>}</li>)}</ul>
+      </section>}
       {briques.length
         ? <Module titre={'Son module · ' + projets.length + ' projet' + (projets.length > 1 ? 's' : '') + ' public' + (projets.length > 1 ? 's' : '') + ' : ' + projets.slice(0, 3).map(x => x.titre).join(', ')} monde={p.domaine === 'broderie' ? 'b' : 'w'} colonnes={[['Ses briques', briques]]} />
         : <section className="section blanche" style={{ margin: '80px calc(-1 * var(--marge)) 0' }}><p className="surtitre">Son module</p><h2 className="titre" style={{ maxWidth: '22ch' }}>Il s’allumera avec ses projets publics.</h2><div style={{ marginTop: 40 }}><MiniGrille allumees={{}} label="Son module dans la Grille 44" /></div></section>}
+      <Demander p={p} dateCherchee={date} />
     </>
   );
 }

@@ -21,6 +21,30 @@ export function useSession() {
   }, []);
   return p;
 }
+/* la photo du compte : une petite image (WebP, 512 px au plus, 160 Ko au plus), enregistrée sur le compte */
+export async function changerPhoto(image: string | null): Promise<{ ok: boolean; raison?: string }> {
+  try {
+    const r = await fetch('/api/auth/update-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ image }) });
+    if (!r.ok) return { ok: false, raison: 'La photo n’a pas pu être enregistrée.' };
+    if (cache) { cache = { ...cache, image }; const v = cache; abonnes.forEach(f => f(v)); }
+    return { ok: true };
+  } catch { return { ok: false, raison: 'Connexion impossible : vérifiez votre réseau.' }; }
+}
+export async function reduirePhoto(f: File): Promise<string> {
+  const url = URL.createObjectURL(f);
+  try {
+    const img = await new Promise<HTMLImageElement>((ok, ko) => { const i = new Image(); i.onload = () => ok(i); i.onerror = ko; i.src = url; });
+    for (const [cote, q] of [[512, .82], [400, .75], [320, .7]] as const) {
+      const k = Math.min(1, cote / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext('2d')!.drawImage(img, 0, 0, c.width, c.height);
+      const d = c.toDataURL('image/webp', q);
+      if (d.startsWith('data:image/webp') && d.length <= 160000) return d;
+      const j = c.toDataURL('image/jpeg', q); if (j.length <= 160000) return j;
+    }
+    throw new Error('trop lourde');
+  } finally { URL.revokeObjectURL(url); }
+}
 export async function seDeconnecter() {
   await fetch('/api/auth/sign-out', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}', credentials: 'same-origin' }).catch(() => {});
   cache = null; abonnes.forEach(f => f(null));

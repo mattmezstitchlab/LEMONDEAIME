@@ -2,43 +2,27 @@ import { useEffect, useState } from 'react';
 import { Tete, DockBas, VerbesSite, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
-import { initiales, lireReseau, type Profil } from '../lib/reseau';
+import { lireReseau, photoProfil, type Profil } from '../lib/reseau';
+import { CarteReseau, type Carte } from '../charte/CartePersonne';
+import { useMeta } from '../lib/metamorphose';
+import { lireDate } from '../../api/_orbe-local.mjs';
 import { DOMAINES, FICHES, UNION_EXEMPLE, domaine } from '../lib/reseau-exemples';
 
-/* Une carte du Réseau : la même que l'Annuaire d'AIME Wedding (photo 4:5, famille, nom, crédit). */
-export type Carte = { href: string; nom: string; etiquette: string; photo?: string; alt?: string; exemple?: boolean; credit?: string | null };
-export function CarteReseau({ c }: { c: Carte }) {
-  return (
-    <article style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <Lien className="carte-reseau" href={c.href} style={{ display: 'flex', flexDirection: 'column', gap: 14, textDecoration: 'none', color: 'inherit' }}>
-        <div className="ph" style={{ position: 'relative', aspectRatio: '4 / 5', borderRadius: 10, overflow: 'hidden', background: c.photo ? '#E4E4E1' : 'var(--nacre)' }}>
-          {c.photo
-            ? <img src={c.photo} alt={c.alt || ''} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 28%', display: 'block' }} />
-            : <span aria-hidden="true" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'clamp(48px, 6vw, 80px)', fontWeight: 600, letterSpacing: '-0.04em' }}>{initiales(c.nom)}</span>}
-          {c.exemple && <span style={{ position: 'absolute', top: 10, left: 10, padding: '4px 9px', borderRadius: 999, background: 'rgba(255,255,255,.92)', fontSize: 12, fontWeight: 600 }}>Exemple</span>}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '.12em', textTransform: 'uppercase', color: '#55555A' }}>{c.etiquette}</span>
-          <span style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.03em' }}>{c.nom}</span>
-        </div>
-      </Lien>
-      {c.credit !== undefined && (c.credit
-        ? <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: '#3A3A3F' }}><span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: '50%', background: '#3B6FD8', flex: 'none' }} />{c.credit}</p>
-        : <p style={{ margin: 0, fontSize: 14, color: '#55555A' }}>Pas encore crédité dans une union</p>)}
-    </article>
-  );
-}
-const deProfil = (p: Profil): Carte & { domaine: string } => ({ href: '/reseau/' + p.ref, nom: p.nom, etiquette: [domaine(p.domaine)?.label, p.metier].filter(Boolean).join(' · '), domaine: p.domaine });
+export { CarteReseau, type Carte } from '../charte/CartePersonne';
+const deProfil = (p: Profil, date: string | null): Carte & { domaine: string } => ({ href: '/reseau/' + p.ref, nom: p.nom, etiquette: [domaine(p.domaine)?.label, p.metier].filter(Boolean).join(' · '), domaine: p.domaine,
+  ref: p.ref, photo: p.photo && p.ref ? photoProfil(p.ref) : undefined, alt: p.photo ? 'Photo de ' + p.nom : undefined, etat: p.etat || null, date });
 
 export default function Reseau() {
   const session = useSession();
   const [profils, setProfils] = useState<Profil[] | null>(null);
   const [filtre, setFiltre] = useState<string | null>(() => { const d = new URLSearchParams(window.location.search).get('domaine'); return d && domaine(d) ? d : null; });
-  useEffect(() => { lireReseau().then(r => setProfils(r.ok ? r.profils || [] : [])); }, []);
+  const [meta] = useMeta();
+  const date = lireDate(meta.date);
+  useEffect(() => { lireReseau(date).then(r => setProfils(r.ok ? r.profils || [] : [])); }, [date]);
   const cartes = [
-    ...FICHES.filter(e => e.vrai).map(e => ({ href: '/reseau/' + e.slug, nom: e.nom, etiquette: domaine(e.domaine)!.label + ' · ' + e.famille, photo: e.photo, alt: e.alt, domaine: e.domaine })),
-    ...(profils || []).filter(p => p.ref).map(deProfil),
-    ...FICHES.filter(e => !e.vrai).map(e => ({ href: '/reseau/' + e.slug, nom: e.nom, etiquette: e.famille, photo: e.photo, alt: e.alt, exemple: true, credit: e.domaine === 'mariage' ? (e.union ? 'Crédité dans ' + UNION_EXEMPLE : null) : undefined, domaine: e.domaine })),
+    ...FICHES.filter(e => e.vrai).map(e => ({ href: '/reseau/' + e.slug, nom: e.nom, etiquette: domaine(e.domaine)!.label + ' · ' + e.famille, photo: e.photo, alt: e.alt, domaine: e.domaine, fiche: { nom: e.nom, metier: e.titre, bio: e.texte } })),
+    ...(profils || []).filter(p => p.ref).map(p => deProfil(p, date)),
+    ...FICHES.filter(e => !e.vrai).map(e => ({ href: '/reseau/' + e.slug, nom: e.nom, etiquette: e.famille, photo: e.photo, alt: e.alt, exemple: true, fiche: { nom: e.nom, bio: e.texte }, credit: e.domaine === 'mariage' ? (e.union ? 'Crédité dans ' + UNION_EXEMPLE : null) : undefined, domaine: e.domaine })),
   ];
   const liste = cartes.filter(c => !filtre || c.domaine === filtre);
   const d = filtre ? domaine(filtre) : null;

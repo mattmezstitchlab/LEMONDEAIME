@@ -166,7 +166,7 @@ export default function LeMondeAime() {
           return <button key={f || 'tous'} type="button" aria-pressed={on} onClick={() => setFamille(f)} style={{ flex: 'none', minHeight: 44, padding: '0 18px', borderRadius: 999, border: '1px solid #0B0B0C', background: on ? '#0B0B0C' : '#fff', color: on ? '#fff' : '#0B0B0C', fontSize: 15, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>{f || 'Tous'}<span style={{ fontSize: 12 }}>{n}</span></button>; })}
       </div>
       <ul className="cartes ligne" tabIndex={0} aria-label="Les prestataires, à faire défiler">
-        {presta.map(e => <li key={e.slug} style={{ flexBasis: 'min(70vw, 280px)' }}><CarteReseau c={{ href: '/reseau/' + e.slug, nom: e.nom, etiquette: e.famille, photo: e.photo, alt: e.alt, exemple: true, credit: e.union ? 'Crédité dans ' + UNION_EXEMPLE : null }} /></li>)}
+        {presta.map(e => <li key={e.slug} style={{ flexBasis: 'min(70vw, 280px)' }}><CarteReseau c={{ href: '/reseau/' + e.slug, nom: e.nom, etiquette: e.famille, photo: e.photo, alt: e.alt, exemple: true, fiche: { nom: e.nom, bio: e.texte }, credit: e.union ? 'Crédité dans ' + UNION_EXEMPLE : null }} /></li>)}
       </ul>
     </section>,
     studio: c => <section id="studio" aria-labelledby="titre-studio" className={c}>

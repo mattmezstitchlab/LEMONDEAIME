@@ -68,6 +68,9 @@ const QUOTAS = {
   'espaces:creer': { max: 10, fenetre: 3600 },      /* projets créés : 10 par personne et par heure */
   'carte:enregistrer': { max: 60, fenetre: 3600 },  /* la Carte enregistrée sur le compte : 60 enregistrements par personne et par heure */
   'carte:lecture': { max: 120, fenetre: 600 },      /* une Carte ouverte par son lien public : 120 ouvertures par adresse IP et par 10 minutes */
+  'demande:personne': { max: 10, fenetre: 3600 },   /* demandes envoyées depuis une carte du Réseau : 10 par personne et par heure */
+  'orbe:ip': { max: 20, fenetre: 600 },             /* questions à l'orbe d'une carte : 20 par adresse IP et par 10 minutes */
+  'orbe:tous': { max: 600, fenetre: 3600 },         /* … et 600 par heure pour tout le site (le coût des appels à Claude) */
   'carte:demande:ip': { max: 3, fenetre: 600 },     /* écrire à une Carte : 3 demandes par adresse IP et par 10 minutes (comme Contact) */
   'carte:demande:boite': { max: 20, fenetre: 86400 },/* … et 20 demandes par Carte et par jour, pour qu'aucune personne ne soit submergée */
   'live:act': { max: 30, fenetre: 60 },             /* le direct : 30 actions par adresse IP et par minute */

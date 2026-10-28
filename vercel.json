@@ -5,6 +5,9 @@
   "functions": {
     "api/analyse.mjs": {
       "maxDuration": 30
+    },
+    "api/orbe.mjs": {
+      "maxDuration": 20
     }
   },
   "rewrites": [
