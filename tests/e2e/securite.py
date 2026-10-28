@@ -61,7 +61,7 @@ with sync_playwright() as p:
     def restants(pg):
         return sorted(pg.evaluate("""() => new Promise(ok => { const r = indexedDB.open('point-zero-library', 1); r.onsuccess = () => { const q = r.result.transaction('projects').objectStore('projects').getAll(); q.onsuccess = () => { r.result.close(); ok(q.result.map(x => x.id)); }; }; })"""))
     def deconnecter(pg, cocher):
-        pg.get_by_role('button', name='Votre espace, U').first.click(); pg.wait_for_timeout(300)
+        pg.get_by_role('button', name='Mon espace, U').first.click(); pg.wait_for_timeout(300)
         case = pg.get_by_role('checkbox', name='Effacer les ouvrages de cet appareil')
         etat = case.count() == 1 and not case.is_checked()
         if cocher and case.count(): case.check()
