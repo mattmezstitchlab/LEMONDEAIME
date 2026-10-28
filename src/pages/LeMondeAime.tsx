@@ -77,6 +77,22 @@ const UNIVERS_M: (UniversM & { diapos: Diapo[] })[] = [
   { id: 'paris', nom: 'Paris', vignette: W('union-ines-hugo'), diapos: [{ src: W('union-ines-hugo'), who: 'Inès & Hugo', where: 'Les toits de Paris', alt: UNIONS[1].alt }, { src: W('invites-copains'), who: 'Les copains de fac', where: 'Une rue pavée', alt: INVITES[2].alt }] },
   { id: 'insolite', nom: 'Insolite', vignette: W('laverie'), diapos: [DIAPOS[1], DIAPOS[2], DIAPOS[3], DIAPOS[7]] },
 ];
+const S = (n: string) => '/media/studio/' + n + '.jpg';
+const STUDIO = [
+  { src: S('dessiner'), titre: 'Dessiner', texte: 'Un patron qui vous ressemble : les initiales des mariés, une couronne de fleurs, la date. Rendu réaliste, case par case.', alt: 'Le Studio : une initiale botanique brodée au point de croix, entourée de fleurs roses' },
+  { src: S('fils'), titre: 'Les fils dans le dock', texte: 'Chaque fil DMC du motif, avec son anneau de progression et l’état du stock. Un geste pour changer de fil.', alt: 'Le Studio : les fils DMC du motif en pastilles dans le dock du bas' },
+  { src: S('patron'), titre: 'Le patron', texte: 'Réaliste, à plat ou en symboles : la même grille, lue comme vous brodez.', alt: 'Le Studio : le motif affiché en symboles de patron' },
+  { src: S('progression'), titre: 'La progression', texte: 'La timeline du patron, fil par fil, se remplit à mesure que vous brodez. Le cercle du dock montre où vous en êtes.', alt: 'Le Studio : la timeline du patron dans le dock du bas, couleur par couleur' },
+  { src: S('puzzle-pdf'), titre: 'Le puzzle PDF', texte: 'Un patron en plusieurs pages ? Les pages se recomposent sur une table magnétique, les raccords et les couleurs DMC se vérifient.', alt: 'Le Studio : un patron PDF recomposé sur la table de montage magnétique' },
+  { src: S('inviter'), titre: 'Inviter à rejoindre la grille', texte: 'Le rond du profil porte un « + » : quelqu’un regarde l’ouvrage en direct, depuis son appareil.', alt: 'Le Studio : le bloc « Inviter à rejoindre la grille » ouvert sous le dock du haut' },
+];
+const NOUVEAU = [
+  ['Le puzzle PDF magnétique', 'Les pages d’un patron se recomposent en une seule grille, raccords contrôlés.'],
+  ['Les fils dans le dock', 'Progression et stock de chaque fil, sans panneau qui encombre.'],
+  ['La timeline du patron', 'Ce qui est brodé, ce qui reste, couleur par couleur.'],
+  ['Chercher en français', '« rouge », « vert foncé » : le nuancier DMC répond, même en anglais.'],
+  ['Partout, sans rien perdre', 'Vos ouvrages se rangent dans votre espace AIME et vous suivent d’un appareil à l’autre.'],
+];
 const APLUS = [
   ['01', 'Votre vitrine', 'Votre page dans le Réseau : vos photos, vos vidéos, les unions où vous êtes crédité.'],
   ['02', 'Votre module', 'Les briques de la Grille 44 pensées pour votre métier : ce que vous voyez, faites et partagez.'],
@@ -84,6 +100,35 @@ const APLUS = [
   ['04', 'Vos modèles', 'Les gabarits de votre métier et les modèles de site au thème de votre domaine, à reprendre dans le Studio.'],
   ['05', 'Vendre et louer', 'Vos créations dans la Boutique, reliées à votre profil.'],
 ];
+
+/* le grand carrousel du Studio : des captures réelles de l'atelier, une utilisation par vue */
+function CarrouselStudio({ reduit }: { reduit: boolean }) {
+  const [k, setK] = useState(0);
+  const [lecture, setLecture] = useState(!reduit);
+  useEffect(() => { if (reduit) setLecture(false); }, [reduit]);
+  useEffect(() => { if (!lecture) return; const t = setInterval(() => setK(n => (n + 1) % STUDIO.length), 7000); return () => clearInterval(t); }, [lecture]);
+  const s = STUDIO[k];
+  const rond = { width: 48, height: 48, padding: 0, borderRadius: '50%', border: '1px solid #0B0B0C', background: '#fff', color: '#0B0B0C', display: 'flex', alignItems: 'center', justifyContent: 'center' } as const;
+  return (
+    <div className="carrousel-studio" role="region" aria-roledescription="carrousel" aria-label="Le Studio en six vues">
+      <div className="carrousel-ecran">
+        {STUDIO.map((x, n) => <img key={x.src} src={x.src} alt={n === k ? x.alt : ''} aria-hidden={n !== k} loading="lazy" style={{ opacity: n === k ? 1 : 0 }} />)}
+      </div>
+      <div className="carrousel-legende">
+        <p aria-live="polite" style={{ margin: 0 }}><span style={{ display: 'block', fontSize: 13, fontWeight: 600, letterSpacing: '.14em', textTransform: 'uppercase', color: '#55555A' }}>{String(k + 1).padStart(2, '0')} / {String(STUDIO.length).padStart(2, '0')}</span>
+          <span style={{ display: 'block', marginTop: 4, fontSize: 'clamp(22px, 2.4vw, 34px)', fontWeight: 600, letterSpacing: '-0.025em' }}>{s.titre}</span>
+          <span style={{ display: 'block', marginTop: 6, maxWidth: '46ch', fontSize: 17, lineHeight: 1.45, color: '#3A3A3F' }}>{s.texte}</span></p>
+        <span style={{ display: 'flex', gap: 8, flex: 'none' }}>
+          <button type="button" style={rond} aria-label="Vue précédente" onClick={() => setK((k - 1 + STUDIO.length) % STUDIO.length)}><Fleche d="M15 5l-7 7 7 7" /></button>
+          <button type="button" style={rond} aria-label={lecture ? 'Mettre le carrousel en pause' : 'Relancer le carrousel'} onClick={() => setLecture(l => !l)}>{lecture ? <Fleche d="M8 5v14M16 5v14" /> : <Fleche d="M8 5l11 7-11 7z" />}</button>
+          <button type="button" style={rond} aria-label="Vue suivante" onClick={() => setK((k + 1) % STUDIO.length)}><Fleche d="M9 5l7 7-7 7" /></button>
+        </span>
+      </div>
+      <div className="carrousel-points" role="group" aria-label="Choisir une vue">{STUDIO.map((x, n) => <button key={x.src} type="button" aria-current={n === k ? 'true' : undefined} aria-label={x.titre} onClick={() => { setK(n); setLecture(false); }}>{x.titre}</button>)}</div>
+      <p style={{ margin: '10px 0 0', fontSize: 13, color: '#55555A' }}>Captures du Studio.</p>
+    </div>
+  );
+}
 
 export default function LeMondeAime() {
   const [meta, setMeta] = useMeta();
@@ -124,6 +169,23 @@ export default function LeMondeAime() {
         {presta.map(e => <li key={e.slug} style={{ flexBasis: 'min(70vw, 280px)' }}><CarteReseau c={{ href: '/reseau/' + e.slug, nom: e.nom, etiquette: e.famille, photo: e.photo, alt: e.alt, exemple: true, credit: e.union ? 'Crédité dans ' + UNION_EXEMPLE : null }} /></li>)}
       </ul>
     </section>,
+    studio: c => <section id="studio" aria-labelledby="titre-studio" className={c}>
+      <Entete id="titre-studio" sur="Studio" texte="Le Studio d’AIME : tout se crée dans une grille. Il commence par la broderie, du premier motif à la dernière croix." />
+      <CarrouselStudio reduit={confort.mouvement === 'reduit'} />
+      <div style={{ marginTop: 28, display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}><Lien className="bouton noir" href="/studio/atelier">Ouvrir le Studio</Lien><Lien className="bouton" href="/studio/boutique">Les patrons à broder</Lien></div>
+      <div className="bande-sombre">
+        <p className="surtitre" style={{ color: 'rgba(255,255,255,.65)' }}>Le fil qui relie</p>
+        <h3 className="titre" style={{ maxWidth: '18ch', color: '#fff' }}>Brodez votre mariage ensemble.</h3>
+        <p className="chapeau" style={{ color: 'rgba(255,255,255,.8)' }}>Les initiales des mariés, la date, le mouchoir, le coussin des alliances : brodés à plusieurs, chacun chez soi, sur la même grille.</p>
+        <ul className="ensemble">
+          <li><b>Inviter à regarder</b><span>Une personne suit l’ouvrage en direct, en lecture seule. Le patron reste sur votre appareil.</span></li>
+          <li><b>À plusieurs, partie par partie <span className="bientot" style={{ background: '#fff', color: '#0B0B0C' }}>Bientôt</span></b><span>Un même patron découpé en parties qui s’ouvrent à leur date : chacun avance, le fil commun montre les progrès de tous.</span></li>
+          <li><b>Commenter sur la grille <span className="bientot" style={{ background: '#fff', color: '#0B0B0C' }}>Bientôt</span></b><span>Une petite orbe posée sur une case ouvre l’échange, là où se trouve la croix dont on parle.</span></li>
+        </ul>
+        <p className="surtitre" style={{ marginTop: 48, color: 'rgba(255,255,255,.65)' }}>Nouveau · pensé pour les brodeuses</p>
+        <ol className="nouveau">{NOUVEAU.map(([t, x], k) => <li key={t}><span>{String(k + 1).padStart(2, '0')}</span><b>{t}</b><p>{x}</p></li>)}</ol>
+      </div>
+    </section>,
     invites: c => <section id="invites" aria-labelledby="titre-invites" className={c}>
       <Entete id="titre-invites" sur="Invités" texte="Les témoins, la table 7, les copains de fac. Chaque invité a sa page, ses souvenirs et sa place dans l’histoire." />
       <div className="grille-auto" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '40px 24px' }}>{INVITES.map(u => <Figure key={u.nom} x={u} ratio="4 / 3" />)}</div>
@@ -147,7 +209,7 @@ export default function LeMondeAime() {
       <Entete id="titre-espace" sur="L’Espace" texte="Un seul endroit pour tout. Les mêmes dossiers pour tout le monde, prêts dès l’arrivée : vos projets, votre profil, vos documents, et tout ce qu’il faut pour commencer." />
       <ApercuEspace />
       <p style={{ margin: '18px 0 0', fontSize: 15, color: '#55555A', textAlign: 'center' }}>Aperçu. Projets et Profil sont déjà dans votre espace ; Documents, Ressources, Prestataires, Tutoriels, Design System et A+ y arrivent.</p>
-      <div style={{ marginTop: 28, display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}><Lien className="bouton noir" href="/buro">Ouvrir mon espace</Lien><Lien className="bouton" href="/studio/">Ouvrir le Studio</Lien></div>
+      <div style={{ marginTop: 28, display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}><Lien className="bouton noir" href="/buro">Ouvrir mon espace</Lien><Lien className="bouton" href="/studio/atelier">Ouvrir le Studio</Lien></div>
     </section>,
     aplus: c => <section id="aplus" aria-labelledby="titre-aplus" className={c}>
       <Entete id="titre-aplus" sur="A+" texte="Pour celles et ceux qui font l’union. Tout est déjà préparé dans votre espace : il ne reste qu’à y mettre votre métier." />

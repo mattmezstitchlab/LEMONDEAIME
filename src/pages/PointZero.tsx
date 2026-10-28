@@ -13,7 +13,7 @@ type Analyse = { domaine: string; label: string; studio: string; certitude: numb
 const D = data.briques as unknown as Record<string, Brique>;
 const G = data.grille as string[][];
 const FEEDS = Object.fromEntries(Object.entries(D).map(([k, v]) => [k, v.feeds]));
-const HREF: Record<string, string> = { union: '/', broderie: '/studio/atelier', sal: '/studio/atelier', formation: '/studio/', presentation: '/studio/', site: '/studio/' };
+const HREF: Record<string, string> = { union: '/', broderie: '/studio/atelier', sal: '/studio/atelier', formation: '/studio/atelier', presentation: '/studio/atelier', site: '/studio/atelier' };
 const EXEMPLES = ['Nous nous marions en juin, à la campagne', 'Je veux broder le portrait de mon chat', 'Je prépare une formation sur le point de croix', 'J’organise un concert entre amis'];
 const reduit = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
