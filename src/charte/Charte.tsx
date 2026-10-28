@@ -21,7 +21,7 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
   useEffect(() => { if (ouvert) menu.current?.querySelector('a')?.focus(); }, [ouvert]);
   const fermer = () => { setOuvert(false); bouton.current?.focus(); };
   /* le menu AIME® : la marque mère, ses studios, puis Le Monde AIME qui les rassemble */
-  const items: [string | null, string][] = [['/', 'AIME'], ['/aime-wedding', 'AIME Wedding'], ['/studio/', 'Brode Way'], ['/monde', 'Le Monde AIME']];
+  const items: [string | null, string][] = [['/', 'Le Monde AIME'], ['/studio/', 'StudiO'], ['/a-propos', 'À propos d’AIME']];
   return (
     <header className="tete">
       <span aria-hidden="true" />
@@ -49,7 +49,6 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
             {items.map(([h, l]) => <li key={l}>{h
               ? <Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setOuvert(false)} style={{ fontWeight: courant === h ? 700 : 500 }}>{l}</Lien>
               : <span aria-disabled="true" style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 46, padding: '0 12px', fontSize: 17, color: '#55555A' }}>{l}<span className="bientot">Bientôt</span></span>}</li>)}
-            <li style={{ borderTop: '1px solid #ECECE8', marginTop: 6, paddingTop: 6 }}><button type="button" onClick={() => { setOuvert(false); lancerVisite(); }}>Visite guidée · 2 min</button></li>
             {session && <li style={{ borderTop: '1px solid #ECECE8', marginTop: 6, paddingTop: 6 }}><button type="button" onClick={() => { setOuvert(false); seDeconnecter(); }}>Déconnexion</button></li>}
           </ul>
         </>}
@@ -64,10 +63,14 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
     </header>
   );
 }
-/* la visite guidée par le Point : sur l'accueil elle démarre tout de suite, ailleurs on y retourne d'abord */
-export function lancerVisite() {
-  if (window.location.pathname === '/') window.dispatchEvent(new Event('aime-visite'));
-  else window.location.assign('/?visite=1');
+/* Le dock du haut de tout le site : les rubriques du Monde AIME (des mots, pas de pictos). */
+export function VerbesSite({ actif }: { actif?: 'unions' | 'prestataires' | 'studio' }) {
+  return <>
+    <Verbe href="/#unions" actif={actif === 'unions'}>Unions</Verbe>
+    <Verbe href="/reseau?domaine=mariage" actif={actif === 'prestataires'}>Prestataires</Verbe>
+    <Verbe href="/studio/" actif={actif === 'studio'}>StudiO</Verbe>
+    <span className="outil" aria-disabled="true" style={{ color: '#55555A' }}>Boutique<span className="bientot">Bientôt</span></span>
+  </>;
 }
 export function Verbe({ href, children, actif }: { href: string; children: ReactNode; actif?: boolean }) {
   return <Lien className="outil" href={href} aria-current={actif ? 'page' : undefined}>{children}</Lien>;
@@ -112,10 +115,10 @@ export function Pied() {
     <footer className="pied">
       <Lien href="/" aria-label="AIME, accueil" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}><Orbe taille={28} /><span className="marque" style={{ fontSize: 22 }}>AIME<sup aria-hidden="true">®</sup></span></Lien>
       <nav aria-label="Plan du site">
-        {col('AIME', [['Manifeste', '/#manifeste'], ['Fondateur', '/#fondateur'], ['Vision', '/#vision']])}
-        {col('Le Monde AIME', [['Tous les projets', '/monde'], ['Réseau', '/reseau'], ['Point Zéro', '/point-zero'], ['AIME Wedding', '/aime-wedding'], ['Brode Way', '/studio/']])}
+        {col('Le Monde AIME', [['Les unions', '/#unions'], ['Prestataires', '/reseau?domaine=mariage'], ['Invités', '/#invites'], ['Collections', '/#collections']])}
+        {col('Créer', [['StudiO', '/studio/'], ['Broderie', '/studio/atelier'], ['Point Zéro', '/point-zero'], ['Boutique', null]])}
         {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil'], ['A+', '/a-plus']])}
-        {col('La maison', [['La Charte AIME', '/#docks'], ['Contact et presse', null], ['Mentions légales', null]])}
+        {col('La maison', [['À propos d’AIME', '/a-propos'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', null], ['Mentions légales', null]])}
       </nav>
       <div className="bas"><p style={{ margin: 0 }}>AIME® est la marque mère. LE MONDE AIME est une association.</p><p style={{ margin: 0 }}>© 2026 AIME®</p></div>
     </footer>

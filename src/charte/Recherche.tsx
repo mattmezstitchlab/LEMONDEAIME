@@ -7,11 +7,11 @@ import { FICHES, domaine } from '../lib/reseau-exemples';
 type Entree = { label: string; meta: string; href: string; groupe: string };
 const B = data.briques as unknown as Record<string, { name: string; fam: string; does: string }>;
 const PLAN: Entree[] = [
-  ...[['AIME', 'L’accueil, le concept', '/'], ['AIME Wedding', 'Le studio de l’union', '/aime-wedding'], ['Brode Way', 'Le studio de la broderie', '/studio/'], ['Le Monde AIME', 'Tous les studios et projets', '/monde'], ['Réseau', 'Les personnes et leurs modules', '/reseau'], ['Point Zéro', 'Commencer quelque chose', '/point-zero']]
-    .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Studios et pages' })),
-  ...[['Le studio', 'Une info, une seule fois', '/#studio'], ['Deux docks', 'Faire en haut, aller en bas', '/#docks'], ['Le Point', 'Le guide et ses neuf états', '/#point'], ['Principes', 'La Charte AIME', '/#principes'], ['Fondateur', 'Matthieu Lecointre', '/#fondateur']]
-    .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Le concept' })),
-  ...[['Votre espace', 'Projets, partagés, archives', '/buro'], ['Mon profil', 'Ce que le Réseau montre de moi', '/buro?lieu=profil'], ['Entrer', 'Google, clé d’accès ou lien e-mail', '/entrer'], ['A+', 'Aller plus loin', '/a-plus']]
+  ...[['Le Monde AIME', 'L’accueil, le site officiel de l’union', '/'], ['Les unions', 'Les pages des mariés', '/#unions'], ['Prestataires', 'Les métiers de l’union', '/reseau?domaine=mariage'], ['Invités', 'Chaque invité a sa page', '/#invites'], ['Collections', 'Les unions par univers', '/#collections']]
+    .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Le Monde AIME' })),
+  ...[['StudiO', 'Créer : broderie d’abord', '/studio/'], ['Atelier de broderie', 'Dessiner, broder, importer', '/studio/atelier'], ['Point Zéro', 'Commencer quelque chose', '/point-zero']]
+    .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Créer' })),
+  ...[['Votre espace', 'Projets, ouvrages, partagés, archives', '/buro'], ['Mon profil', 'Ce que le Réseau montre de moi', '/buro?lieu=profil'], ['Entrer', 'Google, clé d’accès ou lien e-mail', '/entrer'], ['A+', 'Aller plus loin', '/a-plus'], ['À propos d’AIME', 'La marque, l’association, le fondateur', '/a-propos']]
     .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Votre espace' })),
 ];
 const RESEAU: Entree[] = FICHES.map(f => ({ label: f.nom, meta: domaine(f.domaine)!.label + ' · ' + f.famille, href: '/reseau/' + f.slug, groupe: 'Réseau' }));

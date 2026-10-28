@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Tete, Verbe, BoutonBuro, Pied } from '../charte/Charte';
+import { Tete, VerbesSite, BoutonBuro, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import data from '../lib/briques.json';
 import { initiales, lireProfil, type Profil, type ProjetPublic } from '../lib/reseau';
@@ -146,7 +146,7 @@ export default function FicheReseau({ cle }: { cle: string }) {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/reseau" verbes={<><Verbe href="/monde">Découvrir</Verbe><Verbe href="/reseau" actif>Réseau</Verbe></>} />
+      <Tete courant="/reseau" verbes={<VerbesSite actif="prestataires" />} />
       <main id="contenu" style={{ padding: '32px var(--marge) 140px' }}>
         <nav aria-label="Fil d’Ariane" style={{ marginBottom: 32, fontSize: 15, fontWeight: 600 }}><Lien href="/reseau">Réseau</Lien> <span aria-hidden="true" style={{ color: '#8A8A86' }}>›</span> <span aria-current="page">{e ? e.nom : 'Profil'}</span></nav>
         {e ? <FicheExemple e={e} /> : /^[a-f0-9]{12}$/.test(cle) ? <FicheProfil refPublique={cle} /> : <><h1 className="titre">Profil introuvable</h1><p className="chapeau"><Lien href="/reseau">Retour au Réseau</Lien></p></>}

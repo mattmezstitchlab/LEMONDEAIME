@@ -1,11 +1,11 @@
-import { Tete, BoutonBuro, Pied } from '../charte/Charte';
+import { Tete, VerbesSite, BoutonBuro, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 
 export function APlus() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/a-plus" />
+      <Tete courant="/a-plus" verbes={<VerbesSite />} />
       <main id="contenu" style={{ padding: 'clamp(64px, 10vw, 140px) var(--marge) 140px', maxWidth: 900 }}>
         <p className="surtitre">Pour celles et ceux qui en font leur métier</p>
         <h1 className="titre" style={{ fontSize: 'clamp(64px, 13vw, 220px)', lineHeight: .84, textTransform: 'uppercase' }}>A+</h1>

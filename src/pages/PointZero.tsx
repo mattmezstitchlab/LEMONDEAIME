@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import { Tete, BoutonBuro, Pied, Visuel } from '../charte/Charte';
+import { Tete, VerbesSite, BoutonBuro, Pied, Visuel } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { ecrireBuro } from '../lib/buro';
@@ -13,7 +13,7 @@ type Analyse = { domaine: string; label: string; studio: string; certitude: numb
 const D = data.briques as unknown as Record<string, Brique>;
 const G = data.grille as string[][];
 const FEEDS = Object.fromEntries(Object.entries(D).map(([k, v]) => [k, v.feeds]));
-const HREF: Record<string, string> = { union: '/aime-wedding', broderie: '/studio/', sal: '/studio/', formation: '/monde', presentation: '/monde', site: '/monde' };
+const HREF: Record<string, string> = { union: '/', broderie: '/studio/atelier', sal: '/studio/atelier', formation: '/studio/', presentation: '/studio/', site: '/studio/' };
 const EXEMPLES = ['Nous nous marions en juin, à la campagne', 'Je veux broder le portrait de mon chat', 'Je prépare une formation sur le point de croix', 'J’organise un concert entre amis'];
 const reduit = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -76,12 +76,12 @@ export default function PointZero() {
   const pourquoi = !s || !an ? '' : an.raisons[sel!] ? 'Pourquoi : « ' + [...new Set(an.raisons[sel!].map(r => r.q))].slice(0, 4).join(' », « ') + ' »' : decoule[sel!] ? 'Découle de : ' + decoule[sel!].map(k => D[k].name).join(', ') : an.chemin.includes(sel!) ? 'Fait partie de la recette « ' + an.label + ' »' : an.ecartees[sel!] ? 'Écartée : « ' + an.ecartees[sel!] + ' »' : 'Pas concernée par ce projet.';
   const cert = !an ? '' : an.certitude >= 1 ? 'sûr' : an.certitude >= .6 ? 'probable' : an.certitude > 0 ? 'à confirmer' : 'à préciser';
   const ents = !an ? [] : [['Date', 'dates'], ['Montant', 'montants'], ['Personnes', 'personnes'], ['Lieu', 'lieux'], ['Lien', 'liens']].flatMap(([k, f]) => (an.entites[f] || []).map(x => [k, f === 'montants' ? Math.round(Number(x.v)).toLocaleString('fr-FR') + ' €' : String(x.v)]));
-  const href = an ? HREF[an.domaine] || '/monde' : '/monde';
+  const href = an ? HREF[an.domaine] || '/' : '/';
 
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/point-zero" />
+      <Tete courant="/point-zero" verbes={<VerbesSite />} />
       <main id="contenu" style={{ padding: 'clamp(48px, 7vw, 96px) var(--marge) 160px' }}>
         <p className="surtitre">L’étape 0 · au centre de la grille</p>
         <h1 className="signature" style={{ fontSize: 'clamp(56px, 12vw, 200px)' }}>Point Zéro</h1>
@@ -154,7 +154,7 @@ export default function PointZero() {
               </div>}
               {an && fini && <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 18 }}>
                 <button className="bouton noir" type="button" onClick={ranger} style={{ height: 48 }}>Ranger dans mon espace</button>
-                <Lien className="bouton" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener" style={{ height: 48 }}>{href !== '/monde' ? 'Ouvrir ' + an.studio : an.studio === 'Le Monde AIME' ? 'Voir Le Monde AIME' : 'Voir ' + an.studio + ' dans Le Monde AIME'}{href.startsWith('http') && <span className="sr-only"> (nouvel onglet)</span>}</Lien>
+                <Lien className="bouton" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener" style={{ height: 48 }}>{href === '/' ? 'Voir Le Monde AIME' : href === '/studio/atelier' ? 'Ouvrir l’atelier de broderie' : 'Ouvrir le StudiO'}{href.startsWith('http') && <span className="sr-only"> (nouvel onglet)</span>}</Lien>
               </div>}
               <p role="status" style={{ margin: '10px 0 0', minHeight: 20, fontSize: 14, fontWeight: 600 }}>{msg}{msg.startsWith('Entrez') && <> <Lien href="/entrer">+ Entrer</Lien></>}</p>
             </aside>
