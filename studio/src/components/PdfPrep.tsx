@@ -1244,7 +1244,7 @@ function renderPreview(p: Pattern) {
   c.width = p.w * scale;
   c.height = p.h * scale;
   const ctx = c.getContext("2d")!;
-  ctx.fillStyle = "#f7f2e8";
+  ctx.fillStyle = "#f3f3f1";
   ctx.fillRect(0, 0, c.width, c.height);
   for (let i = 0; i < p.cross.length; i++) {
     const v = p.cross[i];

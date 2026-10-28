@@ -302,7 +302,7 @@ export function Pied() {
     <footer className="pied">
       <Lien href="/" aria-label="AIME, accueil" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}><Orbe taille={28} /><span className="marque" style={{ fontSize: 22 }}>AIME<sup aria-hidden="true">®</sup></span></Lien>
       <nav aria-label="Plan du site">
-        {col('Le studio', [['Le studio', '/studio/'], ['L’atelier', '/studio/atelier'], ['Le BurO', '/studio/buro']])}
+        {col('Le studio', [['Le studio', '/studio/'], ['L’atelier', '/studio/atelier']])}
         {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil']])}
         {col('La maison', [['À propos d’AIME', '/a-propos'], ['Les projets d’AIME', '/projets'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', null], ['Mentions légales', null]])}
       </nav>

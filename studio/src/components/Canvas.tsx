@@ -73,8 +73,8 @@ interface Stroke {
 }
 
 const MAX_S = 64;
-const FABRIC_A = "#f7f2e8";
-const PAPER = "#fbfaf7";
+const FABRIC_A = "#f3f3f1";
+const PAPER = "#fbfbfa";
 const AXIS = "#ff453a";
 const ACCENT = "#0a84ff";
 const DONE = "rgba(10,132,255,0.30)";
@@ -228,7 +228,8 @@ export default function Canvas(props: Props) {
     // cadre, ombre ou séparation entre le patron et la toile de travail.
     ctx.setTransform(v.dpr, 0, 0, v.dpr, 0, 0);
     ctx.clearRect(0, 0, v.w, v.h);
-    const cloth = isPattern ? PAPER : (P.fabric?.color ?? FABRIC_A);
+    const toile = P.fabric?.color && P.fabric.color.toLowerCase() !== "#f7f2e8" ? P.fabric.color : FABRIC_A;
+    const cloth = isPattern ? PAPER : toile;
     ctx.fillStyle = cloth;
     ctx.fillRect(0, 0, v.w, v.h);
     if (s >= 4) {
@@ -236,8 +237,8 @@ export default function Canvas(props: Props) {
       const lastCol = Math.ceil((v.w - ox) / s);
       const firstRow = Math.floor(-oy / s);
       const lastRow = Math.ceil((v.h - oy) / s);
-      const minor = highContrast ? "rgba(0,0,0,.38)" : "rgba(38,35,30,.16)";
-      const major = highContrast ? "rgba(0,0,0,.55)" : "rgba(38,35,30,.32)";
+      const minor = highContrast ? "rgba(0,0,0,.38)" : "rgba(28,28,32,.13)";
+      const major = highContrast ? "rgba(0,0,0,.55)" : "rgba(28,28,32,.28)";
       for (const strong of [false, true]) {
         ctx.beginPath();
         for (let k = firstCol; k <= lastCol; k++) {
@@ -765,6 +766,14 @@ export default function Canvas(props: Props) {
     return { x: e.clientX - (r?.left ?? 0), y: e.clientY - (r?.top ?? 0) };
   };
 
+  /* la loupe du dock du bas suit la case survolée ou touchée (un événement par case, pas par pixel) */
+  const derniereCase = useRef("");
+  const annoncerSurvol = (w: Pt) => {
+    const P = latest.current.pattern, x = Math.floor(w.x), y = Math.floor(w.y);
+    if (x < 0 || y < 0 || x >= P.w || y >= P.h || derniereCase.current === x + "," + y) return;
+    derniereCase.current = x + "," + y;
+    window.dispatchEvent(new CustomEvent("pointzero:survol", { detail: { x, y } }));
+  };
   const updateTip = (p: { x: number; y: number }) => {
     const tip = tipRef.current;
     if (!tip) return;
@@ -777,6 +786,7 @@ export default function Canvas(props: Props) {
       return;
     }
     hoverPt.current = wpt;
+    annoncerSurvol(wpt);
     let lx: number;
     let ly: number;
     let code = "";
@@ -800,6 +810,7 @@ export default function Canvas(props: Props) {
   const onDown = (e: RPointerEvent<HTMLCanvasElement>) => {
     e.currentTarget.setPointerCapture(e.pointerId);
     const p = local(e);
+    annoncerSurvol(toWorld(p));
     ptrs.current.set(e.pointerId, p);
     if (ptrs.current.size >= 2) {
       if (subjectDrag.current) {
@@ -997,7 +1008,7 @@ export default function Canvas(props: Props) {
     tool === "hand" ? (ptrs.current.size ? "grabbing" : "grab") : tool === "pick" ? "copy" : tool === "erase" ? "cell" : "crosshair";
 
   return (
-    <div ref={wrapRef} data-guide="canvas" className="absolute inset-0 overflow-hidden bg-[#faf9f7]">
+    <div ref={wrapRef} data-guide="canvas" className="absolute inset-0 overflow-hidden bg-[#f3f3f1]">
       <canvas
         ref={canvasRef}
         role="application"

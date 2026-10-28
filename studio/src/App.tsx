@@ -1,5 +1,4 @@
-import StudioDocks, { type DockPath } from "./components/StudioDocks";
-import Buro from "./components/Buro";
+import StudioDocks, { type BlocDemande, type DockPath } from "./components/StudioDocks";
 import { VISIBILITY, visibilityOf, writeVisibility } from "./lib/visibility";
 import { readInterfaceLevel, INTERFACE_LEVEL_KEY, type InterfaceLevel } from "./lib/interfaceLevel";
 import CrossStitchHome, { type StitchEntry } from "./components/CrossStitchHome";
@@ -24,7 +23,6 @@ import MotifLibrary from "./components/MotifLibrary";
 import EmbroideryInspector from "./components/EmbroideryInspector";
 import { getMotifPreset } from "./lib/motifPresets";
 import { attachSubject, changeSubject, duplicateSubject, recomposeSubjects, removeSubject, reorderSubject, sceneFromPattern, type SubjectScene, type SubjectLayer } from "./lib/subjectEngine";
-import PaletteSheet from "./components/PaletteSheet";
 import FlossRail from "./components/FlossRail";
 import WorkspacePanel, { DEFAULT_PREFS, type Preferences } from "./components/WorkspacePanel";
 import LibrarySheet from "./components/LibrarySheet";
@@ -75,7 +73,6 @@ export default function App() {
   });
   useEffect(()=>{
     if(studioMode==="stitch-home")document.title="Point Zéro — Studio de point de croix";
-    else if(studioMode==="buro")document.title="BurO — Point Zéro";
   },[studioMode]);
   // Public pages are addressable and reversible with browser back/forward.
   // Workspace data remains in its original localStorage keys, untouched.
@@ -106,6 +103,8 @@ export default function App() {
   const [, setShowDrawingTools] = useState(() => readInterfaceLevel() === "expert");
   const [, setMobileLibraryOpen] = useState(false);
   const [dockPath, setDockPath] = useState<DockPath>(null);
+  /* un bloc du dock du haut à ouvrir depuis ailleurs (Mes ouvrages depuis l'accueil, le nuancier depuis le rail de fils) */
+  const [blocDemande, setBlocDemande] = useState<{ bloc: BlocDemande; n: number } | null>(null);
   const [, setVisibilityTick] = useState(0);
   const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
   const [rightSection, setRightSection] = useState<RightSection>("properties");
@@ -125,6 +124,8 @@ export default function App() {
   const checked = useRef(false);
   const notify = useCallback((msg: string) => setToast(msg), []);
   const closePanel = useCallback(() => setPanel(null), []);
+  /* le nuancier DMC se déplie dans le dock du haut (Fils), plus dans un panneau à droite */
+  const ouvrirNuancier = useCallback(() => { setDockPath("fils"); setBlocDemande(d => ({ bloc: "nuancier", n: (d?.n ?? 0) + 1 })); }, []);
   // Les outils sont de véritables panneaux, comme dans Photo.
   // Canvas conserve son moteur plein écran mais centre/ajuste le patron
   // dans la surface libre, entre les panneaux et la bande DMC.
@@ -293,8 +294,8 @@ export default function App() {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       const key = e.key.toLowerCase();
       if (KEYS[key]) chooseTool(KEYS[key]);
-      else if (key === "p") { if (workspace === "stitch") chooseTool("park"); else setPanel("palette"); }
-      else if (key === "f") setPanel("palette");
+      else if (key === "p") { if (workspace === "stitch") chooseTool("park"); else ouvrirNuancier(); }
+      else if (key === "f") ouvrirNuancier();
       else if (key === "t") setView((v) => v === "real" ? "flat" : v === "flat" ? "pattern" : "real");
       else if (key === "escape") { closePanel(); setSelection(null); }
     };
@@ -495,27 +496,17 @@ export default function App() {
   const contextSection: "prepare" | "edit" | "follow" | "settings" =
     rightSection === "properties" || rightSection === "motifs" ? "edit" : rightSection;
   const enterStitchStudio = (entry: StitchEntry) => {
-    if (entry === "library") { switchStudio("buro"); return; }
+    if (entry === "library") { setBlocDemande(n => ({ bloc: "inviter", n: (n?.n ?? 0) + 1 })); switchStudio("embroidery"); return; }
     switchStudio("embroidery");
     openCategory(entry === "prepare" ? "threads" : entry === "stitch" ? "stitch" : "create");
   };
-  return studioMode === "buro"
-    ? <Buro currentName={P.name}
-        onOpen={p => { void loadPattern(p).then(ok => { if (ok) { setShowWelcome(false); setTool("hand"); setDockPath(null); switchStudio("embroidery"); } }); }}
-        onContinue={() => { setShowWelcome(false); switchStudio("embroidery"); }}
-        onNew={() => { panelActions.new(80, 80); setShowWelcome(false); setActiveCategory("compose"); setDockPath("dessiner"); switchStudio("embroidery"); }}
-        onImport={f => { importAnyFile(f); switchStudio("embroidery"); }}
-        onGenerate={() => { setShowWelcome(false); switchStudio("embroidery"); setPromptOpen(true); }}
-        onWatch={() => { setShowWelcome(false); switchStudio("embroidery"); setPanel("share"); }}
-        onInvite={p => { void loadPattern(p).then(ok => { if (ok) { setShowWelcome(false); switchStudio("embroidery"); setPanel("share"); } }); }}
-        onHome={() => switchStudio("stitch-home")} />
-    : studioMode === "stitch-home"
+  return studioMode === "stitch-home"
     ? <CrossStitchHome projectName={P.name} onOpen={enterStitchStudio}
-        onBuro={() => switchStudio("buro")}
+        onOuvrages={() => enterStitchStudio("library")}
         onShare={() => { switchStudio("embroidery"); setPanel("share"); }}
         onImport={chosen => { switchStudio("embroidery"); importAnyFile(chosen); }}
         onVisite={() => { try { localStorage.removeItem(VISITE_CLE); } catch { /* la visite s'ouvrira quand même */ } setPanel(null); setDockPath(null); setShowWelcome(false); setVisite(true); switchStudio("embroidery"); }}/>
-    : <div data-interface-level={interfaceLevel} className={`pz-atelier pz-embroidery-studio fixed inset-0 h-[100dvh] w-full overflow-hidden bg-[#faf9f7] ${prefs.largeText ? "large-text" : ""} ${prefs.highContrast ? "high-contrast" : ""}`}>
+    : <div data-interface-level={interfaceLevel} className={`pz-atelier pz-embroidery-studio fixed inset-0 h-[100dvh] w-full overflow-hidden bg-[#f3f3f1] ${prefs.largeText ? "large-text" : ""} ${prefs.highContrast ? "high-contrast" : ""}`}>
     <input
       ref={imageInputRef}
       type="file"
@@ -545,6 +536,15 @@ export default function App() {
       onSubjectStart={subjectStart} onSubjectMove={subjectMoveTo} onSubjectEnd={subjectEnd}
       onMotifDrop={(id,x,y) => { const preset = getMotifPreset(id); if (preset) addStitchedPattern(preset,{x,y}); }} />
     {depot && <div className="pzs-depot-voile" aria-hidden="true"><span>Déposez ici : l’ouvrage s’ouvre dans la grille</span></div>}
+    {/* le point zéro : sur une grille vide, l'import se fait au centre, là où la broderie commence */}
+    {atelierLibre && !remote && progression.total === 0 && !depot && dockPath === null &&
+      <div className="pz-point-zero" data-guide="point-zero">
+        <button type="button" className="pz-point-zero-bouton" onClick={() => actionImportRef.current?.click()} aria-label="Importer au point zéro : une image, un patron PDF ou un projet">
+          <span aria-hidden="true">+</span>
+        </button>
+        <p><b>Importer</b><span>une image, un patron PDF, un projet — ou glissez-le ici</span></p>
+        <p className="pz-point-zero-ou">ou choisissez Dessiner, en haut, et commencez</p>
+      </div>}
     {!pdfFile && !promptOpen && !compositionInput && !file && !autoImage && <StudioDocks
       patternName={P.name} saving={saving} workspace={workspace}
       onWorkspace={mode => { chooseWorkspace(mode); setActiveCategory(mode === "stitch" ? "stitch" : "compose"); setShowWelcome(false); }}
@@ -568,19 +568,19 @@ export default function App() {
         else notify("Cet appareil refuse d’enregistrer ce réglage.");
       }}
       actions={{
-        buro: () => switchStudio("buro"),
         home: () => switchStudio("stitch-home"),
         settings: () => openRightPanel("settings"),
         share: () => setPanel("share"),
         motifs: () => openRightPanel("motifs"),
         exportPanel: () => setPanel("export"),
         save: panelActions.save,
-        palette: () => setPanel("palette"),
+        palette: () => ouvrirNuancier(),
         threadsSettings: () => openRightPanel("prepare"),
         follow: () => openRightPanel("follow"),
         drawSettings: () => { setActiveCategory("compose"); openRightPanel("edit"); },
         layers: () => { if (mobileInspectorOpen && rightSection === "properties") setMobileInspectorOpen(false); else openRightPanel("properties"); },
         visite: () => setVisite(true),
+        nouveau: () => { panelActions.new(80, 80); setShowWelcome(false); setDockPath(null); },
       }}
       zoom={{
         zoomIn: () => window.dispatchEvent(new CustomEvent("pointzero:canvas", { detail: { action: "zoomIn" } })),
@@ -588,10 +588,15 @@ export default function App() {
         magnify: () => window.dispatchEvent(new CustomEvent("pointzero:canvas", { detail: { action: "magnify" } })),
         fit: () => setFitKey(k => k + 1),
       }}
-      progression={progression} onCouleur={pickColor}
+      progression={progression} onCouleur={pickColor} pattern={P} couleur={color} blocDemande={blocDemande}
       ouvrages={{ courant: P.id, ouvrir: id => { void ouvrirOuvrage(id); }, importer: importAnyFile }}
-      fils={<FlossRail dock pattern={P} active={color} onActive={pickColor} onPattern={(p) => setPattern(p)} onSupply={updateSupply} onBrowse={() => setPanel("palette")} stitching={workspace === "stitch"} hidden={showWelcome || !!file} />} />}
-    {atelierLibre && <OrbeGuide ouverte={visite} onFermer={() => setVisite(false)} onChemin={setDockPath} />}
+      fils={<FlossRail dock pattern={P} active={color} onActive={pickColor} onPattern={(p) => setPattern(p)} onSupply={updateSupply} onBrowse={() => ouvrirNuancier()} stitching={workspace === "stitch"} hidden={showWelcome || !!file} />} />}
+    {atelierLibre && <OrbeGuide ouverte={visite} onFermer={() => setVisite(false)} onChemin={c => {
+      /* « dessiner:grille » : Le Point ouvre aussi la grille des points, pour y imiter les gestes */
+      const [chemin, grille] = (c ?? "").split(":");
+      setDockPath((chemin || null) as DockPath);
+      setBlocDemande(d => ({ bloc: grille ? "outils" : "aucun", n: (d?.n ?? 0) + 1 }));
+    }} />}
     <aside aria-label="Inspecteur de broderie"
       hidden={!mobileInspectorOpen}
       className="pz-embroidery-right pzs-panel thin-scroll fixed bottom-[96px] right-3 top-[112px] z-30 w-[min(300px,calc(100vw-24px))] overflow-y-auto rounded-[18px] border border-white/15 bg-[#09090b] text-white shadow-2xl">
@@ -614,7 +619,7 @@ export default function App() {
       ) : rightSection === "properties" ? (
         <EmbroideryInspector pattern={P} activeColor={color}
           onSettings={() => openRightPanel("settings")}
-          onBrowse={() => { setMobileInspectorOpen(false); setPanel("palette"); }} workspace={workspace}
+          onBrowse={() => { setMobileInspectorOpen(false); ouvrirNuancier(); }} workspace={workspace}
           scene={sceneFromPattern(P)} selectedId={selectedSubjectId}
           onSelect={id => {setSelectedSubjectId(id);setActiveCategory("compose");setTool("hand");}}
           onChange={changeSelectedSubject} onReorder={(id,delta) => updateScene(scene=>reorderSubject(scene,id,delta))}
@@ -636,7 +641,6 @@ export default function App() {
     </aside>
     {showWelcome && !remote && <div className="pointer-events-none fixed inset-0 z-[28] flex items-center justify-center px-3 pb-12 pt-12"><div className="pointer-events-auto"><AtelierCreate {...createActions} /></div></div>}
     {!showWelcome && selection && workspace === "create" && !remote && <SelectionBar selection={selection} hasClipboard={!!clipboard} onAction={selectionAction} />}
-    <PaletteSheet open={panel === "palette"} onClose={closePanel} pattern={P} color={color} onPick={pickColor} />
     <LibrarySheet compte={compteAime} open={panel === "library"} onClose={closePanel} onLoad={(p) => void loadPattern(p)} onNew={() => panelActions.new(80, 80)} inventory={inventory} />
     {autoImage && <AutomaticImageImport file={autoImage}
       onCancel={() => setAutoImage(null)}

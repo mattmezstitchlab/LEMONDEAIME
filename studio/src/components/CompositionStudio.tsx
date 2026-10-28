@@ -20,7 +20,7 @@ function StitchPreview({ pattern, max = 520, zoom = 1, onInspect }: { pattern: P
     const cell = Math.max(1, Math.min(12, max / Math.max(pattern.w, pattern.h)));
     c.width = Math.ceil(pattern.w * cell);
     c.height = Math.ceil(pattern.h * cell);
-    ctx.fillStyle = pattern.fabric?.color ?? "#f7f2e8";
+    ctx.fillStyle = pattern.fabric?.color ?? "#f3f3f1";
     ctx.fillRect(0, 0, c.width, c.height);
     for (let i=0;i<pattern.cross.length;i++){
       const color=FLOSS[pattern.cross[i]];

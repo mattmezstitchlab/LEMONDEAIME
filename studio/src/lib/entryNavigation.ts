@@ -1,7 +1,7 @@
-/** Les trois écrans du studio de broderie : l'accueil, l'atelier et le BurO (les ouvrages).
+/** Les deux écrans du studio de broderie : l'accueil et l'atelier. Les ouvrages se rangent dans le dock du haut (le rond du profil).
  * Les anciennes adresses (studios retirés, ?studio=…, #atelier) mènent à l'accueil ou à l'atelier, sans jamais toucher aux ouvrages enregistrés.
  */
-export const STUDIO_ROUTES=["stitch-home","embroidery","buro"] as const;
+export const STUDIO_ROUTES=["stitch-home","embroidery"] as const;
 export type StudioRoute=(typeof STUDIO_ROUTES)[number];
 export function isStudioRoute(value:string|null):value is StudioRoute{
  return STUDIO_ROUTES.some(route=>route===value);
@@ -23,14 +23,12 @@ export function entryStudio(search:string,hash:string,pathname="/"):StudioRoute{
  pathname=sansBase(pathname);
  const params=new URLSearchParams(search);
  const path=decodeURI(pathname).replace(/\/+$/,"")||"/";
- if(path==="/buro")return "buro";
  if(path==="/atelier")return "embroidery";
  // anciens liens : ?studio=embroidery, ?page=atelier et #atelier ouvrent l'atelier ; tout le reste, l'accueil
  if(path==="/"&&(params.get("studio")==="embroidery"||params.get("page")==="atelier"||hash==="#atelier"))return "embroidery";
  return "stitch-home";
 }
 export function publicPathFor(mode:StudioRoute){
- if(mode==="buro")return "/buro";
  if(mode==="embroidery")return "/atelier";
  return "/";
 }

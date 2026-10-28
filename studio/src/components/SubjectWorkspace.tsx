@@ -29,7 +29,7 @@ function SubjectPreview({pattern,scene,selected,onChoose,onMove,zoom=1,onInspect
     if(!c||!ctx)return;
     const scale=Math.max(2,Math.min(9,720/Math.max(pattern.w,pattern.h)));
     c.width=Math.ceil(pattern.w*scale);c.height=Math.ceil(pattern.h*scale);
-    ctx.fillStyle=pattern.fabric?.color??"#f7f2e8";
+    ctx.fillStyle=pattern.fabric?.color??"#f3f3f1";
     ctx.fillRect(0,0,c.width,c.height);
     for(let i=0;i<pattern.cross.length;i++) {
       const color=pattern.cross[i];if(color<0)continue;
@@ -312,7 +312,7 @@ export default function SubjectWorkspace({pattern,onCancel,onUse}:{
         </div>
         {showSource&&original&&<section className="space-y-2 rounded-md border border-white/10 p-3 text-xs">
           <h4 className="font-semibold">Source originale · non modifiée</h4>
-          <div className="max-w-[480px] bg-[#f7f2e8] p-2">
+          <div className="max-w-[480px] bg-[#f3f3f1] p-2">
             <SubjectPreview pattern={original} scene={{...scene,layers:[]}} selected={null}
               onChoose={()=>{}} onMove={()=>{}} />
           </div>
