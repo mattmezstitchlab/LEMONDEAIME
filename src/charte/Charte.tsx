@@ -222,9 +222,13 @@ function Musique() {
       <button type="button" className="lieu carre-sombre" aria-label="Morceau précédent" onClick={precedent}><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 6h2v12H7zM19 6v12L10 12z" /></svg></button>
       <button type="button" className="lieu carre-sombre" aria-label={e.joue ? 'Pause' : 'Lecture'} onClick={basculerLecture}>{e.joue ? <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg> : <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5l11 7-11 7z" /></svg>}</button>
       <button type="button" className="lieu carre-sombre" aria-label="Morceau suivant" onClick={suivant}><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15 6h2v12h-2zM5 6v12l9-6z" /></svg></button>
-      <span className="lieu" style={{ maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', lineHeight: '48px' }} aria-live="polite">{p.nom}<span style={{ opacity: .6 }}> · {e.i + 1}/{e.pistes.length}</span></span>
-      <button type="button" className="lieu" onClick={() => choix.current?.click()}>Ajouter</button>
-    </> : <button type="button" className="lieu" onClick={() => choix.current?.click()}>Choisir des morceaux sur cet appareil</button>}
+      <span className="lieu piste-dock" aria-live="polite">
+        {p.pochette && <img src={p.pochette} alt="" width={34} height={34} />}
+        <span><b>{p.nom}</b>{p.artiste && <span> · {p.artiste}</span>}<span style={{ opacity: .6 }}> · {e.i + 1}/{e.pistes.length}</span></span>
+      </span>
+      {p.deezer && <a className="lieu" href={p.lien || 'https://www.deezer.com/track/' + p.deezer} target="_blank" rel="noopener">Extrait 30 s · Deezer<span className="sr-only"> (ouvre Deezer)</span></a>}
+      <Lien className="lieu" href="/musique">La journée en musique</Lien>
+    </> : <><Lien className="lieu" href="/musique">La journée en musique</Lien><button type="button" className="lieu" onClick={() => choix.current?.click()}>Écouter un fichier de cet appareil</button></>}
   </>;
 }
 function arc(i: number, n: number) {
@@ -290,7 +294,7 @@ export function Pied() {
       <Lien href="/" aria-label="AIME, accueil" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}><Orbe taille={28} /><span className="marque" style={{ fontSize: 22 }}>AIME<sup aria-hidden="true">®</sup></span></Lien>
       <nav aria-label="Plan du site">
         {col('Le Monde AIME', [['Les unions', '/#unions'], ['Prestataires', '/reseau?domaine=mariage'], ['Invités', '/#invites'], ['Collections', '/#collections']])}
-        {col('Créer', [['Studio', '/studio/atelier'], ['Brodez votre mariage', '/#studio'], ['Point Zéro', '/point-zero'], ['Boutique', '/boutique']])}
+        {col('Créer', [['Studio', '/studio/atelier'], ['Brodez votre mariage', '/#studio'], ['La journée en musique', '/musique'], ['Point Zéro', '/point-zero'], ['Boutique', '/boutique']])}
         {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil'], ['A+', '/a-plus']])}
         {col('La maison', [['À propos d’AIME', '/a-propos'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', null], ['Mentions légales', null]])}
       </nav>

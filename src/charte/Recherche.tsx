@@ -9,7 +9,7 @@ const B = data.briques as unknown as Record<string, { name: string; fam: string;
 const PLAN: Entree[] = [
   ...[['Accueil', 'Le Monde AIME, le site officiel de l’union', '/'], ['Les unions', 'Les pages des mariés', '/#unions'], ['Prestataires', 'Les métiers de l’union', '/reseau?domaine=mariage'], ['Invités', 'Chaque invité a sa page', '/#invites'], ['Collections', 'Les unions par univers', '/#collections']]
     .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Le Monde AIME' })),
-  ...[['Studio', 'Créer : broderie d’abord', '/studio/atelier'], ['Boutique', 'Créations à acheter, louer, broder', '/boutique'], ['Atelier de broderie', 'Dessiner, broder, importer', '/studio/atelier'], ['Point Zéro', 'Commencer quelque chose', '/point-zero']]
+  ...[['Studio', 'Créer : broderie d’abord', '/studio/atelier'], ['Boutique', 'Créations à acheter, louer, broder', '/boutique'], ['Musique', 'La journée en musique, moment par moment', '/musique'], ['Atelier de broderie', 'Dessiner, broder, importer', '/studio/atelier'], ['Point Zéro', 'Commencer quelque chose', '/point-zero']]
     .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Créer' })),
   ...[['Votre espace', 'Projets, ouvrages, partagés, archives', '/buro'], ['Mon profil', 'Ce que le Réseau montre de moi', '/buro?lieu=profil'], ['Entrer', 'Google, clé d’accès ou lien e-mail', '/entrer'], ['A+', 'Aller plus loin', '/a-plus'], ['À propos d’AIME', 'La marque, l’association, le fondateur', '/a-propos']]
     .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Votre espace' })),
