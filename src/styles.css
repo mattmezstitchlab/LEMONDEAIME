@@ -478,7 +478,7 @@ html.calme .carte-flip > .dos { opacity: 0; } html.calme .carte-flip.retournee >
 .bw-broderie { margin: 0; }
 .bw-toile { position: relative; width: 100%; border-radius: 6px; background: var(--aida);
   background-image: linear-gradient(var(--aida-case) 1px, transparent 1px), linear-gradient(90deg, var(--aida-case) 1px, transparent 1px);
-  background-size: calc(100% / 130) calc(100% / 124); box-shadow: 0 1px 0 var(--aida-dix), 0 30px 60px -30px rgba(60, 48, 25, .35); }
+  background-size: calc(100% / 150) calc(100% / 150); box-shadow: 0 1px 0 var(--aida-dix), 0 30px 60px -30px rgba(60, 48, 25, .35); }
 .bw-toile canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* les deux repères rouges du centre, comme dans l'atelier : le point zéro de la grille */
 .bw-toile::before, .bw-toile::after { content: ''; position: absolute; pointer-events: none; background: var(--repere); }
@@ -536,6 +536,17 @@ html.calme .carte-flip > .dos { opacity: 0; } html.calme .carte-flip.retournee >
 .bw-bascule { min-height: 48px; padding: 0 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,.6); background: transparent; color: #fff; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; }
 .bw-bascule[aria-pressed="true"] { background: #fff; color: var(--nuit); }
 .bw-sombre :focus-visible { outline-color: #fff; }
+
+.bw-voliere { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: clamp(28px, 4vw, 48px) clamp(16px, 2.4vw, 32px); }
+.bw-oiseau-lien { display: grid; gap: 4px; text-decoration: none; color: var(--encre); }
+.bw-oiseau-toile { display: block; aspect-ratio: 1; border-radius: 10px; background: var(--aida);
+  background-image: linear-gradient(var(--aida-case) 1px, transparent 1px), linear-gradient(90deg, var(--aida-case) 1px, transparent 1px); background-size: calc(100% / 150) calc(100% / 150);
+  box-shadow: 0 0 0 1px rgba(26,25,23,.06); margin-bottom: 12px; transition: box-shadow .25s; }
+.bw-oiseau-toile canvas { display: block; width: 100%; height: 100%; }
+.bw-oiseau-lien:hover .bw-oiseau-toile { box-shadow: 0 0 0 1px rgba(26,25,23,.12), 0 24px 48px -28px rgba(26,25,23,.5); }
+.bw-oiseau-lien:hover b { text-decoration: underline; text-underline-offset: 4px; }
+.bw-oiseau-lien b { font-size: 19px; font-weight: 650; letter-spacing: -0.02em; }
+.bw-oiseau-lien span:last-child { font-size: 15px; color: var(--encre-3); }
 
 .bw-editions { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
 .bw-collections { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }

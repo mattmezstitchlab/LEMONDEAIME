@@ -2,16 +2,19 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { Tete, Pied, Verbe } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useConfort } from '../lib/confort';
-import MESANGE_BRUT from '../lib/mesange.json';
+import OISEAUX_BRUT from '../lib/oiseaux-botaniques.json';
 import DMC from '../lib/dmc.json';
 
-/* Brode Way (/) : la page de l'atelier de point de croix. Toutes les images sont des captures de l'atelier réel (/studio/atelier),
-   ouvert sur « La mésange du jardin », l'un des 24 patrons des éditions. Le motif qui se brode en tête de page est ce même patron,
-   lu case par case (src/lib/mesange.json), brodé fil par fil comme on le fait à la main. */
+/* Brode Way (/) : la page de l'atelier de point de croix. Toutes les images sont des captures de l'atelier réel (/studio/atelier).
+   Les oiseaux brodés sur la page sont les vrais patrons de la collection « Oiseaux botaniques » des éditions, lus case par case
+   (src/lib/oiseaux-botaniques.json, écrit par studio/scripts/exporter-vitrine.ts et vérifié par les tests du studio) :
+   le rouge-gorge fleuri se brode fil par fil en tête de page, comme on le fait à la main ; les huit forment la volière. */
 
 type Fil = [string, string, string];   /* code, nom, couleur */
 const NUANCIER = DMC as Fil[];
-const MESANGE = MESANGE_BRUT as unknown as { nom: string; w: number; h: number; fils: [string, string][]; lignes: string[] };
+type Grille = { id: string; titre: string; w: number; h: number; fils: [string, string][]; lignes: string[] };
+const OISEAUX = OISEAUX_BRUT as unknown as Grille[];
+const LETTRES = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 const NOMS = new Map(NUANCIER.map(([c, n]) => [c, n]));
 const IMG = (n: string) => '/media/brodeway/' + n + '.webp';
 const ATELIER = '/studio/atelier';
@@ -27,22 +30,35 @@ export function VerbesBrodeWay({ actif }: { actif?: 'parcours' | 'apropos' }) {
   </>;
 }
 
-/* ——— le motif qui se brode : la mésange, fil par fil ——— */
+/* ——— les croix ——— */
 type Croix = { x: number; y: number };
+type FilBrode = { code: string; hex: string; croix: Croix[] };
 function fonce(hex: string, k: number) {
   const n = parseInt(hex.slice(1), 16), f = (v: number) => Math.max(0, Math.min(255, Math.round(v * k)));
   return 'rgb(' + f(n >> 16) + ',' + f((n >> 8) & 255) + ',' + f(n & 255) + ')';
 }
-function Broderie({ reduit }: { reduit: boolean }) {
+/* les croix de chaque fil, dans l'ordre où on les brode : un fil à la fois, du plus présent au plus discret, rang par rang en serpentin */
+function ordreDeBroderie({ fils, lignes }: Grille): FilBrode[] {
+  const par: Croix[][] = fils.map(() => []);
+  lignes.forEach((l, y) => { for (let i = 0; i < l.length; i++) { const x = y % 2 ? l.length - 1 - i : i, k = LETTRES.indexOf(l[x]); if (k >= 0) par[k].push({ x, y }); } });
+  return par.map((croix, k) => ({ code: fils[k][0], hex: fils[k][1] || '#888888', croix })).filter(f => f.croix.length).sort((a, b) => b.croix.length - a.croix.length);
+}
+/* une croix : le premier passage dessous (un peu plus sombre), le second dessus */
+function poserCroix(ctx: CanvasRenderingContext2D, pas: number, x: number, y: number, hex: string) {
+  const m = pas * 0.16, x0 = x * pas + m, y0 = y * pas + m, x1 = (x + 1) * pas - m, y1 = (y + 1) * pas - m;
+  ctx.lineCap = 'round';
+  ctx.lineWidth = Math.max(.8, pas * 0.3);
+  ctx.strokeStyle = fonce(hex, 0.86);
+  ctx.beginPath(); ctx.moveTo(x0, y1); ctx.lineTo(x1, y0); ctx.stroke();
+  ctx.strokeStyle = hex;
+  ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+}
+
+/* ——— l'oiseau qui se brode en tête de page, fil par fil ——— */
+function Broderie({ reduit, grille }: { reduit: boolean; grille: Grille }) {
   const toile = useRef<HTMLCanvasElement>(null);
-  const { w, h, fils, lignes } = MESANGE;
-  /* les croix de chaque fil, dans l'ordre où on les brode : un fil à la fois, du plus présent au plus discret, rang par rang en serpentin */
-  const ordre = useMemo(() => {
-    const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    const par: Croix[][] = fils.map(() => []);
-    lignes.forEach((l, y) => { const xs = [...l].map((_, i) => (y % 2 ? l.length - 1 - i : i)); for (const x of xs) { const k = A.indexOf(l[x]); if (k >= 0) par[k].push({ x, y }); } });
-    return par.map((croix, k) => ({ code: fils[k][0], hex: fils[k][1] || '#888888', croix })).filter(f => f.croix.length).sort((a, b) => b.croix.length - a.croix.length);
-  }, [fils, lignes]);
+  const { w, h } = grille;
+  const ordre = useMemo(() => ordreDeBroderie(grille), [grille]);
   const total = useMemo(() => ordre.reduce((s, f) => s + f.croix.length, 0), [ordre]);
   const [etat, setEtat] = useState({ fil: 0, faites: reduit ? total : 0 });
   const [tour, setTour] = useState(0);
@@ -57,15 +73,7 @@ function Broderie({ reduit }: { reduit: boolean }) {
       c.width = Math.round(largeur * dpr); c.height = Math.round(pas * h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
-    const croix = (x: number, y: number, hex: string) => {
-      const m = pas * 0.16, x0 = x * pas + m, y0 = y * pas + m, x1 = (x + 1) * pas - m, y1 = (y + 1) * pas - m;
-      ctx.lineCap = 'round';
-      ctx.lineWidth = Math.max(1, pas * 0.3);
-      ctx.strokeStyle = fonce(hex, 0.86);
-      ctx.beginPath(); ctx.moveTo(x0, y1); ctx.lineTo(x1, y0); ctx.stroke();   /* le premier passage, dessous */
-      ctx.strokeStyle = hex;
-      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();   /* le second, dessus */
-    };
+    const croix = (x: number, y: number, hex: string) => poserCroix(ctx, pas, x, y, hex);
     const tout = (jusqua: number) => {
       ctx.clearRect(0, 0, c.width, c.height);
       let n = 0;
@@ -96,7 +104,7 @@ function Broderie({ reduit }: { reduit: boolean }) {
   return (
     <figure className="bw-broderie">
       <div className="bw-toile" style={{ aspectRatio: w + ' / ' + h }}>
-        <canvas ref={toile} role="img" aria-label={'La mésange du jardin, patron de ' + w + ' × ' + h + ' points en ' + ordre.length + ' fils DMC, brodée croix par croix'} />
+        <canvas ref={toile} role="img" aria-label={grille.titre + ', patron de ' + w + ' × ' + h + ' points en ' + ordre.length + ' fils DMC, brodé croix par croix'} />
       </div>
       <figcaption className="bw-fil" aria-live="off">
         <span className="bw-bobine" aria-hidden="true">
@@ -105,13 +113,44 @@ function Broderie({ reduit }: { reduit: boolean }) {
         </span>
         <span className="bw-fil-texte">
           {fini
-            ? <><b>La mésange du jardin</b><span>{w} × {h} points, {ordre.length} fils, {nombre(total)} croix</span></>
+            ? <><b>{grille.titre}</b><span>{w} × {h} points, {ordre.length} fils, {nombre(total)} croix</span></>
             : <><b>DMC {f.code}</b><span>{NOMS.get(f.code) || ''}, {nombre(etat.faites)} croix sur {nombre(total)}</span></>}
         </span>
         {fini && !reduit && <button type="button" className="bw-rebroder" onClick={() => setTour(t => t + 1)}>Rebroder</button>}
       </figcaption>
     </figure>
   );
+}
+
+/* ——— la volière : les huit oiseaux, brodés d'un coup quand ils arrivent à l'écran ——— */
+function OiseauBrode({ grille }: { grille: Grille }) {
+  const toile = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const c = toile.current; if (!c) return;
+    const peindre = () => {
+      const ctx = c.getContext('2d'); if (!ctx) return;
+      const dpr = Math.min(2, window.devicePixelRatio || 1), pas = c.clientWidth / grille.w;
+      c.width = Math.round(c.clientWidth * dpr); c.height = Math.round(pas * grille.h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      for (const f of ordreDeBroderie(grille)) for (const p of f.croix) poserCroix(ctx, pas, p.x, p.y, f.hex);
+    };
+    if (typeof IntersectionObserver === 'undefined') { peindre(); return; }
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); peindre(); } }, { rootMargin: '400px' });
+    io.observe(c);
+    return () => io.disconnect();
+  }, [grille]);
+  return (
+    <li className="bw-oiseau">
+      <Lien href={PATRONS} className="bw-oiseau-lien">
+        <span className="bw-oiseau-toile"><canvas ref={toile} role="img" aria-label={grille.titre + ', patron brodé de ' + grille.w + ' × ' + grille.h + ' points'} /></span>
+        <b>{grille.titre}</b>
+        <span>{grille.fils.length} fils DMC</span>
+      </Lien>
+    </li>
+  );
+}
+function Voliere() {
+  return <ul className="bw-voliere">{OISEAUX.map(o => <OiseauBrode key={o.id} grille={o} />)}</ul>;
 }
 
 /* ——— un écran de l'atelier ——— */
@@ -191,14 +230,14 @@ function teinte(hex: string) {
 function Nuancier() {
   const [seuls, setSeuls] = useState(false);
   const fils = useMemo(() => [...NUANCIER].sort((a, b) => teinte(a[2])[0] - teinte(b[2])[0]), []);
-  const du = useMemo(() => new Set(MESANGE.fils.map(f => f[0])), []);
+  const du = useMemo(() => new Set(OISEAUX[0].fils.map(f => f[0])), []);
   return (
     <div className="bw-nuancier-bloc">
-      <div className={'bw-nuancier' + (seuls ? ' filtre' : '')} role="img" aria-label={'Les ' + fils.length + ' fils DMC rangés par teinte' + (seuls ? ', les ' + du.size + ' fils de la mésange mis en avant' : '')}>
+      <div className={'bw-nuancier' + (seuls ? ' filtre' : '')} role="img" aria-label={'Les ' + fils.length + ' fils DMC rangés par teinte' + (seuls ? ', les ' + du.size + ' fils du rouge-gorge mis en avant' : '')}>
         {fils.map(([c, n, hex]) => <span key={c} title={'DMC ' + c + ' · ' + n} className={du.has(c) ? 'du-motif' : undefined} style={{ background: hex }} />)}
       </div>
       <div className="bw-nuancier-pied">
-        <button type="button" className="bw-bascule" aria-pressed={seuls} onClick={() => setSeuls(s => !s)}>{seuls ? 'Montrer tout le nuancier' : 'Montrer les ' + du.size + ' fils de la mésange'}</button>
+        <button type="button" className="bw-bascule" aria-pressed={seuls} onClick={() => setSeuls(s => !s)}>{seuls ? 'Montrer tout le nuancier' : 'Montrer les ' + du.size + ' fils du rouge-gorge'}</button>
         <p>Couleurs indicatives, d’après craft-color-codes (MakeBead), licence CC BY 4.0. Vérifiez sur une carte de fils avant un achat important.</p>
       </div>
     </div>
@@ -227,13 +266,21 @@ export default function BrodeWay() {
               <li>Hors ligne une fois chargé</li>
             </ul>
           </div>
-          <Broderie reduit={reduit} />
+          <Broderie reduit={reduit} grille={OISEAUX[0]} />
         </section>
 
-        <section className="bw-section bw-papier" aria-labelledby="titre-atelier">
+        <section id="voliere" className="bw-section bw-papier" aria-labelledby="titre-voliere">
+          <div className="bw-entete">
+            <h2 id="titre-voliere" className="bw-h2">La volière</h2>
+            <p className="bw-texte">{OISEAUX.length} oiseaux botaniques, nouveaux dans les éditions : leur plumage est fait de fleurs. {OISEAUX[0].w} × {OISEAUX[0].h} points, jusqu’à {Math.max(...OISEAUX.map(o => o.fils.length))} fils DMC chacun. Ce sont les vrais patrons, brodés ici case par case.</p>
+          </div>
+          <Voliere />
+        </section>
+
+        <section className="bw-section" aria-labelledby="titre-atelier">
           <div className="bw-entete">
             <h2 id="titre-atelier" className="bw-h2">L’atelier, tel qu’il est</h2>
-            <p className="bw-texte">Chaque image de cette page est une capture de l’atelier, ouvert sur La mésange du jardin, l’un des 24 patrons des éditions.</p>
+            <p className="bw-texte">Les images qui suivent sont des captures de l’atelier, ouvert sur La mésange du jardin, un patron des éditions.</p>
           </div>
           <Ecran src={IMG('atelier')} alt="L’atelier ouvert sur la mésange du jardin : le dock du haut (Dessiner, Broder, Fils, Partager), la grille, le dock du bas (Réaliste, À plat, Patron, Symboles)" prioritaire />
         </section>
@@ -266,12 +313,12 @@ export default function BrodeWay() {
           <div className="bw-editions">
             <div>
               <h2 id="titre-editions" className="bw-h2">Les éditions</h2>
-              <p className="bw-texte">24 patrons originaux, dessinés case par case, en six collections. Chacun s’ouvre directement dans l’atelier.</p>
-              <ul className="bw-collections">{['Félins', 'Oiseaux', 'Céleste', 'Objets & Maison', 'Monogrammes', 'Signature'].map(c => <li key={c}>{c}</li>)}</ul>
+              <p className="bw-texte">32 patrons originaux, dessinés case par case, en sept collections. Chacun s’ouvre directement dans l’atelier.</p>
+              <ul className="bw-collections">{['Oiseaux botaniques', 'Félins', 'Oiseaux', 'Céleste', 'Objets & Maison', 'Monogrammes', 'Signature'].map(c => <li key={c}>{c}</li>)}</ul>
               <p className="bw-note">La vente n’est pas encore ouverte.</p>
               <Lien className="bouton noir bw-grand" href={PATRONS}>Voir les patrons</Lien>
             </div>
-            <Ecran src={IMG('editions')} alt="Les éditions : le chat à la fenêtre, le rouge-gorge d’hiver, lune de minuit, la machine à écrire" />
+            <Ecran src={IMG('editions')} alt="Les éditions, collection Oiseaux botaniques : le rouge-gorge fleuri, la mésange aux fleurs des champs, le chardonneret en fête, le martin-pêcheur" />
           </div>
         </section>
 
@@ -289,7 +336,7 @@ export default function BrodeWay() {
         <section className="bw-fin" aria-labelledby="titre-fin">
           <h2 id="titre-fin" className="sr-only">Commencer</h2>
           <Lien className="bw-fin-lien" href={ATELIER}>Ouvrir l’atelier</Lien>
-          <p>La mésange vous attend, avec 23 autres patrons.</p>
+          <p>Le rouge-gorge vous attend, avec 31 autres patrons.</p>
         </section>
       </main>
       <Pied />

@@ -4,10 +4,11 @@ import { EDITIONS, editionGrid, fabriquerEdition } from "../lib/editions";
 import { DRAWINGS } from "../lib/editions/drawings";
 import { buildPdf } from "../lib/pdf";
 
-describe("Point Zéro · Éditions — 24 patrons natifs", () => {
-  it("dessine chacun des 24 patrons du catalogue", () => {
-    expect(EDITIONS).toHaveLength(24);
-    expect(new Set(EDITIONS.map(e => e.id)).size).toBe(24);
+describe("Point Zéro · Éditions — 32 patrons natifs (24 + 8 oiseaux botaniques)", () => {
+  it("dessine chacun des 32 patrons du catalogue", () => {
+    expect(EDITIONS).toHaveLength(32);
+    expect(new Set(EDITIONS.map(e => e.id)).size).toBe(32);
+    expect(EDITIONS.filter(e => e.collection === "Oiseaux botaniques")).toHaveLength(8);
     for (const e of EDITIONS) expect(DRAWINGS[e.id], e.id).toBeTypeOf("function");
   });
 
@@ -37,9 +38,17 @@ describe("Point Zéro · Éditions — 24 patrons natifs", () => {
     }
   });
 
-  it("donne 24 dessins différents", () => {
+  it("donne 32 dessins différents", () => {
     const sigs = EDITIONS.map(e => editionGrid(e.id).toile.cells.join(","));
-    expect(new Set(sigs).size).toBe(24);
+    expect(new Set(sigs).size).toBe(32);
+  });
+
+  it("les oiseaux botaniques sont riches : 150 × 150, au moins 30 fils, des fleurs partout dans le plumage", () => {
+    for (const e of EDITIONS.filter(x => x.collection === "Oiseaux botaniques")) {
+      const t = editionGrid(e.id).toile;
+      expect(t.codes().length, e.title).toBeGreaterThanOrEqual(30);
+      expect(t.codes().length, e.title).toBeLessThanOrEqual(e.maxColors);
+    }
   });
 
   it("s’exporte en PDF avec le moteur existant", async () => {
