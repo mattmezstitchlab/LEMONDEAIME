@@ -40,7 +40,7 @@ export function lienPropre(url) {
     const u = new URL(url), t = u.searchParams.get('token') || '';
     if (!/^[A-Za-z0-9_-]{8,200}$/.test(t)) return url;
     const c = u.searchParams.get('callbackURL') || '/buro';
-    return u.origin + '/lien/' + t + '/' + (/^\/[a-z0-9-]{1,40}$/.test(c) ? c.slice(1) : 'buro');
+    return u.origin + '/lien/' + t + '/' + (c === '/' ? 'accueil' : /^\/[a-z0-9-]{1,40}$/.test(c) ? c.slice(1) : 'buro');   /* « accueil » : revenir sur la page d'accueil */
   } catch { return url; }
 }
 function envoyerLien({ email, url: brut }) {

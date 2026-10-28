@@ -58,6 +58,7 @@ import WorkspacePanel, { DEFAULT_PREFS, type Preferences } from "./components/Wo
 import LibrarySheet from "./components/LibrarySheet";
 import SelectionBar from "./components/SelectionBar";
 import ImportStudio from "./components/ImportStudio";
+import { OUVRAGE_DRAG_TYPE } from "./components/OuvragesBloc";
 import PdfPrep from "./components/PdfPrep";
 import PromptStudio from "./components/PromptStudio";
 import CompositionStudio from "./components/CompositionStudio";
@@ -394,12 +395,39 @@ export default function App() {
     setRemote(p);
     if (p) { setShowWelcome(false); setActiveCategory("stitch"); setWorkspace("stitch"); setView("pattern"); setTool("hand"); setColor((c) => p.palette.includes(c) ? c : p.palette[0] ?? 0); }
   }, []);
+  /** Ouvrir un ouvrage de « Mes ouvrages » (rond du profil) : d'un clic, ou glissé sur la grille. */
+  const ouvrirOuvrage = async (id: string) => {
+    if (remote) { notify("Vous regardez l’ouvrage de quelqu’un : revenez au vôtre pour en ouvrir un autre."); return; }
+    if (id === P.id) { notify(`« ${P.name} » est déjà ouvert.`); return; }
+    const r = (await listProjects()).find(x => x.id === id), p = r && getProject(r);
+    if (!p) { notify("Cet ouvrage n’est plus sur cet appareil."); return; }
+    if (await loadPattern(p)) { setShowWelcome(false); notify(`« ${p.name} » ouvert · ${p.w} × ${p.h} points`); }
+  };
+  const [depot, setDepot] = useState(false);
   const importAnyFile = (chosen: File) => {
     if (/\.(json|oxs)$/i.test(chosen.name)) { void openProjectFromFile(chosen); }
     else if (/\.pdf$/i.test(chosen.name) || chosen.type === "application/pdf") { setPdfFile(chosen); }
     else if (chosen.type.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(chosen.name)) { setAutoImage(chosen); }
     else { notify("Format non reconnu : image, PDF, JSON ou OXS."); return; }
     setShowWelcome(false); };
+  /* Glisser-déposer sur toute la grille : un fichier de l'ordinateur (image, PDF, projet) ou un ouvrage tiré de « Mes ouvrages ». */
+  const deposeRef = useRef({ ouvrir: ouvrirOuvrage, importer: importAnyFile });
+  deposeRef.current = { ouvrir: ouvrirOuvrage, importer: importAnyFile };
+  const atelierLibre = studioMode === "embroidery" && !pdfFile && !promptOpen && !compositionInput && !file && !autoImage;
+  useEffect(() => {
+    if (!atelierLibre) return;
+    const utile = (e: DragEvent) => { const t = Array.from(e.dataTransfer?.types ?? []); return t.includes(OUVRAGE_DRAG_TYPE) || t.includes("Files"); };
+    let sortie: number | undefined;
+    const sur = (e: DragEvent) => { if (!utile(e) || e.defaultPrevented) return; e.preventDefault(); if (e.dataTransfer) e.dataTransfer.dropEffect = "copy"; window.clearTimeout(sortie); setDepot(true); sortie = window.setTimeout(() => setDepot(false), 160); };
+    const lacher = (e: DragEvent) => {
+      if (!utile(e) || e.defaultPrevented) return;
+      e.preventDefault(); setDepot(false);
+      const id = e.dataTransfer?.getData(OUVRAGE_DRAG_TYPE); if (id) { void deposeRef.current.ouvrir(id); return; }
+      const f = e.dataTransfer?.files?.[0]; if (f) deposeRef.current.importer(f);
+    };
+    window.addEventListener("dragover", sur); window.addEventListener("drop", lacher);
+    return () => { window.removeEventListener("dragover", sur); window.removeEventListener("drop", lacher); window.clearTimeout(sortie); };
+  }, [atelierLibre]);
   // Snapshots are native POINTZERO projects, never flat decorative images.
   const sceneOf = (p: Pattern): SubjectScene => {
     const saved = sceneFromPattern(p);
@@ -673,6 +701,7 @@ export default function App() {
       onPick={(idx) => { setColor(idx); if (tool === "pick") setTool(prevTool.current); }}
       onSubjectStart={subjectStart} onSubjectMove={subjectMoveTo} onSubjectEnd={subjectEnd}
       onMotifDrop={(id,x,y) => { const preset = getMotifPreset(id); if (preset) addStitchedPattern(preset,{x,y}); }} />
+    {depot && <div className="pzs-depot-voile" aria-hidden="true"><span>Déposez ici : l’ouvrage s’ouvre dans la grille</span></div>}
     {!pdfFile && !promptOpen && !compositionInput && !file && !autoImage && <StudioDocks
       patternName={P.name} saving={saving} workspace={workspace}
       onWorkspace={mode => { chooseWorkspace(mode); setActiveCategory(mode === "stitch" ? "stitch" : "compose"); setShowWelcome(false); }}
@@ -717,6 +746,7 @@ export default function App() {
         fit: () => setFitKey(k => k + 1),
       }}
       progression={progression} onCouleur={pickColor}
+      ouvrages={{ courant: P.id, ouvrir: id => { void ouvrirOuvrage(id); }, importer: importAnyFile }}
       fils={<FlossRail dock pattern={P} active={color} onActive={pickColor} onPattern={(p) => setPattern(p)} onSupply={updateSupply} onBrowse={() => setPanel("palette")} stitching={workspace === "stitch"} hidden={showWelcome || !!file} />} />}
     <aside aria-label="Inspecteur de broderie"
       hidden={!mobileInspectorOpen}
