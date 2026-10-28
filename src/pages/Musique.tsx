@@ -13,7 +13,7 @@ export default function Musique() {
   const [ouvert, setOuvert] = useState<Moment | null>(null);
   useEffect(() => { if (session) mesMusiques().then(r => setMusiques(r.ok ? r.musiques || [] : [])); else if (session === null) setMusiques([]); }, [session]);
   const dans = (m: Moment) => (musiques || []).filter(x => x.moment === m);
-  const journee = MOMENTS.flatMap(([m]) => dans(m)).filter(x => x.deezer);
+  const journee = MOMENTS.flatMap(([m]) => dans(m)).filter(x => !!x.deezer || x.source === 'fichier');
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
@@ -33,7 +33,7 @@ export default function Musique() {
               <div className="moment-tete">
                 <span className="moment-num" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
                 <div><h2>{nom}</h2><p>{texte}</p></div>
-                {liste.some(x => x.deezer) && <button type="button" className="opt" onClick={() => jouerListe(liste.filter(x => x.deezer).map(enPiste))}>Écouter ce moment</button>}
+                {liste.some(x => !!x.deezer || x.source === 'fichier') && <button type="button" className="opt" onClick={() => jouerListe(liste.filter(x => !!x.deezer || x.source === 'fichier').map(enPiste))}>Écouter ce moment</button>}
               </div>
               {session && musiques && <>
                 <ListeMorceaux musiques={liste} modifiable setMusiques={n => setMusiques([...musiques.filter(x => x.moment !== m), ...n])} vide="Pas encore de morceau pour ce moment." />

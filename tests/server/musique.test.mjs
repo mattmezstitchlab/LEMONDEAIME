@@ -19,3 +19,10 @@ test('musique : extrait mal formé refusé, écriture d’un autre site refusée
   let r = res(); await musique({ method: 'GET', url: '/api/musique?extrait=abc', headers: {} }, r); assert.equal(r.statusCode, 400);
   r = res(); await musique({ method: 'POST', url: '/api/musique', headers: { origin: 'https://ailleurs.example', host: 'lemondeaime.com', 'content-type': 'application/json' } }, r); assert.equal(r.statusCode, 403);
 });
+test('fichierOk : seulement notre stockage et le dossier de la personne', async () => {
+  const { fichierOk } = await import('../../api/musique.mjs');
+  assert.equal(fichierOk('https://abc.public.blob.vercel-storage.com/musique/u1/x.mp3', 'u1'), true);
+  assert.equal(fichierOk('https://abc.public.blob.vercel-storage.com/musique/u2/x.mp3', 'u1'), false);
+  assert.equal(fichierOk('https://ailleurs.example/musique/u1/x.mp3', 'u1'), false);
+  assert.equal(fichierOk('http://abc.public.blob.vercel-storage.com/musique/u1/x.mp3', 'u1'), false);
+});
