@@ -1,0 +1,1546 @@
+{
+ "titre": "Le système nerveux de LE MONDE AIME",
+ "perimetre": "Première branche : les docks et la navigation, jusqu'à la page /musique, sa fonctionnalité « ajouter un morceau » et sa donnée. Les autres sujets viendront un par un.",
+ "depot": "https://github.com/mattmezstitchlab/LEMONDEAIME",
+ "branche": "main",
+ "familles": [
+  {
+   "id": "interfaces",
+   "nom": "Interfaces",
+   "texte": "Ce que l'on voit et touche : docks, blocs, pages."
+  },
+  {
+   "id": "actions",
+   "nom": "Actions",
+   "texte": "Ce que l'on fait : aller, chercher, ajouter, écouter."
+  },
+  {
+   "id": "moteurs",
+   "nom": "Moteurs",
+   "texte": "Ce qui exécute : routeur, confort, lecteur, session, fonctions serveur."
+  },
+  {
+   "id": "donnees",
+   "nom": "Données",
+   "texte": "Ce qui est gardé : sur l'appareil, en base, ou chez un tiers."
+  },
+  {
+   "id": "relations",
+   "nom": "Relations",
+   "texte": "Qui a le droit de quoi : visiteur, personne connectée, inspection."
+  },
+  {
+   "id": "evenements",
+   "nom": "Événements",
+   "texte": "Ce qui circule entre les parties, ou circulera."
+  }
+ ],
+ "parcours": [
+  {
+   "id": "premier",
+   "nom": "Du dock du haut à la donnée",
+   "texte": "Le premier parcours réel : on cherche « musique » depuis le dock du haut, on arrive sur la journée en musique, le dock du bas montre ses moments, on ajoute un morceau, la demande part au serveur, qui l'enregistre.",
+   "etapes": [
+    "dock-haut",
+    "bloc-recherche",
+    "naviguer",
+    "routeur",
+    "page-musique",
+    "dock-bas",
+    "ajouter-morceau",
+    "api-musique",
+    "table-musiques"
+   ]
+  }
+ ],
+ "noeuds": [
+  {
+   "id": "dock-haut",
+   "famille": "interfaces",
+   "nom": "Dock du haut",
+   "fonction": "En haut de chaque page : retour, orbe, AIME®, les rubriques, la loupe et le rond du profil. L'orbe, la loupe et le profil ouvrent le même bloc vers le bas.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/Charte.tsx",
+     "symbole": "Tete"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "session-compte",
+     "prefs-confort"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur",
+    "personne-connectee"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "dock du haut : la loupe ouvre la recherche"
+    },
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "dock du haut : le rond du profil ouvre les dossiers de l’espace"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "verbes",
+   "famille": "interfaces",
+   "nom": "Rubriques du dock du haut",
+   "fonction": "Unions, Prestataires, Studio, Boutique : des mots, toujours les mêmes, au centre du dock du haut.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/Charte.tsx",
+     "symbole": "VerbesSite"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "bloc-aime",
+   "famille": "interfaces",
+   "nom": "Orbe : menu et Mon confort",
+   "fonction": "L'orbe ouvre le menu (accueil, à propos, déconnexion) et le choix de l'orbe : chaque orbe règle la taille du texte, l'espacement, le contraste, le mouvement et les sons.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/Charte.tsx",
+     "symbole": "ReglagesLigne"
+    },
+    {
+     "fichier": "src/lib/confort.ts",
+     "symbole": "profils"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "prefs-confort"
+    ],
+    "ecrit": [
+     "prefs-confort"
+    ]
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "orbe : choisir une orbe enregistre Mon confort sur l’appareil"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "bloc-recherche",
+   "famille": "interfaces",
+   "nom": "Loupe : chercher et plan du site",
+   "fonction": "Chercher dans tout AIME sans quitter la page : les pages, le Réseau, les briques. Sans rien taper, c'est le plan du site.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/Recherche.tsx",
+     "symbole": "Recherche"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "recherche : « musique » mène à /musique sans recharger"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "bloc-espace",
+   "famille": "interfaces",
+   "nom": "Rond du profil : l'espace",
+   "fonction": "Sans compte : entrer dans AIME sans quitter la page. Avec un compte : les dossiers de l'espace (projets, partagés, archives, profil).",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/Charte.tsx",
+     "symbole": "Avatar"
+    },
+    {
+     "fichier": "src/charte/EntrerBloc.tsx",
+     "symbole": "EntrerBloc"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "session-compte"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur",
+    "personne-connectee"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "dock du haut : le rond du profil ouvre les dossiers de l’espace"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "dock-bas",
+   "famille": "interfaces",
+   "nom": "Dock du bas",
+   "fonction": "En bas de chaque page : le cercle progresse avec la lecture ; ses modes changent le dock (Navigation, Musique, et ceux qu'apporte la page).",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/Charte.tsx",
+     "symbole": "DockBas"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "prefs-confort"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "dock du bas : le cercle ouvre ses modes (Navigation, Musique)"
+    },
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "dock du bas : les lieux de /musique sont ses dix moments"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "mode-navigation",
+   "famille": "interfaces",
+   "nom": "Dock du bas · Navigation",
+   "fonction": "Les sections de la page, et celle où l'on se trouve.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/Charte.tsx",
+     "symbole": "DockBas"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "dock du bas : un lieu fait défiler la page sans revenir en haut"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "mode-musique",
+   "famille": "interfaces",
+   "nom": "Dock du bas · Musique",
+   "fonction": "Écouter sans quitter la page : les fichiers choisis sur l'appareil, ou les extraits lancés depuis le site ; un lien vers la journée en musique.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/Charte.tsx",
+     "symbole": "Musique"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "fichiers-appareil",
+     "extraits-deezer"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "dock du bas, mode Musique : fichiers de l’appareil et lien vers la journée en musique"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "pied",
+   "famille": "interfaces",
+   "nom": "Pied de page",
+   "fonction": "Le plan du site en quatre colonnes, en bas de chaque page.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/Charte.tsx",
+     "symbole": "Pied"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "page-musique",
+   "famille": "interfaces",
+   "nom": "La journée en musique",
+   "fonction": "Les dix moments du Jour J, dans l'ordre, avec les morceaux de chacun. La playlist est la timeline.",
+   "pages": [
+    "/musique"
+   ],
+   "sources": [
+    {
+     "fichier": "src/pages/Musique.tsx",
+     "symbole": "Musique"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "table-musiques",
+     "programme"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur",
+    "personne-connectee"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/moments.py",
+     "nom": "/musique : 10 moments"
+    },
+    {
+     "fichier": "tests/e2e/moments.py",
+     "nom": "/musique : mes morceaux affichés"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "page-moments",
+   "famille": "interfaces",
+   "nom": "Les 200 moments",
+   "fonction": "L'aperçu global du programme : dix étapes, cinq lectures, une recherche, un support imprimable.",
+   "pages": [
+    "/moments"
+   ],
+   "sources": [
+    {
+     "fichier": "src/pages/Moments.tsx",
+     "symbole": "TousLesMoments"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "programme",
+     "table-musiques"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/moments.py",
+     "nom": "liste : 200 moments"
+    },
+    {
+     "fichier": "tests/e2e/moments.py",
+     "nom": "bandeau : 10 étapes"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "page-systeme",
+   "famille": "interfaces",
+   "nom": "Le système nerveux",
+   "fonction": "Cette page : la carte de ce qui fonctionne, ce qui reste à vérifier et ce qui fait doublon.",
+   "pages": [
+    "/systeme-nerveux"
+   ],
+   "sources": [
+    {
+     "fichier": "src/pages/SystemeNerveux.tsx",
+     "symbole": "SystemeNerveux"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur",
+    "inspection"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/server/cartographie.test.mjs",
+     "nom": "la lecture publique ne montre ni fichier, ni test, ni donnée technique"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "naviguer",
+   "famille": "actions",
+   "nom": "Aller à une page",
+   "fonction": "Un lien interne change de page sans recharger le site, et garde la position pour le retour.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/router.tsx",
+     "symbole": "Lien"
+    },
+    {
+     "fichier": "src/lib/router.tsx",
+     "symbole": "aller"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "routeur : la page est ajoutée à l’historique"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "revenir",
+   "famille": "actions",
+   "nom": "Revenir",
+   "fonction": "La flèche du dock du haut revient là où l'on était ; sans historique, elle mène à l'accueil.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/router.tsx",
+     "symbole": "revenir"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "retour : la flèche revient en arrière (ici, à l’accueil)"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "choisir-orbe",
+   "famille": "actions",
+   "nom": "Choisir son orbe",
+   "fonction": "Un geste règle tout le site pour soi, sur cet appareil.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/confort.ts",
+     "symbole": "ecrirePrefs"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": [
+     "prefs-confort"
+    ]
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "orbe : choisir une orbe enregistre Mon confort sur l’appareil"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "ajouter-morceau",
+   "famille": "actions",
+   "nom": "Ajouter un morceau",
+   "fonction": "Chercher un titre (extrait de 30 secondes), coller un lien d'une autre plateforme ou envoyer sa propre création, puis le ranger dans un moment du Jour J.",
+   "pages": [
+    "/musique",
+    "/moments/:id"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/Morceaux.tsx",
+     "symbole": "ChoisirMorceau"
+    },
+    {
+     "fichier": "src/lib/musique.ts",
+     "symbole": "ajouterMusique"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "extraits-deezer"
+    ],
+    "ecrit": [
+     "table-musiques"
+    ]
+   },
+   "roles": [
+    "personne-connectee"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "ajouter un morceau : POST /api/musique { action: ajouter, deezer, moment }"
+    },
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "ajout : la réponse du serveur apparaît dans le bon moment"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "ecouter-extrait",
+   "famille": "actions",
+   "nom": "Écouter un extrait",
+   "fonction": "Lire les 30 secondes d'un morceau : l'adresse de l'extrait est demandée au moment de jouer, jamais gardée.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/lecteur.ts",
+     "symbole": "jouerListe"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "extraits-deezer"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/server/musique.test.mjs",
+     "nom": "deDeezer : jamais l’adresse de l’extrait, pochette seulement depuis Deezer"
+    }
+   ],
+   "etat": "a-verifier",
+   "note": "Le serveur est testé ; la lecture dans le navigateur ne l'est pas encore (elle demande un vrai extrait)."
+  },
+  {
+   "id": "chercher-moment",
+   "famille": "actions",
+   "nom": "Chercher un moment",
+   "fonction": "Retrouver un moment par son titre, son lieu, un métier ou une personne, sans accents ni majuscules.",
+   "pages": [
+    "/moments"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/programme-outils.mjs",
+     "symbole": "chercher"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "programme"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/server/programme.test.mjs",
+     "nom": "la recherche trouve par titre, lieu, métier et personne, sans accents ni casse"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "routeur",
+   "famille": "moteurs",
+   "nom": "Routeur du site",
+   "fonction": "Sert chaque adresse, garde l'historique et la position de lecture, sans bibliothèque.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/router.tsx",
+     "symbole": "useChemin"
+    },
+    {
+     "fichier": "src/App.tsx",
+     "symbole": "PAGES"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "routeur : la page est ajoutée à l’historique"
+    },
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "dock du bas : un lieu fait défiler la page sans revenir en haut"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "routeur-studio",
+   "famille": "moteurs",
+   "nom": "Routeur du Studio",
+   "fonction": "Le Studio est une application à part, avec son propre routeur.",
+   "pages": [
+    "/studio/*"
+   ],
+   "sources": [
+    {
+     "fichier": "studio/src/App.tsx",
+     "symbole": "entryStudio"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "confort",
+   "famille": "moteurs",
+   "nom": "Mon confort",
+   "fonction": "Applique la taille, l'espacement, le contraste, le mouvement et les sons à tout le site, et prévient chaque partie quand ils changent.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/confort.ts",
+     "symbole": "appliquer"
+    },
+    {
+     "fichier": "src/lib/confort.ts",
+     "symbole": "useConfort"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "prefs-confort"
+    ],
+    "ecrit": [
+     "prefs-confort"
+    ]
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "orbe : choisir une orbe enregistre Mon confort sur l’appareil"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "lecteur",
+   "famille": "moteurs",
+   "nom": "Lecteur de musique",
+   "fonction": "Une seule file de lecture pour tout le site : extraits et fichiers de l'appareil, précédent, suivant, pause.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/lecteur.ts",
+     "symbole": "useLecteur"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "fichiers-appareil",
+     "extraits-deezer"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "session",
+   "famille": "moteurs",
+   "nom": "Session",
+   "fonction": "Sait qui est connecté, à partir du cookie vérifié par le serveur ; l'identité ne vient jamais du navigateur.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/session.ts",
+     "symbole": "useSession"
+    },
+    {
+     "fichier": "api/comptes.mjs",
+     "symbole": "comptes"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "session-compte"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur",
+    "personne-connectee"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/server/buro.test.mjs",
+     "nom": "comptes : /api/auth/<chemin> reconstruit depuis la réécriture Vercel"
+    },
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "ajout : l’identité ne part jamais dans le corps (le serveur la lit dans la session)"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "api-musique",
+   "famille": "moteurs",
+   "nom": "Fonction serveur Musique",
+   "fonction": "Cherche les morceaux, donne l'extrait au moment de jouer, enregistre, range et retire les morceaux de la personne connectée.",
+   "pages": [
+    "/musique",
+    "/moments",
+    "/moments/:id"
+   ],
+   "sources": [
+    {
+     "fichier": "api/musique.mjs",
+     "symbole": "musique"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "table-musiques",
+     "extraits-deezer",
+     "session-compte"
+    ],
+    "ecrit": [
+     "table-musiques"
+    ]
+   },
+   "roles": [
+    "visiteur",
+    "personne-connectee"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/server/musique.test.mjs",
+     "nom": "musique : extrait mal formé refusé, écriture d’un autre site refusée"
+    },
+    {
+     "fichier": "tests/server/musique.test.mjs",
+     "nom": "lireLien : Deezer reconnu, autres plateformes gardées comme liens, http refusé"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "programme-outils",
+   "famille": "moteurs",
+   "nom": "Programme et ses lectures",
+   "fonction": "Une seule source pour les 200 moments : chronologie, musique, métiers, patron, personnes, recherche, support imprimable.",
+   "pages": [
+    "/",
+    "/moments",
+    "/moments/:id",
+    "/musique"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/programme-outils.mjs",
+     "symbole": "construireSupport"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "programme"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/server/programme.test.mjs",
+     "nom": "le support imprimable : chacun ses moments, et seulement les champs autorisés"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "prefs-confort",
+   "famille": "donnees",
+   "nom": "Réglages Mon confort",
+   "fonction": "Les réglages de confort, gardés sur l'appareil seulement, vus par personne d'autre.",
+   "stockage": "Navigateur · stockage local",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/confort.ts",
+     "symbole": "lirePrefs"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "orbe : choisir une orbe enregistre Mon confort sur l’appareil"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "fichiers-appareil",
+   "famille": "donnees",
+   "nom": "Fichiers de l'appareil",
+   "fonction": "Les morceaux choisis depuis le dock du bas restent sur l'appareil : rien n'est envoyé.",
+   "stockage": "Navigateur · mémoire de la page",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/lecteur.ts",
+     "symbole": "ajouter"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "extraits-deezer",
+   "famille": "donnees",
+   "nom": "Extraits de 30 secondes",
+   "fonction": "Lus chez Deezer, qui en garde les droits ; jamais copiés ni gardés ici.",
+   "stockage": "Tiers · Deezer",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "api/musique.mjs",
+     "symbole": "deDeezer"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/server/musique.test.mjs",
+     "nom": "deDeezer : jamais l’adresse de l’extrait, pochette seulement depuis Deezer"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "table-musiques",
+   "famille": "donnees",
+   "nom": "Les morceaux de chacun",
+   "fonction": "Les morceaux qu'une personne a ajoutés, rangés par moment ; chacun ne lit et ne modifie que les siens.",
+   "stockage": "Base · table musiques",
+   "pages": [
+    "/musique",
+    "/moments"
+   ],
+   "sources": [
+    {
+     "fichier": "api/musique.mjs",
+     "symbole": "TABLE"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "personne-connectee"
+   ],
+   "tests": [],
+   "etat": "a-verifier",
+   "note": "La requête d'ajout est prouvée jusqu'au serveur (API simulée). L'écriture dans une vraie base, avec un vrai compte, n'a pas encore de test."
+  },
+  {
+   "id": "session-compte",
+   "famille": "donnees",
+   "nom": "Compte et session",
+   "fonction": "Le compte et la session, gérés par le service d'authentification ; le site ne voit jamais de mot de passe.",
+   "stockage": "Base · comptes",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "api/_auth/auth.mjs",
+     "symbole": "personne"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "personne-connectee"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/server/buro.test.mjs",
+     "nom": "lien e-mail : le jeton passe dans le chemin, puis redevient la vérification Better Auth"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "programme",
+   "famille": "donnees",
+   "nom": "Grille 200 de référence",
+   "fonction": "Les 200 moments de l'union d'exemple : un fichier statique, jamais modifié par une union.",
+   "stockage": "Fichier du site",
+   "pages": [
+    "/",
+    "/moments",
+    "/musique"
+   ],
+   "sources": [
+    {
+     "fichier": "src/data/programme.json",
+     "symbole": "moments"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/server/programme.test.mjs",
+     "nom": "200 moments, numérotés dans l’ordre, identifiants uniques"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "visiteur",
+   "famille": "relations",
+   "nom": "Visiteur",
+   "fonction": "Lit tout ce qui est public, écoute les extraits, règle son confort ; n'écrit rien sur le serveur.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "api/_auth/requete.cjs",
+     "symbole": "ecriture"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [
+    {
+     "fichier": "tests/server/musique.test.mjs",
+     "nom": "musique : extrait mal formé refusé, écriture d’un autre site refusée"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "personne-connectee",
+   "famille": "relations",
+   "nom": "Personne connectée",
+   "fonction": "Ajoute, range et retire ses propres morceaux ; son identité vient de la session, jamais de la requête.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "api/_auth/auth.mjs",
+     "symbole": "personne"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "ajout : l’identité ne part jamais dans le corps (le serveur la lit dans la session)"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "inspection",
+   "famille": "relations",
+   "nom": "Inspection",
+   "fonction": "Lit la carte complète : modules, données, tests, doublons. Réservée aux personnes autorisées par le serveur.",
+   "pages": [
+    "/systeme-nerveux"
+   ],
+   "sources": [
+    {
+     "fichier": "api/systeme.mjs",
+     "symbole": "systeme"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [
+    {
+     "fichier": "tests/server/cartographie.test.mjs",
+     "nom": "inspection : fermée sans compte, refusée sans autorisation, jamais de secret"
+    },
+    {
+     "fichier": "tests/deploiement/inspection.mjs",
+     "nom": "déploiement : sans session, /api/systeme refuse (401) sans rien montrer"
+    },
+    {
+     "fichier": "tests/deploiement/inspection.mjs",
+     "nom": "déploiement : le code public ne contient rien de l’inspection"
+    }
+   ],
+   "etat": "a-verifier",
+   "note": "En déploiement : le refus sans session (401), le refus d'écrire (405) et l'absence de toute donnée d'inspection dans le code public sont prouvés. Le refus d'un compte connecté mais non autorisé (403) et l'accès autorisé (200) demandent une vraie session : à vérifier avec un compte réel."
+  },
+  {
+   "id": "evt-confort",
+   "famille": "evenements",
+   "nom": "Le confort a changé",
+   "fonction": "Quand une orbe est choisie, chaque dock et chaque page se règlent aussitôt, sans recharger.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/confort.ts",
+     "symbole": "EVT"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "evt-adresse",
+   "famille": "evenements",
+   "nom": "L'adresse a changé",
+   "fonction": "Retour, avance ou lien de section : le routeur suit l'adresse ; un lien de section ne ramène plus en haut.",
+   "pages": [
+    "*"
+   ],
+   "sources": [
+    {
+     "fichier": "src/lib/router.tsx",
+     "symbole": "popstate"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [
+    "visiteur"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/navigation.py",
+     "nom": "dock du bas : un lieu fait défiler la page sans revenir en haut"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "notifications",
+   "famille": "evenements",
+   "nom": "Prévenir les personnes concernées",
+   "fonction": "Quand un moment change, prévenir les métiers et les personnes qu'il concerne.",
+   "pages": [],
+   "sources": [],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [],
+   "etat": "prevu",
+   "note": "N'existe pas : aucune notification n'est envoyée aujourd'hui. La simulation de causalité montre seulement qui le serait."
+  }
+ ],
+ "liens": [
+  {
+   "de": "dock-haut",
+   "vers": "verbes",
+   "nature": "contient"
+  },
+  {
+   "de": "dock-haut",
+   "vers": "bloc-aime",
+   "nature": "ouvre"
+  },
+  {
+   "de": "dock-haut",
+   "vers": "bloc-recherche",
+   "nature": "ouvre"
+  },
+  {
+   "de": "dock-haut",
+   "vers": "bloc-espace",
+   "nature": "ouvre"
+  },
+  {
+   "de": "dock-haut",
+   "vers": "revenir",
+   "nature": "declenche"
+  },
+  {
+   "de": "bloc-aime",
+   "vers": "choisir-orbe",
+   "nature": "declenche"
+  },
+  {
+   "de": "choisir-orbe",
+   "vers": "confort",
+   "nature": "appelle"
+  },
+  {
+   "de": "confort",
+   "vers": "prefs-confort",
+   "nature": "ecrit"
+  },
+  {
+   "de": "confort",
+   "vers": "evt-confort",
+   "nature": "emet"
+  },
+  {
+   "de": "evt-confort",
+   "vers": "dock-bas",
+   "nature": "previent"
+  },
+  {
+   "de": "evt-confort",
+   "vers": "dock-haut",
+   "nature": "previent"
+  },
+  {
+   "de": "bloc-recherche",
+   "vers": "naviguer",
+   "nature": "declenche"
+  },
+  {
+   "de": "verbes",
+   "vers": "naviguer",
+   "nature": "declenche"
+  },
+  {
+   "de": "pied",
+   "vers": "naviguer",
+   "nature": "declenche"
+  },
+  {
+   "de": "naviguer",
+   "vers": "routeur",
+   "nature": "appelle"
+  },
+  {
+   "de": "revenir",
+   "vers": "routeur",
+   "nature": "appelle"
+  },
+  {
+   "de": "routeur",
+   "vers": "evt-adresse",
+   "nature": "ecoute"
+  },
+  {
+   "de": "routeur",
+   "vers": "page-musique",
+   "nature": "affiche"
+  },
+  {
+   "de": "routeur",
+   "vers": "page-moments",
+   "nature": "affiche"
+  },
+  {
+   "de": "page-musique",
+   "vers": "dock-bas",
+   "nature": "contient"
+  },
+  {
+   "de": "page-moments",
+   "vers": "dock-bas",
+   "nature": "contient"
+  },
+  {
+   "de": "dock-bas",
+   "vers": "mode-navigation",
+   "nature": "contient"
+  },
+  {
+   "de": "dock-bas",
+   "vers": "mode-musique",
+   "nature": "contient"
+  },
+  {
+   "de": "mode-musique",
+   "vers": "lecteur",
+   "nature": "appelle"
+  },
+  {
+   "de": "mode-musique",
+   "vers": "page-musique",
+   "nature": "ouvre"
+  },
+  {
+   "de": "lecteur",
+   "vers": "fichiers-appareil",
+   "nature": "lit"
+  },
+  {
+   "de": "page-musique",
+   "vers": "ajouter-morceau",
+   "nature": "declenche"
+  },
+  {
+   "de": "page-moments",
+   "vers": "chercher-moment",
+   "nature": "declenche"
+  },
+  {
+   "de": "chercher-moment",
+   "vers": "programme-outils",
+   "nature": "appelle"
+  },
+  {
+   "de": "programme-outils",
+   "vers": "programme",
+   "nature": "lit"
+  },
+  {
+   "de": "page-musique",
+   "vers": "programme-outils",
+   "nature": "appelle"
+  },
+  {
+   "de": "ajouter-morceau",
+   "vers": "api-musique",
+   "nature": "appelle"
+  },
+  {
+   "de": "ecouter-extrait",
+   "vers": "api-musique",
+   "nature": "appelle"
+  },
+  {
+   "de": "ecouter-extrait",
+   "vers": "lecteur",
+   "nature": "appelle"
+  },
+  {
+   "de": "api-musique",
+   "vers": "session",
+   "nature": "appelle"
+  },
+  {
+   "de": "session",
+   "vers": "session-compte",
+   "nature": "lit"
+  },
+  {
+   "de": "bloc-espace",
+   "vers": "session",
+   "nature": "appelle"
+  },
+  {
+   "de": "api-musique",
+   "vers": "table-musiques",
+   "nature": "ecrit",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "api-musique",
+   "vers": "extraits-deezer",
+   "nature": "lit"
+  },
+  {
+   "de": "personne-connectee",
+   "vers": "ajouter-morceau",
+   "nature": "autorise"
+  },
+  {
+   "de": "visiteur",
+   "vers": "ecouter-extrait",
+   "nature": "autorise"
+  },
+  {
+   "de": "inspection",
+   "vers": "page-systeme",
+   "nature": "autorise"
+  },
+  {
+   "de": "routeur",
+   "vers": "page-systeme",
+   "nature": "affiche"
+  },
+  {
+   "de": "api-musique",
+   "vers": "notifications",
+   "nature": "emet",
+   "etat": "prevu"
+  }
+ ],
+ "audit": [
+  {
+   "id": "entrer-espace",
+   "fonction": "Ouvrir son espace",
+   "moteur": "routeur",
+   "donnees": [
+    "session-compte"
+   ],
+   "destinations": [
+    "/buro"
+   ],
+   "statut": "simplifier",
+   "raison": "L'espace s'ouvre depuis le rond du profil (ses quatre dossiers), puis encore depuis « Ouvrir mon espace » dans le même bloc, la loupe et le pied. Le rond du profil suffit comme entrée canonique ; garder la loupe et le pied comme plan du site."
+  },
+  {
+   "id": "deconnexion",
+   "fonction": "Se déconnecter",
+   "moteur": "session",
+   "donnees": [
+    "session-compte"
+   ],
+   "destinations": [],
+   "points": [
+    {
+     "fichier": "src/charte/Charte.tsx",
+     "texte": "Déconnexion"
+    }
+   ],
+   "statut": "simplifier",
+   "raison": "Deux boutons « Déconnexion » dans le même dock du haut : dans le menu de l'orbe et dans le bloc de l'espace. Le garder dans l'espace, là où l'on gère son compte."
+  },
+  {
+   "id": "studio",
+   "fonction": "Ouvrir le Studio",
+   "moteur": "routeur-studio",
+   "donnees": [],
+   "destinations": [
+    "/studio"
+   ],
+   "statut": "mutualiser",
+   "raison": "La loupe propose « Studio » et « Atelier de broderie », qui mènent à la même adresse ; le Studio s'ouvre aussi depuis les rubriques, le pied, l'accueil et Point Zéro. Une seule entrée dans la loupe."
+  },
+  {
+   "id": "point-zero",
+   "fonction": "Commencer quelque chose",
+   "moteur": "routeur",
+   "donnees": [],
+   "destinations": [
+    "/point-zero"
+   ],
+   "statut": "conserver",
+   "raison": "Point d'entrée de création, présent à plusieurs endroits à dessein ; harmoniser seulement les libellés (« Point Zéro », « Commencer au Point Zéro », « Créer la page de notre union »)."
+  },
+  {
+   "id": "ma-musique",
+   "fonction": "Écouter « ma musique »",
+   "moteur": "lecteur",
+   "donnees": [
+    "fichiers-appareil",
+    "table-musiques"
+   ],
+   "destinations": [
+    "/musique"
+   ],
+   "statut": "mutualiser",
+   "raison": "Deux sens de « ma musique » : le mode Musique du dock lit des fichiers de l'appareil (rien n'est envoyé), la journée en musique lit les morceaux du compte. Le lecteur est déjà commun ; décider si le dock propose aussi la playlist du compte quand on est connecté."
+  },
+  {
+   "id": "normaliser-recherche",
+   "fonction": "Chercher sans accents",
+   "moteur": "programme-outils",
+   "donnees": [],
+   "destinations": [],
+   "points": [
+    {
+     "fichier": "src/charte/Recherche.tsx",
+     "texte": "const sans"
+    },
+    {
+     "fichier": "src/lib/programme-outils.mjs",
+     "texte": "const plat"
+    }
+   ],
+   "statut": "mutualiser",
+   "raison": "La loupe du site et la recherche des moments ont chacune leur fonction pour retirer les accents. Une seule fonction, partagée."
+  },
+  {
+   "id": "deux-routeurs",
+   "fonction": "Servir les adresses",
+   "moteur": "routeur",
+   "donnees": [],
+   "destinations": [],
+   "points": [
+    {
+     "fichier": "src/lib/router.tsx",
+     "texte": "export function aller"
+    },
+    {
+     "fichier": "studio/src/App.tsx",
+     "texte": "entryStudio"
+    }
+   ],
+   "statut": "deplacer",
+   "raison": "Le site et le Studio ont chacun leur routeur et leurs docks. Hors de cette première branche : à examiner avec le sujet « StudiO », sans rien fusionner avant l'audit."
+  }
+ ]
+}

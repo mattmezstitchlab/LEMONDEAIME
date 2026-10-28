@@ -10,6 +10,7 @@ import FicheReseau from './pages/FicheReseau';
 import Boutique from './pages/Boutique';
 import Musique from './pages/Musique';
 import Moments from './pages/Moments';
+import SystemeNerveux from './pages/SystemeNerveux';
 import { APlus, Introuvable } from './pages/Simples';
 import { aller } from './lib/router';
 
@@ -24,6 +25,7 @@ const PAGES: Record<string, [() => React.JSX.Element, string]> = {
   '/boutique': [Boutique, 'LE MONDE AIME — Boutique'],
   '/musique': [Musique, 'LE MONDE AIME — La journée en musique'],
   '/moments': [() => <Moments />, 'LE MONDE AIME — Les moments de l’union'],
+  '/systeme-nerveux': [SystemeNerveux, 'LE MONDE AIME — Le système nerveux'],
 };
 /* anciennes adresses : elles mènent toutes à l'accueil LE MONDE AIME (rien ne casse pour qui les a gardées) */
 const ANCIENNES: Record<string, string> = { '/charte': '/', '/monde': '/', '/aime-wedding': '/' };

@@ -9,6 +9,9 @@
     "api/orbe.mjs": {
       "maxDuration": 20
     },
+    "api/systeme.mjs": {
+      "includeFiles": "cartographie/*.json"
+    },
     "api/maintenance.mjs": {
       "maxDuration": 60
     }
