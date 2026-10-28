@@ -5,7 +5,7 @@ import { fromObject, type Pattern, type Supply } from "../lib/pattern";
 import { downloadBlob } from "../lib/io";
 import Sheet from "./Sheet";
 
-export default function LibrarySheet({ open, onClose, onLoad, onNew, inventory }: { open: boolean; onClose: () => void; onLoad: (p: Pattern) => void; onNew: () => void; inventory: Record<string, Supply> }) {
+export default function LibrarySheet({ open, onClose, onLoad, onNew, inventory, compte = false }: { compte?: boolean; open: boolean; onClose: () => void; onLoad: (p: Pattern) => void; onNew: () => void; inventory: Record<string, Supply> }) {
   const [items, setItems] = useState<ProjectRecord[]>([]), [q, setQ] = useState(""), [folder, setFolder] = useState(""), [versions, setVersions] = useState<string | null>(null), [error, setError] = useState("");
   const [legacy] = useState(() => { try { return localStorage.getItem("point-zero:legacy-backup") ?? ""; } catch { return ""; } });
   const reload = () => listProjects().then((v) => setItems(v.sort((a, b) => b.updated - a.updated))).catch(() => setError("Le stockage IndexedDB est indisponible. Exportez votre fichier JSON pour le conserver."));
@@ -16,7 +16,7 @@ export default function LibrarySheet({ open, onClose, onLoad, onNew, inventory }
     const text = "DMC;Nom;Metres_equivalent_6_brins;Echeveaux_a_acheter\n" + rows.map((r) => `${r.code};${r.name};${r.meters.toFixed(2)};${r.buy}`).join("\n");
     downloadBlob(new Blob(["\uFEFF" + text], { type: "text/csv;charset=utf-8" }), "liste-achats-point-zero.csv");
   };
-  return <Sheet open={open} onClose={onClose} title="Mes projets" subtitle="Sur cet appareil, avec sauvegardes de versions" toolbar={<div className="flex items-center justify-between"><button className="btn-tinted" onClick={onNew}><Plus size={16} />Nouvelle grille</button><button onClick={shopping} className="text-[13px] font-medium text-accent-2">Liste d’achat CSV</button></div>}>
+  return <Sheet open={open} onClose={onClose} title={compte ? "Votre espace AIME" : "Mes projets"} subtitle={compte ? "Sur votre compte et sur cet appareil, avec sauvegardes de versions" : "Sur cet appareil, avec sauvegardes de versions"} toolbar={<div className="flex items-center justify-between"><button className="btn-tinted" onClick={onNew}><Plus size={16} />Nouvelle grille</button><button onClick={shopping} className="text-[13px] font-medium text-accent-2">Liste d’achat CSV</button></div>}>
     <div className="relative"><Search size={16} className="absolute left-3 top-3 text-label-3" /><input className="field pl-9" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher un projet" aria-label="Rechercher un projet" /></div>
     <label className="mt-3 flex items-center gap-2 text-[13px] text-label-2"><Folder size={15} /><select className="field" value={folder} onChange={(e) => setFolder(e.target.value)}><option value="">Tous les dossiers</option>{[...new Set(items.map((v) => v.folder).filter(Boolean))].map((f) => <option key={f}>{f}</option>)}</select></label>
     {error && <p role="alert" className="mt-3 text-[13px] text-danger">{error}</p>}

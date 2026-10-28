@@ -1,6 +1,7 @@
 import { computeStats, fromObject, makeId, toObject, type Pattern, type Supply } from "./pattern";
 import { FLOSS, flossIndex } from "./dmc";
 import { loadBrodeuseProfile, saveBrodeuseProfile } from "./brodeuseProfile";
+import { apresEnregistrement, apresSuppression, tirer } from "./aimeSync";
 
 export interface ProjectRecord { id: string; name: string; folder: string; updated: number; w: number; h: number; progress: number; data: string; versions: { date: number; data: string }[] }
 const DB = "point-zero-library";
@@ -24,7 +25,7 @@ async function request<T>(mode: IDBTransactionMode, fn: (s: IDBObjectStore) => I
   });
 }
 export const listProjects = () => request<ProjectRecord[]>("readonly", (s) => s.getAll());
-export const deleteProject = (id: string) => request("readwrite", (s) => s.delete(id));
+export const deleteProject = async (id: string) => { const r = await request("readwrite", (s) => s.delete(id)); void apresSuppression(id); return r; };
 export const getProject = (record: ProjectRecord) => fromObject(JSON.parse(record.data));
 export async function saveLibrary(p: Pattern, checkpoint = false): Promise<void> {
   const id = p.id ?? makeId();
@@ -33,7 +34,18 @@ export async function saveLibrary(p: Pattern, checkpoint = false): Promise<void>
   const { totals } = computeStats(p), now = Date.now(), data = JSON.stringify(toObject({ ...p, id }));
   const versions = [...(old?.versions ?? [])];
   if (old && (checkpoint || now - (versions[0]?.date ?? 0) > 180000) && old.data !== data) versions.unshift({ date: old.updated, data: old.data });
-  await request("readwrite", (s) => s.put({ id, name: p.name, folder: p.folder ?? "", updated: now, w: p.w, h: p.h, progress: totals.units ? totals.doneUnits / totals.units : 0, data, versions: versions.slice(0, 8) } satisfies ProjectRecord));
+  const record = { id, name: p.name, folder: p.folder ?? "", updated: now, w: p.w, h: p.h, progress: totals.units ? totals.doneUnits / totals.units : 0, data, versions: versions.slice(0, 8) } satisfies ProjectRecord;
+  await request("readwrite", (s) => s.put(record));
+  if (totals.units > 0) apresEnregistrement(record); // dans AIME et connecté : rangé aussi dans Votre espace (une grille vide reste sur l'appareil)
+}
+/** Dans AIME et connecté : ramène sur l'appareil les ouvrages du compte plus récents. L'ancienne version locale reste dans l'historique. */
+export async function tirerDuCompte(): Promise<string[]> {
+  return tirer(listProjects, async (r) => {
+    if (!fromObject(JSON.parse(r.data))) return;
+    const old = await request<ProjectRecord | undefined>("readonly", (s) => s.get(r.id));
+    const versions = old ? [{ date: old.updated, data: old.data }, ...old.versions].slice(0, 8) : [];
+    await request("readwrite", (s) => s.put({ ...r, versions } satisfies ProjectRecord));
+  }, (r) => { try { const p = getProject(r as ProjectRecord); return !!p && computeStats(p).totals.units > 0; } catch { return false; } });
 }
 export function readInventory(): Record<string, Supply> {
   try {

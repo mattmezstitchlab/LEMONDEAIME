@@ -115,6 +115,8 @@ export async function effacerTraces(db, u) {
     if (m.rows[0] && m.rows[0].t) await c.query('delete from matiere where user_id = $1', [u.id]);
     const id = await c.query("select to_regclass('public.identite') as t");
     if (id.rows[0] && id.rows[0].t) await c.query('delete from identite where user_id = $1', [u.id]);
+    const ou = await c.query("select to_regclass('public.ouvrages') as t");   /* les ouvrages de l'atelier partent avec le compte */
+    if (ou.rows[0] && ou.rows[0].t) await c.query('delete from ouvrages where user_id = $1', [u.id]);
     const pr = await c.query("select to_regclass('public.profils') as t");   /* le profil du Réseau part avec le compte */
     if (pr.rows[0] && pr.rows[0].t) await c.query('delete from profils where user_id = $1', [u.id]);
     await c.query('commit');

@@ -1,4 +1,4 @@
-export type Projet = { id: string; genre: string; titre: string; role: string; maj: string; briques: string[]; studio: string; visibilite: string; archive: boolean };
+export type Projet = { id: string; genre: string; titre: string; role: string; maj: string; briques: string[]; studio: string; visibilite: string; archive: boolean; ouvrage?: string | null };
 const H = { 'Content-Type': 'application/json' };
 export async function lireBuro(): Promise<{ ok: boolean; projets?: Projet[]; raison?: string; code: number }> {
   try { const r = await fetch('/api/buro', { credentials: 'same-origin' }); const j = await r.json().catch(() => ({})); return { ...j, code: r.status }; }

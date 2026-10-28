@@ -11,7 +11,8 @@ import { blankPattern, initState, loadStored, reducer, saveStored } from "./lib/
 import { clonePattern, compositePattern, computeStats, createPattern, ensurePalette, toObject, fromObject, type Pattern, type Supply } from "./lib/pattern";
 import { readProjectFile, readTextFile, saveProjectFile } from "./lib/io";
 import { fromOxs } from "./lib/oxs";
-import { readInventory, saveLibrary, writeInventory } from "./lib/library";
+import { getProject, listProjects, readInventory, saveLibrary, tirerDuCompte, writeInventory } from "./lib/library";
+import { estConnecte } from "./lib/aimeSync";
 import { clearSelection, extractSelection, pasteSelection, transformPart, type Selection } from "./lib/editing";
 import { useMedia } from "./lib/useMedia";
 import type { Tool } from "./lib/stitch";
@@ -260,6 +261,26 @@ export default function App() {
     }, 650);
     return () => clearTimeout(timer);
   }, [store.present, remote, notify]);
+  /* Dans AIME et connecté : les ouvrages du compte reviennent sur l'appareil ; ?ouvrage=<id> ouvre celui choisi dans Votre espace. */
+  const [compteAime, setCompteAime] = useState(false);
+  useEffect(() => {
+    let fini = false;
+    void (async () => {
+      const connecte = await estConnecte(); if (fini) return; setCompteAime(connecte);
+      if (!connecte) return;
+      const ecrits = await tirerDuCompte().catch(() => [] as string[]);
+      const id = new URLSearchParams(window.location.search).get("ouvrage");
+      if (id) { const r = (await listProjects()).find(x => x.id === id), p = r && getProject(r); if (p && !fini) void loadPattern(p); else if (!fini) notify("Cet ouvrage n’est pas dans votre espace AIME."); }
+      else if (ecrits.length && !fini) notify(ecrits.length > 1 ? `${ecrits.length} ouvrages récupérés depuis votre espace AIME.` : "Un ouvrage récupéré depuis votre espace AIME.");
+    })();
+    const etat = (e: Event) => { const d = (e as CustomEvent<{ etat: string; nom: string }>).detail;
+      if (d.etat === "range") setSaving("Rangé dans votre espace AIME");
+      else if (d.etat === "trop-gros") notify(`« ${d.nom} » est trop lourd pour votre espace AIME : il reste sur cet appareil.`);
+      else setSaving("Sauvegardé sur cet appareil · espace AIME injoignable"); };
+    window.addEventListener("pointzero:aime-espace", etat);
+    return () => { fini = true; window.removeEventListener("pointzero:aime-espace", etat); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     const flush = () => { if (!snapshot.current.remote) saveStored(snapshot.current.store.present); };
     window.addEventListener("pagehide", flush); return () => window.removeEventListener("pagehide", flush);
@@ -737,7 +758,7 @@ export default function App() {
     {!showWelcome && selection && workspace === "create" && !remote && <SelectionBar selection={selection} hasClipboard={!!clipboard} onAction={selectionAction} />}
     <FlossRail fullWidth pattern={P} active={color} onActive={pickColor} onPattern={(p) => setPattern(p)} onSupply={updateSupply} onBrowse={() => setPanel("palette")} stitching={workspace === "stitch"} hidden={showWelcome || !!file || dockPath !== "fils"} />
     <PaletteSheet open={panel === "palette"} onClose={closePanel} pattern={P} color={color} onPick={pickColor} />
-    <LibrarySheet open={panel === "library"} onClose={closePanel} onLoad={(p) => void loadPattern(p)} onNew={() => panelActions.new(80, 80)} inventory={inventory} />
+    <LibrarySheet compte={compteAime} open={panel === "library"} onClose={closePanel} onLoad={(p) => void loadPattern(p)} onNew={() => panelActions.new(80, 80)} inventory={inventory} />
     {autoImage && <AutomaticImageImport file={autoImage}
       onCancel={() => setAutoImage(null)}
       onReady={async p => { if (!await useImportedPattern(p)) throw new Error("Projet précédent conservé : exportez son JSON puis réessayez."); }}/> }
