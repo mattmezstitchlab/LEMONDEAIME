@@ -7,7 +7,8 @@ type Etat = { n?: number; y?: number };
 const etat = (): Etat => (window.history.state && typeof window.history.state === 'object' ? window.history.state : {}) as Etat;
 if (typeof window !== 'undefined') {
   try { window.history.scrollRestoration = 'manual'; } catch { /* navigateur ancien */ }
-  window.addEventListener('popstate', () => { const y = etat().y || 0; requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'instant' as ScrollBehavior }))); });
+  /* un lien d'ancre (#section) déclenche aussi « popstate », sans état : le navigateur fait défiler lui-même, on ne le ramène pas en haut */
+  window.addEventListener('popstate', () => { if (!window.history.state) return; const y = etat().y || 0; requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'instant' as ScrollBehavior }))); });
 }
 export function profondeur() { return etat().n || 0; }
 export function revenir() { if (profondeur() > 0) window.history.back(); else aller('/'); }

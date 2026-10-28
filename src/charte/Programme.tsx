@@ -24,10 +24,3 @@ export function BandeEtapes() {
   );
 }
 const TEINTES = ['#E9E9E4', '#E1E1DB', '#D8D8D1', '#CFCFC8', '#D8D8D1', '#E1E1DB'];
-
-/* Les chiffres du programme, en une ligne (page des moments) */
-export function ChiffresProgramme() {
-  const c = compter(PROGRAMME);
-  const L: [string, number][] = [['Moments', c.moments], ['Étapes', c.etapes], ['Métiers', c.metiers], ['Fils DMC', c.voix]];
-  return <dl className="chiffres200">{L.map(([t, n]) => <div key={t}><dt>{t}</dt><dd>{n}</dd></div>)}</dl>;
-}

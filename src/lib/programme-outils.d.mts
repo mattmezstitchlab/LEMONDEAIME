@@ -19,3 +19,13 @@ export function personnesDe(p: Programme, m: MomentP): { id: string; nom: string
 export function momentsDe(p: Programme, qui: string): MomentP[];
 export function parMusique(p: Programme, cle: string): MomentP[];
 export function plageMusique(p: Programme, cle: string): string;
+export function chercher(p: Programme, q: string): MomentP[];
+export function personnaliser(ref: Programme, choix: { union?: Partial<Programme['union']>; moments: string[]; horaires?: Record<string, string> }): Programme;
+export function estReference(p: Programme): boolean;
+export const CHAMPS: Record<'tous' | 'maries' | 'prestataire', string[]>;
+export const CONTENUS: Record<'jour' | 'autour' | 'tout', string[] | null>;
+export const COULISSES: string[];
+export function pourLesMaries(p: Programme, m: MomentP): boolean;
+export type LigneSupport = { n: number; id: string; heure: string; titre: string; lieu: string; description?: string; responsables?: string[]; metiers?: string[]; personnes?: string[]; consignes?: string[] };
+export type Support = { titre: string; lieu: string; jour: string; reference: boolean; pour: string; champs: string[]; sections: { id: string; nom: string; repere: string; moments: LigneSupport[] }[]; total: number };
+export function construireSupport(p: Programme, o?: { pour?: string; contenu?: 'jour' | 'autour' | 'tout' }): Support;

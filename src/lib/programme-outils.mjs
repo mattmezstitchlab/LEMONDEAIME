@@ -6,7 +6,7 @@ const caches = new WeakMap();
 function cache(p) {
   let c = caches.get(p);
   if (!c) {
-    c = { parId: new Map(p.moments.map(m => [m.id, m])), lieux: new Map(p.lieux.map(l => [l.id, l.nom])) };
+    c = { parId: new Map(p.moments.map(m => [m.id, m])), rang: new Map(p.moments.map((m, i) => [m.id, i])), lieux: new Map(p.lieux.map(l => [l.id, l.nom])) };
     caches.set(p, c);
   }
   return c;
@@ -48,13 +48,14 @@ export function compter(p) {
 }
 
 /** Les moments autour d'un moment, dans l'ordre du programme. */
+/* la position dans CE programme (une union personnalisée garde les numéros de la Grille 200, mais pas tous les moments) */
+const rang = (p, id) => cache(p).rang.get(id) ?? -1;
 export function autour(p, id, k = 3) {
-  const m = moment(p, id);
-  if (!m) return [];
-  return p.moments.slice(Math.max(0, m.n - 1 - k), m.n + k);
+  const i = rang(p, id);
+  return i < 0 ? [] : p.moments.slice(Math.max(0, i - k), i + k + 1);
 }
-export const avant = (p, id) => { const m = moment(p, id); return m && m.n > 1 ? p.moments[m.n - 2] : null; };
-export const apres = (p, id) => { const m = moment(p, id); return m && m.n < p.moments.length ? p.moments[m.n] : null; };
+export const avant = (p, id) => { const i = rang(p, id); return i > 0 ? p.moments[i - 1] : null; };
+export const apres = (p, id) => { const i = rang(p, id); return i >= 0 && i < p.moments.length - 1 ? p.moments[i + 1] : null; };
 
 /** Les métiers d'un moment : ceux qui le tiennent (avec la carte d'exemple du Réseau quand il y en a une) et ceux qui pourraient. */
 export function metiersDe(p, m) {
@@ -124,4 +125,76 @@ export const parMusique = (p, cle) => p.moments.filter(m => m.musique === cle);
 export function plageMusique(p, cle) {
   const ms = parMusique(p, cle);
   return ms.length ? heure(ms[0]) + ' → ' + heure(ms[ms.length - 1]) : '';
+}
+
+/* ——— Chercher ——— */
+const plat = t => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+/** Les moments qui répondent à une recherche : titre, description, lieu, étape, métiers, personnes. Tous les mots doivent se trouver. */
+export function chercher(p, q) {
+  const mots = plat(q || '').split(/[^a-z0-9]+/).filter(x => x.length > 1);
+  if (!mots.length) return p.moments;
+  return p.moments.filter(m => {
+    const t = plat([m.titre, m.description, nomLieu(p, m.lieu), nomEtape(p, m.etape), ...m.metiers.map(id => nomMetier(p, id)),
+      ...p.union.personnes.filter(x => concerne(p, m, x.id)).map(x => x.nom)].join(' '));
+    return mots.every(w => t.includes(w));
+  });
+}
+
+/* ——— La Grille 200 de référence et le programme d'une union ———
+   La référence ne change jamais. Une union choisit ses moments (et peut changer leurs horaires) : on obtient
+   un programme de la même forme, que toutes les vues savent lire. */
+/** Le programme d'une union à partir de la référence : seuls les moments retenus, dans l'ordre de la Grille, horaires éventuellement changés. */
+export function personnaliser(ref, { union, moments, horaires = {} }) {
+  const garde = new Set(moments);
+  const ms = ref.moments.filter(m => garde.has(m.id)).map(m => {
+    const h = horaires[m.id];
+    if (!h || !/^([01]\d|2[0-3]):[0-5]\d$/.test(h)) return m;
+    const [y, mo, d] = m.debut.slice(0, 10).split('-').map(Number), [hh, mi] = h.split(':').map(Number), dec = m.debut.slice(19);
+    const iso = t => { const x = new Date(t); const z = n => String(n).padStart(2, '0'); return x.getUTCFullYear() + '-' + z(x.getUTCMonth() + 1) + '-' + z(x.getUTCDate()) + 'T' + z(x.getUTCHours()) + ':' + z(x.getUTCMinutes()) + ':00' + dec; };
+    const t0 = Date.UTC(y, mo - 1, d, hh, mi);
+    return { ...m, debut: iso(t0), fin: iso(t0 + m.duree * 60000), horaireChange: true };
+  });
+  // un horaire changé peut déplacer un moment dans sa journée : on garde l'ordre des étapes, puis celui des heures
+  const ordre = new Map(ref.etapes.map((e, i) => [e.id, i]));
+  ms.sort((a, b) => ordre.get(a.etape) - ordre.get(b.etape) || (a.etape === 'day' ? a.debut.localeCompare(b.debut) : 0) || a.n - b.n);
+  return { ...ref, reference: false, union: union ? { ...ref.union, ...union } : ref.union, moments: ms };
+}
+export const estReference = p => p.reference !== false;
+
+/* ——— Le support imprimable ———
+   Un même programme, imprimé pour un public : chacun ne reçoit que ses moments et que les champs qui lui sont autorisés. */
+export const CHAMPS = {
+  tous: ['n', 'id', 'heure', 'titre', 'lieu', 'responsables'],
+  maries: ['n', 'id', 'heure', 'titre', 'lieu', 'description', 'personnes'],
+  prestataire: ['n', 'id', 'heure', 'titre', 'lieu', 'responsables', 'metiers', 'consignes'],
+};
+export const CONTENUS = { jour: ['day'], autour: ['eve', 'day', 'next-day'], tout: null };
+/* les coulisses : ce que les mariés n'ont pas besoin de lire (sauf si le moment les concerne) */
+export const COULISSES = ['security', 'venue-manager', 'day-coordinator', 'admin', 'digital', 'sound-light', 'accessibility', 'planner'];
+export const pourLesMaries = (p, m) => p.union.personnes.some(x => x.role !== 'Témoin' && concerne(p, m, x.id)) || m.metiers.some(t => !COULISSES.includes(t));
+/** Pour qui : 'tous' (l'équipe), 'maries', ou l'identifiant d'un métier. Contenu : 'jour', 'autour' (veille → lendemain) ou 'tout'. */
+export function construireSupport(p, { pour = 'tous', contenu = 'jour' } = {}) {
+  const metier = pour !== 'tous' && pour !== 'maries' ? pour : null;
+  if (metier && !p.metiers[metier]) throw new Error('Métier inconnu : ' + pour);
+  const champs = CHAMPS[metier ? 'prestataire' : pour];
+  const etapesGardees = contenu in CONTENUS ? CONTENUS[contenu] : CONTENUS.jour;
+  const retenus = p.moments.filter(m => (!etapesGardees || etapesGardees.includes(m.etape))
+    && (!metier || m.metiers.includes(metier))
+    && (pour !== 'maries' || pourLesMaries(p, m)));
+  const ligne = m => {
+    const tout = {
+      n: m.n, id: m.id, heure: m.etape === 'day' ? heure(m) : p.etapes.find(e => e.id === m.etape).repere, titre: m.titre, lieu: nomLieu(p, m.lieu),
+      description: m.description, responsables: m.responsables.map(r => r === 'couple' ? 'Les mariés' : r === 'temoins' ? 'Les témoins' : nomMetier(p, r)),
+      metiers: m.metiers.map(id => nomMetier(p, id)), personnes: p.union.personnes.filter(x => concerne(p, m, x.id)).map(x => x.nom),
+      consignes: m.consignes && metier ? [...m.consignes.taches, ...m.consignes.repli.map(t => 'Plan B : ' + t)] : undefined,
+    };
+    const o = {}; for (const k of champs) if (tout[k] !== undefined) o[k] = tout[k];
+    return o;
+  };
+  const sections = etapes(p).map(e => ({ id: e.id, nom: e.nom, repere: e.id === 'day' ? '06:00 → 06:00' : e.repere, moments: e.moments.filter(m => retenus.includes(m)).map(ligne) })).filter(s => s.moments.length);
+  return {
+    titre: p.union.nom, lieu: p.union.lieu, jour: p.union.jour, reference: estReference(p),
+    pour: metier ? nomMetier(p, metier) : pour === 'maries' ? 'Les mariés' : 'Toute l’équipe', champs, sections,
+    total: sections.reduce((t, s) => t + s.moments.length, 0),
+  };
 }

@@ -114,7 +114,7 @@ test('les huit photos du Jour J sont raccordées à un moment, à la même heure
 test('les chiffres affichés sont comptés, jamais recopiés', () => {
   const c = P.compter(p);
   assert.deepEqual([c.moments, c.etapes, c.jourJ, c.voix], [200, 10, 102, 8]);
-  for (const f of ['src/pages/LeMondeAime.tsx', 'src/pages/Moments.tsx', 'src/charte/LecturesMoment.tsx']) {
+  for (const f of ['src/pages/LeMondeAime.tsx', 'src/pages/Moments.tsx', 'src/charte/LecturesMoment.tsx', 'src/charte/Support.tsx', 'src/charte/Programme.tsx']) {
     const s = lire(f);
     assert.ok(!/>\s*(200|102|122)\s*</.test(s), f + ' affiche un chiffre écrit à la main');
   }
@@ -144,4 +144,49 @@ test('les personnes : chacune retrouve ses moments', () => {
 test('aucune donnée personnelle ni projet réel : le programme est marqué comme démonstration', () => {
   assert.match(p.note, /démonstration/);
   assert.ok(!/@|https?:\/\//.test(JSON.stringify(p)));
+});
+
+test('la recherche trouve par titre, lieu, métier et personne, sans accents ni casse', () => {
+  assert.equal(P.chercher(p, '').length, 200);
+  assert.ok(P.chercher(p, 'piscine').every(m => /piscine/i.test(m.titre + m.description) || m.lieu === 'piscine'));
+  assert.ok(P.chercher(p, 'piscine').length > 10);
+  assert.ok(P.chercher(p, 'ENTREE camille').some(m => m.id === 'day-ceremony-bride-entry'));
+  assert.ok(P.chercher(p, 'dj').some(m => m.id === 'day-first-dance'));
+  assert.deepEqual(P.chercher(p, 'malik alliances').map(m => m.id), ['lastweek-rings-check', 'day-rings-ready', 'day-ceremony-rings']);
+  assert.equal(P.chercher(p, 'xyzzy').length, 0);
+});
+
+test('la Grille 200 de référence et le programme d’une union restent distincts', () => {
+  const avantJson = JSON.stringify(p);
+  const u = P.personnaliser(p, { union: { nom: 'Une vraie union' }, moments: ['day-first-dance', 'day-dessert', 'day-wake', 'inconnu'], horaires: { 'day-first-dance': '21:30', 'day-wake': '25:00' } });
+  assert.equal(JSON.stringify(p), avantJson, 'la référence ne bouge pas');
+  assert.ok(P.estReference(p)); assert.ok(!P.estReference(u));
+  assert.deepEqual(u.moments.map(m => m.id), ['day-wake', 'day-first-dance', 'day-dessert'], 'ordre des heures après changement');
+  assert.equal(P.heure(P.moment(u, 'day-first-dance')), '21:30');
+  assert.equal(P.moment(u, 'day-first-dance').n, 149, 'le numéro de la Grille reste');
+  assert.equal(P.heure(P.moment(u, 'day-wake')), '06:00', 'horaire invalide ignoré');
+  assert.equal(P.avant(u, 'day-dessert').id, 'day-first-dance');
+  assert.equal(u.union.nom, 'Une vraie union');
+  const s = P.construireSupport(u, { pour: 'tous', contenu: 'tout' });
+  assert.equal(s.total, 3); assert.equal(s.reference, false);
+});
+
+test('le support imprimable : chacun ses moments, et seulement les champs autorisés', () => {
+  for (const pour of ['tous', 'maries', 'dj', 'photographer', 'caterer']) for (const contenu of ['jour', 'autour', 'tout']) {
+    const s = P.construireSupport(p, { pour, contenu });
+    assert.ok(s.total > 0, pour + ' ' + contenu);
+    for (const sec of s.sections) for (const l of sec.moments) {
+      for (const k of Object.keys(l)) assert.ok(s.champs.includes(k), pour + ' : champ non autorisé ' + k);
+      const m = P.moment(p, l.id);
+      if (!['tous', 'maries'].includes(pour)) assert.ok(m.metiers.includes(pour), pour + ' reçoit ' + l.id);
+      if (contenu === 'jour') assert.equal(m.etape, 'day');
+    }
+  }
+  assert.equal(P.construireSupport(p, { pour: 'tous', contenu: 'jour' }).total, 102);
+  assert.equal(P.construireSupport(p, { pour: 'tous', contenu: 'tout' }).total, 200);
+  const maries = P.construireSupport(p, { pour: 'maries' });
+  assert.ok(maries.total < 102 && maries.sections[0].moments.some(l => l.id === 'day-first-dance'));
+  assert.ok(!maries.sections[0].moments.some(l => l.id === 'day-security-round'), 'les coulisses restent aux équipes');
+  assert.ok(!('consignes' in maries.sections[0].moments[0]) && !('metiers' in maries.sections[0].moments[0]));
+  assert.throws(() => P.construireSupport(p, { pour: 'nimporte' }));
 });

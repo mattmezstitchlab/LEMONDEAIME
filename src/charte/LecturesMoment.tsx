@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { Lien } from '../lib/router';
-import { PROGRAMME as P, avant, apres, moment, heure, nomEtape, nomLieu, nomMetier, metiersDe, patron, personnesDe, momentsDe, parMusique, plageMusique, voixDuMetier, type MomentP } from '../lib/programme';
+import { useProgramme, avant, apres, moment, heure, nomEtape, nomLieu, nomMetier, metiersDe, patron, personnesDe, momentsDe, parMusique, plageMusique, voixDuMetier, type MomentP, type Programme } from '../lib/programme';
 import { MOMENTS as MUSIQUE, mesMusiques, type Musique } from '../lib/musique';
 import { useSession } from '../lib/session';
 import { EXEMPLES, UNION_EXEMPLE } from '../lib/reseau-exemples';
@@ -13,10 +13,10 @@ export const LECTURES: [LectureId, string][] = [['chrono', 'Chronologie'], ['mus
 export const lectureOk = (x: string | null): LectureId => (LECTURES.some(l => l[0] === x) ? x : 'chrono') as LectureId;
 
 /* « 22:36 » pour le Jour J, le repère de l'étape sinon (« M − 9 mois ») */
-export const quand = (m: MomentP) => m.etape === 'day' ? heure(m) : P.etapes.find(e => e.id === m.etape)!.repere;
+export const quand = (P: Programme, m: MomentP) => m.etape === 'day' ? heure(m) : P.etapes.find(e => e.id === m.etape)!.repere;
 const duree = (n: number) => n >= 60 ? (n % 60 ? Math.floor(n / 60) + ' h ' + (n % 60) : Math.floor(n / 60) + ' h') : n + ' minutes';
-const listeNoms = (ids: string[]) => ids.map(id => id === 'couple' ? 'les mariés' : id === 'temoins' ? 'les témoins' : nomMetier(P, id)).join(', ');
-export const resume = (m: MomentP) => ['Moment ' + m.n + ' sur ' + P.moments.length, duree(m.duree), nomLieu(P, m.lieu), m.responsables.length ? 'Responsables : ' + listeNoms(m.responsables) : ''].filter(Boolean).join(' · ');
+const listeNoms = (P: Programme, ids: string[]) => ids.map(id => id === 'couple' ? 'les mariés' : id === 'temoins' ? 'les témoins' : nomMetier(P, id)).join(', ');
+export const resume = (P: Programme, m: MomentP) => ['Moment ' + m.n + ' de la Grille 200', duree(m.duree), nomLieu(P, m.lieu), m.responsables.length ? 'Responsables : ' + listeNoms(P, m.responsables) : ''].filter(Boolean).join(' · ');
 
 /* Les onglets des lectures : flèches gauche/droite, Début, Fin */
 export function OngletsLectures({ actif, choisir, ids }: { actif: LectureId; choisir: (l: LectureId) => void; ids: string }) {
@@ -44,6 +44,7 @@ export function Lecture({ m, l }: { m: MomentP; l: LectureId }) {
 const LienMoment = ({ m }: { m: MomentP }) => <Lien href={'/moments/' + m.id + location.search}>{m.titre}</Lien>;
 
 function LectureChrono({ m }: { m: MomentP }) {
+  const P = useProgramme();
   const a = avant(P, m.id), b = apres(P, m.id);
   const E = P.etapes.findIndex(e => e.id === m.etape);
   const prerequis = m.prerequis.map(id => moment(P, id)!).filter(Boolean);
@@ -51,10 +52,10 @@ function LectureChrono({ m }: { m: MomentP }) {
   return <>
     <h2 className="lecture-titre">Sa place dans le programme</h2>
     <p className="lecture-texte">Étape {E + 1} sur {P.etapes.length} · {nomEtape(P, m.etape)}{m.tranche ? ' · tranche ' + m.tranche : ''}.{' '}
-      {a && <>Juste après <LienMoment m={a} /> ({quand(a)})</>}{a && b && ', '}{b && <>juste avant <LienMoment m={b} /> ({quand(b)})</>}.</p>
+      {a && <>Juste après <LienMoment m={a} /> ({quand(P, a)})</>}{a && b && ', '}{b && <>juste avant <LienMoment m={b} /> ({quand(P, b)})</>}.</p>
     <div className="lecture-cases">
-      <div><b>Il faut d’abord</b>{prerequis.length ? <ul>{prerequis.map(x => <li key={x.id}><LienMoment m={x} /> · {quand(x)}</li>)}</ul> : <p>Rien : ce moment peut commencer seul.</p>}</div>
-      <div><b>Il ouvre la voie à</b>{suites.length ? <ul>{suites.map(x => <li key={x.id}><LienMoment m={x} /> · {quand(x)}</li>)}</ul> : <p>Aucun moment n’attend celui-ci.</p>}</div>
+      <div><b>Il faut d’abord</b>{prerequis.length ? <ul>{prerequis.map(x => <li key={x.id}><LienMoment m={x} /> · {quand(P, x)}</li>)}</ul> : <p>Rien : ce moment peut commencer seul.</p>}</div>
+      <div><b>Il ouvre la voie à</b>{suites.length ? <ul>{suites.map(x => <li key={x.id}><LienMoment m={x} /> · {quand(P, x)}</li>)}</ul> : <p>Aucun moment n’attend celui-ci.</p>}</div>
       {m.consignes && <div><b>Les consignes</b><ul>{[...m.consignes.taches, ...m.consignes.repli.map(t => 'Plan B : ' + t)].map(t => <li key={t}>{t}</li>)}</ul></div>}
     </div>
     <p className="profil-note" style={{ marginTop: 18 }}>Horaires d’exemple, à adapter à chaque union.</p>
@@ -63,6 +64,7 @@ function LectureChrono({ m }: { m: MomentP }) {
 
 /* La musique : le moment du programme appartient à un moment de /musique ; on y retrouve ses propres morceaux */
 function LectureMusique({ m }: { m: MomentP }) {
+  const P = useProgramme();
   const session = useSession();
   const [mes, setMes] = useState<Musique[] | null>(null);
   const [ajout, setAjout] = useState(false);
@@ -92,6 +94,7 @@ function LectureMusique({ m }: { m: MomentP }) {
 }
 
 function LectureMetiers({ m }: { m: MomentP }) {
+  const P = useProgramme();
   const { principaux, possibles } = metiersDe(P, m);
   const familles = [...new Set(possibles.map(x => x.famille))];
   return <>
@@ -114,12 +117,14 @@ function LectureMetiers({ m }: { m: MomentP }) {
 
 /* Le patron du moment : une grille brodée avec les fils (DMC) des voix qui font vivre le moment */
 export function Patron({ m, petit }: { m: MomentP; petit?: boolean }) {
+  const P = useProgramme();
   const t = patron(P, m);
   return <div role="img" aria-label={'Le patron du moment, ' + t.taille + ' par ' + t.taille + ' points, ' + t.voix.length + ' fil' + (t.voix.length > 1 ? 's' : '') + ' : ' + t.voix.map(v => v.nom).join(', ')} className={'patron' + (petit ? ' petit' : '')} style={{ gridTemplateColumns: 'repeat(' + t.taille + ', minmax(0, 1fr))' }}>
     {t.points.map((v, k) => <span key={k} style={v >= 0 ? { background: t.voix[v].hex } : undefined} />)}
   </div>;
 }
 function LecturePatron({ m }: { m: MomentP }) {
+  const P = useProgramme();
   const t = patron(P, m);
   return <div className="lecture-patron">
     <Patron m={m} />
@@ -133,6 +138,7 @@ function LecturePatron({ m }: { m: MomentP }) {
 }
 
 function LecturePersonnes({ m }: { m: MomentP }) {
+  const P = useProgramme();
   const gens = personnesDe(P, m);
   return <>
     <h2 className="lecture-titre">Les personnes du moment</h2>
