@@ -17,7 +17,8 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
   const menu = useRef<HTMLUListElement>(null);
   useEffect(() => { if (ouvert) menu.current?.querySelector('a')?.focus(); }, [ouvert]);
   const fermer = () => { setOuvert(false); bouton.current?.focus(); };
-  const items: [string, string][] = [['/', 'AIME'], ['/monde', 'Le Monde AIME'], ['/charte', 'La Charte AIME']];
+  /* le menu AIME® : la marque mère, ses studios, puis Le Monde AIME qui les rassemble */
+  const items: [string | null, string][] = [['/', 'AIME'], [null, 'AIME Wedding'], ['https://pointzero-zeta.vercel.app/', 'Brode Way'], ['/monde', 'Le Monde AIME']];
   return (
     <header className="tete">
       <span aria-hidden="true" />
@@ -36,7 +37,9 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
         {ouvert && <>
           <div aria-hidden="true" onClick={() => setOuvert(false)} style={{ position: 'fixed', inset: 0, zIndex: 1 }} />
           <ul id="menu-aime" ref={menu} className="menu-aime" onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); fermer(); } }}>
-            {items.map(([h, l]) => <li key={h}><Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setOuvert(false)} style={{ fontWeight: courant === h ? 700 : 500 }}>{l}</Lien></li>)}
+            {items.map(([h, l]) => <li key={l}>{h
+              ? <Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setOuvert(false)} style={{ fontWeight: courant === h ? 700 : 500 }}>{l}</Lien>
+              : <span aria-disabled="true" style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 46, padding: '0 12px', fontSize: 17, color: '#55555A' }}>{l}<span className="bientot">Bientôt</span></span>}</li>)}
             {session && <li style={{ borderTop: '1px solid #ECECE8', marginTop: 6, paddingTop: 6 }}><button type="button" onClick={() => { setOuvert(false); seDeconnecter(); }}>Déconnexion</button></li>}
           </ul>
         </>}
@@ -80,7 +83,7 @@ export function DockBas({ lieux, label = 'Sections de la page' }: { lieux: [stri
 
 export function BoutonBuro({ courant }: { courant?: boolean }) {
   return (
-    <Lien className="buro-bouton" href="/buro" aria-label="BurO" title="BurO" aria-current={courant ? 'page' : undefined}>
+    <Lien className="buro-bouton" href="/buro" aria-label="Votre espace AIME" title="Votre espace" aria-current={courant ? 'page' : undefined}>
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2.2h8.5A1.5 1.5 0 0 1 21 9.7v8.8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z" /></svg>
     </Lien>
   );
@@ -95,8 +98,8 @@ export function Pied() {
       <Lien href="/" aria-label="AIME, accueil" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}><Orbe taille={28} /><span className="marque" style={{ fontSize: 22 }}>AIME<sup aria-hidden="true">®</sup></span></Lien>
       <nav aria-label="Plan du site">
         {col('AIME', [['Manifeste', '/#manifeste'], ['Fondateur', '/#fondateur'], ['Vision', '/#vision']])}
-        {col('Le Monde AIME', [['Tous les projets', '/monde'], ['Point Zéro', '/point-zero'], ['Brode Way', 'https://pointzero-zeta.vercel.app/']])}
-        {col('Votre espace', [['Entrer', '/entrer'], ['BurO', '/buro'], ['A+', '/a-plus']])}
+        {col('Le Monde AIME', [['Tous les projets', '/monde'], ['Réseau', '/reseau'], ['Point Zéro', '/point-zero'], ['AIME Wedding', null], ['Brode Way', 'https://pointzero-zeta.vercel.app/']])}
+        {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil'], ['A+', '/a-plus']])}
         {col('La maison', [['La Charte AIME', '/charte'], ['Contact et presse', null], ['Mentions légales', null]])}
       </nav>
       <div className="bas"><p style={{ margin: 0 }}>AIME® est la marque mère. LE MONDE AIME est une association.</p><p style={{ margin: 0 }}>© 2026 AIME®</p></div>

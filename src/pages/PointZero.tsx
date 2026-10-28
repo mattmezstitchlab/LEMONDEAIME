@@ -67,10 +67,10 @@ export default function PointZero() {
   const envoyer = (e: FormEvent) => { e.preventDefault(); const v = champ.current?.value.trim() || ''; if (!v) { setMsg('Écrivez quelques mots pour commencer.'); champ.current?.focus(); return; } lancer(v); };
   const ranger = async () => {
     if (!an) return;
-    if (!session) { setMsg('Entrez dans AIME pour ranger ce projet dans votre BurO.'); return; }
+    if (!session) { setMsg('Entrez dans AIME pour ranger ce projet dans votre espace.'); return; }
     let nom = source.replace(/\s+/g, ' ').trim(); if (nom.length > 60) nom = nom.slice(0, 58).trim() + '…';
     const r = await ecrireBuro({ titre: nom.charAt(0).toUpperCase() + nom.slice(1), briques: an.chemin, studio: an.studio, intention: source });
-    setMsg(r.ok ? 'Rangé dans le BurO : ' + an.chemin.length + ' briques.' : (r.raison || 'Rangement impossible.'));
+    setMsg(r.ok ? 'Rangé dans votre espace : ' + an.chemin.length + ' briques.' : (r.raison || 'Rangement impossible.'));
   };
   const s = sel ? D[sel] : null;
   const pourquoi = !s || !an ? '' : an.raisons[sel!] ? 'Pourquoi : « ' + [...new Set(an.raisons[sel!].map(r => r.q))].slice(0, 4).join(' », « ') + ' »' : decoule[sel!] ? 'Découle de : ' + decoule[sel!].map(k => D[k].name).join(', ') : an.chemin.includes(sel!) ? 'Fait partie de la recette « ' + an.label + ' »' : an.ecartees[sel!] ? 'Écartée : « ' + an.ecartees[sel!] + ' »' : 'Pas concernée par ce projet.';
@@ -153,7 +153,7 @@ export default function PointZero() {
                 </dl>
               </div>}
               {an && fini && <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 18 }}>
-                <button className="bouton noir" type="button" onClick={ranger} style={{ height: 48 }}>Ranger dans le BurO</button>
+                <button className="bouton noir" type="button" onClick={ranger} style={{ height: 48 }}>Ranger dans mon espace</button>
                 <Lien className="bouton" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener" style={{ height: 48 }}>Ouvrir {an.studio}</Lien>
               </div>}
               <p role="status" style={{ margin: '10px 0 0', minHeight: 20, fontSize: 14, fontWeight: 600 }}>{msg}{msg.startsWith('Entrez') && <> <Lien href="/entrer">+ Entrer</Lien></>}</p>

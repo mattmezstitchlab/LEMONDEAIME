@@ -105,3 +105,14 @@ img, video { display: block; max-width: 100%; }
 .pied .bas { margin-top: 56px; padding-top: 24px; border-top: 2px dotted #BDBDB8; display: flex; justify-content: space-between; gap: 12px 32px; flex-wrap: wrap; font-size: 15px; color: var(--encre-2); }
 @media (max-width: 1080px) { .g44 { grid-template-columns: minmax(0, 1fr) !important; } }
 @media (max-width: 620px) { .g44-nom, .g44-etape { display: none !important; } }
+
+/* le grand visuel d'entrée de l'accueil : la photo plein cadre, le nom en blanc */
+.hero { position: relative; min-height: calc(100svh - 104px); border-radius: 24px; overflow: hidden; background: #111; color: #fff; display: flex; align-items: flex-end; }
+.hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.35) 45%, rgba(0,0,0,.15) 100%); pointer-events: none; }
+.hero-contenu { position: relative; z-index: 1; width: 100%; padding: clamp(28px, 5vw, 72px) clamp(20px, 4vw, 64px) calc(clamp(36px, 5vw, 72px) + 76px); }  /* le dock du bas passe par-dessus : on lui laisse sa place */
+.hero-titre { font-size: clamp(110px, 24vw, 400px); line-height: .8; letter-spacing: -0.035em; color: #fff; }
+.hero-sous-titre { margin: clamp(14px, 2vw, 26px) 0 0; max-width: 30ch; font-size: clamp(20px, 2.4vw, 36px); line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+.hero a { color: #fff; }
+.hero a:hover { color: #E2E2DE; }
+.hero :focus-visible { outline-color: #fff; }

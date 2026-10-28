@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react';
-import { Tete, BoutonBuro, Pied, Visuel, Orbe } from '../charte/Charte';
+import { Tete, BoutonBuro, Pied, Orbe } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { lireBuro, ecrireBuro, type Projet } from '../lib/buro';
-import { MEDIAS } from '../lib/medias';
+import MonProfil from './MonProfil';
 import data from '../lib/briques.json';
 import { clesPossibles, creerCle, nombreDeCles } from '../lib/cles';
 
 const VIS: Record<string, string> = { prive: 'Privé', restreint: 'Restreint', lien: 'Par lien', public: 'Public' };
 const ORDRE = ['prive', 'restreint', 'lien', 'public'];
-type Lieu = 'projets' | 'partages' | 'archives';
+type Lieu = 'projets' | 'partages' | 'archives' | 'profil';
 
-/* Le BurO : votre espace. En bas, les lieux (Projets, Partagés avec moi, Archives) ; en haut, ce qu'on fait au projet choisi. */
+/* Votre espace AIME. En bas, les lieux (Projets, Partagés avec moi, Archives, Profil) ; en haut, ce qu'on fait au projet choisi. */
 export default function Buro() {
   const session = useSession();
   const [projets, setProjets] = useState<Projet[] | null>(null);
   const [raison, setRaison] = useState('');
-  const [lieu, setLieu] = useState<Lieu>('projets');
+  const [lieu, setLieu] = useState<Lieu>(() => new URLSearchParams(window.location.search).get('lieu') === 'profil' ? 'profil' : 'projets');
   const [choisi, setChoisi] = useState<string | null>(null);
   const [msg, setMsg] = useState('');
   const [proposerCle, setProposerCle] = useState(false);
@@ -43,11 +43,9 @@ export default function Buro() {
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
       <Tete courant="/buro" verbes={verbes} />
       <main id="contenu" style={{ padding: 'clamp(48px, 7vw, 96px) var(--marge) 170px' }}>
-        <p className="surtitre">Votre espace AIME</p>
-        <h1 className="titre" style={{ fontSize: 'clamp(48px, 8vw, 128px)', lineHeight: .9 }}>BurO</h1>
-        <div style={{ marginTop: 32 }}><Visuel m={MEDIAS['buro-hero']} hauteur="clamp(14rem, 28vw, 24rem)" /></div>
+        <h1 className="titre" style={{ fontSize: 'clamp(44px, 7vw, 108px)', lineHeight: .92 }}>Votre espace AIME</h1>
         {session === null && <p className="chapeau">Entrez dans AIME pour retrouver vos projets, sur tous vos appareils. <Lien href="/entrer">+ Entrer</Lien></p>}
-        {session === undefined && <p className="chapeau">Ouverture du BurO…</p>}
+        {session === undefined && <p className="chapeau">Ouverture de votre espace…</p>}
         {session && proposerCle && <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', padding: '16px 18px', borderRadius: 16, background: '#fff', border: '1px solid #E2E2DE' }}>
           <p style={{ margin: 0, fontSize: 17, lineHeight: 1.5, maxWidth: '52ch' }}><b style={{ fontWeight: 600 }}>Se souvenir de cet appareil.</b> La prochaine fois, votre visage ou votre empreinte suffiront pour entrer.</p>
           <span style={{ display: 'flex', gap: 8 }}>
@@ -55,7 +53,8 @@ export default function Buro() {
             <button className="bouton" type="button" style={{ height: 46 }} onClick={() => { try { localStorage.setItem('aime-cle-plus-tard', '1'); } catch { /* rien */ } setProposerCle(false); }}>Plus tard</button>
           </span>
         </div>}
-        {session && <>
+        {session && lieu === 'profil' && <MonProfil />}
+        {session && lieu !== 'profil' && <>
           <p role="status" aria-live="polite" style={{ margin: '20px 0 0', minHeight: 24, fontSize: 16, fontWeight: 600 }}>{msg || raison}</p>
           <ul style={{ listStyle: 'none', margin: '20px 0 0', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20 }}>
             {lieu === 'projets' && <li><Lien href="/point-zero" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 240, height: '100%', padding: 22, borderRadius: 22, border: '2px dashed #BDBDB8', textDecoration: 'none' }}>
@@ -74,9 +73,9 @@ export default function Buro() {
           {projets && !liste.length && lieu !== 'projets' && <p style={{ fontSize: 18, color: '#3A3A3F' }}>{lieu === 'archives' ? 'Rien aux archives.' : 'Personne ne vous a encore partagé de projet.'}</p>}
         </>}
       </main>
-      {session && <nav className="dock-bas" aria-label="Lieux du BurO"><div>
-        {([['projets', 'Projets'], ['partages', 'Partagés avec moi'], ['archives', 'Archives']] as [Lieu, string][]).map(([k, l]) =>
-          <button key={k} type="button" className="lieu" aria-current={lieu === k ? 'true' : 'false'} onClick={() => { setLieu(k); setChoisi(null); setMsg(''); }}>{l}<span style={{ marginLeft: 8, fontSize: 13, opacity: .8 }}>{(projets || []).filter(p => dans(p, k)).length}</span></button>)}
+      {session && <nav className="dock-bas" aria-label="Lieux de votre espace"><div>
+        {([['projets', 'Projets'], ['partages', 'Partagés avec moi'], ['archives', 'Archives'], ['profil', 'Profil']] as [Lieu, string][]).map(([k, l]) =>
+          <button key={k} type="button" className="lieu" aria-current={lieu === k ? 'true' : 'false'} onClick={() => { setLieu(k); setChoisi(null); setMsg(''); }}>{l}{k !== 'profil' && <span style={{ marginLeft: 8, fontSize: 13, opacity: .8 }}>{(projets || []).filter(p => dans(p, k)).length}</span>}</button>)}
       </div></nav>}
       <Pied />
       <BoutonBuro courant />

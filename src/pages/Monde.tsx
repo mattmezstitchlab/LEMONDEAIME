@@ -12,7 +12,7 @@ export default function Monde() {
         <section aria-labelledby="titre-monde" style={{ padding: 'clamp(64px, 10vw, 140px) var(--marge) 48px' }}>
           <p className="surtitre">Les studios et projets d’AIME®</p>
           <h1 id="titre-monde" className="signature">Le Monde AIME</h1>
-          <p className="chapeau">Une galerie, comme une vitrine d’atelier : chaque studio a sa page, son métier et son BurO. Tous parlent la même langue, la Charte AIME.</p>
+          <p className="chapeau">Une galerie, comme une vitrine d’atelier : chaque studio a sa page et son métier. Tous parlent la même langue, la Charte AIME.</p>
           <div style={{ marginTop: 48 }}><Visuel m={MEDIAS['monde-hero']} /></div>
         </section>
         <section id="projets" aria-labelledby="titre-projets" style={{ padding: '24px var(--marge) 120px' }}>
@@ -26,7 +26,7 @@ export default function Monde() {
           <h2 id="titre-asso" className="titre" style={{ maxWidth: '18ch' }}>Une maison commune pour les studios.</h2>
           <div className="grille-auto" style={{ marginTop: 48, maxWidth: 1100, fontSize: 19, lineHeight: 1.6, color: '#E4E4E0' }}>
             <p style={{ margin: 0 }}>AIME® est la marque mère. LE MONDE AIME est l’association qui réunit ses studios et ceux qui les font vivre.</p>
-            <p style={{ margin: 0 }}>Un seul compte ouvre tous les studios. Le « + » vous fait entrer, le BurO garde vos projets, quel que soit le métier.</p>
+            <p style={{ margin: 0 }}>Un seul compte ouvre tous les studios. Le « + » vous fait entrer, votre espace garde vos projets, quel que soit le métier.</p>
           </div>
           <Lien className="bouton" href="/charte" style={{ marginTop: 40, border: 0 }}>Lire la Charte AIME</Lien>
         </section>

@@ -6,7 +6,7 @@ const PRINCIPES: [string, string][] = [
   ['Des mots, pas des pictos', 'Seuls les signes universels restent : la loupe, le « + », le chevron du menu, fermer, retour.'],
   ['Aucun doublon', 'Chaque action n’apparaît qu’une fois. Le pied de page est la seule exception.'],
   ['Le mot le plus court', '« A+ » plutôt que « Pro », « + » plutôt que « Créer ».'],
-  ['Une seule porte', 'Le « + » : « Entrer » avant, le Point Zéro après. Le BurO garde tout le reste.'],
+  ['Une seule porte', 'Le « + » : « Entrer » avant, le Point Zéro après. Votre espace garde tout le reste.'],
   ['Des titres légers', 'Titres en 600. Le 900 est réservé à la signature de chaque page d’accueil.'],
   ['Au-delà du WCAG 2.2 AA', 'Contrastes, clavier, lecteurs d’écran, mouvement réduit : partout, dès le premier jour.'],
 ];
