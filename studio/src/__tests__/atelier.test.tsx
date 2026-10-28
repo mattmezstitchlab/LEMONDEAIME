@@ -361,7 +361,8 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     expect(["Dessiner","Broder","Fils","Partager"].every(name => category(name))).toBe(true);
     expect(category("Créer")).toBeUndefined();
     expect(category("Dessiner")?.getAttribute("aria-pressed")).toBe("true");
-    expect(inBottom("Revenir au BurO")).toBeTruthy();
+    expect(inBottom("Tout voir")).toBeTruthy();
+    expect(inBottom("Revenir au BurO")).toBeUndefined();
   });
   it("range les fils DMC dans le dock du bas, avec leurs filtres", async () => {
     await mount();
@@ -384,10 +385,10 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     expect(cercle()?.getAttribute("aria-expanded")).toBe("true");
     await click(inBottom("Progression"));
     expect(bottom()?.textContent).toContain("Rien à broder");
-    expect(inBottom("Revenir au BurO")).toBeUndefined();
+    expect(inBottom("Tout voir")).toBeUndefined();
     await click(cercle());
     await click(inBottom("Repères"));
-    expect(inBottom("Revenir au BurO")).toBeTruthy();
+    expect(inBottom("Tout voir")).toBeTruthy();
   });
   it("cherche dans la grille depuis la loupe du dock du haut, et invite depuis le rond du profil", async () => {
     await mount();

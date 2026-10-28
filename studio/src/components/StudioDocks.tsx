@@ -179,6 +179,7 @@ export default function StudioDocks(p: Props) {
           <button id="pzs-brand" type="button" className="pzs-orbe" aria-label="Menu AIME et Point Zéro" aria-expanded={bloc === "menu"} aria-controls="pzs-bloc" onClick={() => ouvrir("menu")}>
             <span className="pzs-orb" aria-hidden="true" />
           </button>
+          <span className="pzs-sep" aria-hidden="true" />
           {aime ? <a className="pzs-tool pzs-marque" href="/" aria-label="AIME, Le Monde AIME">AIME<sup aria-hidden="true">®</sup></a> : <span className="pzs-tool pzs-marque">Point Zéro</span>}
           <span className="pzs-sep" aria-hidden="true" />
           <div className="pzs-row">
@@ -263,9 +264,6 @@ export default function StudioDocks(p: Props) {
         : modeBas === "fils" ? (p.fils ?? null)
         : modeBas === "progression" ? <Progression progression={p.progression} onCouleur={p.onCouleur} />
         : <>
-      <button type="button" className="pzs-btm pzs-buro" onClick={p.actions.buro} aria-label="Revenir au BurO">
-        <span className="pzs-orb" aria-hidden="true" />BurO
-      </button>
       <span className="pzs-place" title={p.patternName}><VisibilityOrb value={p.visibility} size={18} dark /><span className="sr-only">{VISIBILITY[p.visibility].label} · </span>{p.patternName}</span>
       <span className="pzs-sep" aria-hidden="true" />
       <div className="pzs-seg" role="group" aria-label="Affichage de la grille">

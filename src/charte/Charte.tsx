@@ -41,7 +41,6 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
   const fermer = () => { const m = mode; setMode(null); setReglages(false); if (m) boutons.current[m]?.focus(); };
   const choisir = (p: Profil) => { ecrirePrefs({ ...p.prefs }); setAnnonce(p.msg); if (p.prefs.sons === 'on') earcon('ok', true); };
   const regler = <K extends keyof Prefs>(k: K, v: Prefs[K], msg: string) => { ecrirePrefs({ ...prefs, [k]: v }); setAnnonce(msg); earcon('ok', k === 'sons' && v === 'on'); };
-  const blanche = { ...profils()[0], couleurs: ['#FFFFFF'], halo: 'rgba(255,255,255,.4)' };
   const DOSSIERS: [string, string, string][] = [['projets', 'Projets', '#C9B8FF'], ['partages', 'Partagés avec moi', '#D9E8FF'], ['archives', 'Archives', '#E4E4E1'], ['profil', 'Profil', '#FFD6EC']];
   return (
     <header className="tete">
@@ -53,8 +52,9 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
           </button>}
           <button ref={el => { boutons.current.aime = el; }} type="button" className="carre-orbe" aria-expanded={mode === 'aime'} aria-controls="bloc-dock"
             aria-label={'Menu AIME et Mon confort, orbe ' + (cp ? cp.nom : 'personnalisée')} title="Menu et Mon confort" onClick={() => ouvrir('aime')}>
-            <OrbeDessin p={cp || blanche} taille={38} iris={iris} />
+            <Orbe taille={30} />
           </button>
+          <span className="separateur" aria-hidden="true" />
           <Lien href="/" className="outil" aria-label="AIME, accueil" aria-current={courant === '/' ? 'page' : undefined} style={{ padding: '0 10px' }}><Marque /></Lien>
           <div className="rangee">{verbes ? <><span className="separateur" aria-hidden="true" />{verbes}</> : null}</div>
           <span className="separateur" aria-hidden="true" />
@@ -126,7 +126,7 @@ export function VerbesSite({ actif }: { actif?: 'unions' | 'prestataires' | 'stu
   return <>
     <Verbe href="/#unions" actif={actif === 'unions'}>Unions</Verbe>
     <Verbe href="/reseau?domaine=mariage" actif={actif === 'prestataires'}>Prestataires</Verbe>
-    <Verbe href="/studio/" actif={actif === 'studio'}>Studio</Verbe>
+    <Verbe href="/studio/atelier" actif={actif === 'studio'}>Studio</Verbe>
     <Verbe href="/boutique" actif={actif === 'boutique'}>Boutique</Verbe>
   </>;
 }
@@ -290,7 +290,7 @@ export function Pied() {
       <Lien href="/" aria-label="AIME, accueil" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}><Orbe taille={28} /><span className="marque" style={{ fontSize: 22 }}>AIME<sup aria-hidden="true">®</sup></span></Lien>
       <nav aria-label="Plan du site">
         {col('Le Monde AIME', [['Les unions', '/#unions'], ['Prestataires', '/reseau?domaine=mariage'], ['Invités', '/#invites'], ['Collections', '/#collections']])}
-        {col('Créer', [['Studio', '/studio/'], ['Broderie', '/studio/atelier'], ['Point Zéro', '/point-zero'], ['Boutique', '/boutique']])}
+        {col('Créer', [['Studio', '/studio/atelier'], ['Brodez votre mariage', '/#studio'], ['Point Zéro', '/point-zero'], ['Boutique', '/boutique']])}
         {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil'], ['A+', '/a-plus']])}
         {col('La maison', [['À propos d’AIME', '/a-propos'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', null], ['Mentions légales', null]])}
       </nav>
