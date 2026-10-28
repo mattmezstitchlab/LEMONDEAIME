@@ -3,56 +3,68 @@ import { Tete, Verbe, BoutonBuro, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { initiales, lireReseau, type Profil } from '../lib/reseau';
+import { DOMAINES, EXEMPLES, UNION_EXEMPLE, domaine } from '../lib/reseau-exemples';
 
-/* Le Réseau : les personnes et les studios du Monde AIME. Chacun choisit d'y apparaître, depuis son espace. */
-export function CarteProfil({ p }: { p: Profil }) {
+/* Une carte du Réseau : la même que l'Annuaire d'AIME Wedding (photo 4:5, famille, nom, crédit). */
+export type Carte = { href: string; nom: string; etiquette: string; photo?: string; alt?: string; exemple?: boolean; credit?: string | null };
+export function CarteReseau({ c }: { c: Carte }) {
   return (
-    <article style={{ display: 'flex', flexDirection: 'column', gap: 10, height: '100%', padding: 22, borderRadius: 22, background: '#fff', border: '1px solid #E2E2DE' }}>
-      <span aria-hidden="true" style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--nacre)', boxShadow: 'inset 0 0 0 1px rgba(11,11,12,.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 700 }}>{initiales(p.nom)}</span>
-      <p style={{ margin: '6px 0 0', fontSize: 13, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: '#55555A' }}>{p.metier}{p.ville ? ' · ' + p.ville : ''}</p>
-      <h2 style={{ margin: 0, fontSize: 24, fontWeight: 600, letterSpacing: '-0.015em' }}>{p.nom}</h2>
-      {p.bio && <p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: '#3A3A3F', whiteSpace: 'pre-line' }}>{p.bio}</p>}
-      {p.site && <a href={p.site} target="_blank" rel="noopener nofollow ugc" style={{ marginTop: 'auto', fontSize: 16, fontWeight: 600, overflowWrap: 'anywhere' }}>{p.site.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}<span className="sr-only"> (nouvel onglet)</span></a>}
+    <article style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <Lien className="carte-reseau" href={c.href} style={{ display: 'flex', flexDirection: 'column', gap: 14, textDecoration: 'none', color: 'inherit' }}>
+        <div className="ph" style={{ position: 'relative', aspectRatio: '4 / 5', borderRadius: 10, overflow: 'hidden', background: c.photo ? '#E4E4E1' : 'var(--nacre)' }}>
+          {c.photo
+            ? <img src={c.photo} alt={c.alt || ''} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 28%', display: 'block' }} />
+            : <span aria-hidden="true" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'clamp(48px, 6vw, 80px)', fontWeight: 600, letterSpacing: '-0.04em' }}>{initiales(c.nom)}</span>}
+          {c.exemple && <span style={{ position: 'absolute', top: 10, left: 10, padding: '4px 9px', borderRadius: 999, background: 'rgba(255,255,255,.92)', fontSize: 12, fontWeight: 600 }}>Exemple</span>}
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '.12em', textTransform: 'uppercase', color: '#55555A' }}>{c.etiquette}</span>
+          <span style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.03em' }}>{c.nom}</span>
+        </div>
+      </Lien>
+      {c.credit !== undefined && (c.credit
+        ? <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: '#3A3A3F' }}><span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: '50%', background: '#3B6FD8', flex: 'none' }} />{c.credit}</p>
+        : <p style={{ margin: 0, fontSize: 14, color: '#55555A' }}>Pas encore crédité dans une union</p>)}
     </article>
   );
 }
+const deProfil = (p: Profil): Carte & { domaine: string } => ({ href: '/reseau/' + p.ref, nom: p.nom, etiquette: [domaine(p.domaine)?.label, p.metier].filter(Boolean).join(' · '), domaine: p.domaine });
+
 export default function Reseau() {
   const session = useSession();
   const [profils, setProfils] = useState<Profil[] | null>(null);
-  const [metiers, setMetiers] = useState<string[]>([]);
   const [filtre, setFiltre] = useState<string | null>(null);
-  const [raison, setRaison] = useState('');
-  useEffect(() => { lireReseau().then(r => { setProfils(r.profils || []); setMetiers(r.metiers || []); if (!r.ok) setRaison(r.raison || ''); }); }, []);
-  const liste = (profils || []).filter(p => !filtre || p.metier === filtre);
+  useEffect(() => { lireReseau().then(r => setProfils(r.ok ? r.profils || [] : [])); }, []);
+  const cartes = [
+    ...(profils || []).filter(p => p.ref).map(deProfil),
+    ...EXEMPLES.map(e => ({ href: '/reseau/' + e.slug, nom: e.nom, etiquette: e.famille, photo: e.photo, alt: e.alt, exemple: true, credit: e.domaine === 'mariage' ? (e.union ? 'Crédité dans ' + UNION_EXEMPLE : null) : undefined, domaine: e.domaine })),
+  ];
+  const liste = cartes.filter(c => !filtre || c.domaine === filtre);
+  const d = filtre ? domaine(filtre) : null;
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
       <Tete courant="/reseau" verbes={<><Verbe href="/monde">Découvrir</Verbe><Verbe href="/reseau" actif>Réseau</Verbe></>} />
-      <main id="contenu" style={{ padding: 'clamp(48px, 7vw, 96px) var(--marge) 140px' }}>
-        <p className="surtitre">Le Monde AIME</p>
-        <h1 className="titre" style={{ fontSize: 'clamp(48px, 8vw, 128px)', lineHeight: .9 }}>Réseau</h1>
-        <p className="chapeau">Les personnes et les studios qui font Le Monde AIME : prestataires de l’union, brodeuses et brodeurs, créatrices et créateurs. Chacun choisit d’y apparaître, ou non.</p>
-        <div style={{ marginTop: 28, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          {session
-            ? <Lien className="bouton noir" href="/buro?lieu=profil">Mon profil</Lien>
-            : <Lien className="bouton noir" href="/entrer">+ Entrer pour rejoindre le Réseau</Lien>}
-          <Lien className="bouton" href="/monde">Voir les studios</Lien>
+      <main id="contenu" style={{ padding: '40px var(--marge) 140px' }}>
+        <h1 style={{ margin: 0, textAlign: 'center', fontSize: 'clamp(56px, 12vw, 200px)', lineHeight: .86, fontWeight: 600, letterSpacing: '-0.045em', textTransform: 'uppercase' }}>Réseau</h1>
+        <p style={{ margin: '20px auto 0', maxWidth: '36rem', textAlign: 'center', fontSize: 'clamp(18px, 1.7vw, 24px)', lineHeight: 1.35 }}>Les personnes et les studios du Monde AIME. Chaque page montre son module : les briques qu’elle utilise, et avec qui.</p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap', marginTop: 28 }}>
+          {session ? <Lien className="bouton noir" href="/buro?lieu=profil">Mon profil</Lien> : <Lien className="bouton noir" href="/entrer">+ Entrer pour rejoindre le Réseau</Lien>}
         </div>
-        {metiers.length > 0 && <div role="group" aria-label="Filtrer par métier" style={{ marginTop: 48, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {[null, ...metiers].map(m => {
-            const n = (profils || []).filter(p => !m || p.metier === m).length;
-            return <button key={m || 'tous'} type="button" aria-pressed={filtre === m} onClick={() => setFiltre(m)} style={{ height: 44, padding: '0 16px', borderRadius: 999, border: '1px solid #0B0B0C', background: filtre === m ? '#0B0B0C' : '#fff', color: filtre === m ? '#fff' : '#0B0B0C', fontSize: 15, fontWeight: 600 }}>{m || 'Tout le monde'} <span style={{ opacity: .7, fontWeight: 500 }}>{n}</span></button>;
+        <div role="group" aria-label="Filtrer par domaine" style={{ margin: '40px 0 12px', display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
+          {[null, ...DOMAINES.map(x => x.id)].map(id => {
+            const n = cartes.filter(c => !id || c.domaine === id).length, on = filtre === id;
+            return <button key={id || 'tous'} type="button" aria-pressed={on} onClick={() => setFiltre(id)} style={{ minHeight: 44, padding: '0 18px', borderRadius: 999, border: '1px solid #0B0B0C', background: on ? '#0B0B0C' : '#fff', color: on ? '#fff' : '#0B0B0C', fontSize: 15, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>{id ? domaine(id)!.label : 'Tous'}<span style={{ fontSize: 12 }}>{n}</span></button>;
           })}
-        </div>}
-        <p role="status" aria-live="polite" className="sr-only">{profils ? liste.length + ' profil' + (liste.length > 1 ? 's' : '') : ''}</p>
-        {profils === null
-          ? <p style={{ marginTop: 40, fontSize: 18 }}>Chargement…</p>
-          : liste.length
-            ? <ul style={{ listStyle: 'none', margin: '32px 0 0', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: 20 }}>{liste.map((p, i) => <li key={i}><CarteProfil p={p} /></li>)}</ul>
-            : <div style={{ marginTop: 40, padding: 'clamp(28px, 4vw, 48px)', borderRadius: 24, border: '2px dashed #BDBDB8', maxWidth: 760 }}>
-              <h2 style={{ margin: 0, fontSize: 28, fontWeight: 600 }}>{raison ? 'Le Réseau se repose.' : filtre ? 'Personne ici pour l’instant.' : 'Le Réseau s’ouvre.'}</h2>
-              <p className="texte" style={{ marginTop: 12 }}>{raison || 'Soyez parmi les premiers : créez votre profil depuis votre espace, puis choisissez de le rendre visible.'}</p>
-            </div>}
+        </div>
+        <p style={{ margin: '0 auto 40px', textAlign: 'center', maxWidth: '40rem', fontSize: 16, color: '#3A3A3F', minHeight: 24 }}>{d ? d.texte : 'Un filtre par domaine, le plus large possible : chaque domaine réunit tous ses métiers.'}</p>
+        <p aria-live="polite" style={{ margin: '0 0 20px', fontSize: 15, color: '#55555A' }}>{profils === null ? 'Chargement…' : liste.length + (liste.length > 1 ? ' profils' : ' profil')}</p>
+        {liste.length
+          ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 250px), 1fr))', gap: '44px 24px' }}>{liste.map(c => <CarteReseau key={c.href} c={c} />)}</div>
+          : <div style={{ padding: 'clamp(28px, 4vw, 48px)', borderRadius: 24, border: '2px dashed #BDBDB8', maxWidth: 760 }}>
+            <h2 style={{ margin: 0, fontSize: 28, fontWeight: 600 }}>Personne ici pour l’instant.</h2>
+            <p className="texte" style={{ marginTop: 12 }}>Ce domaine attend ses premiers profils. Le vôtre, peut-être : créez-le depuis votre espace.</p>
+          </div>}
       </main>
       <Pied />
       <BoutonBuro />

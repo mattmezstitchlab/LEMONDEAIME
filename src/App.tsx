@@ -6,6 +6,7 @@ import PointZero from './pages/PointZero';
 import Buro from './pages/Buro';
 import Entrer from './pages/Entrer';
 import Reseau from './pages/Reseau';
+import FicheReseau from './pages/FicheReseau';
 import { Charte, APlus, Introuvable } from './pages/Simples';
 
 const PAGES: Record<string, [() => React.JSX.Element, string]> = {
@@ -20,7 +21,9 @@ const PAGES: Record<string, [() => React.JSX.Element, string]> = {
 };
 export default function App() {
   const chemin = useChemin().replace(/\/+$/, '') || '/';
+  const fiche = /^\/reseau\/([a-z0-9-]{1,60})$/.exec(chemin);
   const [Page, titre] = PAGES[chemin] || [Introuvable, 'AIME — Page introuvable'];
-  useEffect(() => { document.title = titre; }, [titre]);
+  useEffect(() => { if (!fiche) document.title = titre; }, [titre, fiche]);
+  if (fiche) return <FicheReseau key={fiche[1]} cle={fiche[1]} />;
   return <Page />;
 }

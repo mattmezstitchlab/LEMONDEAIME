@@ -1,24 +1,23 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Lien } from '../lib/router';
 import { ecrireMonProfil, lireMonProfil, type Profil } from '../lib/reseau';
-import { CarteProfil } from './Reseau';
+import { CarteReseau } from './Reseau';
+import { DOMAINES, domaine } from '../lib/reseau-exemples';
 
 /* Mon profil, dans mon espace : ce que le Réseau montre de moi, et seulement si je le décide. */
 export default function MonProfil() {
   const [p, setP] = useState<Profil | null>(null);
-  const [metiers, setMetiers] = useState<string[]>([]);
   const [msg, setMsg] = useState('');
   const [envoi, setEnvoi] = useState(false);
   useEffect(() => { lireMonProfil().then(r => {
-    setMetiers(r.metiers || []);
-    setP(r.profil || { nom: r.suggestion?.nom || '', metier: '', ville: '', bio: '', site: '', visible: false });
+    setP(r.profil || { nom: r.suggestion?.nom || '', domaine: '', metier: '', ville: '', bio: '', site: '', visible: false });
     if (!r.ok) setMsg(r.raison || '');
   }); }, []);
   if (!p) return <p style={{ marginTop: 24, fontSize: 18 }}>Chargement…</p>;
   const champ = (k: keyof Profil) => ({ value: String(p[k] ?? ''), onChange: (e: { target: { value: string } }) => setP({ ...p, [k]: e.target.value }) });
   const envoyer = async (e: FormEvent) => {
     e.preventDefault(); setEnvoi(true);
-    const r = await ecrireMonProfil(p); setEnvoi(false);
+    const r = await ecrireMonProfil(p); setEnvoi(false); if (r.ok && r.profil) setP({ ...p, ref: r.profil.ref });
     setMsg(r.ok ? (p.visible ? 'Profil enregistré : il apparaît dans le Réseau.' : 'Profil enregistré. Il reste caché tant que vous ne le rendez pas visible.') : (r.raison || 'Enregistrement impossible.'));
   };
   const etiquette = { display: 'grid', gap: 6, fontSize: 16, fontWeight: 600 } as const;
@@ -28,13 +27,14 @@ export default function MonProfil() {
         <h2 id="titre-profil" style={{ margin: 0, fontSize: 28, fontWeight: 600 }}>Mon profil</h2>
         <label style={etiquette}>Nom affiché<input className="champ" required maxLength={60} autoComplete="name" {...champ('nom')} /></label>
         <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
-          <legend style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Ce que je fais</legend>
+          <legend style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Mon domaine</legend>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {metiers.map(m => <label key={m} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, minHeight: 44, padding: '0 14px', borderRadius: 999, border: '1px solid #0B0B0C', background: p.metier === m ? '#0B0B0C' : '#fff', color: p.metier === m ? '#fff' : '#0B0B0C', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>
-              <input type="radio" name="metier" value={m} required checked={p.metier === m} onChange={() => setP({ ...p, metier: m })} style={{ accentColor: '#fff', margin: 0 }} />{m}
+            {DOMAINES.map(d => <label key={d.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, minHeight: 44, padding: '0 14px', borderRadius: 999, border: '1px solid #0B0B0C', background: p.domaine === d.id ? '#0B0B0C' : '#fff', color: p.domaine === d.id ? '#fff' : '#0B0B0C', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>
+              <input type="radio" name="domaine" value={d.id} required checked={p.domaine === d.id} onChange={() => setP({ ...p, domaine: d.id })} style={{ accentColor: '#fff', margin: 0 }} />{d.label}
             </label>)}
           </div>
         </fieldset>
+        <label style={etiquette}><span>Mon métier <span style={{ fontWeight: 400, color: '#55555A' }}>(en un ou deux mots : fleuriste, DJ, brodeuse…)</span></span><input className="champ" required maxLength={40} {...champ('metier')} /></label>
         <label style={etiquette}><span>Ville ou région <span style={{ fontWeight: 400, color: '#55555A' }}>(facultatif)</span></span><input className="champ" maxLength={60} autoComplete="address-level2" {...champ('ville')} /></label>
         <label style={etiquette}><span>En quelques mots <span style={{ fontWeight: 400, color: '#55555A' }}>(400 caractères)</span></span><textarea className="champ" maxLength={400} rows={4} style={{ height: 'auto', padding: 14, lineHeight: 1.5, resize: 'vertical' }} {...champ('bio')} /></label>
         <label style={etiquette}><span>Mon site <span style={{ fontWeight: 400, color: '#55555A' }}>(facultatif)</span></span><input className="champ" type="url" inputMode="url" maxLength={200} placeholder="https://" {...champ('site')} /></label>
@@ -50,7 +50,7 @@ export default function MonProfil() {
       </form>
       <div aria-label="Aperçu de mon profil" role="region">
         <p className="surtitre">Aperçu{p.visible ? '' : ' · caché'}</p>
-        <CarteProfil p={{ ...p, nom: p.nom || 'Votre nom', metier: p.metier || 'Ce que vous faites' }} />
+        <div style={{ maxWidth: 300 }}><CarteReseau c={{ href: p.ref && p.visible ? '/reseau/' + p.ref : '/reseau', nom: p.nom || 'Votre nom', etiquette: [domaine(p.domaine)?.label, p.metier].filter(Boolean).join(' · ') || 'Votre domaine · votre métier' }} /></div>
       </div>
     </div>
   );
