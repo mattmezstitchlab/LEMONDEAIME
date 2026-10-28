@@ -24,7 +24,7 @@ const PROJETS: Projet[] = [
   { id: 'union', nom: 'Notre union', studio: 'Le Monde AIME', photo: W('union-camille-gabriel'), alt: 'Un couple danse sous les étoiles devant un motel du désert',
     fichiers: [{ nom: 'La page de l’union', genre: 'Page' }, { nom: 'Le programme du jour', genre: 'Document' }, { nom: 'La liste des invités', genre: 'Tableau' }, { nom: 'Le plan de table', genre: 'Placement' }, { nom: 'Le faire-part', genre: 'Design' }, { nom: 'Les photos de la piscine', genre: 'Galerie' }],
     briques: ['intention', 'page', 'personnes', 'invitation', 'placement', 'programme', 'galerie', 'livreor', 'lieu', 'budget'] },
-  { id: 'fairepart', nom: 'Le faire-part', studio: 'StudiO', photo: W('piscine'), alt: 'Un couple de mariés au bord de la piscine d’un motel',
+  { id: 'fairepart', nom: 'Le faire-part', studio: 'Studio', photo: W('piscine'), alt: 'Un couple de mariés au bord de la piscine d’un motel',
     fichiers: [{ nom: 'Recto', genre: 'Design' }, { nom: 'Verso', genre: 'Design' }, { nom: 'Les adresses', genre: 'Tableau' }], briques: ['modele', 'palette', 'document', 'invitation', 'personnes'] },
   { id: 'broderie', nom: 'Les initiales brodées', studio: 'Broderie', photo: '/media/grille-roses.jpg', alt: 'Une grille de broderie au point de croix avec des roses',
     fichiers: [{ nom: 'La grille', genre: 'Ouvrage' }, { nom: 'La palette de fils', genre: 'Palette' }], briques: ['grille', 'palette', 'atelier', 'import'] },

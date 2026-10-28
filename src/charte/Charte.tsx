@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { Lien } from '../lib/router';
-import { useSession, seDeconnecter } from '../lib/session';
+import { useSession, seDeconnecter, type Personne } from '../lib/session';
 import { Recherche } from './Recherche';
 import { arcs, earcon, ecrirePrefs, estPerso, profilCourant, profils, useConfort, type Prefs, type Profil } from '../lib/confort';
 
@@ -11,7 +11,7 @@ export function Marque() {
   return <span className="marque">AIME<sup aria-hidden="true">®</sup></span>;
 }
 
-/* Le dock du haut : AIME® (le menu : Le Monde AIME, StudiO, Mon espace, A+, À propos), les verbes de la page, la loupe. */
+/* Le dock du haut : AIME® (le menu), les verbes de la page, la loupe, et le rond du profil (votre espace). */
 export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string }) {
   const [ouvert, setOuvert] = useState(false);
   const [cherche, setCherche] = useState(false);
@@ -21,9 +21,9 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
   const menu = useRef<HTMLUListElement>(null);
   useEffect(() => { if (ouvert) menu.current?.querySelector('a')?.focus(); }, [ouvert]);
   const fermer = () => { setOuvert(false); bouton.current?.focus(); };
-  /* sans compte, « Mon espace » mène à Entrer ; avec, à Votre espace */
-  const items: [string, string, string?][] = [['/', 'Le Monde AIME'], ['/studio/', 'StudiO'], [session ? '/buro' : '/entrer', 'Mon espace', session ? undefined : 'Entrer'], ['/a-plus', 'A+'], ['/a-propos', 'À propos d’AIME']];
-  const actif = (h: string) => courant === h || (h === '/entrer' && courant === '/buro');
+  /* le menu AIME® : la marque. Studio et Boutique sont dans le dock ; l'espace, derrière le rond du profil. */
+  const items: [string, string][] = [['/', 'Le Monde AIME'], ['/a-propos', 'À propos d’AIME']];
+  const actif = (h: string) => courant === h;
   return (
     <header className="tete">
       <nav className="dock-haut" aria-label="Dock du haut">
@@ -40,6 +40,10 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
             ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
             : <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-4.2-4.2" /></svg>}
         </button>
+        <Lien className="outil profil" href={session ? '/buro' : '/entrer'} aria-current={courant === '/buro' || courant === '/entrer' ? 'page' : undefined}
+          aria-label={session ? 'Votre espace' + (session.name ? ', ' + session.name : '') : 'Entrer dans AIME'} title={session ? 'Votre espace' : 'Entrer'}>
+          <Avatar p={session} />
+        </Lien>
         {cherche && <>
           <div aria-hidden="true" onClick={() => setCherche(false)} style={{ position: 'fixed', inset: 0, zIndex: 1 }} />
           <Recherche fermer={() => { setCherche(false); loupe.current?.focus(); }} />
@@ -47,8 +51,8 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
         {ouvert && <>
           <div aria-hidden="true" onClick={() => setOuvert(false)} style={{ position: 'fixed', inset: 0, zIndex: 1 }} />
           <ul id="menu-aime" ref={menu} className="menu-aime" onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); fermer(); } }}>
-            {items.map(([h, l, note], k) => <li key={l} style={k === 2 ? { borderTop: '1px solid #ECECE8', marginTop: 6, paddingTop: 6 } : undefined}>
-              <Lien href={h} aria-current={actif(h) ? 'page' : undefined} onClick={() => setOuvert(false)} style={{ fontWeight: actif(h) ? 700 : 500, justifyContent: 'space-between' }}>{l}{note && <span style={{ fontSize: 14, color: '#55555A' }}>{note}</span>}</Lien>
+            {items.map(([h, l]) => <li key={l}>
+              <Lien href={h} aria-current={actif(h) ? 'page' : undefined} onClick={() => setOuvert(false)} style={{ fontWeight: actif(h) ? 700 : 500 }}>{l}</Lien>
             </li>)}
             {session && <li style={{ borderTop: '1px solid #ECECE8', marginTop: 6, paddingTop: 6 }}><button type="button" onClick={() => { setOuvert(false); seDeconnecter(); }}>Déconnexion</button></li>}
           </ul>
@@ -57,13 +61,19 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
     </header>
   );
 }
+/* le rond du profil : la photo, sinon les initiales, sinon une silhouette (pas encore entré) */
+function Avatar({ p }: { p: Personne | null | undefined }) {
+  if (p && p.image) return <img src={p.image} alt="" className="avatar" />;
+  const ini = p ? ((p.name || p.email || '').trim().split(/[\s@.]+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase() || '·') : '';
+  return <span className="avatar" aria-hidden="true">{p ? ini : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="9" r="3.6" /><path d="M5 19.5c1.4-3.2 4-4.7 7-4.7s5.6 1.5 7 4.7" /></svg>}</span>;
+}
 /* Le dock du haut de tout le site : les rubriques du Monde AIME (des mots, pas de pictos). */
-export function VerbesSite({ actif }: { actif?: 'unions' | 'prestataires' | 'studio' }) {
+export function VerbesSite({ actif }: { actif?: 'unions' | 'prestataires' | 'studio' | 'boutique' }) {
   return <>
     <Verbe href="/#unions" actif={actif === 'unions'}>Unions</Verbe>
     <Verbe href="/reseau?domaine=mariage" actif={actif === 'prestataires'}>Prestataires</Verbe>
-    <Verbe href="/studio/" actif={actif === 'studio'}>StudiO</Verbe>
-    <span className="outil" aria-disabled="true" style={{ color: '#55555A' }}>Boutique<span className="bientot">Bientôt</span></span>
+    <Verbe href="/studio/" actif={actif === 'studio'}>Studio</Verbe>
+    <Verbe href="/boutique" actif={actif === 'boutique'}>Boutique</Verbe>
   </>;
 }
 export function Verbe({ href, children, actif }: { href: string; children: ReactNode; actif?: boolean }) {
@@ -205,7 +215,7 @@ export function Pied() {
       <Lien href="/" aria-label="AIME, accueil" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}><Orbe taille={28} /><span className="marque" style={{ fontSize: 22 }}>AIME<sup aria-hidden="true">®</sup></span></Lien>
       <nav aria-label="Plan du site">
         {col('Le Monde AIME', [['Les unions', '/#unions'], ['Prestataires', '/reseau?domaine=mariage'], ['Invités', '/#invites'], ['Collections', '/#collections']])}
-        {col('Créer', [['StudiO', '/studio/'], ['Broderie', '/studio/atelier'], ['Point Zéro', '/point-zero'], ['Boutique', null]])}
+        {col('Créer', [['Studio', '/studio/'], ['Broderie', '/studio/atelier'], ['Point Zéro', '/point-zero'], ['Boutique', '/boutique']])}
         {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil'], ['A+', '/a-plus']])}
         {col('La maison', [['À propos d’AIME', '/a-propos'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', null], ['Mentions légales', null]])}
       </nav>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 /* La personne connectée, lue depuis la session Better Auth (cookie vérifié côté serveur). */
-export type Personne = { id: string; email: string; name?: string | null };
+export type Personne = { id: string; email: string; name?: string | null; image?: string | null };
 let cache: Personne | null | undefined;
 const abonnes = new Set<(p: Personne | null) => void>();
 export async function lireSession(): Promise<Personne | null> {
@@ -9,7 +9,7 @@ export async function lireSession(): Promise<Personne | null> {
     const r = await fetch('/api/auth/get-session', { credentials: 'same-origin' });
     if (!r.ok) return null;
     const j = await r.json();
-    return j && j.user ? { id: j.user.id, email: j.user.email, name: j.user.name } : null;
+    return j && j.user ? { id: j.user.id, email: j.user.email, name: j.user.name, image: j.user.image } : null;
   } catch { return null; }
 }
 export function useSession() {

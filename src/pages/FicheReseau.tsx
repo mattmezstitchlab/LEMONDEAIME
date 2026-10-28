@@ -19,7 +19,7 @@ export function MiniGrille({ allumees, label }: { allumees: Record<string, Role 
         if (id === 'VIDE') return <span key={i} />;
         if (id === 'PZ') return <span key={i} style={{ aspectRatio: '1', borderRadius: '50%', background: '#0B0B0C', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ width: '46%', height: '46%', borderRadius: '50%', background: 'var(--nacre)' }} /></span>;
         const b = B[id], on = !!allumees[id];
-        return <span key={i} title={b?.name} style={{ aspectRatio: '1', borderRadius: 'clamp(4px, .8vw, 9px)', background: on ? b.c : '#ECECE8', border: on ? '1.5px solid #0B0B0C' : '1px solid transparent', display: 'flex', alignItems: 'flex-end', padding: 'clamp(2px, .4vw, 5px)', overflow: 'hidden', transition: 'background .4s ease' }}>
+        return <span key={i} title={b?.name} style={{ aspectRatio: '1', borderRadius: 'clamp(4px, .8vw, 9px)', background: on ? b.c : '#ECECE8', display: 'flex', alignItems: 'flex-end', padding: 'clamp(2px, .4vw, 5px)', overflow: 'hidden', transition: 'background .4s ease' }}>
           <span className="mini-nom" style={{ fontSize: 'clamp(7px, .75vw, 10.5px)', lineHeight: 1.05, fontWeight: 600, color: on ? '#0B0B0C' : '#8A8A86', overflowWrap: 'anywhere' }}>{on ? b.name : b.n}</span>
         </span>;
       })}

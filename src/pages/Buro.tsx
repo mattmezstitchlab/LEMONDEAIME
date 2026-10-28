@@ -34,7 +34,7 @@ export default function Buro() {
   const B = data.briques as Record<string, { name: string }>;
   const verbes = sel && sel.role === 'owner'
     ? <>
-      {sel.ouvrage && <a className="outil" href={'/studio/atelier?ouvrage=' + encodeURIComponent(sel.ouvrage)} style={{ fontWeight: 600 }}>Ouvrir dans le StudiO</a>}
+      {sel.ouvrage && <a className="outil" href={'/studio/atelier?ouvrage=' + encodeURIComponent(sel.ouvrage)} style={{ fontWeight: 600 }}>Ouvrir dans le Studio</a>}
       <button className="outil" type="button" onClick={() => maj({ visibilite: ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4] }, '« ' + sel.titre + ' » : ' + VIS[ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4]] + '.')}>Partager · {VIS[sel.visibilite] || 'Privé'}</button>
       <button className="outil" type="button" onClick={() => { maj({ archive: !sel.archive }, sel.archive ? '« ' + sel.titre + ' » restauré.' : '« ' + sel.titre + ' » rangé aux archives.'); setChoisi(null); }}>{sel.archive ? 'Restaurer' : 'Archiver'}</button>
     </>
