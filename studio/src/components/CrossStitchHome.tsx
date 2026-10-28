@@ -1,9 +1,7 @@
-import { useEffect, useState, type ChangeEvent, type ReactNode } from "react";
-import StudioDemo from "./StudioDemo";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import TopDock from "./TopDock";
-import { ETAPES } from "./OrbeGuide";
-import { BASE_FLOSS } from "../lib/dmc";
-import { MOTIF_PRESETS } from "../lib/motifPresets";
+import Metamorphose from "./Metamorphose";
+import TraineePoints from "./TraineePoints";
 import "./CrossStitchHome.css";
 
 export type StitchEntry = "create" | "library" | "prepare" | "stitch";
@@ -27,75 +25,97 @@ function pick(onImport: (file: File) => void) {
   };
 }
 
-const SECTIONS = [["docks", "Les docks"], ["le-point", "Le Point"], ["fonctionnalites", "Fonctionnalités"], ["commencer", "Commencer"]] as const;
+const IMG = import.meta.env.BASE_URL + "images/landing/";
+
+/* Les chapitres : chacun montre, par l'image, une fonction du studio. Une phrase, pas plus. */
+interface Chapitre { id: string; num: string; titre: string; phrase: string; detail: string; images: [string, string][]; teinte: string; cadrage: string }
+export const CHAPITRES: Chapitre[] = [
+  { id: "ch-zero", num: "I", titre: "Le point zéro", phrase: "Tout commence au centre de la grille.", detail: "Déposez une image, un patron PDF ou un projet : il s’ouvre là, en fils DMC.", images: [["ecran-point-zero.webp", "La grille vide de l’atelier, avec au centre le bouton rond d’import"]], teinte: "prune", cadrage: "20% 30%" },
+  { id: "ch-docks", num: "II", titre: "Les docks", phrase: "Deux docks, et la grille entre eux.", detail: "Dessiner déplie tous les points et tous les outils ; choisir replie le dock.", images: [["ecran-dessiner.webp", "Le dock du haut déplié : la grille des points, des outils et des formes"]], teinte: "mousse", cadrage: "70% 60%" },
+  { id: "ch-point", num: "III", titre: "Le Point", phrase: "L’orbe qui guide, et brode le geste.", detail: "À la première ouverture, il se pose sur chaque outil ; sur la croix, il la brode devant vous.", images: [["ecran-geste.webp", "Le Point, l’orbe nacrée, brode une croix sur le bouton Croix pendant la visite"]], teinte: "nuit", cadrage: "55% 20%" },
+  { id: "ch-nuancier", num: "IV", titre: "Le nuancier", phrase: "Les fils scintillent là où ils sont brodés.", detail: "489 fils DMC, cherchés en français ; chaque pastille montre sa place sur la grille.", images: [["ecran-nuancier.webp", "Le nuancier DMC déplié dans le dock, les fils du motif en pastilles"]], teinte: "rose", cadrage: "62% 38%" },
+  { id: "ch-loupe", num: "V", titre: "La loupe", phrase: "La grille, case par case, sous le pointeur.", detail: "Un dock sombre se déplie et suit la souris ou le doigt. Il ne modifie rien.", images: [["ecran-loupe.webp", "La loupe agrandit des pétales de rose, case par case"]], teinte: "ocre", cadrage: "40% 70%" },
+  { id: "ch-lectures", num: "VI", titre: "Trois lectures", phrase: "La même grille, trois regards.", detail: "Réaliste comme une fois brodé, À plat pour les couleurs, Patron pour compter.", images: [["ecran-reel.webp", "Lecture réaliste"], ["ecran-lecture-a-plat.webp", "Lecture à plat"], ["ecran-lecture-patron.webp", "Lecture patron"]], teinte: "ardoise", cadrage: "75% 75%" },
+  { id: "ch-broder", num: "VII", titre: "Broder", phrase: "Suivre le patron sans le redessiner.", detail: "Marquer une case, une ligne, un bloc ; la timeline suit chaque fil jusqu’au bout.", images: [["ecran-broder.webp", "Le mode Broder : des lignes marquées, la timeline de progression en bas"]], teinte: "vert", cadrage: "30% 80%" },
+  { id: "ch-partager", num: "VIII", titre: "Partager", phrase: "Un PDF prêt à imprimer, ou en direct.", detail: "Le patron paginé, symboles et légende ; quelqu’un regarde l’ouvrage pendant que vous brodez.", images: [["ecran-exporter.webp", "Le panneau Exporter : le PDF paginé du patron de roses"]], teinte: "teal", cadrage: "50% 50%" },
+];
+
+/* Tout le studio, en une liste : le nom, puis une ligne. */
+const TOUT: [string, string][] = [
+  ["Tous les points", "Croix, demi-point, quart, trois quarts, petite croix, point arrière, point lancé, nœud, perle."],
+  ["Les outils", "Main, gomme, remplir, pipette, sélection, lasso, déplacer, ligne, rectangle, ellipse, symétrie."],
+  ["Composer", "Motifs à glisser, calques, sujets déplaçables, lettres en croix, redimensionner, nettoyer."],
+  ["Importer", "Photo convertie en fils DMC, puzzle PDF recomposé, projets JSON et OXS, glisser-déposer."],
+  ["Les fils", "489 références DMC, recherche en français, fils mélangés, perles Miyuki Delica, remplacer au plus proche."],
+  ["Le stock", "Votre stock de fils, les fils manquants, la liste de courses, les quantités estimées."],
+  ["Broder", "Marquer case, bloc ou ligne ; parking des fils, notes, cases à défaire, journal des séances."],
+  ["Se repérer", "Le cercle de progression, la timeline fil par fil, la loupe, symboles, tout voir."],
+  ["Partager", "Inviter à regarder en direct, visibilité, PDF paginé, SVG, PNG, JSON."],
+  ["Garder", "Sauvegarde automatique, Mes ouvrages dans le dock, compte AIME synchronisé, hors ligne."],
+  ["Confort", "Débutante, confirmée, experte ; contraste élevé, texte plus grand, stylet, clavier, lecteur d’écran."],
+  ["Le Point", "La visite guidée de bout en bout, au clavier, qui imite le geste de chaque point."],
+];
+
+const SECTIONS = [["chapitres", "Le studio"], ["ch-point", "Le Point"], ["tout", "Tout le studio"], ["commencer", "Commencer"]] as const;
 type SectionId = typeof SECTIONS[number][0];
 
-/* Les deux docks, pièce par pièce : ce que l'on voit, ce que cela fait */
-const HAUT: [string, string][] = [
-  ["L’orbe", "Le menu : l’accueil, les réglages, et l’affichage débutante, confirmée ou experte."],
-  ["Dessiner", "Six outils sous la main ; « Tous les points » déplie la grille complète, qui se replie au choix."],
-  ["Broder", "Marquer, bloc 10 × 10, ligne ; la grille déplie parking, note, à défaire et le suivi."],
-  ["Fils", "Le nuancier DMC se déplie dans le dock, cherché en français ; puis les fils et la toile."],
-  ["Partager", "Inviter à regarder, la visibilité, exporter, enregistrer."],
-  ["Annuler · Rétablir", "Chaque geste se reprend."],
-  ["Chercher", "Un fil, un outil, une fonction : on tape, on choisit."],
-  ["Mes ouvrages", "Tous les ouvrages, rangés dans le dock : rouvrir, déposer un fichier, inviter."],
-];
-const BAS: [string, string][] = [
-  ["Le cercle", "L’anneau suit l’avancement ; un clic change le dock."],
-  ["L’ouvrage", "Son nom et sa visibilité, toujours sous les yeux."],
-  ["Réaliste · À plat · Patron", "Trois lectures de la même grille."],
-  ["Symboles", "Par-dessus les couleurs, comme sur un patron papier."],
-  ["Loupe · − · +", "La loupe déplie un dock : la grille agrandie sous le pointeur ; − et + règlent le zoom."],
-  ["Tout voir", "Le patron entier revient à l’écran."],
-];
-const MODES: [string, string][] = [
-  ["Repères", "Les lectures, les symboles, le zoom."],
-  ["Fils", "Les pastilles DMC du motif, avec le stock : projet, utilisés, en stock, manquants."],
-  ["Progression", "La timeline du patron, fil par fil, du plus présent au plus discret."],
-];
+/** Un chapitre : un grand fond peint (la toile de roses, floutée et teintée), une phrase, l'écran réel ; tout bouge un peu au défilement. */
+function ChapitreVue({ c, n, onVoir }: { c: Chapitre; n: number; onVoir: (id: string) => void }) {
+  const ref = useRef<HTMLElement>(null);
+  const [vu, setVu] = useState(false);
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    if (typeof IntersectionObserver === "undefined") { setVu(true); return; }
+    const o = new IntersectionObserver(es => { for (const e of es) { if (e.isIntersecting) { setVu(true); if (e.intersectionRatio > .35) onVoir(c.id); } } }, { threshold: [0, .15, .35, .6] });
+    o.observe(el); return () => o.disconnect();
+  }, [c.id, onVoir]);
+  return <section ref={ref} id={c.id} className={"ch ch-" + c.teinte + (n % 2 ? " ch-inverse" : "") + (vu ? " vu" : "")} aria-labelledby={c.id + "-titre"} data-parallaxe="">
+    <div className="ch-fond" aria-hidden="true" style={{ backgroundImage: `url(${IMG}peinture-roses.webp)`, backgroundPosition: c.cadrage }} data-vitesse=".22" />
+    <div className="ch-voile" aria-hidden="true" />
+    <div className="ch-corps">
+      <div className="ch-texte">
+        <p className="ch-num">{c.num}</p>
+        <h2 id={c.id + "-titre"} tabIndex={-1}>{c.titre}</h2>
+        <p className="ch-phrase">{c.phrase}</p>
+        <p className="ch-detail">{c.detail}</p>
+      </div>
+      <div className={"ch-ecrans ch-ecrans-" + c.images.length} data-vitesse="-.06">
+        {c.images.map(([fichier, alt], k) => <figure key={fichier} className="ch-ecran" style={{ transitionDelay: k * 120 + "ms" }}>
+          <img src={IMG + fichier} alt={alt} loading="lazy" decoding="async" width={1600} height={1000} />
+          {c.images.length > 1 && <figcaption>{alt.replace("Lecture ", "")}</figcaption>}
+        </figure>)}
+      </div>
+    </div>
+  </section>;
+}
 
-const Bientot = () => <span className="pzh-soon">Bientôt</span>;
-
-interface Tuile { id: string; num: string; cat: string; titre: string; texte: string; points: ReactNode[]; taille: "l" | "m" | "s" | "xl"; sombre?: boolean; ouvrir?: [string, StitchEntry] }
-const TUILES: Tuile[] = [
-  { id: "dessiner", num: "01", cat: "Dessiner", titre: "Tous les points du point de croix", taille: "l", ouvrir: ["Dessiner un patron", "create"],
-    texte: "Chaque point a son outil, posé case par case ou en formes, avec la symétrie si l’on veut.",
-    points: ["Grille rétractable dans le dock", "Croix", "Demi-point", "Quart", "Trois quarts", "Petite croix", "Point arrière", "Point lancé", "Nœud", "Perle", "Ligne", "Rectangle", "Ellipse", "Remplir", "Pipette", "Gomme", "Sélection", "Lasso", "Déplacer", "Symétrie sur un ou deux axes", "Sens du demi-point"] },
-  { id: "composer", num: "02", cat: "Composer", titre: "Un patron qui se construit", taille: "m",
-    texte: "Des motifs prêts à glisser sur la grille, des calques, des sujets que l’on déplace.",
-    points: [`${MOTIF_PRESETS.length} motifs à glisser`, "Calques", "Sujets déplaçables", "Lettres en croix (A–Z, 0–9)", "Redimensionner la grille", "Nettoyer les points isolés"] },
-  { id: "importer", num: "03", cat: "Importer", titre: "Partir de ce que l’on aime", taille: "s",
-    texte: "Une photo devient un patron en fils DMC ; un PDF de plusieurs pages se recompose.",
-    points: ["Le point zéro : importer au centre de la grille", "Photo → couleurs DMC", "Puzzle PDF sur plateau magnétique", "Projet JSON ou OXS", "Glisser-déposer sur la grille", "Calage manuel"] },
-  { id: "fils", num: "04", cat: "Fils", titre: "Le nuancier DMC complet", taille: "s", ouvrir: ["Préparer mes fils", "prepare"],
-    texte: `${BASE_FLOSS.length} références, cherchées par code ou en français : « rouge », « vert foncé », « doré ».`,
-    points: ["Nuancier dans le dock", "Pixels qui scintillent : où chaque fil est brodé", "Fil actif", "Remplacer par le plus proche", "Fils mélangés", "Perles Miyuki Delica", "Toile et brins", "Marge de fil estimée"] },
-  { id: "stock", num: "05", cat: "Stock", titre: "Ce qu’il vous faut, ce que vous avez", taille: "s",
-    texte: "Le stock de fils de la brodeuse, rapproché du patron avant la première croix.",
-    points: ["Mon stock de fils", "Fils manquants", "Liste de courses", "Quantités estimées"] },
-  { id: "broder", num: "06", cat: "Broder", titre: "Suivre le patron sans le redessiner", taille: "l", sombre: true, ouvrir: ["Passer en mode Broder", "stitch"],
-    texte: "Marquer ce qui est brodé, garer un fil, noter un rappel : le dessin, lui, ne bouge pas.",
-    points: ["Marquer une case", "Un bloc de 10 × 10", "Une ligne entière", "Uniquement le fil actif", "Parking des fils", "Notes sur la grille", "Cases à défaire", "Journal des séances", "Écran gardé éveillé"] },
-  { id: "reperer", num: "07", cat: "Se repérer", titre: "Toujours savoir où l’on en est", taille: "m",
-    texte: "Le cercle, la timeline et trois lectures pour ne jamais perdre le fil.",
-    points: ["La loupe sous le pointeur", "Pourcentage brodé", "Timeline fil par fil", "Réaliste · À plat · Patron", "Symboles", "Tout voir"] },
-  { id: "partager", num: "08", cat: "Partager", titre: "Montrer l’ouvrage", taille: "m",
-    texte: "Quelqu’un regarde en direct, depuis son appareil, pendant que vous brodez.",
-    points: ["Inviter à regarder", "Privé · Restreint · Par lien · Public", "PDF paginé", "SVG · PNG · JSON", <>SAL à plusieurs <Bientot /></>, <>Commenter sur la grille <Bientot /></>] },
-  { id: "garder", num: "09", cat: "Garder", titre: "Vos ouvrages, en sûreté", taille: "m",
-    texte: "Sans compte, tout reste sur l’appareil ; avec AIME, vos ouvrages vous suivent.",
-    points: ["Sauvegarde automatique", "Mes ouvrages, rangés dans le dock", "Espace AIME synchronisé", "Hors ligne après chargement", "Export JSON de sûreté"] },
-  { id: "confort", num: "10", cat: "Confort", titre: "Un studio qui s’adapte à la brodeuse", taille: "xl",
-    texte: "L’interface s’ajuste à votre main, à vos yeux et à votre rythme.",
-    points: ["Débutante · Confirmée · Experte", "Contraste élevé", "Texte plus grand", "Stylet uniquement", "La grille au clavier", "Lecteur d’écran", "Moins d’animations respecté", "Le Point pour démarrer"] },
-];
+/** Un seul écouteur pour le parallaxe : chaque élément [data-vitesse] glisse selon sa place dans l'écran. */
+function useParallaxe() {
+  useEffect(() => {
+    if (typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let image = 0;
+    const pas = () => {
+      image = 0; const H = window.innerHeight;
+      document.querySelectorAll<HTMLElement>("[data-vitesse]").forEach(el => {
+        const box = (el.closest("[data-parallaxe]") ?? el).getBoundingClientRect();
+        if (box.bottom < -200 || box.top > H + 200) return;
+        const centre = box.top + box.height / 2 - H / 2, v = parseFloat(el.dataset.vitesse || "0");
+        el.style.transform = `translate3d(0, ${(centre * v).toFixed(1)}px, 0)`;
+      });
+    };
+    const demander = () => { if (!image) image = requestAnimationFrame(pas); };
+    window.addEventListener("scroll", demander, { passive: true }); window.addEventListener("resize", demander); demander();
+    return () => { if (image) cancelAnimationFrame(image); window.removeEventListener("scroll", demander); window.removeEventListener("resize", demander); };
+  }, []);
+}
 
 /** Un écran d'accueil seulement : l'ouvrir ne crée aucun patron et ne réécrit aucun projet. */
 export default function CrossStitchHome({ projectName, onOpen, onImport, onShare, onOuvrages, onVisite }: Props) {
   const [current, setCurrent] = useState<SectionId | null>(null);
+  const [chapitre, setChapitre] = useState<string | null>(null);
   const enter = () => (onOuvrages ? onOuvrages() : onOpen("library"));
   const visite = () => (onVisite ? onVisite() : onOpen("create"));
+  useParallaxe();
 
   // Repère : la section visible est mise en évidence dans le dock du bas.
   useEffect(() => {
@@ -105,13 +125,14 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
       frame = 0;
       const line = window.innerHeight * 0.4;
       let found: SectionId | null = null;
-      // L'import n'a pas d'entrée dans le dock : rien n'y est mis en évidence.
-      const marks: [string, SectionId | null][] = [["docks", "docks"], ["le-point", "le-point"], ["fonctionnalites", "fonctionnalites"], ["csh-import", null], ["commencer", "commencer"]];
+      const marks: [string, SectionId | null][] = [["chapitres", "chapitres"], ["ch-point", "ch-point"], ["ch-nuancier", "chapitres"], ["tout", "tout"], ["csh-import", null], ["commencer", "commencer"]];
       for (const [id, key] of marks) {
         const el = document.getElementById(id);
         if (el && el.getBoundingClientRect().top <= line) found = key;
       }
       setCurrent(found);
+      const premier = document.getElementById("chapitres"), tout = document.getElementById("tout");
+      if (premier && tout && (premier.getBoundingClientRect().top > line || tout.getBoundingClientRect().top < line)) setChapitre(null);
     };
     const onScroll = () => { if (!frame) frame = window.requestAnimationFrame?.(compute) ?? 0; };
     compute();
@@ -133,125 +154,47 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
     window.history?.replaceState?.(null, "", window.location.pathname + window.location.search);
     (el.querySelector<HTMLElement>("h2") ?? el).focus?.({ preventScroll: true });
   };
-  const haut = ETAPES.filter(e => e.dock === "haut"), bas = ETAPES.filter(e => e.dock === "bas");
 
   return <div className="cross-stitch-home">
     <a className="csh-skip" href="#csh-main">Aller au contenu</a>
+    <TraineePoints />
 
     <TopDock label="Navigation point de croix" idBloc="pzh-menu"
       menu={[{ label: "Mes ouvrages", faire: () => onOpen("library") }, { label: "Ouvrir le studio", faire: () => onOpen("stitch") }, { label: "Faire la visite avec Le Point", faire: visite }]}
       droite={<button type="button" className="pzs-tool pzs-noir pzh-entrer" onClick={enter} aria-label="Entrer dans Point Zéro"><span aria-hidden="true">+</span> Entrer</button>}>
-      <a className="pzs-tool" href="#docks" onClick={go("docks")}>Les docks</a>
-      <a className="pzs-tool" href="#le-point" onClick={go("le-point")}>Le Point</a>
-      <a className="pzs-tool" href="#fonctionnalites" onClick={go("fonctionnalites")}>Fonctionnalités</a>
+      <a className="pzs-tool" href="#chapitres" onClick={go("chapitres")}>Le studio</a>
+      <a className="pzs-tool" href="#ch-point" onClick={go("ch-point")}>Le Point</a>
+      <a className="pzs-tool" href="#tout" onClick={go("tout")}>Tout le studio</a>
       <a className="pzs-tool" href="#csh-import" onClick={go("csh-import")}>Importer</a>
     </TopDock>
 
+    {/* l'index des chapitres, à gauche, comme une table des matières qui suit la lecture */}
+    <nav className={"ix" + (chapitre ? " ix-on" : "")} aria-label="Chapitres">
+      <p className="ix-tete">Point Zéro<span>Édition point de croix</span></p>
+      <ol>{CHAPITRES.map(c => <li key={c.id}><a href={"#" + c.id} onClick={go(c.id)} aria-current={chapitre === c.id ? "true" : undefined}><span className="ix-nom">{c.titre}</span><span className="ix-points" aria-hidden="true" /><span className="ix-num">{c.num}</span></a></li>)}</ol>
+    </nav>
+
     <main id="csh-main">
-      <section className="pzh-hero" aria-labelledby="csh-title">
-        <p className="pzh-kicker">Le studio de point de croix d’AIME</p>
-        <h1 id="csh-title">Point Zéro</h1>
-        <p className="pzh-lead">Deux docks, une grille, et Le Point pour vous guider.</p>
-        <p className="pzh-text">Créez votre patron, préparez vos fils et suivez votre broderie, du premier motif à la dernière croix.</p>
-        <div className="pzh-actions">
-          <button className="pzh-btn pzh-btn-primary" onClick={() => onOpen("create")}>Créer mon patron</button>
-          <button className="pzh-btn pzh-btn-secondary pzh-btn-point" onClick={visite}><span className="pzh-dot" aria-hidden="true" />Faire la visite avec Le Point</button>
-          <a className="pzh-btn pzh-btn-ghost" href="#csh-import" onClick={go("csh-import")}>Importer une image ou un patron</a>
+      <Metamorphose src={IMG + "peinture-roses.webp"} titre="Point Zéro">
+        <p className="mm-sous">Du tableau à la dernière croix.</p>
+        <ol className="mm-sommaire">{CHAPITRES.map(c => <li key={c.id}><a href={"#" + c.id} onClick={go(c.id)}>{c.titre}</a><span>{c.num}</span></li>)}</ol>
+        <div className="mm-actions">
+          <button className="pzh-btn pzh-btn-clair" onClick={() => onOpen("create")}>Créer mon patron</button>
+          <button className="pzh-btn mm-btn-point" onClick={visite}><span className="pzh-dot" aria-hidden="true" />Faire la visite avec Le Point</button>
         </div>
-        <p className="pzh-fine">Sans compte · Projets conservés sur cet appareil · Utilisable hors ligne après chargement</p>
-      </section>
+      </Metamorphose>
 
-      <figure className="pzh-demo">
-        <StudioDemo />
-        <figcaption>Reproduction de l’interface du studio — pas une capture d’écran ni un ouvrage brodé.</figcaption>
-      </figure>
+      <div id="chapitres" className="chapitres">
+        {CHAPITRES.map((c, n) => <ChapitreVue key={c.id} c={c} n={n} onVoir={setChapitre} />)}
+      </div>
 
-      <section className="pzh-section" id="docks" aria-labelledby="pzh-docks-title">
-        <div className="pzh-intro">
-          <div>
-            <p className="pzh-kicker">Toute la grille, rien autour</p>
-            <h2 id="pzh-docks-title" tabIndex={-1}>Les docks</h2>
-          </div>
-          <p>La grille occupe tout l’écran. En haut, le dock pour faire : des verbes qui se déploient dans le dock lui-même. En bas, le dock pour se repérer. Rien d’autre à apprendre.</p>
+      <section className="pzh-section tout" id="tout" aria-labelledby="tout-titre">
+        <div className="tout-tete">
+          <p className="pzh-kicker">Tout ce que fait le studio</p>
+          <h2 id="tout-titre" tabIndex={-1}>Tout le studio</h2>
         </div>
-        <div className="pzh-docks">
-          <article className="pzh-dock pzh-dock-haut" aria-labelledby="pzh-dock-haut">
-            <p className="pzh-step">En haut · pour faire</p>
-            <h3 id="pzh-dock-haut">Le dock du haut</h3>
-            <div className="pzh-replica pzh-replica-haut" aria-hidden="true">
-              <i className="pzh-r-sq"><b /></i><em>Point Zéro</em><s /><span data-on="1">Dessiner</span><span>Broder</span><span>Fils</span><span>Partager</span><s /><span>↶</span><span>↷</span><s /><span>⌕</span><span>◯</span>
-            </div>
-            <ol className="pzh-legend">{HAUT.map(([n, t]) => <li key={n}><strong>{n}</strong><span>{t}</span></li>)}</ol>
-          </article>
-          <article className="pzh-dock pzh-dock-bas" aria-labelledby="pzh-dock-bas">
-            <p className="pzh-step">En bas · pour se repérer</p>
-            <h3 id="pzh-dock-bas">Le dock du bas</h3>
-            <div className="pzh-replica pzh-replica-bas" aria-hidden="true">
-              <i className="pzh-r-cercle"><b /></i><em>Roses anciennes</em><s /><span data-on="1">Réaliste</span><span>À plat</span><span>Patron</span><span>Symboles</span><s /><span>−</span><span>+</span><span data-clair="1">Tout voir</span>
-            </div>
-            <ol className="pzh-legend">{BAS.map(([n, t]) => <li key={n}><strong>{n}</strong><span>{t}</span></li>)}</ol>
-            <div className="pzh-modes">
-              <p className="pzh-step">Le cercle change le dock du bas</p>
-              <ul>{MODES.map(([n, t]) => <li key={n}><strong>{n}</strong><span>{t}</span></li>)}</ul>
-            </div>
-          </article>
-        </div>
-        <ul className="pzh-plis" aria-label="Ce qui se déplie dans les docks">
-          <li><span className="pzh-pli-vue pzh-pli-zero" aria-hidden="true"><i>+</i></span><strong>Le point zéro</strong><span>Sur une grille vide, l’import est au centre : une image, un patron PDF, un projet.</span></li>
-          <li><span className="pzh-pli-vue pzh-pli-grille" aria-hidden="true">{Array.from({ length: 9 }, (_, n) => <i key={n} data-on={n === 0 ? "1" : undefined} />)}</span><strong>La grille qui se replie</strong><span>Dessiner et Broder déplient tous les points et outils ; choisir replie le dock.</span></li>
-          <li><span className="pzh-pli-vue pzh-pli-fils" aria-hidden="true">{["#BC4365", "#5F7A3A", "#E48E9F", "#8C1D3F"].map((c, n) => <i key={c} style={{ background: c }}><b className={"dg-scintille dg-scintille-" + (n % 3)} /><b className={"dg-scintille dg-scintille-" + ((n + 1) % 3)} /></i>)}</span><strong>Les fils qui scintillent</strong><span>Dans le nuancier, de petits pixels scintillent là où chaque fil est brodé sur la grille.</span></li>
-          <li><span className="pzh-pli-vue pzh-pli-loupe" aria-hidden="true"><i /></span><strong>La loupe</strong><span>Un dock sombre se déplie : la grille agrandie case par case, sous le pointeur ou le doigt.</span></li>
-        </ul>
-      </section>
-
-      <section className="pzh-section pzh-dark pzh-point" id="le-point" aria-labelledby="pzh-point-title">
-        <div className="pzh-point-grid">
-          <div className="pzh-point-texte">
-            <span className="pzh-point-orbe" aria-hidden="true" />
-            <p className="pzh-kicker">L’orbe qui guide</p>
-            <h2 id="pzh-point-title" tabIndex={-1}>Le Point</h2>
-            <p className="pzh-point-lead">À la première ouverture de l’atelier, Le Point se pose sur chaque outil des deux docks et vous le présente. {ETAPES.length} étapes, de bout en bout, à votre rythme.</p>
-            <ul className="pzh-chips">
-              <li>Dès la première ouverture</li>
-              <li>Outil par outil, en haut puis en bas</li>
-              <li>Imite le geste de chaque point</li>
-              <li>Ouvre lui-même les grilles du dock</li>
-              <li>Au clavier : → ← Échap</li>
-              <li>Respecte « moins d’animations »</li>
-              <li>Se relance depuis le menu</li>
-            </ul>
-            <button className="pzh-btn pzh-btn-clair" onClick={visite}><span className="pzh-dot" aria-hidden="true" />Faire la visite maintenant</button>
-          </div>
-          <div className="pzh-parcours" aria-label="Le parcours du Point">
-            <div>
-              <p className="pzh-step">Dock du haut</p>
-              <ol>{haut.map((e, n) => <li key={e.titre}><span>{String(n + 1).padStart(2, "0")}</span>{e.titre}</li>)}</ol>
-            </div>
-            <div>
-              <p className="pzh-step">Dock du bas</p>
-              <ol start={haut.length + 1}>{bas.map((e, n) => <li key={e.titre}><span>{String(haut.length + n + 1).padStart(2, "0")}</span>{e.titre}</li>)}</ol>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="pzh-section" id="fonctionnalites" aria-labelledby="pzh-fonct-title">
-        <div className="pzh-intro">
-          <div>
-            <p className="pzh-kicker">Tout ce que fait le studio</p>
-            <h2 id="pzh-fonct-title" tabIndex={-1}>Fonctionnalités</h2>
-          </div>
-          <p>Dix familles, du dessin à la sauvegarde. Chaque fonction ci-dessous existe dans le studio aujourd’hui, sauf celles marquées « Bientôt ».</p>
-        </div>
-        <ul className="pzh-bento">
-          {TUILES.map(t => <li key={t.id} id={"f-" + t.id} className={"pzh-tuile pzh-t-" + t.taille + (t.sombre ? " pzh-tuile-sombre" : "")}>
-            <p className="pzh-tuile-tete"><span>{t.num}</span><span>{t.cat}</span></p>
-            <h3>{t.titre}</h3>
-            <p className="pzh-tuile-texte">{t.texte}</p>
-            <ul className="pzh-puces">{t.points.map((x, n) => <li key={n}>{x}</li>)}</ul>
-            {t.ouvrir && <button className="pzh-link" onClick={() => onOpen(t.ouvrir![1])}>{t.ouvrir[0]} <span aria-hidden="true">→</span></button>}
-          </li>)}
-        </ul>
+        <dl className="tout-liste">{TOUT.map(([nom, ligne]) => <div key={nom}><dt>{nom}</dt><dd>{ligne}</dd></div>)}</dl>
+        <p className="pzh-fine">Bientôt : les SAL à plusieurs, et les commentaires posés sur la grille.</p>
       </section>
 
       <section className="pzh-section" id="csh-import" aria-labelledby="csh-import-title">
@@ -325,9 +268,8 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
         <div>
           <h2>Découvrir</h2>
           <ul>
-            <li><a href="#docks" onClick={go("docks")}>Les docks</a></li>
-            <li><a href="#le-point" onClick={go("le-point")}>Le Point</a></li>
-            <li><a href="#fonctionnalites" onClick={go("fonctionnalites")}>Fonctionnalités</a></li>
+            {CHAPITRES.map(c => <li key={c.id}><a href={"#" + c.id} onClick={go(c.id)}>{c.num}. {c.titre}</a></li>)}
+            <li><a href="#tout" onClick={go("tout")}>Tout le studio</a></li>
           </ul>
         </div>
         <div>

@@ -113,7 +113,7 @@ def docks(b, largeur, hauteur, nom):
     t = pg.locator('.pzs-bloc').inner_text()
     ok('Mes ouvrages' in t and 'Nouvelle grille' in t and 'Votre espace AIME' not in t and 'BurO' not in t, f'{nom} : Mes ouvrages dans le dock, sans BurO ni Espace AIME')
     pg.goto(B + '/buro'); pg.wait_for_timeout(600)
-    ok(pg.locator('#csh-title').count() == 1, f'{nom} : l’ancienne adresse /buro mène à l’accueil')
+    ok(pg.locator('#mm-titre').count() == 1, f'{nom} : l’ancienne adresse /buro mène à l’accueil')
     ctx.close()
 
 def depuis_accueil(b):
@@ -122,17 +122,28 @@ def depuis_accueil(b):
     pg = ctx.new_page(); pg.on('pageerror', lambda e: erreurs.append(str(e)))
     pg.add_init_script("localStorage.setItem('pointzero:visite-docks:v1','vue')")
     pg.goto(B + '/'); pg.wait_for_timeout(800)
-    ok(pg.locator('#le-point h2').inner_text().strip().lower() == 'le point' and pg.locator('#fonctionnalites .pzh-bento > li').count() == 10, 'accueil : les docks, Le Point et la grande grille des fonctionnalités')
+    ok(pg.locator('#chapitres .ch').count() == 8 and pg.locator('#tout dt').count() == 12, 'accueil : huit chapitres illustrés et tout le studio')
     ok(pg.locator('#editions').count() == 0 and 'Boutique' not in pg.locator('body').inner_text(), 'accueil : plus de page ni de lien vers les éditions')
-    nxt = pg.get_by_role('button', name='Outil suivant')
-    nxt.click(); nxt.click(); pg.wait_for_timeout(300)
-    ok(pg.locator('.sdemo-outils').count() == 1 and pg.locator('.sdemo [data-k="cross"] .og-geste').count() == 1, 'accueil : la réplique déplie la grille des points, et Le Point y brode la croix')
+    etape = lambda: pg.locator('.mm-etapes li[aria-current]').inner_text().strip()
+    H = pg.evaluate('document.querySelector(".mm").offsetHeight - innerHeight')
+    vus = []
+    for f in (0, .45, .72, .98):
+        pg.evaluate(f'window.scrollTo(0,{int(H*f)})'); pg.wait_for_timeout(400); vus.append(etape())
+    ok([v.split()[-1] for v in vus] == ['peinture', 'pixels', 'croix', 'patron'], 'accueil : au défilement, la peinture devient pixels, point de croix, puis patron ' + str(vus))
+    teintes = pg.locator('canvas.mm-toile').evaluate("c => { const x = c.getContext('2d').getImageData(0, 0, c.width, c.height).data, s = new Set(); for (let i = 0; i < x.length; i += 4 * 997) s.add(x[i] >> 4 << 8 | x[i+1] >> 4 << 4 | x[i+2] >> 4); return s.size; }")
+    ok(teintes > 20, f'accueil : le patron est dessiné en couleurs DMC ({teintes} teintes)')
+    pg.locator('#ch-nuancier').scroll_into_view_if_needed(); pg.wait_for_timeout(1200)
+    ok('vu' in pg.locator('#ch-nuancier').get_attribute('class') and pg.locator('.ix a[aria-current]').get_attribute('href') == '#ch-nuancier', 'accueil : le chapitre apparaît et l’index de gauche le suit')
+    ok(pg.evaluate("[...document.querySelectorAll('.ch-ecran img')].every(i => i.complete && i.naturalWidth > 0) || [...document.querySelectorAll('.ch-ecran img')].filter(i => i.loading !== 'lazy').every(i => i.naturalWidth > 0)"), 'accueil : les captures du studio se chargent')
+    for k in range(8): pg.mouse.move(300 + k * 30, 300 + k * 12); pg.wait_for_timeout(16)
+    ok(pg.locator('canvas.tp-traine').count() == 1, 'accueil : la souris laisse une traîne de points et de symboles')
+    pg.evaluate('window.scrollTo(0,0)'); pg.wait_for_timeout(300)
     fond = pg.locator('.cross-stitch-home').evaluate("e => getComputedStyle(e).backgroundImage")
     ok('linear-gradient' in fond, 'accueil : le fond est une grille gris clair')
     pg.get_by_role('button', name='Faire la visite avec Le Point').first.click(); pg.wait_for_selector('#og-titre')
     ok(pg.url.endswith('/atelier') and pg.locator('#og-titre').inner_text() == 'Bonjour, je suis Le Point', 'accueil → « Faire la visite » : Le Point démarre dans l’atelier')
     pg.goto(B + '/boutique'); pg.wait_for_timeout(600)
-    ok(pg.locator('#csh-title').count() == 1, 'l’ancienne adresse /boutique mène à l’accueil')
+    ok(pg.locator('#mm-titre').count() == 1, 'l’ancienne adresse /boutique mène à l’accueil')
     ctx.close()
 
 with sync_playwright() as p:

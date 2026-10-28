@@ -250,7 +250,7 @@ describe("POINTZERO : atelier unique sans assistant", () => {
 
   it("ouvre directement la préparation depuis l’accueil spécialisé", async () => {
     await mount(true);
-    const prepare = [...(container?.querySelectorAll("button") ?? [])].find(b => b.textContent?.includes("Préparer mes fils"));
+    const prepare = [...(container?.querySelectorAll("button") ?? [])].find(b => b.textContent === "Préparer");
     await click(prepare);
     expect(inspector()?.hasAttribute("hidden")).toBe(false);
     expect(inspector()?.textContent).toContain("Fils & toile");
