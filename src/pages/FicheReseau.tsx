@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Tete, VerbesSite, BoutonBuro, Pied } from '../charte/Charte';
+import { Tete, DockBas, VerbesSite, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import data from '../lib/briques.json';
 import { initiales, lireProfil, type Profil, type ProjetPublic } from '../lib/reseau';
@@ -152,7 +152,7 @@ export default function FicheReseau({ cle }: { cle: string }) {
         {e ? <FicheExemple e={e} /> : /^[a-f0-9]{12}$/.test(cle) ? <FicheProfil refPublique={cle} /> : <><h1 className="titre">Profil introuvable</h1><p className="chapeau"><Lien href="/reseau">Retour au Réseau</Lien></p></>}
       </main>
       <Pied />
-      <BoutonBuro />
+      <DockBas />
     </>
   );
 }

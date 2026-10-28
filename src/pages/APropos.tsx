@@ -1,4 +1,4 @@
-import { Tete, VerbesSite, BoutonBuro, Pied, Visuel } from '../charte/Charte';
+import { Tete, DockBas, VerbesSite, Pied, Visuel } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { MEDIAS } from '../lib/medias';
 import { FONDATEUR } from '../lib/reseau-exemples';
@@ -42,7 +42,7 @@ export default function APropos() {
         </section>
       </main>
       <Pied />
-      <BoutonBuro />
+      <DockBas />
     </>
   );
 }

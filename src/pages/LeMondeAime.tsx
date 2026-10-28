@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Tete, VerbesSite, DockBas, BoutonBuro, Pied } from '../charte/Charte';
+import { Tete, VerbesSite, DockBas, Pied } from '../charte/Charte';
+import { ApercuEspace } from '../charte/ApercuEspace';
+import { useConfort } from '../lib/confort';
 import { Lien } from '../lib/router';
 import { EXEMPLES, UNION_EXEMPLE } from '../lib/reseau-exemples';
 import { CarteReseau } from './Reseau';
@@ -62,7 +64,9 @@ const Fleche = ({ d }: { d: string }) => <svg width="18" height="18" viewBox="0 
 
 export default function LeMondeAime() {
   const [i, setI] = useState(0);
-  const [lecture, setLecture] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const confort = useConfort();
+  const [lecture, setLecture] = useState(() => confort.mouvement !== 'reduit');
+  useEffect(() => { if (confort.mouvement === 'reduit') setLecture(false); }, [confort.mouvement]);
   const [famille, setFamille] = useState<string | null>(null);
   useEffect(() => { if (!lecture) return; const t = setInterval(() => setI(n => (n + 1) % DIAPOS.length), 6000); return () => clearInterval(t); }, [lecture]);
   const d = DIAPOS[i];
@@ -129,16 +133,15 @@ export default function LeMondeAime() {
           </ol>
         </section>
 
-        <section id="espace" aria-labelledby="titre-espace" className="section blanche" style={{ paddingBottom: 160 }}>
-          <p className="surtitre">Votre espace</p>
-          <h2 id="titre-espace" className="titre" style={{ maxWidth: '20ch' }}>Après le « + », chacun retrouve son espace.</h2>
-          <p className="chapeau">Son union, ses invités, ses documents, et ce qu’on lui partage. En haut, des verbes ; en bas, des lieux : projets, partagés avec moi, archives. Chaque projet choisit qui le voit : privé, restreint, par lien ou public.</p>
-          <div style={{ marginTop: 28, display: 'flex', gap: 10, flexWrap: 'wrap' }}><Lien className="bouton noir" href="/buro">Ouvrir mon espace</Lien><Lien className="bouton" href="/studio/">Ouvrir le StudiO</Lien></div>
+        <section id="espace" aria-labelledby="titre-espace" className="section blanche">
+          <Entete id="titre-espace" sur="L’Espace" texte="Un seul endroit pour tout. Les mêmes dossiers pour tout le monde, prêts dès l’arrivée : vos projets, votre profil, vos documents, et tout ce qu’il faut pour commencer." />
+          <ApercuEspace />
+          <p style={{ margin: '18px 0 0', fontSize: 15, color: '#55555A', textAlign: 'center' }}>Aperçu. Projets et Profil sont déjà dans votre espace ; Documents, Ressources, Prestataires, Tutoriels, Design System et A+ y arrivent.</p>
+          <div style={{ marginTop: 28, display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}><Lien className="bouton noir" href="/buro">Ouvrir mon espace</Lien><Lien className="bouton" href="/studio/">Ouvrir le StudiO</Lien></div>
         </section>
       </main>
-      <DockBas lieux={[['unions', 'Unions'], ['prestataires', 'Prestataires'], ['invites', 'Invités'], ['collections', 'Collections'], ['chacun', 'Pour chacun'], ['espace', 'Votre espace']]} />
+      <DockBas lieux={[['unions', 'Unions'], ['prestataires', 'Prestataires'], ['invites', 'Invités'], ['collections', 'Collections'], ['chacun', 'Pour chacun'], ['espace', 'L’Espace']]} />
       <Pied />
-      <BoutonBuro />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Tete, BoutonBuro, Pied, Orbe } from '../charte/Charte';
+import { Tete, DockBas, Pied, Orbe } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { lireBuro, ecrireBuro, type Projet } from '../lib/buro';
@@ -74,12 +74,11 @@ export default function Buro() {
           {projets && !liste.length && lieu !== 'projets' && <p style={{ fontSize: 18, color: '#3A3A3F' }}>{lieu === 'archives' ? 'Rien aux archives.' : 'Personne ne vous a encore partagé de projet.'}</p>}
         </>}
       </main>
-      {session && <nav className="dock-bas" aria-label="Lieux de votre espace"><div>
+      <DockBas label="Lieux de votre espace">{session ? <>
         {([['projets', 'Projets'], ['partages', 'Partagés avec moi'], ['archives', 'Archives'], ['profil', 'Profil']] as [Lieu, string][]).map(([k, l]) =>
           <button key={k} type="button" className="lieu" aria-current={lieu === k ? 'true' : 'false'} onClick={() => { setLieu(k); setChoisi(null); setMsg(''); }}>{l}{k !== 'profil' && <span style={{ marginLeft: 8, fontSize: 13, opacity: .8 }}>{(projets || []).filter(p => dans(p, k)).length}</span>}</button>)}
-      </div></nav>}
+      </> : undefined}</DockBas>
       <Pied />
-      <BoutonBuro courant />
     </>
   );
 }

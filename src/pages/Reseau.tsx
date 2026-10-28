@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Tete, VerbesSite, BoutonBuro, Pied } from '../charte/Charte';
+import { Tete, DockBas, VerbesSite, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { initiales, lireReseau, type Profil } from '../lib/reseau';
@@ -68,7 +68,7 @@ export default function Reseau() {
           </div>}
       </main>
       <Pied />
-      <BoutonBuro />
+      <DockBas />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import { Tete, VerbesSite, BoutonBuro, Pied, Visuel } from '../charte/Charte';
+import { Tete, DockBas, VerbesSite, Pied, Visuel } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { ecrireBuro } from '../lib/buro';
@@ -162,7 +162,7 @@ export default function PointZero() {
         </section>
       </main>
       <Pied />
-      <BoutonBuro />
+      <DockBas />
     </>
   );
 }
