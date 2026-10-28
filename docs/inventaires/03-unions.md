@@ -126,6 +126,19 @@ BASE_TEST_URL=<branche Neon de test, jamais la production> node tests/base/union
   - décidé : `brouillons-studio-mariage` ;
   - à vérifier : `invitations-credits-partage`.
 
+## Correction et vérification : le Réseau et la visibilité
+
+**Correction de l'inventaire.** La première version disait qu'aucune page publique ne lisait `visibilite` : c'est faux.
+- La fiche publique d'un profil du Réseau (`api/reseau.mjs`, `?ref=…`) montre le titre et les briques des espaces de son propriétaire marqués `public`.
+
+**Vérifié sur la branche Neon de test** (28 octobre, script ponctuel, comptes de test effacés) :
+1. Avec cette PR, une union ne peut pas passer en `public` par Mon espace (404). La fiche publique ne montre que les projets publics, pas l'union.
+2. La liste publique du Réseau ne montre aucun espace.
+3. Mais si un autre écrivain (une autre application, une écriture directe) marquait l'union `public`, la fiche publique l'afficherait. La lecture du Réseau ne filtre pas le genre d'espace.
+4. Sur `main`, avant cette PR, « Partager » de Mon espace peut passer un mariage existant en `public`.
+
+**Correctif proposé**, hors de cette PR, dans la PR de sécurité indépendante : la lecture publique du Réseau exclut toujours les unions (`evenement` + `mariage`), quelle que soit leur visibilité.
+
 ## Limites
 
 - La production n'a reçu aucune écriture : le code n'y sera qu'après fusion des PR.
