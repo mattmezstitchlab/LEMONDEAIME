@@ -29,8 +29,8 @@ Autorisé : corrections, raccordements, consolidation, accessibilité, et ce qu'
 
 Un sujet à la fois : son audit, ses décisions, sa petite PR, ses tests. On clôture un sujet avant d'en ouvrir un autre.
 
-1. Docks et navigation : en cours (première branche de la carte).
-2. Métamorphose.
+1. Docks et navigation : clos le 28 octobre 2026 (voir `docs/inventaires/01-docks-navigation.md`).
+2. Métamorphose : inventaire prêt (`docs/inventaires/02-metamorphose.md`), modifications en attente de validation.
 3. Unions.
 4. Grille 200.
 5. Réseau et cartes métiers.
