@@ -612,12 +612,12 @@
  },
  "tests/server/analyse.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "1df9c01",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
-    "test": "analyse : fermée sans clé, origine contrôlée, réponse nettoyée",
+    "test": "analyse : la garde commune d’abord (même site, JSON), puis fermée sans clé ni comptes ; jamais la clé dans une réponse",
     "ok": true
    },
    {
@@ -628,8 +628,8 @@
  },
  "tests/server/buro.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "1df9c01",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -668,8 +668,8 @@
  },
  "tests/server/cartographie.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "1df9c01",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -704,8 +704,8 @@
  },
  "tests/server/metamorphose.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "1df9c01",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -740,8 +740,8 @@
  },
  "tests/server/musique.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "1df9c01",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -764,8 +764,8 @@
  },
  "tests/server/orbe.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "1df9c01",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -792,8 +792,8 @@
  },
  "tests/server/programme.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "1df9c01",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -868,8 +868,8 @@
  },
  "tests/server/reseau.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "1df9c01",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -882,6 +882,54 @@
    },
    {
     "test": "exemples du Réseau : chaque brique existe, chaque « travaille avec » mène à un exemple, chaque photo existe",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/securite.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "1df9c01",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "S1 : la suppression de compte couvre la musique, le Réseau, et inscrit les fichiers pour effacement",
+    "ok": true
+   },
+   {
+    "test": "S1 : la reprise est fermée sans secret, refuse un mauvais secret, et la tâche est planifiée",
+    "ok": true
+   },
+   {
+    "test": "S1 : la file ne perd rien quand le stockage échoue, et se vide quand il répond",
+    "ok": true
+   },
+   {
+    "test": "S2 : à la déconnexion, seuls les ouvrages du compte déjà rangés (version au moins aussi récente) sont effacés",
+    "ok": true
+   },
+   {
+    "test": "S3 : /api/analyse exige une session, la garde commune et les quotas partagés",
+    "ok": true
+   },
+   {
+    "test": "S4 : la lecture publique du Réseau exclut tout événement",
+    "ok": true
+   },
+   {
+    "test": "S1 : le nettoyage automatique du texte libre retire ce qui se reconnaît à coup sûr, garde ce qui sert au destinataire",
+    "ok": true
+   },
+   {
+    "test": "S1 : la conservation des demandes d’un compte supprimé se règle (12 mois par défaut, de 1 à 120)",
+    "ok": true
+   },
+   {
+    "test": "S1 : la file vient d’une migration explicite, idempotente, avec son retour arrière",
+    "ok": true
+   },
+   {
+    "test": "S3 : les quotas de l’analyse se règlent par l’environnement (20 et 300 par défaut)",
     "ok": true
    }
   ]
