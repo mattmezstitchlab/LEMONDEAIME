@@ -5,6 +5,8 @@ import { ChoisirMorceau, ListeMorceaux, enPiste } from '../charte/Morceaux';
 import { MOMENTS, mesMusiques, type Moment, type Musique as M } from '../lib/musique';
 import { jouerListe } from '../lib/lecteur';
 import { useSession } from '../lib/session';
+import { Lien } from '../lib/router';
+import { PROGRAMME, parMusique, plageMusique } from '../lib/programme';
 
 /* La journée en musique : la playlist est la timeline du Jour J. Chaque moment, dans l'ordre, avec ses morceaux à écouter. */
 export default function Musique() {
@@ -32,7 +34,7 @@ export default function Musique() {
             return <li key={m} id={'moment-' + m} className="moment">
               <div className="moment-tete">
                 <span className="moment-num" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
-                <div><h2>{nom}</h2><p>{texte}</p></div>
+                <div><h2>{nom}</h2><p>{texte}</p><p className="moment-programme">{plageMusique(PROGRAMME, m)} · <Lien href={'/moments?lecture=musique#' + parMusique(PROGRAMME, m)[0].id}>{parMusique(PROGRAMME, m).length} moment{parMusique(PROGRAMME, m).length > 1 ? 's' : ''} du programme</Lien></p></div>
                 {liste.some(x => !!x.deezer || x.source === 'fichier') && <button type="button" className="opt" onClick={() => jouerListe(liste.filter(x => !!x.deezer || x.source === 'fichier').map(enPiste))}>Écouter ce moment</button>}
               </div>
               {session && musiques && <>

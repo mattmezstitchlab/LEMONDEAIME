@@ -2,8 +2,8 @@
    La page ne change que pour cette personne, sur cet appareil : pour tous les autres, l'accueil reste le même. */
 import { useEffect, useState } from 'react';
 
-export type SectionId = 'unions' | 'prestataires' | 'studio' | 'invites' | 'collections' | 'boutique' | 'chacun' | 'espace' | 'aplus';
-export const SECTIONS: [SectionId, string][] = [['unions', 'Unions'], ['prestataires', 'Prestataires'], ['studio', 'Studio'], ['invites', 'Invités'], ['collections', 'Collections'], ['boutique', 'Boutique'], ['chacun', 'Pour chacun'], ['espace', 'L’Espace'], ['aplus', 'A+']];
+export type SectionId = 'moments' | 'unions' | 'prestataires' | 'studio' | 'invites' | 'collections' | 'boutique' | 'chacun' | 'espace' | 'aplus';
+export const SECTIONS: [SectionId, string][] = [['moments', 'Les moments'], ['unions', 'Unions'], ['prestataires', 'Prestataires'], ['studio', 'Studio'], ['invites', 'Invités'], ['collections', 'Collections'], ['boutique', 'Boutique'], ['chacun', 'Pour chacun'], ['espace', 'L’Espace'], ['aplus', 'A+']];
 export type Meta = { a: string; b: string; date: string; univers: string | null; presta: string[]; ordre: SectionId[]; cachees: SectionId[] };
 export const DEFAUT: Meta = { a: '', b: '', date: '', univers: null, presta: [], ordre: SECTIONS.map(s => s[0]), cachees: ['boutique'] };
 const CLE = 'aime-metamorphose';
