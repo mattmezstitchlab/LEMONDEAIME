@@ -1,6 +1,7 @@
 /* Mon confort : l'orbe du dock règle le site pour chacun (taille du texte, espacement, contraste, mouvement, sons).
    Réglé une fois, appliqué sur chaque page. Les réglages restent sur cet appareil, visibles par personne d'autre. */
 import { useEffect, useState } from 'react';
+import { halo, nettoyer, verifier } from './orbe-perso.js';
 
 export type Prefs = { taille: 100 | 115 | 130; espace: 'normal' | 'aere'; contraste: 'standard' | 'renforce'; mouvement: 'normal' | 'reduit'; sons: 'off' | 'on' };
 export type Profil = { id: string; nom: string; indice: string; prefs: Prefs; n: number; couleurs: string[]; w: number; halo: string; msg: string };
@@ -38,6 +39,29 @@ export function useConfort(): Prefs {
   return p;
 }
 export function estPerso(p: Prefs) { const d = prefsAppareil(); return CLES.some(k => d[k] !== p[k]); }
+
+/* Mon orbe : le dessin que la personne a composé (arcs, couleurs, épaisseur). Il reste sur cet appareil, comme Mon confort,
+   et ne touche à aucun réglage d'accès. Ce qu'on relit est remis d'aplomb et refusé s'il n'est plus lisible sur le dock. */
+export type Dessin = { n: number; couleurs: string[]; w: number };
+const CLE_ORBE = 'aime-mon-orbe';
+const EVT_ORBE = 'aime:orbe';
+export function lireOrbe(): Dessin | null {
+  try { const d = nettoyer(JSON.parse(localStorage.getItem(CLE_ORBE) || 'null')); return d && verifier(d).ok ? d : null; } catch { return null; }
+}
+export function ecrireOrbe(d: Dessin | null): boolean {
+  if (d && !verifier(d).ok) return false;
+  try { if (d) localStorage.setItem(CLE_ORBE, JSON.stringify(d)); else localStorage.removeItem(CLE_ORBE); } catch { /* reste pour la session */ }
+  window.dispatchEvent(new CustomEvent(EVT_ORBE, { detail: d }));
+  return true;
+}
+export function useOrbePerso(): Dessin | null {
+  const [o, setO] = useState(lireOrbe);
+  useEffect(() => { const f = (e: Event) => setO((e as CustomEvent<Dessin | null>).detail); window.addEventListener(EVT_ORBE, f); return () => window.removeEventListener(EVT_ORBE, f); }, []);
+  return o;
+}
+export function enProfil(d: Dessin): Profil {
+  return { id: 'perso', nom: 'Mon orbe', indice: 'Dessinée par vous', prefs: lirePrefs(), n: d.n, couleurs: d.couleurs, w: d.w, halo: halo(d), msg: 'Mon orbe est gardée sur cet appareil.' };
+}
 
 const base: Prefs = { taille: 100, espace: 'normal', contraste: 'standard', mouvement: 'normal', sons: 'off' };
 const mk = (o: Partial<Prefs>): Prefs => ({ ...base, ...o });

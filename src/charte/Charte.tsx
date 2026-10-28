@@ -5,7 +5,8 @@ import { ajouter as ajouterPistes, basculer as basculerLecture, precedent, suiva
 import { useSession, seDeconnecter, type Personne } from '../lib/session';
 import { Recherche, GROUPES } from './Recherche';
 import { EntrerBloc } from './EntrerBloc';
-import { arcs, earcon, ecrirePrefs, profilCourant, profils, useConfort, type Prefs, type Profil } from '../lib/confort';
+import { arcs, earcon, ecrireOrbe, ecrirePrefs, enProfil, profilCourant, profils, useConfort, useOrbePerso, type Dessin, type Prefs, type Profil } from '../lib/confort';
+import { DEFAUT as ORBE_DEFAUT, verifier as verifierOrbe } from '../lib/orbe-perso.js';
 
 export function Orbe({ taille = 30 }: { taille?: number }) {
   return <span className="orbe" aria-hidden="true" style={{ width: taille, height: taille }} />;
@@ -21,12 +22,14 @@ type ModeHaut = 'aime' | 'recherche' | 'espace' | null;
 export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string }) {
   const [mode, setMode] = useState<ModeHaut>(null);
   const [reglages, setReglages] = useState(false);
+  const [editeur, setEditeur] = useState<Dessin | null>(null);   /* le brouillon de Mon orbe : non nul = l'éditeur est ouvert */
   const [groupe, setGroupe] = useState<string | null>(null);
   const [effacerOuvrages, setEffacerOuvrages] = useState(false);   /* jamais coché par défaut */
   const [annonce, setAnnonce] = useState('');
   const [comptes, setComptes] = useState<Record<string, number> | null>(null);
   const session = useSession();
   const prefs = useConfort();
+  const perso = useOrbePerso();
   const chemin = useChemin();
   const iris = useId().replace(/:/g, '');
   const boutons = useRef<Partial<Record<'aime' | 'recherche' | 'espace', HTMLButtonElement | null>>>({});
@@ -35,13 +38,24 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
   const retour = chemin !== '/' || profondeur() > 0;
   useEffect(() => { setMode(null); }, [chemin]);
   useEffect(() => { if (mode && mode !== 'recherche') bloc.current?.querySelector<HTMLElement>('input, a, button')?.focus(); }, [mode]);
+  const editant = editeur !== null;
+  useEffect(() => { if (editant) bloc.current?.querySelector<HTMLElement>('input')?.focus(); }, [editant]);
   useEffect(() => { if (mode === 'espace' && session) lireBuro().then(r => {
     const ps = r.ok ? r.projets || [] : [];
     setComptes({ projets: ps.filter(p => p.role === 'owner' && !p.archive).length, partages: ps.filter(p => p.role !== 'owner' && !p.archive).length, archives: ps.filter(p => p.archive).length });
   }); }, [mode, session]);
-  const ouvrir = (m: Exclude<ModeHaut, null>) => { setReglages(false); setMode(x => x === m ? null : m); };
-  const fermer = () => { const m = mode; setMode(null); setReglages(false); if (m) boutons.current[m]?.focus(); };
-  const choisir = (p: Profil) => { ecrirePrefs({ ...p.prefs }); setAnnonce(p.msg); if (p.prefs.sons === 'on') earcon('ok', true); };
+  const ouvrir = (m: Exclude<ModeHaut, null>) => { setReglages(false); setEditeur(null); setMode(x => x === m ? null : m); };
+  const fermer = () => { const m = mode; setMode(null); setReglages(false); setEditeur(null); if (m) boutons.current[m]?.focus(); };
+  const choisir = (p: Profil) => { ecrireOrbe(null); ecrirePrefs({ ...p.prefs }); setAnnonce(p.msg); if (p.prefs.sons === 'on') earcon('ok', true); };
+  /* Mon orbe : on part de l'orbe qu'on a sous les yeux ; rien n'est gardé avant « Garder mon orbe », et jamais une orbe illisible sur le dock */
+  const ouvrirEditeur = () => { setReglages(false); setEditeur(perso ? { ...perso, couleurs: [...perso.couleurs] } : cp ? { n: cp.n, couleurs: cp.couleurs.slice(0, 4), w: cp.w } : { ...ORBE_DEFAUT, couleurs: [...ORBE_DEFAUT.couleurs] }); };
+  const garderOrbe = () => {
+    if (!editeur) return;
+    const v = verifierOrbe(editeur);
+    if (!v.ok) { setAnnonce(v.problemes.join(' ')); return; }
+    if (ecrireOrbe(editeur)) { setAnnonce('Mon orbe est gardée sur cet appareil.'); setEditeur(null); }
+  };
+  const retirerOrbe = () => { ecrireOrbe(null); setAnnonce('Mon orbe est retirée : retour aux orbes d’origine.'); setEditeur(null); };
   const regler = <K extends keyof Prefs>(k: K, v: Prefs[K], msg: string) => { ecrirePrefs({ ...prefs, [k]: v }); setAnnonce(msg); earcon('ok', k === 'sons' && v === 'on'); };
   const DOSSIERS: [string, string, string][] = [['projets', 'Projets', '#C9B8FF'], ['partages', 'Partagés avec moi', '#D9E8FF'], ['archives', 'Archives', '#E4E4E1'], ['profil', 'Profil', '#FFD6EC']];
   return (
@@ -52,9 +66,9 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
           {retour && <button type="button" className="outil carre" aria-label="Revenir là où vous étiez" title="Retour" onClick={revenir}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
           </button>}
-          <button ref={el => { boutons.current.aime = el; }} type="button" className="carre-orbe" aria-expanded={mode === 'aime'} aria-controls="bloc-dock"
-            aria-label={'Menu AIME et Mon confort, orbe ' + (cp ? cp.nom : 'personnalisée')} title="Menu et Mon confort" onClick={() => ouvrir('aime')}>
-            <Orbe taille={30} />
+          <button ref={el => { boutons.current.aime = el; }} type="button" className={'carre-orbe' + (perso ? ' perso' : '')} aria-expanded={mode === 'aime'} aria-controls="bloc-dock"
+            aria-label={'Menu AIME et Mon confort, orbe ' + (perso ? 'personnelle' : cp ? cp.nom : 'personnalisée')} title="Menu et Mon confort" onClick={() => ouvrir('aime')}>
+            {perso ? <OrbeDessin p={enProfil(perso)} taille={34} /> : <Orbe taille={30} />}
           </button>
           <span className="separateur" aria-hidden="true" />
           <Lien href="/" className="outil" aria-label="AIME, accueil" aria-current={courant === '/' ? 'page' : undefined} style={{ padding: '0 10px' }}><Marque /></Lien>
@@ -78,9 +92,11 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
                 {([['/', 'Accueil'], ['/a-propos', 'À propos d’AIME']] as [string, string][]).map(([h, l]) => <li key={h}><Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setMode(null)}>{l}</Lien></li>)}
                 {session && <li><button type="button" onClick={() => { setMode(null); seDeconnecter(); }}>Déconnexion</button></li>}
               </ul>
-              <p className="bloc-note">{reglages
-                ? <>Mon confort, en bas : touchez un picto pour l’activer. Réglé une fois, appliqué partout, gardé sur cet appareil. <b>{annonce}</b></>
-                : <>Votre orbe : <b>{cp ? cp.nom : 'personnalisée'}</b>{cp ? ' · ' + cp.indice : ''}. Choisissez-en une autre en bas, ou réglez chaque détail avec <b>Mon confort</b>.</>}</p>
+              {editeur
+                ? <EditeurCorps d={editeur} set={setEditeur} />
+                : <p className="bloc-note">{reglages
+                  ? <>Mon confort, en bas : touchez un picto pour l’activer. Réglé une fois, appliqué partout, gardé sur cet appareil. <b>{annonce}</b></>
+                  : <>Votre orbe : <b>{perso ? 'Mon orbe' : cp ? cp.nom : 'personnalisée'}</b>{perso ? ' · dessinée par vous' : cp ? ' · ' + cp.indice : ''}. Choisissez-en une autre en bas, réglez chaque détail avec <b>Mon confort</b>, ou dessinez la vôtre avec <b>Mon orbe</b>.</>}</p>}
             </>}
             {mode === 'recherche' && <Recherche fermer={fermer} groupe={groupe} />}
             {mode === 'espace' && (session
@@ -98,15 +114,20 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
                 <EntrerBloc compact retour={/^\/[a-z0-9-]{1,40}$/.test(chemin) || chemin === '/' ? chemin : '/buro'} />
               </>)}
           </div>
-          <div className="mini-dock" role="group" aria-label={mode === 'aime' ? (reglages ? 'Mon confort' : 'Choisir mon orbe') : mode === 'recherche' ? 'Chercher dans' : 'Votre espace'}>
-            {mode === 'aime' && (reglages
+          <div className="mini-dock" role="group" aria-label={mode === 'aime' ? (editeur ? 'Mon orbe' : reglages ? 'Mon confort' : 'Choisir mon orbe') : mode === 'recherche' ? 'Chercher dans' : 'Votre espace'}>
+            {mode === 'aime' && (editeur
+              ? <EditeurLigne d={editeur} garder={garderOrbe} retirer={retirerOrbe} annuler={() => setEditeur(null)} aUne={!!perso} />
+              : reglages
               ? <ReglagesLigne prefs={prefs} regler={regler} retour={() => setReglages(false)} retablir={() => { ecrirePrefs(null); setAnnonce('Réglages de l’appareil rétablis.'); }} />
               : <>
-                {profils().map(p => { const on = cp?.id === p.id;
+                {profils().map(p => { const on = !perso && cp?.id === p.id;
                   return <button key={p.id} type="button" className="orbe-choix" aria-pressed={on} aria-label={'Orbe ' + p.nom + ' : ' + p.indice} title={'Orbe ' + p.nom + ' : ' + p.indice} onClick={() => choisir(p)}><OrbeDessin p={p} taille={40} iris={iris} /></button>; })}
                 <span className="separateur sombre" aria-hidden="true" />
                 <button type="button" className="orbe-choix" aria-label="Mon confort : régler chaque détail" title="Mon confort" style={{ color: '#fff' }} onClick={() => setReglages(true)}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
+                </button>
+                <button type="button" className="orbe-choix" aria-pressed={!!perso} aria-label={perso ? 'Mon orbe : la modifier' : 'Mon orbe : dessiner la mienne'} title="Mon orbe" style={{ color: '#fff' }} onClick={ouvrirEditeur}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8" strokeDasharray="9 3" /><path d="M12 8.5v7M8.5 12h7" /></svg>
                 </button>
               </>)}
             {mode === 'recherche' && [null, ...GROUPES].map(g => <button key={g || 'tout'} type="button" className="lieu" aria-current={groupe === g ? 'true' : 'false'} onClick={() => setGroupe(g)}>{g || 'Tout'}</button>)}
@@ -157,6 +178,7 @@ export function DockBas({ lieux = [], label = 'Sections de la page', children, m
   const [menu, setMenu] = useState(false);
   const [modeId, setModeId] = useState('nav');
   const prefs = useConfort();
+  const perso = useOrbePerso();
   const musique = useLecteur();
   const cercle = useRef<HTMLButtonElement>(null);
   const iris = useId().replace(/:/g, '');
@@ -182,7 +204,7 @@ export function DockBas({ lieux = [], label = 'Sections de la page', children, m
   ];
   const m = tous.find(x => x.id === modeId) || tous[0];
   const cp = profilCourant(prefs);
-  const teinte = m.id === 'nav' ? (cp ? cp.couleurs[0] : '#FFFFFF') : m.halo;
+  const teinte = m.id === 'nav' ? (perso ? perso.couleurs[0] : cp ? cp.couleurs[0] : '#FFFFFF') : m.halo;
   const progres = m.progres ?? lu;
   const circ = 2 * Math.PI * 11;
   const segments = m.id === 'nav' && lieux.length
@@ -291,6 +313,55 @@ function ReglagesLigne({ prefs, regler, retour, retablir }: { prefs: Prefs; regl
     })}
     <span className="separateur sombre" aria-hidden="true" />
     <button type="button" className="lieu" onClick={retablir}>Comme mon appareil</button>
+  </>;
+}
+
+/* Mon orbe : l'éditeur. Dans le bloc du haut, l'aperçu sur les deux docks et les réglages ; dans la ligne sombre, garder, annuler, retirer.
+   Une orbe qui rendrait le dock illisible ne peut pas être gardée : la raison est dite, à l'écran comme aux lecteurs d'écran. */
+function CercleApercu({ d }: { d: Dessin }) {
+  const id = useId().replace(/:/g, ''), circ = 2 * Math.PI * 11;
+  return <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
+    {[0, 1, 2, 3].map(k => <path key={k} d={arc(k, 4)} fill="none" stroke={k === 1 ? d.couleurs[0] : '#FFFFFF'} strokeWidth={k === 1 ? 4 : 2} strokeOpacity={k === 1 ? 1 : 0.32} strokeLinecap="round" />)}
+    <circle cx="22" cy="22" r="11" fill="none" stroke="#FFFFFF" strokeOpacity={0.18} strokeWidth="2" />
+    <circle cx="22" cy="22" r="11" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeDasharray={(circ * 0.4).toFixed(1) + ' ' + circ.toFixed(1)} transform="rotate(-90 22 22)" />
+    <circle cx="22" cy="22" r="5.5" fill={'url(#' + id + ')'} />
+    <defs><Iris id={id} /></defs>
+  </svg>;
+}
+function EditeurCorps({ d, set }: { d: Dessin; set: (d: Dessin) => void }) {
+  const v = verifierOrbe(d);
+  const maj = (p: Partial<Dessin>) => set({ ...d, ...p });
+  const virgule = (x: number) => x.toFixed(1).replace('.', ',');
+  return <div className="editeur-orbe">
+    <p className="bloc-note" style={{ marginTop: 0 }}>Dessinez votre orbe. Elle prend la place de l’orbe d’origine dans les deux docks et reste sur cet appareil ; vos réglages d’accès ne changent pas.</p>
+    <div className="apercu-orbes" role="group" aria-label="Aperçu dans les deux docks">
+      <figure><span className="tuile-sombre"><OrbeDessin p={enProfil(d)} taille={34} /></span><figcaption>Dock du haut</figcaption></figure>
+      <figure><span className="tuile-sombre"><CercleApercu d={d} /></span><figcaption>Dock du bas</figcaption></figure>
+    </div>
+    <p className={'verdict-orbe' + (v.ok ? '' : ' alerte')} role="status">{v.ok ? 'Contraste suffisant sur le dock : vous pouvez la garder.' : v.problemes.join(' ')}</p>
+    <label className="champ-orbe"><span>Arcs <b>{d.n}</b></span>
+      <input type="range" min={1} max={16} step={1} value={d.n} aria-valuetext={d.n + (d.n > 1 ? ' arcs' : ' arc')} onChange={e => maj({ n: Number(e.target.value) })} /></label>
+    <label className="champ-orbe"><span>Épaisseur <b>{virgule(d.w)}</b></span>
+      <input type="range" min={2} max={5} step={0.2} value={d.w} aria-valuetext={'épaisseur ' + virgule(d.w)} onChange={e => maj({ w: Math.round(Number(e.target.value) * 10) / 10 })} /></label>
+    <fieldset className="champ-couleurs"><legend>Couleurs, {d.couleurs.length} sur 4</legend>
+      {d.couleurs.map((c, i) => <span key={i} className="couleur-orbe">
+        <input type="color" aria-label={'Couleur ' + (i + 1)} value={c} onChange={e => maj({ couleurs: d.couleurs.map((x, k) => k === i ? e.target.value.toLowerCase() : x) })} />
+        {d.couleurs.length > 1 && <button type="button" className="mini-bouton" aria-label={'Retirer la couleur ' + (i + 1)} onClick={() => maj({ couleurs: d.couleurs.filter((_, k) => k !== i) })}>Retirer</button>}
+      </span>)}
+      {d.couleurs.length < 4 && <button type="button" className="mini-bouton" onClick={() => maj({ couleurs: [...d.couleurs, '#ffffff'] })}>Ajouter une couleur</button>}
+    </fieldset>
+  </div>;
+}
+function EditeurLigne({ d, garder, retirer, annuler, aUne }: { d: Dessin; garder: () => void; retirer: () => void; annuler: () => void; aUne: boolean }) {
+  const ok = verifierOrbe(d).ok;
+  return <>
+    <button type="button" className="orbe-choix" aria-label="Revenir aux orbes sans garder" title="Revenir aux orbes" style={{ color: '#fff' }} onClick={annuler}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+    </button>
+    <span className="separateur sombre" aria-hidden="true" />
+    <button type="button" className="lieu" aria-disabled={!ok} onClick={garder}>Garder mon orbe</button>
+    <button type="button" className="lieu" onClick={annuler}>Annuler</button>
+    {aUne && <button type="button" className="lieu" onClick={retirer}>Retirer mon orbe</button>}
   </>;
 }
 
