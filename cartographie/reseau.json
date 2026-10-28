@@ -1,6 +1,6 @@
 {
  "titre": "Le système nerveux de LE MONDE AIME",
- "perimetre": "Sujet n° 1, clos : les docks et la navigation, jusqu’à la page /musique. Sujet n° 2, Métamorphose : l’accueil personnel, la date de recherche du Réseau et l’outil Fragments du Studio. Prochain sujet : les Unions (inventaire seulement).",
+ "perimetre": "Sujet n° 1, clos : les docks et la navigation. Sujet n° 2, Métamorphose : l’accueil personnel, la date de recherche du Réseau, Fragments. Sujet n° 3, Unions : une union canonique en base (forme AIMESTUDIO), le parcours Point Zéro → Mon espace, son programme. Invitations, crédits et partage public restent prévus.",
  "depot": "https://github.com/mattmezstitchlab/LEMONDEAIME",
  "branche": "main",
  "familles": [
@@ -50,6 +50,20 @@
     "ajouter-morceau",
     "api-musique",
     "table-musiques"
+   ]
+  },
+  {
+   "id": "union",
+   "nom": "Une union, de l’intention à la base",
+   "texte": "Le second parcours réel : « Nous nous marions » au Point Zéro, l’union rangée une seule fois en base, complétée dans Mon espace, relue après rechargement, et son programme tiré de la Grille 200.",
+   "etapes": [
+    "point-zero-union",
+    "ranger-union",
+    "api-buro",
+    "union-canonique",
+    "fiche-union",
+    "modifier-union",
+    "programme-union"
    ]
   }
  ],
@@ -1665,6 +1679,396 @@
    "roles": [],
    "tests": [],
    "etat": "a-verifier"
+  },
+  {
+   "id": "point-zero-union",
+   "famille": "interfaces",
+   "nom": "Point Zéro : ranger notre union",
+   "fonction": "Quand on écrit « Nous nous marions » au Point Zéro, il propose de ranger l’union dans son espace, puis de la compléter. Une seule union par personne.",
+   "pages": [
+    "/point-zero"
+   ],
+   "sources": [
+    {
+     "fichier": "src/pages/PointZero.tsx",
+     "symbole": "Ranger notre union dans mon espace"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": [
+     "union-canonique"
+    ]
+   },
+   "roles": [
+    "personne-connectee"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "Point Zéro : « Nous nous marions » propose « Ranger notre union dans mon espace »"
+    },
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "Point Zéro : l’union est rangée par l’action « union » (une seule par personne)"
+    },
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "Point Zéro : ensuite, « Compléter notre union » mène à cette union dans Mon espace"
+    },
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "sans compte : le Point Zéro invite à entrer, rien n’est envoyé"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "fiche-union",
+   "famille": "interfaces",
+   "nom": "Fiche de l’union (Mon espace)",
+   "fonction": "Dans Mon espace, l’union montre ses prénoms, sa date officielle et son lieu ; son propriétaire les modifie, et ouvre de là le programme de l’union.",
+   "pages": [
+    "/buro"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/FicheUnion.tsx",
+     "symbole": "export function FicheUnion"
+    },
+    {
+     "fichier": "src/pages/Buro.tsx",
+     "symbole": "<FicheUnion"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "union-canonique"
+    ],
+    "ecrit": [
+     "union-canonique"
+    ]
+   },
+   "roles": [
+    "proprietaire-union"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "Mon espace : la fiche de l’union s’ouvre"
+    },
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "Mon espace : « Enregistrer » envoie les prénoms, la date officielle et le lieu de cette union"
+    },
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "Mon espace : après rechargement, la même union, relue telle qu’enregistrée"
+    },
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "téléphone : la fiche de l’union tient dans l’écran"
+    }
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "programme-union",
+   "famille": "interfaces",
+   "nom": "Programme de l’union",
+   "fonction": "Le programme d’une union : les moments qu’elle a choisis, à ses prénoms et à sa date, tirés de la Grille 200 de référence, qui ne change pas.",
+   "pages": [
+    "/moments",
+    "/moments/:id"
+   ],
+   "sources": [
+    {
+     "fichier": "src/charte/ProgrammeUnion.tsx",
+     "symbole": "export function ProgrammeUnion"
+    },
+    {
+     "fichier": "src/App.tsx",
+     "symbole": "<ProgrammeUnion>"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "union-canonique",
+     "programme"
+    ],
+    "ecrit": []
+   },
+   "roles": [
+    "proprietaire-union"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "programme : « Voir notre programme » ouvre le programme de cette union"
+    },
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "programme : rien de Camille & Gabriel (ni nom, ni photo, ni bouton de démonstration)"
+    },
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "programme : les liens vers un moment gardent l’union"
+    },
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "programme : une union qui n’est pas dans l’espace n’affiche rien (ni la référence à sa place)"
+    }
+   ],
+   "etat": "verifie",
+   "note": "Adresse /moments?union=… ; personnaliser() via programmeDUnion ; une union absente de l’espace n’affiche rien."
+  },
+  {
+   "id": "ranger-union",
+   "famille": "actions",
+   "nom": "Ranger une union",
+   "fonction": "Ranger une union : la créer une fois, ou retrouver celle qu’on a déjà, même si l’on clique plusieurs fois.",
+   "pages": [
+    "/point-zero"
+   ],
+   "sources": [
+    {
+     "fichier": "api/buro.mjs",
+     "symbole": "b.action === 'union'"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "union-canonique"
+    ],
+    "ecrit": [
+     "union-canonique"
+    ]
+   },
+   "roles": [
+    "personne-connectee"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "union : créée et rangée dans l’espace de son propriétaire (201)"
+    },
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "union : ranger à nouveau retrouve la même union (aucun doublon)"
+    },
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "union : trois envois simultanés d’un nouveau compte ne créent qu’une union"
+    }
+   ],
+   "etat": "verifie",
+   "note": "POST /api/buro { action: « union » } ; index unique (propriétaire, origine) d’AIMESTUDIO contre les envois simultanés."
+  },
+  {
+   "id": "modifier-union",
+   "famille": "actions",
+   "nom": "Modifier une union",
+   "fonction": "Modifier une union : prénoms, date officielle, lieu, choix du programme. Seul son propriétaire le peut ; une date impossible est refusée.",
+   "pages": [
+    "/buro"
+   ],
+   "sources": [
+    {
+     "fichier": "api/buro.mjs",
+     "symbole": "b.action === 'union-maj'"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": [
+     "union-canonique"
+    ]
+   },
+   "roles": [
+    "proprietaire-union"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "union : le propriétaire modifie ses informations, relues telles quelles"
+    },
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "union : une date officielle invalide est refusée, rien n’est écrit"
+    },
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "permissions : un autre compte ne peut ni modifier ni archiver l’union (404)"
+    }
+   ],
+   "etat": "verifie",
+   "note": "POST /api/buro { action: « union-maj » }."
+  },
+  {
+   "id": "api-buro",
+   "famille": "moteurs",
+   "nom": "Fonction serveur de Mon espace",
+   "fonction": "Ce qui garde les projets et l’union de chacun : il reconnaît la personne connectée, jamais sur parole.",
+   "pages": [
+    "/buro",
+    "/point-zero"
+   ],
+   "sources": [
+    {
+     "fichier": "api/buro.mjs",
+     "symbole": "export default async function buro"
+    }
+   ],
+   "donnees": {
+    "lit": [
+     "session-compte",
+     "union-canonique"
+    ],
+    "ecrit": [
+     "union-canonique"
+    ]
+   },
+   "roles": [
+    "personne-connectee"
+   ],
+   "tests": [
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "union : relue après rechargement, avec ses prénoms, sa date officielle et son lieu"
+    },
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "permissions : un autre compte ne voit pas l’union"
+    }
+   ],
+   "etat": "verifie",
+   "note": "/api/buro, tables spaces et space_members ; identité par la session vérifiée."
+  },
+  {
+   "id": "union-canonique",
+   "famille": "donnees",
+   "nom": "L’union (base)",
+   "fonction": "L’union enregistrée : une seule, au même format que les mariages déjà créés dans l’écosystème AIME, avec ses prénoms, sa date officielle, son lieu et son programme.",
+   "pages": [],
+   "sources": [
+    {
+     "fichier": "api/buro.mjs",
+     "symbole": "const EST_UNION"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "union : écrite une fois en base, sous la forme canonique (evenement + mariage + data.union)"
+    },
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "existant : un mariage d’AIMESTUDIO sans prénoms apparaît comme union à compléter"
+    },
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "existant : complété par son propriétaire, ses champs d’origine (titre, modèle, origine) intacts"
+    },
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "schéma : aucun nouveau kind, aucune migration (contrainte d’origine intacte)"
+    }
+   ],
+   "etat": "verifie",
+   "note": "spaces : kind evenement, data.modele mariage (forme AIMESTUDIO) ; data.union = { a, b, date, lieu, programme } ; propriétaire dans space_members. Aucune nouvelle table ni kind, aucune migration."
+  },
+  {
+   "id": "proprietaire-union",
+   "famille": "relations",
+   "nom": "Propriétaire de l’union",
+   "fonction": "Le propriétaire de l’union est seul à la modifier ; une autre personne ne la voit pas.",
+   "pages": [
+    "/buro"
+   ],
+   "sources": [
+    {
+     "fichier": "api/buro.mjs",
+     "symbole": "owner_id = $2 and ${EST_UNION}"
+    }
+   ],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "union : son seul membre est son propriétaire"
+    },
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "permissions : un autre compte ne voit pas l’union"
+    },
+    {
+     "fichier": "tests/base/unions.mjs",
+     "nom": "permissions : un autre compte ne peut ni modifier ni archiver l’union (404)"
+    },
+    {
+     "fichier": "tests/e2e/unions.py",
+     "nom": "permissions : un membre non propriétaire voit l’union sans pouvoir la modifier"
+    }
+   ],
+   "etat": "verifie",
+   "note": "space_members rôle owner ; mises à jour filtrées par owner_id."
+  },
+  {
+   "id": "invitations-union",
+   "famille": "relations",
+   "nom": "Invitations à une union",
+   "fonction": "Inviter les mariés, les prestataires ou les invités dans l’union. Pas encore ouvert.",
+   "pages": [],
+   "sources": [],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [],
+   "etat": "prevu",
+   "note": "La table invitations existe (AIMESTUDIO) ; rien ne l’écrit depuis LE MONDE AIME."
+  },
+  {
+   "id": "credits-prestataires",
+   "famille": "relations",
+   "nom": "Crédits des prestataires",
+   "fonction": "Créditer un prestataire dans une union. Aujourd’hui, seulement sur les fiches d’exemple.",
+   "pages": [],
+   "sources": [],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [],
+   "etat": "prevu",
+   "note": "Aucune donnée de crédit en base."
+  },
+  {
+   "id": "partage-public-union",
+   "famille": "relations",
+   "nom": "Partage public d’une union",
+   "fonction": "Une page publique de l’union. Pas encore ouverte : l’union reste privée.",
+   "pages": [],
+   "sources": [],
+   "donnees": {
+    "lit": [],
+    "ecrit": []
+   },
+   "roles": [],
+   "tests": [],
+   "etat": "prevu",
+   "note": "Visibilité d’une union inchangeable ; bouton Partager masqué."
   }
  ],
  "liens": [
@@ -1944,6 +2348,71 @@
   {
    "de": "routeur-studio",
    "vers": "fragments-studio",
+   "nature": "affiche"
+  },
+  {
+   "de": "point-zero-union",
+   "vers": "ranger-union",
+   "nature": "declenche"
+  },
+  {
+   "de": "ranger-union",
+   "vers": "api-buro",
+   "nature": "appelle"
+  },
+  {
+   "de": "api-buro",
+   "vers": "union-canonique",
+   "nature": "ecrit"
+  },
+  {
+   "de": "fiche-union",
+   "vers": "modifier-union",
+   "nature": "declenche"
+  },
+  {
+   "de": "modifier-union",
+   "vers": "api-buro",
+   "nature": "appelle"
+  },
+  {
+   "de": "fiche-union",
+   "vers": "union-canonique",
+   "nature": "lit"
+  },
+  {
+   "de": "programme-union",
+   "vers": "union-canonique",
+   "nature": "lit"
+  },
+  {
+   "de": "programme-union",
+   "vers": "programme-outils",
+   "nature": "appelle"
+  },
+  {
+   "de": "proprietaire-union",
+   "vers": "modifier-union",
+   "nature": "autorise"
+  },
+  {
+   "de": "api-buro",
+   "vers": "session-compte",
+   "nature": "lit"
+  },
+  {
+   "de": "invitations-union",
+   "vers": "union-canonique",
+   "nature": "autorise"
+  },
+  {
+   "de": "credits-prestataires",
+   "vers": "union-canonique",
+   "nature": "lit"
+  },
+  {
+   "de": "partage-public-union",
+   "vers": "union-canonique",
    "nature": "affiche"
   }
  ],
@@ -2458,6 +2927,189 @@
     "fichiers": [
      "src/lib/metamorphose.ts"
     ]
+   }
+  },
+  {
+   "id": "union-sans-entite",
+   "fonction": "Aucune union canonique en base",
+   "moteur": "api-buro",
+   "donnees": [
+    "union-canonique"
+   ],
+   "destinations": [
+    "/point-zero",
+    "/buro"
+   ],
+   "points": [
+    {
+     "fichier": "api/buro.mjs",
+     "texte": "EST_UNION"
+    }
+   ],
+   "statut": "mutualiser",
+   "raison": "Une union rangée depuis le Point Zéro devenait un « projet » comme un autre, sans nom, date ni lieu ; AIMESTUDIO, sur la même base, range déjà un mariage en evenement + modèle mariage.",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "Une source : la forme d’AIMESTUDIO (spaces, evenement, modèle mariage), data.union pour les prénoms, la date officielle, le lieu et le programme. Aucune table, aucun kind, aucune migration. Une union par personne ; les mariages existants sont retrouvés et complétés, jamais dupliqués.",
+    "tests": [
+     {
+      "fichier": "tests/base/unions.mjs",
+      "nom": "union : écrite une fois en base, sous la forme canonique (evenement + mariage + data.union)"
+     },
+     {
+      "fichier": "tests/base/unions.mjs",
+      "nom": "union : trois envois simultanés d’un nouveau compte ne créent qu’une union"
+     },
+     {
+      "fichier": "tests/base/unions.mjs",
+      "nom": "existant : ranger depuis le Point Zéro retrouve ce mariage, sans en créer un second"
+     },
+     {
+      "fichier": "tests/base/unions.mjs",
+      "nom": "schéma : aucun nouveau kind, aucune migration (contrainte d’origine intacte)"
+     }
+    ],
+    "fichiers": [
+     "api/buro.mjs",
+     "src/lib/buro.ts"
+    ]
+   }
+  },
+  {
+   "id": "boutons-union",
+   "fonction": "Des boutons d’entrée qui promettent une page qui n’existe pas",
+   "moteur": "routeur",
+   "donnees": [],
+   "destinations": [
+    "/point-zero?q=Nous%20nous%20marions"
+   ],
+   "points": [
+    {
+     "fichier": "src/pages/LeMondeAime.tsx",
+     "texte": "Commencer notre union"
+    },
+    {
+     "fichier": "src/pages/Moments.tsx",
+     "texte": "Commencer notre union"
+    }
+   ],
+   "statut": "simplifier",
+   "raison": "« Créer la page de notre union » et « Commencer mon union » menaient au Point Zéro, qui rangeait un projet, sans page d’union.",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "Un seul libellé, « Commencer notre union », vers le Point Zéro ; puis « Ranger notre union dans mon espace » et « Compléter notre union » : chaque bouton dit ce qu’il fait.",
+    "tests": [
+     {
+      "fichier": "tests/e2e/unions.py",
+      "nom": "entrée : l’accueil propose « Commencer notre union », vers le Point Zéro"
+     },
+     {
+      "fichier": "tests/e2e/unions.py",
+      "nom": "entrée : la Grille 200 de référence propose le même « Commencer notre union »"
+     },
+     {
+      "fichier": "tests/e2e/unions.py",
+      "nom": "Point Zéro : ensuite, « Compléter notre union » mène à cette union dans Mon espace"
+     }
+    ],
+    "fichiers": [
+     "src/pages/LeMondeAime.tsx",
+     "src/pages/Moments.tsx",
+     "src/pages/PointZero.tsx"
+    ]
+   }
+  },
+  {
+   "id": "personnaliser-branche",
+   "fonction": "personnaliser() prêt mais appelé par aucune page",
+   "moteur": "programme-outils",
+   "donnees": [
+    "programme",
+    "union-canonique"
+   ],
+   "destinations": [
+    "/moments"
+   ],
+   "points": [
+    {
+     "fichier": "src/lib/programme-outils.mjs",
+     "texte": "export function programmeDUnion"
+    }
+   ],
+   "statut": "mutualiser",
+   "raison": "La Grille 200 savait produire le programme d’une vraie union, mais aucune union ne lui fournissait ses choix.",
+   "resolution": {
+    "etat": "resolu",
+    "decision": "Les choix du programme sont enregistrés dans data.union ; /moments?union=… en tire le programme avec personnaliser(), aux prénoms et à la date de l’union, sans rien de Camille & Gabriel. La référence ne change pas.",
+    "tests": [
+     {
+      "fichier": "tests/base/unions.mjs",
+      "nom": "programme : les choix de l’union sont enregistrés avec elle et relus"
+     },
+     {
+      "fichier": "tests/base/unions.mjs",
+      "nom": "programme : personnaliser() donne le programme de cette union (ses moments, son nom, sa date)"
+     },
+     {
+      "fichier": "tests/base/unions.mjs",
+      "nom": "programme : la Grille 200 de référence (Camille & Gabriel) n’a pas changé"
+     },
+     {
+      "fichier": "tests/e2e/unions.py",
+      "nom": "programme : rien de Camille & Gabriel (ni nom, ni photo, ni bouton de démonstration)"
+     }
+    ],
+    "fichiers": [
+     "src/lib/programme-outils.mjs",
+     "src/charte/ProgrammeUnion.tsx",
+     "src/pages/Moments.tsx"
+    ]
+   }
+  },
+  {
+   "id": "brouillons-studio-mariage",
+   "fonction": "Des brouillons « mariage » du Studio, locaux et séparés",
+   "moteur": "routeur-studio",
+   "donnees": [],
+   "destinations": [
+    "/studio/*"
+   ],
+   "points": [
+    {
+     "fichier": "studio/src/lib/oneSpaceCore.ts",
+     "texte": "mariage"
+    }
+   ],
+   "statut": "conserver",
+   "raison": "Mon Espace, Dossier universel et Mini-site du Studio gardent chacun un mariage sur l’appareil, sans lien avec l’union en base.",
+   "resolution": {
+    "etat": "decide",
+    "decision": "Inchangés, en attente de l’audit du StudiO.",
+    "tests": [],
+    "fichiers": []
+   }
+  },
+  {
+   "id": "invitations-credits-partage",
+   "fonction": "Invitations, crédits de prestataires et partage public d’une union",
+   "moteur": "api-buro",
+   "donnees": [
+    "union-canonique"
+   ],
+   "destinations": [],
+   "points": [],
+   "statut": "conserver",
+   "raison": "La base a une table invitations et des rôles (AIMESTUDIO) ; rien ne les écrit depuis LE MONDE AIME, et aucun crédit n’existe en base.",
+   "resolution": {
+    "etat": "a-verifier",
+    "decision": "Non activés à cette étape : seul le propriétaire modifie l’union, qui reste privée. Prévus pour une étape suivante, après leur propre audit.",
+    "tests": [
+     {
+      "fichier": "tests/base/unions.mjs",
+      "nom": "permissions : pas de partage public d’une union à cette étape"
+     }
+    ],
+    "fichiers": []
    }
   }
  ]

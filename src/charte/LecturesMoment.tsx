@@ -5,6 +5,7 @@ import { MOMENTS as MUSIQUE, mesMusiques, type Musique } from '../lib/musique';
 import { useSession } from '../lib/session';
 import { EXEMPLES, UNION_EXEMPLE } from '../lib/reseau-exemples';
 import { CarteReseau } from './CartePersonne';
+import { useLienProgramme } from './ProgrammeUnion';
 import { ListeMorceaux, ChoisirMorceau } from './Morceaux';
 
 /* Un seul programme, cinq lectures. Chaque lecture lit le même moment du même programme : rien n'est recopié. */
@@ -41,7 +42,7 @@ export function Lecture({ m, l }: { m: MomentP; l: LectureId }) {
   return <LectureChrono m={m} />;
 }
 
-const LienMoment = ({ m }: { m: MomentP }) => <Lien href={'/moments/' + m.id + location.search}>{m.titre}</Lien>;
+const LienMoment = ({ m }: { m: MomentP }) => <Lien href={'/moments/' + m.id + location.search}>{m.titre}</Lien>;   /* location.search garde déjà ?union */
 
 function LectureChrono({ m }: { m: MomentP }) {
   const P = useProgramme();
@@ -138,7 +139,7 @@ function LecturePatron({ m }: { m: MomentP }) {
 }
 
 function LecturePersonnes({ m }: { m: MomentP }) {
-  const P = useProgramme();
+  const P = useProgramme(), L = useLienProgramme();
   const gens = personnesDe(P, m);
   return <>
     <h2 className="lecture-titre">Les personnes du moment</h2>
@@ -146,7 +147,7 @@ function LecturePersonnes({ m }: { m: MomentP }) {
     <ul className="lecture-personnes">
       {gens.map(x => {
         const e = x.reseau?.map(s => EXEMPLES.find(y => y.slug === s)).find(Boolean);
-        return <li key={x.id}><Lien href={'/moments?qui=' + x.id + '#' + m.id}>
+        return <li key={x.id}><Lien href={L('/moments?qui=' + x.id + '#' + m.id)}>
           {e ? <img src={e.photo} alt="" /> : <span className={'rond' + (x.type === 'personne' ? ' nacre' : '')} aria-hidden="true">{x.nom.replace(/^(L[ea]s?\s|L’)/, '').slice(0, 2)}</span>}
           <span><b>{x.nom}</b><span>{x.role} · {momentsDe(P, x.id).length} moments</span></span>
         </Lien></li>;

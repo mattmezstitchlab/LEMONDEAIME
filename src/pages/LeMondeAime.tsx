@@ -182,7 +182,7 @@ export default function LeMondeAime() {
       <BandeEtapes />
     </section>,
     unions: c => <section id="unions" aria-labelledby="titre-unions" className={c}>
-      <Entete id="titre-unions" sur="Unions" texte="Les pages des mariés. Chaque couple raconte son union à sa façon." lien={['Créer la page de notre union', '/point-zero?q=Nous%20nous%20marions']} />
+      <Entete id="titre-unions" sur="Unions" texte="Les pages des mariés. Chaque couple raconte son union à sa façon." lien={['Commencer notre union', '/point-zero?q=Nous%20nous%20marions']} />
       <div className="grille-auto" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '40px 24px' }}>{UNIONS.map(x => <Figure key={x.nom} x={x} action={<button type="button" className="bouton" onClick={() => { setMeta({ ...meta, univers: x.univers }); window.scrollTo({ top: 0, behavior: confort.mouvement === 'reduit' ? 'auto' : 'smooth' }); }}>Essayer leur univers</button>} />)}</div>
     </section>,
     prestataires: c => <section id="prestataires" aria-labelledby="titre-presta" className={c}>

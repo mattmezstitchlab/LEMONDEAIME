@@ -161,6 +161,29 @@ export function personnaliser(ref, { union, moments, horaires = {} }) {
 }
 export const estReference = p => p.reference !== false;
 
+/** Le programme d'une union enregistrée (data.union : a, b, date, lieu, programme), tiré de la référence avec personnaliser().
+    Rien de l'union d'exemple ne passe : ses prénoms deviennent ceux de l'union, ses dates suivent la date officielle.
+    La référence n'est jamais modifiée. */
+export function programmeDUnion(ref, u) {
+  const a = (u && u.a) || 'Partenaire 1', b = (u && u.b) || 'Partenaire 2';
+  const [ea, eb] = ref.union.personnes.filter(x => x.role !== 'Témoin');
+  const temoins = ref.union.personnes.filter(x => x.role === 'Témoin').map((x, i) => ({ ...x, nom: 'Témoin ' + (i + 1) }));   /* pas encore connus : nommés par leur place */
+  const choix = u && u.programme && Array.isArray(u.programme.moments) ? u.programme.moments : ref.moments.map(m => m.id);
+  const p = personnaliser(ref, {
+    union: { nom: a + ' & ' + b, jour: (u && u.date) || ref.union.jour, lieu: (u && u.lieu) || '', univers: '', personnes: [{ ...ea, nom: a }, { ...eb, nom: b }, ...temoins] },
+    moments: choix, horaires: (u && u.programme && u.programme.horaires) || {},
+  });
+  const noms = [[ea.nom, a], [eb.nom, b], ...ref.union.personnes.filter(x => x.role === 'Témoin').map((x, i) => [x.nom, temoins[i].nom])];
+  const remplacer = t => noms.reduce((s, [de, vers]) => s.split(de).join(vers), t);
+  const ecart = u && u.date ? Math.round((Date.UTC(...u.date.split('-').map((x, i) => i === 1 ? x - 1 : +x)) - Date.UTC(...ref.union.jour.split('-').map((x, i) => i === 1 ? x - 1 : +x))) / 86400000) : 0;
+  const decaler = iso => {
+    if (!ecart) return iso;
+    const [y, m, d] = iso.slice(0, 10).split('-').map(Number), x = new Date(Date.UTC(y, m - 1, d + ecart)), z = n => String(n).padStart(2, '0');
+    return x.getUTCFullYear() + '-' + z(x.getUTCMonth() + 1) + '-' + z(x.getUTCDate()) + iso.slice(10);
+  };
+  return { ...p, note: 'Votre programme, tiré de la Grille 200 de référence : les moments choisis, à votre date. Les horaires restent ceux de la référence, sauf ceux que vous avez changés.', moments: p.moments.map(m => ({ ...m, titre: remplacer(m.titre), description: remplacer(m.description), debut: decaler(m.debut), fin: decaler(m.fin) })) };
+}
+
 /* ——— Le support imprimable ———
    Un même programme, imprimé pour un public : chacun ne reçoit que ses moments et que les champs qui lui sont autorisés. */
 export const CHAMPS = {

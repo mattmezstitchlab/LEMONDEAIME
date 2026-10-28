@@ -1,4 +1,92 @@
 {
+ "tests/base/unions.mjs": {
+  "date": "2026-10-28",
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "base réelle : branche Neon de test isolée « test/unions-2026-10-28 » (jamais la production), connexion WebSocket Neon",
+  "resultats": [
+   {
+    "test": "base : deux comptes de test, connectés par le vrai lien de connexion",
+    "ok": true
+   },
+   {
+    "test": "union : créée et rangée dans l’espace de son propriétaire (201)",
+    "ok": true
+   },
+   {
+    "test": "union : écrite une fois en base, sous la forme canonique (evenement + mariage + data.union)",
+    "ok": true
+   },
+   {
+    "test": "union : son seul membre est son propriétaire",
+    "ok": true
+   },
+   {
+    "test": "union : ranger à nouveau retrouve la même union (aucun doublon)",
+    "ok": true
+   },
+   {
+    "test": "union : trois envois simultanés d’un nouveau compte ne créent qu’une union",
+    "ok": true
+   },
+   {
+    "test": "union : relue après rechargement, avec ses prénoms, sa date officielle et son lieu",
+    "ok": true
+   },
+   {
+    "test": "union : le propriétaire modifie ses informations, relues telles quelles",
+    "ok": true
+   },
+   {
+    "test": "union : une date officielle invalide est refusée, rien n’est écrit",
+    "ok": true
+   },
+   {
+    "test": "permissions : un autre compte ne voit pas l’union",
+    "ok": true
+   },
+   {
+    "test": "permissions : un autre compte ne peut ni modifier ni archiver l’union (404)",
+    "ok": true
+   },
+   {
+    "test": "permissions : pas de partage public d’une union à cette étape",
+    "ok": true
+   },
+   {
+    "test": "existant : un mariage d’AIMESTUDIO sans prénoms apparaît comme union à compléter",
+    "ok": true
+   },
+   {
+    "test": "existant : ranger depuis le Point Zéro retrouve ce mariage, sans en créer un second",
+    "ok": true
+   },
+   {
+    "test": "existant : complété par son propriétaire, ses champs d’origine (titre, modèle, origine) intacts",
+    "ok": true
+   },
+   {
+    "test": "programme : les choix de l’union sont enregistrés avec elle et relus",
+    "ok": true
+   },
+   {
+    "test": "programme : personnaliser() donne le programme de cette union (ses moments, son nom, sa date)",
+    "ok": true
+   },
+   {
+    "test": "programme : rien de Camille & Gabriel dans le programme personnel ; les moments du jour tombent à sa date",
+    "ok": true
+   },
+   {
+    "test": "programme : la Grille 200 de référence (Camille & Gabriel) n’a pas changé",
+    "ok": true
+   },
+   {
+    "test": "schéma : aucun nouveau kind, aucune migration (contrainte d’origine intacte)",
+    "ok": true
+   }
+  ]
+ },
  "tests/deploiement/inspection.mjs": {
   "date": "2026-10-28",
   "commit": "f9ee715",
@@ -28,8 +116,8 @@
  },
  "tests/e2e/docks.py": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
    {
@@ -160,8 +248,8 @@
  },
  "tests/e2e/metamorphose.py": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
    {
@@ -276,8 +364,8 @@
  },
  "tests/e2e/moments.py": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
    {
@@ -452,8 +540,8 @@
  },
  "tests/e2e/navigation.py": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
    {
@@ -520,8 +608,8 @@
  },
  "tests/e2e/systeme.py": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "aperçu local (vite preview), autorisation simulée",
   "resultats": [
    {
@@ -558,6 +646,10 @@
    },
    {
     "test": "parcours : l’écriture en base reste annoncée « à vérifier »",
+    "ok": true
+   },
+   {
+    "test": "parcours : l’union, de l’intention à la base, entièrement vérifiée",
     "ok": true
    },
    {
@@ -610,10 +702,118 @@
    }
   ]
  },
+ "tests/e2e/unions.py": {
+  "date": "2026-10-28",
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "aperçu local (vite preview), API SIMULÉES : interface seulement",
+  "resultats": [
+   {
+    "test": "entrée : l’accueil propose « Commencer notre union », vers le Point Zéro",
+    "ok": true
+   },
+   {
+    "test": "entrée : la Grille 200 de référence propose le même « Commencer notre union »",
+    "ok": true
+   },
+   {
+    "test": "Point Zéro : « Nous nous marions » propose « Ranger notre union dans mon espace »",
+    "ok": true
+   },
+   {
+    "test": "Point Zéro : l’union est rangée par l’action « union » (une seule par personne)",
+    "ok": true
+   },
+   {
+    "test": "Point Zéro : ensuite, « Compléter notre union » mène à cette union dans Mon espace",
+    "ok": true
+   },
+   {
+    "test": "Point Zéro : ranger à nouveau retrouve la même union, sans doublon",
+    "ok": true
+   },
+   {
+    "test": "Mon espace : l’union est choisie, marquée « à compléter »",
+    "ok": true
+   },
+   {
+    "test": "Mon espace : la fiche de l’union s’ouvre",
+    "ok": true
+   },
+   {
+    "test": "Mon espace : pas de partage public pour une union",
+    "ok": true
+   },
+   {
+    "test": "Mon espace : « Enregistrer » envoie les prénoms, la date officielle et le lieu de cette union",
+    "ok": true
+   },
+   {
+    "test": "Mon espace : la fiche montre l’union complétée",
+    "ok": true
+   },
+   {
+    "test": "Mon espace : après rechargement, la même union, relue telle qu’enregistrée",
+    "ok": true
+   },
+   {
+    "test": "programme : « Voir notre programme » ouvre le programme de cette union",
+    "ok": true
+   },
+   {
+    "test": "programme : rien de Camille & Gabriel (ni nom, ni photo, ni bouton de démonstration)",
+    "ok": true
+   },
+   {
+    "test": "programme : il se dit tiré de la Grille 200, pas « de démonstration »",
+    "ok": true
+   },
+   {
+    "test": "programme : les liens vers un moment gardent l’union",
+    "ok": true
+   },
+   {
+    "test": "programme : la page d’un moment reste celle de l’union",
+    "ok": true
+   },
+   {
+    "test": "programme : une union qui n’est pas dans l’espace n’affiche rien (ni la référence à sa place)",
+    "ok": true
+   },
+   {
+    "test": "programme : sans union, la Grille 200 de référence est inchangée",
+    "ok": true
+   },
+   {
+    "test": "permissions : un membre non propriétaire voit l’union sans pouvoir la modifier",
+    "ok": true
+   },
+   {
+    "test": "sans compte : le Point Zéro invite à entrer, rien n’est envoyé",
+    "ok": true
+   },
+   {
+    "test": "sans compte : le programme d’une union demande d’entrer",
+    "ok": true
+   },
+   {
+    "test": "téléphone : la fiche de l’union tient dans l’écran",
+    "ok": true
+   },
+   {
+    "test": "téléphone : le programme de l’union s’affiche sans déborder",
+    "ok": true
+   },
+   {
+    "test": "aucune erreur dans la console",
+    "ok": true
+   }
+  ]
+ },
  "tests/server/analyse.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -628,8 +828,8 @@
  },
  "tests/server/buro.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -668,8 +868,8 @@
  },
  "tests/server/cartographie.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -704,8 +904,8 @@
  },
  "tests/server/metamorphose.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -740,8 +940,8 @@
  },
  "tests/server/musique.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -764,8 +964,8 @@
  },
  "tests/server/orbe.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -792,8 +992,8 @@
  },
  "tests/server/programme.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -868,8 +1068,8 @@
  },
  "tests/server/reseau.test.mjs": {
   "date": "2026-10-28",
-  "commit": "792735b",
-  "code_modifie_depuis_le_commit": false,
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -882,6 +1082,42 @@
    },
    {
     "test": "exemples du Réseau : chaque brique existe, chaque « travaille avec » mène à un exemple, chaque photo existe",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/unions.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "7be2300",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "union : la date officielle est une vraie date AAAA-MM-JJ",
+    "ok": true
+   },
+   {
+    "test": "union : seuls les champs envoyés sont retenus, nettoyés ; une valeur invalide refuse tout",
+    "ok": true
+   },
+   {
+    "test": "union : un mariage incomplet se lit avec des champs vides ; un autre espace n’est pas une union",
+    "ok": true
+   },
+   {
+    "test": "programme d’une union : tiré de la référence, sans rien de l’union d’exemple, à sa date",
+    "ok": true
+   },
+   {
+    "test": "programme d’une union : ses moments choisis et ses horaires",
+    "ok": true
+   },
+   {
+    "test": "union : aucun nouveau kind, aucune nouvelle table ; la forme canonique d’AIMESTUDIO",
+    "ok": true
+   },
+   {
+    "test": "union : à cette étape, ni invitation, ni partage public",
     "ok": true
    }
   ]

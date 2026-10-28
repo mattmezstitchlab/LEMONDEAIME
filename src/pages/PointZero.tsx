@@ -27,11 +27,12 @@ export default function PointZero() {
   const [sel, setSel] = useState<string | null>(null);
   const [attente, setAttente] = useState(false);
   const [msg, setMsg] = useState('');
+  const [unionRangee, setUnionRangee] = useState<string | null>(null);
   const champ = useRef<HTMLTextAreaElement>(null);
   const titre = useRef<HTMLHeadingElement>(null);
 
   const montrer = (a: Analyse, texte: string, n: string) => {
-    setAn(a); setSource(texte); setNote(n); setSel(a.chemin[0] || null); setMsg(''); setVus(reduit() ? a.chemin.length : 0);
+    setAn(a); setSource(texte); setNote(n); setSel(a.chemin[0] || null); setMsg(''); setUnionRangee(null); setVus(reduit() ? a.chemin.length : 0);
     setTimeout(() => { titre.current?.focus({ preventScroll: true }); titre.current?.scrollIntoView({ behavior: reduit() ? 'auto' : 'smooth', block: 'start' }); }, 60);
   };
   const lancer = async (texte: string) => {
@@ -67,7 +68,13 @@ export default function PointZero() {
   const envoyer = (e: FormEvent) => { e.preventDefault(); const v = champ.current?.value.trim() || ''; if (!v) { setMsg('Écrivez quelques mots pour commencer.'); champ.current?.focus(); return; } lancer(v); };
   const ranger = async () => {
     if (!an) return;
-    if (!session) { setMsg('Entrez dans AIME pour ranger ce projet dans votre espace.'); return; }
+    if (!session) { setMsg(an.domaine === 'union' ? 'Entrez dans AIME pour ranger votre union dans votre espace.' : 'Entrez dans AIME pour ranger ce projet dans votre espace.'); return; }
+    if (an.domaine === 'union') {   /* une union : une seule par personne, la forme canonique partagée avec AIMESTUDIO */
+      const r = await ecrireBuro({ action: 'union', briques: an.chemin, intention: source });
+      if (r.ok && r.id) setUnionRangee(r.id);
+      setMsg(!r.ok ? (r.raison || 'Rangement impossible.') : r.existant ? 'Votre union était déjà dans votre espace : la voici.' : 'Votre union est rangée dans votre espace.');
+      return;
+    }
     let nom = source.replace(/\s+/g, ' ').trim(); if (nom.length > 60) nom = nom.slice(0, 58).trim() + '…';
     const r = await ecrireBuro({ titre: nom.charAt(0).toUpperCase() + nom.slice(1), briques: an.chemin, studio: an.studio, intention: source });
     setMsg(r.ok ? 'Rangé dans votre espace : ' + an.chemin.length + ' briques.' : (r.raison || 'Rangement impossible.'));
@@ -153,7 +160,9 @@ export default function PointZero() {
                 </dl>
               </div>}
               {an && fini && <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 18 }}>
-                <button className="bouton noir" type="button" onClick={ranger} style={{ height: 48 }}>Ranger dans mon espace</button>
+                {unionRangee
+                  ? <Lien className="bouton noir" href={'/buro?union=' + unionRangee} style={{ height: 48 }}>Compléter notre union</Lien>
+                  : <button className="bouton noir" type="button" onClick={ranger} style={{ height: 48 }}>{an.domaine === 'union' ? 'Ranger notre union dans mon espace' : 'Ranger dans mon espace'}</button>}
                 <Lien className="bouton" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener" style={{ height: 48 }}>{href === '/' ? 'Voir Le Monde AIME' : href === '/studio/atelier' ? 'Ouvrir l’atelier de broderie' : 'Ouvrir le Studio'}{href.startsWith('http') && <span className="sr-only"> (nouvel onglet)</span>}</Lien>
               </div>}
               <p role="status" style={{ margin: '10px 0 0', minHeight: 20, fontSize: 14, fontWeight: 600 }}>{msg}{msg.startsWith('Entrez') && <> <Lien href="/entrer">+ Entrer</Lien></>}</p>

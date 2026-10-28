@@ -1,6 +1,6 @@
 {
  "titre": "Le système nerveux de LE MONDE AIME",
- "perimetre": "Sujet n° 1, clos : les docks et la navigation, jusqu’à la page /musique. Sujet n° 2, Métamorphose : l’accueil personnel, la date de recherche du Réseau et l’outil Fragments du Studio. Prochain sujet : les Unions (inventaire seulement).",
+ "perimetre": "Sujet n° 1, clos : les docks et la navigation. Sujet n° 2, Métamorphose : l’accueil personnel, la date de recherche du Réseau, Fragments. Sujet n° 3, Unions : une union canonique en base (forme AIMESTUDIO), le parcours Point Zéro → Mon espace, son programme. Invitations, crédits et partage public restent prévus.",
  "familles": [
   {
    "id": "interfaces",
@@ -48,6 +48,20 @@
     "ajouter-morceau",
     "api-musique",
     "table-musiques"
+   ]
+  },
+  {
+   "id": "union",
+   "nom": "Une union, de l’intention à la base",
+   "texte": "Le second parcours réel : « Nous nous marions » au Point Zéro, l’union rangée une seule fois en base, complétée dans Mon espace, relue après rechargement, et son programme tiré de la Grille 200.",
+   "etapes": [
+    "point-zero-union",
+    "ranger-union",
+    "api-buro",
+    "union-canonique",
+    "fiche-union",
+    "modifier-union",
+    "programme-union"
    ]
   }
  ],
@@ -519,6 +533,109 @@
     "/"
    ],
    "etat": "a-verifier"
+  },
+  {
+   "id": "point-zero-union",
+   "famille": "interfaces",
+   "nom": "Point Zéro : ranger notre union",
+   "fonction": "Quand on écrit « Nous nous marions » au Point Zéro, il propose de ranger l’union dans son espace, puis de la compléter. Une seule union par personne.",
+   "pages": [
+    "/point-zero"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "fiche-union",
+   "famille": "interfaces",
+   "nom": "Fiche de l’union (Mon espace)",
+   "fonction": "Dans Mon espace, l’union montre ses prénoms, sa date officielle et son lieu ; son propriétaire les modifie, et ouvre de là le programme de l’union.",
+   "pages": [
+    "/buro"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "programme-union",
+   "famille": "interfaces",
+   "nom": "Programme de l’union",
+   "fonction": "Le programme d’une union : les moments qu’elle a choisis, à ses prénoms et à sa date, tirés de la Grille 200 de référence, qui ne change pas.",
+   "pages": [
+    "/moments"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "ranger-union",
+   "famille": "actions",
+   "nom": "Ranger une union",
+   "fonction": "Ranger une union : la créer une fois, ou retrouver celle qu’on a déjà, même si l’on clique plusieurs fois.",
+   "pages": [
+    "/point-zero"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "modifier-union",
+   "famille": "actions",
+   "nom": "Modifier une union",
+   "fonction": "Modifier une union : prénoms, date officielle, lieu, choix du programme. Seul son propriétaire le peut ; une date impossible est refusée.",
+   "pages": [
+    "/buro"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "api-buro",
+   "famille": "moteurs",
+   "nom": "Fonction serveur de Mon espace",
+   "fonction": "Ce qui garde les projets et l’union de chacun : il reconnaît la personne connectée, jamais sur parole.",
+   "pages": [
+    "/buro",
+    "/point-zero"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "union-canonique",
+   "famille": "donnees",
+   "nom": "L’union (base)",
+   "fonction": "L’union enregistrée : une seule, au même format que les mariages déjà créés dans l’écosystème AIME, avec ses prénoms, sa date officielle, son lieu et son programme.",
+   "pages": [],
+   "etat": "verifie"
+  },
+  {
+   "id": "proprietaire-union",
+   "famille": "relations",
+   "nom": "Propriétaire de l’union",
+   "fonction": "Le propriétaire de l’union est seul à la modifier ; une autre personne ne la voit pas.",
+   "pages": [
+    "/buro"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "invitations-union",
+   "famille": "relations",
+   "nom": "Invitations à une union",
+   "fonction": "Inviter les mariés, les prestataires ou les invités dans l’union. Pas encore ouvert.",
+   "pages": [],
+   "etat": "prevu"
+  },
+  {
+   "id": "credits-prestataires",
+   "famille": "relations",
+   "nom": "Crédits des prestataires",
+   "fonction": "Créditer un prestataire dans une union. Aujourd’hui, seulement sur les fiches d’exemple.",
+   "pages": [],
+   "etat": "prevu"
+  },
+  {
+   "id": "partage-public-union",
+   "famille": "relations",
+   "nom": "Partage public d’une union",
+   "fonction": "Une page publique de l’union. Pas encore ouverte : l’union reste privée.",
+   "pages": [],
+   "etat": "prevu"
   }
  ],
  "liens": [
@@ -851,6 +968,84 @@
    "vers": "fragments-studio",
    "nature": "affiche",
    "etat": "verifie"
+  },
+  {
+   "de": "point-zero-union",
+   "vers": "ranger-union",
+   "nature": "declenche",
+   "etat": "verifie"
+  },
+  {
+   "de": "ranger-union",
+   "vers": "api-buro",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "api-buro",
+   "vers": "union-canonique",
+   "nature": "ecrit",
+   "etat": "verifie"
+  },
+  {
+   "de": "fiche-union",
+   "vers": "modifier-union",
+   "nature": "declenche",
+   "etat": "verifie"
+  },
+  {
+   "de": "modifier-union",
+   "vers": "api-buro",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "fiche-union",
+   "vers": "union-canonique",
+   "nature": "lit",
+   "etat": "verifie"
+  },
+  {
+   "de": "programme-union",
+   "vers": "union-canonique",
+   "nature": "lit",
+   "etat": "verifie"
+  },
+  {
+   "de": "programme-union",
+   "vers": "programme-outils",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "proprietaire-union",
+   "vers": "modifier-union",
+   "nature": "autorise",
+   "etat": "verifie"
+  },
+  {
+   "de": "api-buro",
+   "vers": "session-compte",
+   "nature": "lit",
+   "etat": "verifie"
+  },
+  {
+   "de": "invitations-union",
+   "vers": "union-canonique",
+   "nature": "autorise",
+   "etat": "prevu"
+  },
+  {
+   "de": "credits-prestataires",
+   "vers": "union-canonique",
+   "nature": "lit",
+   "etat": "prevu"
+  },
+  {
+   "de": "partage-public-union",
+   "vers": "union-canonique",
+   "nature": "affiche",
+   "etat": "prevu"
   }
  ]
 }

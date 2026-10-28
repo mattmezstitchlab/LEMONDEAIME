@@ -7,6 +7,7 @@ import { Lien, aller, remplacer, useRecherche } from '../lib/router';
 import { useProgramme, autour, avant, apres, chercher, compter, estReference, etapes, moment, momentsDe, nomLieu, nomMetier, nomEtape, parMusique, personnesDe, plageMusique, voixDe, type MomentP, type Programme } from '../lib/programme';
 import { MOMENTS as MUSIQUE, mesMusiques, type Musique } from '../lib/musique';
 import { useSession } from '../lib/session';
+import { useLienProgramme } from '../charte/ProgrammeUnion';
 
 /* Les 200 moments : l'aperçu global du programme, de l'idée au premier anniversaire.
    Le bandeau des dix étapes est la navigation de la page ; une seule liste, cinq lectures, une recherche ;
@@ -134,7 +135,7 @@ const deQui = (P: Programme, qui: string) => { const n = nomQui(P, qui); return 
 
 /* Une ligne : l'heure, la couleur de sa voix, le titre et le lieu, puis ce que la lecture montre */
 function Ligne({ m, lecture, mes, debutMusique }: { m: MomentP; lecture: LectureId; mes: Musique[] | null; debutMusique: boolean }) {
-  const P = useProgramme();
+  const P = useProgramme(), L = useLienProgramme();
   const suffixe = lecture === 'chrono' ? '' : '?lecture=' + lecture;
   const v = voixDe(P, m);
   let cote: ReactNode = null;
@@ -146,7 +147,7 @@ function Ligne({ m, lecture, mes, debutMusique }: { m: MomentP; lecture: Lecture
   return (
     <li id={m.id} className="m200-item">
       {debutMusique && <SegmentMusique cle={m.musique!} mes={mes} />}
-      <Lien href={'/moments/' + m.id + suffixe} className="m200-ligne">
+      <Lien href={L('/moments/' + m.id + suffixe)} className="m200-ligne">
         <span className="h">{quand(P, m)}</span>
         <span className="voix" style={{ background: v[0]?.hex }} title={v[0] ? 'DMC ' + v[0].dmc + ' · ' + v[0].nom : undefined} aria-hidden="true" />
         <span className="corps"><b>{m.titre}</b><span>{nomLieu(P, m.lieu)}{m.horaireChange && ' · horaire changé'}</span></span>
@@ -176,11 +177,12 @@ function Aside() {
   const metiers = useMemo(() => [...new Set(P.moments.filter(m => m.etape === 'day').flatMap(m => m.metiers))].map(id => [id, nomMetier(P, id)]).sort((a, b) => a[1].localeCompare(b[1], 'fr')), [P]);
   const [pour, setPour] = useState('tous');
   const [contenu, setContenu] = useState('jour');
+  const L = useLienProgramme();
   return <aside className="m200-aside" aria-label="L’union et son support">
     <div className="m200-carte">
-      <div className="m200-photo"><img src="/media/wedding/union-camille-gabriel.jpg" alt="" /><p>{estReference(P) ? 'Votre union prend forme' : P.union.nom}</p></div>
+      {estReference(P) ? <div className="m200-photo"><img src="/media/wedding/union-camille-gabriel.jpg" alt="" /><p>Votre union prend forme</p></div> : <div className="m200-photo m200-photo-perso"><p>{P.union.nom}</p></div>}
       <dl>{([['Moments', c.moments], ['Étapes', c.etapes], ['Métiers', c.metiers], ['Fils DMC', c.voix]] as [string, number][]).map(([t, n]) => <div key={t}><dt>{t}</dt><dd>{n}</dd></div>)}</dl>
-      <div className="m200-carte-bas"><Lien className="bouton noir" href="/point-zero?q=Nous%20nous%20marions">Commencer mon union</Lien></div>
+      <div className="m200-carte-bas">{estReference(P) ? <Lien className="bouton noir" href="/point-zero?q=Nous%20nous%20marions">Commencer notre union</Lien> : <Lien className="bouton noir" href={'/buro?union=' + new URLSearchParams(location.search).get('union')}>Notre union dans mon espace</Lien>}</div>
     </div>
     <div className="m200-carte m200-support">
       <h2>Le support du jour J</h2>
@@ -192,7 +194,7 @@ function Aside() {
       <label>Contenu<select className="champ" value={contenu} onChange={e => setContenu(e.target.value)}>
         <option value="jour">Le Jour J</option><option value="autour">De la veille au lendemain</option><option value="tout">Tout le programme</option>
       </select></label>
-      <Lien className="bouton" href={'/moments/support?pour=' + pour + '&contenu=' + contenu}>Version imprimable</Lien>
+      <Lien className="bouton" href={L('/moments/support?pour=' + pour + '&contenu=' + contenu)}>Version imprimable</Lien>
       {estReference(P) && <p className="profil-note">Ici, la Grille 200 de référence. Le support d’une vraie union ne reprendra que les moments qu’elle a choisis et les informations autorisées.</p>}
     </div>
   </aside>;
@@ -204,7 +206,7 @@ function UnMoment({ m }: { m: MomentP }) {
   const choisir = (l: LectureId) => changerParam('lecture', l === 'chrono' ? null : l);
   const voisins = autour(P, m.id, 3);
   const q = lecture === 'chrono' ? '' : '?lecture=' + lecture;
-  const a = avant(P, m.id), b = apres(P, m.id);
+  const a = avant(P, m.id), b = apres(P, m.id), L = useLienProgramme();
   useEffect(() => { document.title = m.titre + ' — ' + P.union.nom + ' · LE MONDE AIME'; }, [m, P]);
   return (
     <>
@@ -212,7 +214,7 @@ function UnMoment({ m }: { m: MomentP }) {
       <Tete courant="/moments" verbes={<VerbesSite />} />
       <main id="contenu" style={{ padding: '40px var(--marge) 140px' }}>
         <header className="moment-tete-page">
-          <p className="fil-ariane"><Lien href={'/moments#' + m.id}>{P.moments.length} moments</Lien> › <Lien href={'/moments#etape-' + m.etape}>{nomEtape(P, m.etape)}</Lien> › {quand(P, m)}</p>
+          <p className="fil-ariane"><Lien href={L('/moments#' + m.id)}>{P.moments.length} moments</Lien> › <Lien href={L('/moments#etape-' + m.etape)}>{nomEtape(P, m.etape)}</Lien> › {quand(P, m)}</p>
           <h1>{m.titre}</h1>
           <p className="moment-resume">{resume(P, m)}</p>
           <p className="chapeau">{m.description}</p>
@@ -220,7 +222,7 @@ function UnMoment({ m }: { m: MomentP }) {
         <OngletsLectures actif={lecture} choisir={choisir} ids="moment" />
         <div className="moment-grille">
           <ol aria-label="Les moments autour" className="moments-autour">
-            {voisins.map(x => <li key={x.id}><Lien href={'/moments/' + x.id + q} aria-current={x.id === m.id ? 'page' : undefined}><span>{quand(P, x)}</span><span>{x.titre}</span></Lien></li>)}
+            {voisins.map(x => <li key={x.id}><Lien href={L('/moments/' + x.id + q)} aria-current={x.id === m.id ? 'page' : undefined}><span>{quand(P, x)}</span><span>{x.titre}</span></Lien></li>)}
           </ol>
           <section role="tabpanel" id="moment-panneau" aria-labelledby={'moment-onglet-' + lecture} className="lecture-panneau" tabIndex={0}>
             <Lecture m={m} l={lecture} />
@@ -229,9 +231,9 @@ function UnMoment({ m }: { m: MomentP }) {
         <p className="profil-note" style={{ marginTop: 18 }}>{P.note}</p>
       </main>
       <DockBas label="D’un moment à l’autre">
-        {a && <button type="button" className="lieu" onClick={() => aller('/moments/' + a.id + q)}>‹ {quand(P, a)} · {a.titre}</button>}
-        <a className="lieu" href={'/moments#' + m.id} aria-current="true" onClick={e => { e.preventDefault(); aller('/moments#' + m.id); }}>{P.moments.indexOf(m) + 1} / {P.moments.length}</a>
-        {b && <button type="button" className="lieu" onClick={() => aller('/moments/' + b.id + q)}>{quand(P, b)} · {b.titre} ›</button>}
+        {a && <button type="button" className="lieu" onClick={() => aller(L('/moments/' + a.id + q))}>‹ {quand(P, a)} · {a.titre}</button>}
+        <a className="lieu" href={L('/moments#' + m.id)} aria-current="true" onClick={e => { e.preventDefault(); aller(L('/moments#' + m.id)); }}>{P.moments.indexOf(m) + 1} / {P.moments.length}</a>
+        {b && <button type="button" className="lieu" onClick={() => aller(L('/moments/' + b.id + q))}>{quand(P, b)} · {b.titre} ›</button>}
       </DockBas>
       <Pied />
     </>

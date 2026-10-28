@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Tete, VerbesSite } from './Charte';
 import { Lien, remplacer, useRecherche } from '../lib/router';
+import { useLienProgramme } from './ProgrammeUnion';
 import { useProgramme, construireSupport, nomMetier, type Programme } from '../lib/programme';
 
 /* Le support imprimable : le même programme, mis en page pour l'A4 et pour un public (l'équipe, les mariés, un métier).
@@ -14,7 +15,7 @@ function publics(P: Programme) {
 }
 
 export function SupportImprimable() {
-  const P = useProgramme();
+  const P = useProgramme(), L = useLienProgramme();
   const q = new URLSearchParams(useRecherche());
   const liste = publics(P);
   const pour = liste.some(x => x[0] === q.get('pour')) ? q.get('pour')! : 'tous';
@@ -29,7 +30,7 @@ export function SupportImprimable() {
       <div className="ecran-seul"><Tete courant="/moments" verbes={<VerbesSite />} /></div>
       <main id="contenu" className="support-page">
         <div className="support-outils ecran-seul">
-          <Lien href="/moments" className="opt">‹ Les moments</Lien>
+          <Lien href={L('/moments')} className="opt">‹ Les moments</Lien>
           <label>Pour<select className="champ" value={pour} onChange={e => changer('pour', e.target.value)}>{liste.map(([id, n]) => <option key={id} value={id}>{n}</option>)}</select></label>
           <label>Contenu<select className="champ" value={contenu} onChange={e => changer('contenu', e.target.value)}>{CONTENUS.map(([id, n]) => <option key={id} value={id}>{n}</option>)}</select></label>
           <button type="button" className="bouton noir" onClick={() => window.print()}>Imprimer ou enregistrer en PDF</button>
