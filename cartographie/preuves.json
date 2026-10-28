@@ -1,7 +1,34 @@
 {
+ "tests/deploiement/inspection.mjs": {
+  "date": "2026-10-28",
+  "commit": "f9ee715",
+  "environnement": "déploiement Vercel lemondeaime-git-systeme-082f63-matthieulecointre",
+  "resultats": [
+   {
+    "test": "déploiement : sans session, /api/systeme refuse (401) sans rien montrer",
+    "ok": true
+   },
+   {
+    "test": "déploiement : la réponse d’inspection n’est jamais mise en cache",
+    "ok": true
+   },
+   {
+    "test": "déploiement : une fausse session est refusée (401)",
+    "ok": true
+   },
+   {
+    "test": "déploiement : /api/systeme ne fait que lire (405 pour une écriture)",
+    "ok": true
+   },
+   {
+    "test": "déploiement : le code public ne contient rien de l’inspection",
+    "ok": true
+   }
+  ]
+ },
  "tests/e2e/moments.py": {
   "date": "2026-10-28",
-  "commit": "0aea1ce",
+  "commit": "f9ee715",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
@@ -177,7 +204,7 @@
  },
  "tests/e2e/navigation.py": {
   "date": "2026-10-28",
-  "commit": "0aea1ce",
+  "commit": "f9ee715",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
@@ -245,7 +272,7 @@
  },
  "tests/e2e/systeme.py": {
   "date": "2026-10-28",
-  "commit": "0aea1ce",
+  "commit": "f9ee715",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), autorisation simulée",
   "resultats": [
@@ -326,6 +353,10 @@
     "ok": true
    },
    {
+    "test": "diagnostic seulement : la page n’envoie aucune écriture",
+    "ok": true
+   },
+   {
     "test": "aucune erreur dans la console",
     "ok": true
    }
@@ -333,7 +364,7 @@
  },
  "tests/server/analyse.test.mjs": {
   "date": "2026-10-28",
-  "commit": "0aea1ce",
+  "commit": "f9ee715",
   "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -349,7 +380,7 @@
  },
  "tests/server/buro.test.mjs": {
   "date": "2026-10-28",
-  "commit": "0aea1ce",
+  "commit": "f9ee715",
   "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -389,7 +420,7 @@
  },
  "tests/server/cartographie.test.mjs": {
   "date": "2026-10-28",
-  "commit": "0aea1ce",
+  "commit": "f9ee715",
   "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -425,7 +456,7 @@
  },
  "tests/server/musique.test.mjs": {
   "date": "2026-10-28",
-  "commit": "0aea1ce",
+  "commit": "f9ee715",
   "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -449,7 +480,7 @@
  },
  "tests/server/orbe.test.mjs": {
   "date": "2026-10-28",
-  "commit": "0aea1ce",
+  "commit": "f9ee715",
   "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -477,7 +508,7 @@
  },
  "tests/server/programme.test.mjs": {
   "date": "2026-10-28",
-  "commit": "0aea1ce",
+  "commit": "f9ee715",
   "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -553,7 +584,7 @@
  },
  "tests/server/reseau.test.mjs": {
   "date": "2026-10-28",
-  "commit": "0aea1ce",
+  "commit": "f9ee715",
   "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
