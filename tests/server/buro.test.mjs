@@ -45,3 +45,22 @@ test('lien e-mail coupé (sans jeton) : retour à « Entrer », pas une erreur b
   const r = res(); await comptes({ method: 'GET', url: '/api/comptes?__chemin=magic-link/verify', headers: {} }, r);
   assert.equal(r.statusCode, 302); assert.equal(r.headers.Location, '/entrer?erreur=lien');
 });
+test('ouvrages : un ouvrage de l’atelier est vérifié avant d’entrer dans le compte', async () => {
+  const { nettoyerOuvrage, TAILLE_MAX } = await import('../../api/ouvrages.mjs');
+  const bon = { id: 'abc123', nom: ' Roses\u0007 ', w: 80, h: 80, maj: 1793160000000, progression: 1.4, contenu: '{"w":80}' };
+  const { ouvrage } = nettoyerOuvrage(bon);
+  assert.equal(ouvrage.nom, 'Roses'); assert.equal(ouvrage.progression, 1);
+  assert.ok(nettoyerOuvrage({ ...bon, id: '../x' }).raison);
+  assert.ok(nettoyerOuvrage({ ...bon, w: 0 }).raison);
+  assert.ok(nettoyerOuvrage({ ...bon, contenu: 'pas du json' }).raison);
+  assert.ok(nettoyerOuvrage({ ...bon, contenu: '[1]' }).raison);
+  assert.equal(nettoyerOuvrage({ ...bon, contenu: '"' + 'x'.repeat(TAILLE_MAX) + '"' }).code, 413);
+});
+test('ouvrages : fermé sans base (503), écriture d’un autre site refusée (403)', async () => {
+  const { default: ouvrages } = await import('../../api/ouvrages.mjs');
+  const old = process.env.DATABASE_URL; delete process.env.DATABASE_URL;
+  try {
+    let r = res(); await ouvrages({ method: 'GET', url: '/api/ouvrages', headers: {} }, r); assert.equal(r.statusCode, 503);
+    r = res(); await ouvrages({ method: 'POST', url: '/api/ouvrages', headers: { origin: 'https://ailleurs.example', host: 'lemondeaime.com', 'content-type': 'application/json' } }, r); assert.equal(r.statusCode, 403);
+  } finally { if (old !== undefined) process.env.DATABASE_URL = old; }
+});

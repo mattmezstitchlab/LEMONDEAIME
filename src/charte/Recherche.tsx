@@ -7,7 +7,7 @@ import { FICHES, domaine } from '../lib/reseau-exemples';
 type Entree = { label: string; meta: string; href: string; groupe: string };
 const B = data.briques as unknown as Record<string, { name: string; fam: string; does: string }>;
 const PLAN: Entree[] = [
-  ...[['AIME', 'L’accueil, le concept', '/'], ['AIME Wedding', 'Le studio de l’union', '/aime-wedding'], ['Brode Way', 'Le studio de la broderie', 'https://pointzero-zeta.vercel.app/'], ['Le Monde AIME', 'Tous les studios et projets', '/monde'], ['Réseau', 'Les personnes et leurs modules', '/reseau'], ['Point Zéro', 'Commencer quelque chose', '/point-zero']]
+  ...[['AIME', 'L’accueil, le concept', '/'], ['AIME Wedding', 'Le studio de l’union', '/aime-wedding'], ['Brode Way', 'Le studio de la broderie', '/studio/'], ['Le Monde AIME', 'Tous les studios et projets', '/monde'], ['Réseau', 'Les personnes et leurs modules', '/reseau'], ['Point Zéro', 'Commencer quelque chose', '/point-zero']]
     .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Studios et pages' })),
   ...[['Le studio', 'Une info, une seule fois', '/#studio'], ['Deux docks', 'Faire en haut, aller en bas', '/#docks'], ['Le Point', 'Le guide et ses neuf états', '/#point'], ['Principes', 'La Charte AIME', '/#principes'], ['Fondateur', 'Matthieu Lecointre', '/#fondateur']]
     .map(([label, meta, href]) => ({ label, meta, href, groupe: 'Le concept' })),
