@@ -98,6 +98,26 @@ img, video { display: block; max-width: 100%; }
 .reglage-val { font-size: 13px; font-weight: 600; opacity: .85; }
 .coche { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid rgba(255,255,255,.7); display: inline-flex; align-items: center; justify-content: center; }
 .coche.on { background: #fff; border-color: #fff; color: #0B0B0C; }
+/* Mon orbe : l'éditeur (dans le bloc du dock du haut) et l'orbe personnelle sur sa tuile sombre */
+.carre-orbe.perso { background: var(--dock); }
+.carre-orbe.perso:hover, .carre-orbe.perso[aria-expanded="true"] { background: #000; }
+.editeur-orbe { display: flex; flex-direction: column; gap: 14px; }
+.apercu-orbes { display: flex; gap: 24px; margin: 0; }
+.apercu-orbes figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 13px; color: #55555A; }
+.tuile-sombre { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 12px; background: var(--dock); }
+.champ-orbe { display: flex; flex-direction: column; gap: 6px; font-size: 15px; font-weight: 500; }
+.champ-orbe b { font-weight: 700; margin-left: 4px; }
+.champ-orbe input[type="range"] { width: 100%; max-width: 420px; min-height: 28px; accent-color: #0B0B0C; }
+.champ-couleurs { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.champ-couleurs legend { padding: 0; margin-bottom: 8px; font-size: 15px; font-weight: 500; }
+.couleur-orbe { display: inline-flex; align-items: center; gap: 6px; }
+.couleur-orbe input[type="color"] { width: 48px; height: 48px; padding: 2px; border: 1px solid var(--trait); border-radius: 10px; background: #fff; cursor: pointer; }
+.mini-bouton { min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--trait); background: #fff; color: var(--encre); font-size: 14px; font-weight: 500; cursor: pointer; }
+.mini-bouton:hover { background: var(--doux); }
+.verdict-orbe { margin: 0; font-size: 14px; line-height: 1.45; color: #3A3A3F; }
+.verdict-orbe.alerte { color: #8A1C1C; font-weight: 600; }
+.lieu[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+.lieu[aria-disabled="true"]:hover { background: transparent; }
 .confort { color: var(--encre); }
 .opt { display: flex; align-items: center; justify-content: center; min-width: 64px; height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #CFCFCB; background: #fff; color: var(--encre); font-size: 15px; font-weight: 500; }
 .opt[aria-pressed="true"] { border: 2px solid var(--encre); background: var(--encre); color: #fff; font-weight: 700; }
