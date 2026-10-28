@@ -19,7 +19,7 @@
    {
     "route": "/buro",
     "composant": "Buro",
-    "titre": "LE MONDE AIME — Votre espace"
+    "titre": "LE MONDE AIME — Mon espace"
    },
    {
     "route": "/reseau",
@@ -80,7 +80,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 35,
+   "ligne": 39,
    "composant": "Tete"
   },
   {
@@ -88,7 +88,7 @@
    "route": "/",
    "libelle": "AIME, accueil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 60,
+   "ligne": 64,
    "composant": "Tete"
   },
   {
@@ -96,7 +96,7 @@
    "route": "/",
    "libelle": "AIME, accueil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 60,
+   "ligne": 64,
    "composant": "Tete"
   },
   {
@@ -104,7 +104,7 @@
    "route": "/buro",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 68,
+   "ligne": 72,
    "composant": "Tete"
   },
   {
@@ -112,7 +112,7 @@
    "route": "/entrer",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 68,
+   "ligne": 72,
    "composant": "Tete"
   },
   {
@@ -120,7 +120,7 @@
    "route": "/",
    "libelle": "Accueil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 78,
+   "ligne": 82,
    "composant": "Tete"
   },
   {
@@ -128,7 +128,7 @@
    "route": "/a-propos",
    "libelle": "À propos d’AIME",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 78,
+   "ligne": 82,
    "composant": "Tete"
   },
   {
@@ -136,7 +136,7 @@
    "route": "/buro",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 90,
+   "ligne": 93,
    "composant": "Tete"
   },
   {
@@ -144,7 +144,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 98,
+   "ligne": 101,
    "composant": "Tete"
   },
   {
@@ -152,7 +152,7 @@
    "route": "/buro",
    "libelle": null,
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 98,
+   "ligne": 101,
    "composant": "Tete"
   },
   {
@@ -160,7 +160,7 @@
    "route": "/buro",
    "libelle": "Ouvrir mon espace",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 114,
+   "ligne": 117,
    "composant": "Tete"
   },
   {
@@ -168,7 +168,7 @@
    "route": "/point-zero",
    "libelle": "Point Zéro",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 114,
+   "ligne": 117,
    "composant": "Tete"
   },
   {
@@ -176,7 +176,7 @@
    "route": "/a-plus",
    "libelle": "A+",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 114,
+   "ligne": 117,
    "composant": "Tete"
   },
   {
@@ -184,7 +184,7 @@
    "route": "/a-propos",
    "libelle": "Pourquoi un compte ?",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 115,
+   "ligne": 118,
    "composant": "Tete"
   },
   {
@@ -192,7 +192,7 @@
    "route": "/a-plus",
    "libelle": "A+ pour les pros",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 115,
+   "ligne": 118,
    "composant": "Tete"
   },
   {
@@ -200,7 +200,7 @@
    "route": "/",
    "libelle": "Unions",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 131,
+   "ligne": 134,
    "composant": "VerbesSite"
   },
   {
@@ -208,7 +208,7 @@
    "route": "/reseau",
    "libelle": "Prestataires",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 132,
+   "ligne": 135,
    "composant": "VerbesSite"
   },
   {
@@ -216,7 +216,7 @@
    "route": "/studio",
    "libelle": "Studio",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 133,
+   "ligne": 136,
    "composant": "VerbesSite"
   },
   {
@@ -224,23 +224,23 @@
    "route": "/boutique",
    "libelle": "Boutique",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 134,
+   "ligne": 137,
    "composant": "VerbesSite"
   },
   {
    "cible": "/musique",
    "route": "/musique",
-   "libelle": "La journée en musique",
+   "libelle": "Mes morceaux",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 231,
+   "ligne": 236,
    "composant": "Musique"
   },
   {
    "cible": "/musique",
    "route": "/musique",
-   "libelle": "La journée en musique",
+   "libelle": "Mes morceaux",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 232,
+   "ligne": 237,
    "composant": "Musique"
   },
   {
@@ -248,7 +248,7 @@
    "route": "/",
    "libelle": "AIME, accueil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 295,
+   "ligne": 300,
    "composant": "Pied"
   },
   {
@@ -256,7 +256,7 @@
    "route": "/",
    "libelle": "Les unions",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 297,
+   "ligne": 302,
    "composant": "Pied"
   },
   {
@@ -264,7 +264,7 @@
    "route": "/reseau",
    "libelle": "Prestataires",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 297,
+   "ligne": 302,
    "composant": "Pied"
   },
   {
@@ -272,7 +272,7 @@
    "route": "/",
    "libelle": "Invités",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 297,
+   "ligne": 302,
    "composant": "Pied"
   },
   {
@@ -280,7 +280,7 @@
    "route": "/",
    "libelle": "Collections",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 297,
+   "ligne": 302,
    "composant": "Pied"
   },
   {
@@ -288,7 +288,7 @@
    "route": "/studio",
    "libelle": "Studio",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 298,
+   "ligne": 303,
    "composant": "Pied"
   },
   {
@@ -296,7 +296,7 @@
    "route": "/",
    "libelle": "Brodez votre mariage",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 298,
+   "ligne": 303,
    "composant": "Pied"
   },
   {
@@ -304,7 +304,7 @@
    "route": "/moments",
    "libelle": "Les 200 moments",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 298,
+   "ligne": 303,
    "composant": "Pied"
   },
   {
@@ -312,7 +312,7 @@
    "route": "/musique",
    "libelle": "La journée en musique",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 298,
+   "ligne": 303,
    "composant": "Pied"
   },
   {
@@ -320,7 +320,7 @@
    "route": "/point-zero",
    "libelle": "Point Zéro",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 298,
+   "ligne": 303,
    "composant": "Pied"
   },
   {
@@ -328,7 +328,7 @@
    "route": "/boutique",
    "libelle": "Boutique",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 298,
+   "ligne": 303,
    "composant": "Pied"
   },
   {
@@ -336,15 +336,15 @@
    "route": "/entrer",
    "libelle": "Entrer",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 299,
+   "ligne": 304,
    "composant": "Pied"
   },
   {
    "cible": "/buro",
    "route": "/buro",
-   "libelle": "Mon espace",
+   "libelle": "Ouvrir mon espace",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 299,
+   "ligne": 304,
    "composant": "Pied"
   },
   {
@@ -352,7 +352,7 @@
    "route": "/buro",
    "libelle": "Mon profil",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 299,
+   "ligne": 304,
    "composant": "Pied"
   },
   {
@@ -360,7 +360,7 @@
    "route": "/a-plus",
    "libelle": "A+",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 299,
+   "ligne": 304,
    "composant": "Pied"
   },
   {
@@ -368,7 +368,7 @@
    "route": "/a-propos",
    "libelle": "À propos d’AIME",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 300,
+   "ligne": 305,
    "composant": "Pied"
   },
   {
@@ -376,7 +376,7 @@
    "route": "/reseau",
    "libelle": "Le fondateur",
    "fichier": "src/charte/Charte.tsx",
-   "ligne": 300,
+   "ligne": 305,
    "composant": "Pied"
   },
   {
@@ -524,14 +524,6 @@
    "composant": null
   },
   {
-   "cible": "/studio/atelier",
-   "route": "/studio",
-   "libelle": "Atelier de broderie",
-   "fichier": "src/charte/Recherche.tsx",
-   "ligne": 12,
-   "composant": null
-  },
-  {
    "cible": "/point-zero",
    "route": "/point-zero",
    "libelle": "Point Zéro",
@@ -542,7 +534,7 @@
   {
    "cible": "/buro",
    "route": "/buro",
-   "libelle": "Votre espace",
+   "libelle": "Mon espace",
    "fichier": "src/charte/Recherche.tsx",
    "ligne": 14,
    "composant": null
@@ -1064,7 +1056,7 @@
    "route": "/musique",
    "libelle": null,
    "fichier": "src/pages/Musique.tsx",
-   "ligne": 29,
+   "ligne": 30,
    "composant": "Musique"
   },
   {
@@ -1072,7 +1064,7 @@
    "route": "/moments",
    "libelle": null,
    "fichier": "src/pages/Musique.tsx",
-   "ligne": 37,
+   "ligne": 38,
    "composant": "Musique"
   },
   {
@@ -1312,15 +1304,7 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/SystemeNerveux.tsx",
-   "ligne": 246,
-   "composant": "Inventaire"
-  },
-  {
-   "cible": "/blob/",
-   "route": "/blob",
-   "libelle": null,
-   "fichier": "src/pages/SystemeNerveux.tsx",
-   "ligne": 254,
+   "ligne": 247,
    "composant": "Inventaire"
   },
   {
@@ -1328,7 +1312,23 @@
    "route": "/",
    "libelle": null,
    "fichier": "src/pages/SystemeNerveux.tsx",
-   "ligne": 254,
+   "ligne": 251,
+   "composant": "Inventaire"
+  },
+  {
+   "cible": "/blob/",
+   "route": "/blob",
+   "libelle": null,
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "ligne": 258,
+   "composant": "Inventaire"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": null,
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "ligne": 258,
    "composant": "Inventaire"
   }
  ],
@@ -1950,7 +1950,7 @@
      "la lecture publique ne montre ni fichier, ni test, ni donnée technique",
      "inspection : fermée sans compte, refusée sans autorisation, jamais de secret",
      "le premier parcours va du dock du haut à une donnée, chaque étape reliée aux précédentes",
-     "les doublons signalés sont tirés du code, et rien n’est retiré",
+     "les doublons résolus le sont dans le code, et les accès utiles restent",
      "causalité : décaler un moment suit les prérequis, sans rien modifier ni envoyer"
     ]
    },
@@ -2021,6 +2021,38 @@
   ],
   "e2e": [
    {
+    "fichier": "tests/e2e/docks.py",
+    "tests": [
+     "déconnexion : absente du menu de l’orbe",
+     "déconnexion : une seule, dans le bloc de l’espace",
+     "espace : le rond du profil s’appelle « Mon espace »",
+     "espace : « Ouvrir mon espace » dans le bloc",
+     "espace : les quatre dossiers restent des raccourcis",
+     "espace : le pied dit « Mon espace », « Ouvrir mon espace », « Mon profil »",
+     "loupe : le plan du site propose le Studio une seule fois",
+     "loupe : « Mon espace », comme partout",
+     "loupe : « %s » trouve le Studio, une fois",
+     "loupe : choisir un résultat ferme le bloc et change de page",
+     "/musique : la page dit que ses morceaux sont ceux du compte, pas ceux de l’appareil",
+     "dock, Musique : « Fichier de cet appareil », rien n’est envoyé",
+     "dock, Musique : « Mes morceaux » mène à la bibliothèque du compte",
+     "dock, Musique : un fichier local est marqué « Sur cet appareil »",
+     "clavier, dock du haut : %s s’ouvre au clavier, Échap ferme et rend le focus",
+     "clavier, dock du bas : le cercle ouvre les modes, Échap ferme et rend le focus",
+     "clavier : le focus reste visible dans le dock du bas",
+     "retour : la flèche est là hors de l’accueil",
+     "retour : pas de flèche sur l’accueil sans historique",
+     "téléphone : aucune page ne déborde (accueil)",
+     "téléphone : les rubriques qui dépassent sont signalées par un fondu",
+     "téléphone : les rubriques défilent jusqu’à la dernière",
+     "téléphone : chaque commande des docks fait au moins 44 px",
+     "téléphone : le bloc de l’espace tient dans l’écran",
+     "Studio : un lien ramène au Monde AIME",
+     "Studio : ses docks sont les siens (pas ceux du site)",
+     "aucune erreur dans la console"
+    ]
+   },
+   {
     "fichier": "tests/e2e/moments.py",
     "tests": [
      "bandeau : 10 étapes",
@@ -2061,7 +2093,7 @@
      "dock du bas : les lieux de /musique sont ses dix moments",
      "dock du bas : un lieu fait défiler la page sans revenir en haut",
      "dock du bas : le cercle ouvre ses modes (Navigation, Musique)",
-     "dock du bas, mode Musique : fichiers de l’appareil et lien vers la journée en musique",
+     "dock du bas, mode Musique : fichier de l’appareil et mes morceaux, séparés",
      "ajouter un morceau : la recherche interroge /api/musique?q",
      "ajouter un morceau : POST /api/musique { action: ajouter, deezer, moment }",
      "ajout : la réponse du serveur apparaît dans le bon moment",

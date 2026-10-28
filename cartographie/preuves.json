@@ -26,9 +26,141 @@
    }
   ]
  },
+ "tests/e2e/docks.py": {
+  "date": "2026-10-28",
+  "commit": "948cf8f",
+  "code_modifie_depuis_le_commit": false,
+  "environnement": "aperçu local (vite preview), API simulées",
+  "resultats": [
+   {
+    "test": "déconnexion : absente du menu de l’orbe",
+    "ok": true
+   },
+   {
+    "test": "déconnexion : une seule, dans le bloc de l’espace",
+    "ok": true
+   },
+   {
+    "test": "espace : le rond du profil s’appelle « Mon espace »",
+    "ok": true
+   },
+   {
+    "test": "espace : « Ouvrir mon espace » dans le bloc",
+    "ok": true
+   },
+   {
+    "test": "espace : les quatre dossiers restent des raccourcis",
+    "ok": true
+   },
+   {
+    "test": "espace : le pied dit « Mon espace », « Ouvrir mon espace », « Mon profil »",
+    "ok": true
+   },
+   {
+    "test": "loupe : le plan du site propose le Studio une seule fois",
+    "ok": true
+   },
+   {
+    "test": "loupe : « Mon espace », comme partout",
+    "ok": true
+   },
+   {
+    "test": "loupe : « atelier » trouve le Studio, une fois",
+    "ok": true
+   },
+   {
+    "test": "loupe : « broderie » trouve le Studio, une fois",
+    "ok": true
+   },
+   {
+    "test": "loupe : « studio » trouve le Studio, une fois",
+    "ok": true
+   },
+   {
+    "test": "loupe : choisir un résultat ferme le bloc et change de page",
+    "ok": true
+   },
+   {
+    "test": "/musique : la page dit que ses morceaux sont ceux du compte, pas ceux de l’appareil",
+    "ok": true
+   },
+   {
+    "test": "dock, Musique : « Fichier de cet appareil », rien n’est envoyé",
+    "ok": true
+   },
+   {
+    "test": "dock, Musique : « Mes morceaux » mène à la bibliothèque du compte",
+    "ok": true
+   },
+   {
+    "test": "dock, Musique : un fichier local est marqué « Sur cet appareil »",
+    "ok": true
+   },
+   {
+    "test": "clavier, dock du haut : orbe s’ouvre au clavier, Échap ferme et rend le focus",
+    "ok": true
+   },
+   {
+    "test": "clavier, dock du haut : loupe s’ouvre au clavier, Échap ferme et rend le focus",
+    "ok": true
+   },
+   {
+    "test": "clavier, dock du haut : profil s’ouvre au clavier, Échap ferme et rend le focus",
+    "ok": true
+   },
+   {
+    "test": "clavier, dock du bas : le cercle ouvre les modes, Échap ferme et rend le focus",
+    "ok": true
+   },
+   {
+    "test": "clavier : le focus reste visible dans le dock du bas",
+    "ok": true
+   },
+   {
+    "test": "retour : la flèche est là hors de l’accueil",
+    "ok": true
+   },
+   {
+    "test": "retour : pas de flèche sur l’accueil sans historique",
+    "ok": true
+   },
+   {
+    "test": "téléphone : aucune page ne déborde (accueil)",
+    "ok": true
+   },
+   {
+    "test": "téléphone : les rubriques qui dépassent sont signalées par un fondu",
+    "ok": true
+   },
+   {
+    "test": "téléphone : les rubriques défilent jusqu’à la dernière",
+    "ok": true
+   },
+   {
+    "test": "téléphone : chaque commande des docks fait au moins 44 px",
+    "ok": true
+   },
+   {
+    "test": "téléphone : le bloc de l’espace tient dans l’écran",
+    "ok": true
+   },
+   {
+    "test": "Studio : un lien ramène au Monde AIME",
+    "ok": true
+   },
+   {
+    "test": "Studio : ses docks sont les siens (pas ceux du site)",
+    "ok": true
+   },
+   {
+    "test": "aucune erreur dans la console",
+    "ok": true
+   }
+  ]
+ },
  "tests/e2e/moments.py": {
   "date": "2026-10-28",
-  "commit": "f9ee715",
+  "commit": "948cf8f",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
@@ -204,7 +336,7 @@
  },
  "tests/e2e/navigation.py": {
   "date": "2026-10-28",
-  "commit": "f9ee715",
+  "commit": "948cf8f",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
@@ -233,7 +365,7 @@
     "ok": true
    },
    {
-    "test": "dock du bas, mode Musique : fichiers de l’appareil et lien vers la journée en musique",
+    "test": "dock du bas, mode Musique : fichier de l’appareil et mes morceaux, séparés",
     "ok": true
    },
    {
@@ -272,7 +404,7 @@
  },
  "tests/e2e/systeme.py": {
   "date": "2026-10-28",
-  "commit": "f9ee715",
+  "commit": "948cf8f",
   "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), autorisation simulée",
   "resultats": [
@@ -364,7 +496,7 @@
  },
  "tests/server/analyse.test.mjs": {
   "date": "2026-10-28",
-  "commit": "fdad29d",
+  "commit": "c39f964",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -380,7 +512,7 @@
  },
  "tests/server/buro.test.mjs": {
   "date": "2026-10-28",
-  "commit": "fdad29d",
+  "commit": "c39f964",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -420,7 +552,7 @@
  },
  "tests/server/cartographie.test.mjs": {
   "date": "2026-10-28",
-  "commit": "fdad29d",
+  "commit": "c39f964",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -445,7 +577,7 @@
     "ok": true
    },
    {
-    "test": "les doublons signalés sont tirés du code, et rien n’est retiré",
+    "test": "les doublons résolus le sont dans le code, et les accès utiles restent",
     "ok": true
    },
    {
@@ -456,7 +588,7 @@
  },
  "tests/server/musique.test.mjs": {
   "date": "2026-10-28",
-  "commit": "fdad29d",
+  "commit": "c39f964",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -480,7 +612,7 @@
  },
  "tests/server/orbe.test.mjs": {
   "date": "2026-10-28",
-  "commit": "fdad29d",
+  "commit": "c39f964",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -508,7 +640,7 @@
  },
  "tests/server/programme.test.mjs": {
   "date": "2026-10-28",
-  "commit": "fdad29d",
+  "commit": "c39f964",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -584,7 +716,7 @@
  },
  "tests/server/reseau.test.mjs": {
   "date": "2026-10-28",
-  "commit": "fdad29d",
+  "commit": "c39f964",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
@@ -604,7 +736,7 @@
  },
  "tests/server/securite.test.mjs": {
   "date": "2026-10-28",
-  "commit": "fdad29d",
+  "commit": "c39f964",
   "code_modifie_depuis_le_commit": true,
   "environnement": "node --test, sans base ni clé",
   "resultats": [

@@ -39,7 +39,7 @@ with sync_playwright() as p:
     texte = pg.locator('main').inner_text()
     ok(not any(x in texte.lower() for x in ['src/', '.tsx', '.mjs', 'tests/', 'modules du dépôt']), 'lecture publique : aucun fichier ni test affiché')
     pg.screenshot(path=OUT + 'carte.png')
-    pg.get_by_role('button', name='Dock du haut, Vérifié').click(); pg.wait_for_timeout(900)
+    pg.get_by_role('button', name='Dock du haut, Vérifié', exact=True).click(); pg.wait_for_timeout(900)
     n = len(voisins('dock-haut'))
     ok(pg.locator('.sn-fiche h3').inner_text() == 'Dock du haut' and 'noeud=dock-haut' in pg.url, 'sélection : la fiche du point s’ouvre')
     ok(pg.locator('.sn-famille li.lie').count() == len({l['vers'] if l['de'] == 'dock-haut' else l['de'] for l in voisins('dock-haut')}) and pg.locator('.sn-liens path').count() == n, 'sélection : les connexions apparaissent (%d)' % n)

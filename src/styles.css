@@ -70,6 +70,7 @@ img, video { display: block; max-width: 100%; }
 .remonter { width: 50px; padding: 0; justify-content: center; }
 .dock-haut .rangee { display: flex; align-items: center; gap: 6px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
 .dock-haut .rangee::-webkit-scrollbar { display: none; }
+.dock-haut .rangee.deborde { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); }
 .outil { flex: none; display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 14px; border-radius: 12px; border: 0; background: transparent; color: var(--encre); font-size: 15px; font-weight: 500; white-space: nowrap; text-decoration: none; }
 .outil:hover { background: var(--doux); color: var(--encre); }
 .outil[aria-current="page"] { font-weight: 700; }
@@ -643,6 +644,10 @@ html.calme .sn-liens .trait { animation: none; stroke-dashoffset: 0; }
 .sn-table thead th { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--encre-3); border-bottom-color: var(--encre); }
 .sn-statut { display: inline-block; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--encre); font-size: 13px; font-weight: 600; white-space: nowrap; }
 .sn-statut.conserver { background: var(--encre); color: #fff; }
+.sn-resolution { display: inline-block; margin-right: 4px; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid var(--encre); }
+.sn-resolution.resolu { background: var(--encre); color: #fff; }
+.sn-resolution.a-verifier { border-style: dashed; color: var(--encre-3); }
+.sn-preuve-ligne { display: block; margin-top: 4px; font-size: 12px; color: var(--encre-3); }
 .sn-entrees { list-style: none; margin: 18px 0 40px; padding: 0; display: grid; gap: 6px; }
 .sn-entrees summary { cursor: pointer; display: flex; gap: 12px; flex-wrap: wrap; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--trait); }
 .sn-entrees summary span { font-size: 13px; color: var(--encre-3); }

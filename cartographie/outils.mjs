@@ -2,6 +2,7 @@
    La page l'affiche ; les tests le vérifient contre le dépôt ; la fonction serveur sert la lecture d'inspection. */
 
 export const ETATS = { verifie: 'Vérifié', 'a-verifier': 'À vérifier', prevu: 'Prévu' };
+export const RESOLUTIONS = { resolu: 'Résolu', decide: 'Décidé', 'a-verifier': 'À vérifier' };
 export const STATUTS = { conserver: 'Conserver', mutualiser: 'Mutualiser', deplacer: 'Déplacer', simplifier: 'Simplifier', retirer: 'Retirer' };
 export const NATURES = { contient: 'contient', ouvre: 'ouvre', declenche: 'déclenche', appelle: 'appelle', lit: 'lit', ecrit: 'écrit', emet: 'émet', ecoute: 'écoute', previent: 'prévient', affiche: 'affiche', autorise: 'autorise' };
 
@@ -53,6 +54,7 @@ export function valider(r, { lire, inventaire, preuves }) {
   const routes = new Set([...inventaire.routes.pages.map(p => p.route), '/systeme-nerveux', '/studio/*', '*']);
   const testsConnus = new Set([...inventaire.tests.serveur, ...inventaire.tests.e2e, ...(inventaire.tests.deploiement || [])].flatMap(f => f.tests.map(t => f.fichier + '#' + t)));
   const prouve = preuvesParTest(preuves);
+  for (const cle of prouve.keys()) testsConnus.add(cle);   /* les noms calculés (boucles) sont connus par leur dernier enregistrement */
   if (ids.size !== r.noeuds.length) err.push('identifiant de nœud en double');
   for (const n of r.noeuds) {
     const ici = 'nœud ' + n.id;
@@ -84,6 +86,13 @@ export function valider(r, { lire, inventaire, preuves }) {
   for (const p of r.parcours) for (const e of p.etapes) if (!ids.has(e)) err.push('parcours ' + p.id + ' : étape inconnue ' + e);
   for (const a of r.audit) {
     if (!STATUTS[a.statut]) err.push('audit ' + a.id + ' : statut inconnu');
+    const res = a.resolution;
+    if (res) {
+      if (!['resolu', 'decide', 'a-verifier'].includes(res.etat)) err.push('audit ' + a.id + ' : résolution inconnue');
+      if (res.etat === 'resolu' && !res.tests.length) err.push('audit ' + a.id + ' : « résolu » sans test');
+      for (const t of res.tests) { const cle = t.fichier + '#' + t.nom; if (!testsConnus.has(cle)) err.push('audit ' + a.id + ' : test introuvable ' + cle); else if (res.etat === 'resolu' && !prouve.get(cle)) err.push('audit ' + a.id + ' : « résolu » sans preuve réussie ' + cle); }
+      for (const f of res.fichiers) if (lire(f) === null) err.push('audit ' + a.id + ' : fichier absent ' + f);
+    }
     if (!ids.has(a.moteur)) err.push('audit ' + a.id + ' : moteur inconnu');
     for (const pt of a.points || []) { const t = lire(pt.fichier); if (t === null || !t.includes(pt.texte)) err.push('audit ' + a.id + ' : « ' + pt.texte + ' » introuvable dans ' + pt.fichier); }
   }

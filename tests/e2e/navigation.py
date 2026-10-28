@@ -55,8 +55,8 @@ with sync_playwright() as p:
     modes = [x.inner_text().strip() for x in pg.locator('.dock-bas .halo-mode').all()]
     ok(modes == ['Navigation', 'Musique'], 'dock du bas : le cercle ouvre ses modes (Navigation, Musique)')
     pg.locator('.dock-bas .halo-mode', has_text='Musique').click(); pg.wait_for_timeout(200)
-    ok(pg.locator('.dock-bas a.lieu', has_text='La journée en musique').count() == 1 and pg.get_by_role('button', name='Écouter un fichier de cet appareil').count() == 1,
-       'dock du bas, mode Musique : fichiers de l’appareil et lien vers la journée en musique')
+    ok(pg.locator('.dock-bas a.lieu', has_text='Mes morceaux').count() == 1 and pg.get_by_role('button', name='Écouter un fichier de cet appareil').count() == 1,
+       'dock du bas, mode Musique : fichier de l’appareil et mes morceaux, séparés')
 
     # 3 · la page active → 4 · la fonctionnalité → 5 · sa donnée (la requête)
     pg.goto(B + '/musique'); pg.wait_for_timeout(700)
@@ -70,7 +70,7 @@ with sync_playwright() as p:
     ok(not any(k in envois[0] for k in ('user_id', 'userId', 'email')), 'ajout : l’identité ne part jamais dans le corps (le serveur la lit dans la session)')
 
     # le dock du haut, ses autres blocs
-    pg.get_by_role('button', name='Votre espace, Essai').click(); pg.wait_for_timeout(300)
+    pg.get_by_role('button', name='Mon espace, Essai').click(); pg.wait_for_timeout(300)
     ok(pg.locator('.bloc-dossiers a[href^="/buro?lieu="]').count() == 4, 'dock du haut : le rond du profil ouvre les dossiers de l’espace')
     pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
     pg.locator('.carre-orbe').click()

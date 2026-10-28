@@ -31,6 +31,10 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
   const iris = useId().replace(/:/g, '');
   const boutons = useRef<Partial<Record<'aime' | 'recherche' | 'espace', HTMLButtonElement | null>>>({});
   const bloc = useRef<HTMLDivElement>(null);
+  /* sur un petit écran, les rubriques défilent : un fondu signale celles qui restent à droite */
+  const rangee = useRef<HTMLDivElement>(null);
+  const signalerDebord = () => { const r = rangee.current; if (r) r.classList.toggle('deborde', r.scrollWidth > r.clientWidth + 1 && r.scrollLeft + r.clientWidth < r.scrollWidth - 2); };
+  useEffect(() => { signalerDebord(); window.addEventListener('resize', signalerDebord); return () => window.removeEventListener('resize', signalerDebord); }, []);
   const cp = profilCourant(prefs);
   const retour = chemin !== '/' || profondeur() > 0;
   useEffect(() => { setMode(null); }, [chemin]);
@@ -58,7 +62,7 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
           </button>
           <span className="separateur" aria-hidden="true" />
           <Lien href="/" className="outil" aria-label="AIME, accueil" aria-current={courant === '/' ? 'page' : undefined} style={{ padding: '0 10px' }}><Marque /></Lien>
-          <div className="rangee">{verbes ? <><span className="separateur" aria-hidden="true" />{verbes}</> : null}</div>
+          <div className="rangee" ref={rangee} onScroll={signalerDebord}>{verbes ? <><span className="separateur" aria-hidden="true" />{verbes}</> : null}</div>
           <span className="separateur" aria-hidden="true" />
           <button ref={el => { boutons.current.recherche = el; }} type="button" className="outil loupe" aria-expanded={mode === 'recherche'} aria-controls="bloc-dock" aria-label={mode === 'recherche' ? 'Fermer la recherche' : 'Chercher dans tout AIME, et le plan du site'} title="Chercher" onClick={() => ouvrir('recherche')}>
             {mode === 'recherche'
@@ -66,7 +70,7 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
               : <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-4.2-4.2" /></svg>}
           </button>
           <button ref={el => { boutons.current.espace = el; }} type="button" className="outil profil" aria-expanded={mode === 'espace'} aria-controls="bloc-dock" aria-current={courant === '/buro' || courant === '/entrer' ? 'page' : undefined}
-            aria-label={session ? 'Votre espace' + (session.name ? ', ' + session.name : '') : 'Votre espace : entrer dans AIME'} title="Votre espace" onClick={() => ouvrir('espace')}>
+            aria-label={session ? 'Mon espace' + (session.name ? ', ' + session.name : '') : 'Mon espace : entrer dans AIME'} title="Mon espace" onClick={() => ouvrir('espace')}>
             <Avatar p={session} />
           </button>
         </div>
@@ -76,7 +80,6 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
             {mode === 'aime' && <>
               <ul className="bloc-menu">
                 {([['/', 'Accueil'], ['/a-propos', 'À propos d’AIME']] as [string, string][]).map(([h, l]) => <li key={h}><Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setMode(null)}>{l}</Lien></li>)}
-                {session && <li><button type="button" onClick={() => { setMode(null); seDeconnecter(); }}>Déconnexion</button></li>}
               </ul>
               <p className="bloc-note">{reglages
                 ? <>Mon confort, en bas : touchez un picto pour l’activer. Réglé une fois, appliqué partout, gardé sur cet appareil. <b>{annonce}</b></>
@@ -98,7 +101,7 @@ export function Tete({ verbes, courant }: { verbes?: ReactNode; courant?: string
                 <EntrerBloc compact retour={/^\/[a-z0-9-]{1,40}$/.test(chemin) || chemin === '/' ? chemin : '/buro'} />
               </>)}
           </div>
-          <div className="mini-dock" role="group" aria-label={mode === 'aime' ? (reglages ? 'Mon confort' : 'Choisir mon orbe') : mode === 'recherche' ? 'Chercher dans' : 'Votre espace'}>
+          <div className="mini-dock" role="group" aria-label={mode === 'aime' ? (reglages ? 'Mon confort' : 'Choisir mon orbe') : mode === 'recherche' ? 'Chercher dans' : 'Mon espace'}>
             {mode === 'aime' && (reglages
               ? <ReglagesLigne prefs={prefs} regler={regler} retour={() => setReglages(false)} retablir={() => { ecrirePrefs(null); setAnnonce('Réglages de l’appareil rétablis.'); }} />
               : <>
@@ -212,7 +215,9 @@ export function DockBas({ lieux = [], label = 'Sections de la page', children, m
     </nav>
   );
 }
-/* Le mode Musique : vos morceaux, choisis sur l'appareil (rien n'est envoyé), lus sans quitter la page */
+/* Le mode Musique : deux sources, jamais confondues. « Fichier de cet appareil » : lu ici, rien n'est envoyé.
+   « Mes morceaux » : la bibliothèque du compte, sur la journée en musique (/musique). Le lecteur est le même. */
+const MES_MORCEAUX = 'Mes morceaux : la bibliothèque de mon compte, sur la journée en musique';
 function Musique() {
   const e = useLecteur();
   const choix = useRef<HTMLInputElement>(null);
@@ -225,11 +230,11 @@ function Musique() {
       <button type="button" className="lieu carre-sombre" aria-label="Morceau suivant" onClick={suivant}><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15 6h2v12h-2zM5 6v12l9-6z" /></svg></button>
       <span className="lieu piste-dock" aria-live="polite">
         {p.pochette && <img src={p.pochette} alt="" width={34} height={34} />}
-        <span><b>{p.nom}</b>{p.artiste && <span> · {p.artiste}</span>}<span style={{ opacity: .6 }}> · {e.i + 1}/{e.pistes.length}</span></span>
+        <span><b>{p.nom}</b>{p.artiste && <span> · {p.artiste}</span>}{p.url?.startsWith('blob:') && <span> · Sur cet appareil</span>}{p.source === 'fichier' && <span> · Mes morceaux</span>}<span style={{ opacity: .6 }}> · {e.i + 1}/{e.pistes.length}</span></span>
       </span>
       {p.deezer && <a className="lieu" href={p.lien || 'https://www.deezer.com/track/' + p.deezer} target="_blank" rel="noopener">Extrait 30 s · Deezer<span className="sr-only"> (ouvre Deezer)</span></a>}
-      <Lien className="lieu" href="/musique">La journée en musique</Lien>
-    </> : <><Lien className="lieu" href="/musique">La journée en musique</Lien><button type="button" className="lieu" onClick={() => choix.current?.click()}>Écouter un fichier de cet appareil</button></>}
+      <Lien className="lieu" href="/musique" aria-label={MES_MORCEAUX}>Mes morceaux</Lien>
+    </> : <><Lien className="lieu" href="/musique" aria-label={MES_MORCEAUX}>Mes morceaux</Lien><button type="button" className="lieu" aria-label="Écouter un fichier de cet appareil : il reste sur l’appareil, rien n’est envoyé" onClick={() => choix.current?.click()}>Fichier de cet appareil</button></>}
   </>;
 }
 function arc(i: number, n: number) {
@@ -296,7 +301,7 @@ export function Pied() {
       <nav aria-label="Plan du site">
         {col('Le Monde AIME', [['Les unions', '/#unions'], ['Prestataires', '/reseau?domaine=mariage'], ['Invités', '/#invites'], ['Collections', '/#collections']])}
         {col('Créer', [['Studio', '/studio/atelier'], ['Brodez votre mariage', '/#studio'], ['Les 200 moments', '/moments'], ['La journée en musique', '/musique'], ['Point Zéro', '/point-zero'], ['Boutique', '/boutique']])}
-        {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil'], ['A+', '/a-plus']])}
+        {col('Mon espace', [['Entrer', '/entrer'], ['Ouvrir mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil'], ['A+', '/a-plus']])}
         {col('La maison', [['À propos d’AIME', '/a-propos'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', null], ['Mentions légales', null]])}
       </nav>
       <div className="bas"><p style={{ margin: 0 }}>AIME® est la marque mère. LE MONDE AIME est une association.</p><p style={{ margin: 0 }}>© 2026 AIME®</p></div>

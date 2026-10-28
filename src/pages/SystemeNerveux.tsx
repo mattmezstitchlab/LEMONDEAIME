@@ -3,7 +3,7 @@ import { Tete, DockBas, VerbesSite, Pied } from '../charte/Charte';
 import { EntrerBloc } from '../charte/EntrerBloc';
 import { Lien, remplacer, useRecherche } from '../lib/router';
 import publique from '../data/systeme-public.json';
-import { ETATS, NATURES, STATUTS, noeud, preuveDe, voisins, type Entree, type Etat, type Noeud, type Preuve, type Reseau } from '../../cartographie/outils.mjs';
+import { ETATS, NATURES, RESOLUTIONS, STATUTS, noeud, preuveDe, voisins, type Entree, type Etat, type Noeud, type Preuve, type Reseau } from '../../cartographie/outils.mjs';
 import { REFERENCE, decaler, heure } from '../lib/programme';
 
 /* LE MONDE AIME — le système nerveux. Une carte de ce qui existe réellement dans le dépôt : chaque point est un élément
@@ -240,11 +240,15 @@ function Inventaire({ d }: { d: Inspection }) {
   const doublons = d.entrees.filter(e => e.doublonDock || e.libellesDifferents);
   return <div className="sn-inventaire">
     <h2 className="sn-h2">Audit des doublons</h2>
-    <p className="sn-texte">Des recommandations : rien n’est supprimé à ce stade. Chaque décision deviendra sa propre petite PR, avec ses tests.</p>
+    <p className="sn-texte">Plusieurs accès à un même moteur ne font pas un doublon : seules les fonctions réellement dupliquées sont corrigées. « Résolu » demande un test réussi et enregistré ; sinon la décision reste « décidée » ou « à vérifier ».</p>
+    <p className="sn-bilan">{(['resolu', 'decide', 'a-verifier'] as const).map(e => (R.audit || []).filter(a => a.resolution?.etat === e).length + ' ' + RESOLUTIONS[e].toLowerCase()).join(' · ')}</p>
     <div className="sn-table"><table>
-      <thead><tr><th scope="col">Fonction</th><th scope="col">Moteur</th><th scope="col">Points d’entrée</th><th scope="col">Statut</th><th scope="col">Pourquoi</th></tr></thead>
+      <thead><tr><th scope="col">Fonction</th><th scope="col">Moteur</th><th scope="col">Points d’entrée</th><th scope="col">Statut</th><th scope="col">Constat</th><th scope="col">Décision appliquée</th></tr></thead>
       <tbody>{(R.audit || []).map(a => { const e = d.entrees.filter(x => a.destinations.some(dd => x.cible === dd || x.cible.startsWith(dd + '/') || x.cible.startsWith(dd + '?')));
-        return <tr key={a.id}><th scope="row">{a.fonction}</th><td>{noeud(R, a.moteur)?.nom}</td><td>{e.length ? e.reduce((t, x) => t + x.total, 0) + ' liens, dont ' + e.reduce((t, x) => t + x.docks, 0) + ' dans les docks' : (a.points || []).length + ' endroits du code'}</td><td><span className={'sn-statut ' + a.statut}>{STATUTS[a.statut]}</span></td><td>{a.raison}</td></tr>; })}</tbody>
+        return <tr key={a.id}><th scope="row">{a.fonction}</th><td>{noeud(R, a.moteur)?.nom}</td><td>{e.length ? e.reduce((t, x) => t + x.total, 0) + ' liens, dont ' + e.reduce((t, x) => t + x.docks, 0) + ' dans les docks' : (a.points || []).length + ' endroits du code'}</td><td><span className={'sn-statut ' + a.statut}>{STATUTS[a.statut]}</span></td><td>{a.raison}</td>
+          <td>{a.resolution ? <><span className={'sn-resolution ' + a.resolution.etat}>{RESOLUTIONS[a.resolution.etat]}</span> {a.resolution.decision}
+            {a.resolution.tests.length > 0 && <span className="sn-preuve-ligne">{(() => { const p = a.resolution!.tests.map(t => preuveDe(d.preuves, t)); const ok = p.filter(x => x?.ok).length; const x = p.find(Boolean);
+              return ok + '/' + p.length + ' preuves réussies' + (x ? ' le ' + x.date + ' (commit ' + x.commit + ')' : ''); })()}</span>}</> : '—'}</td></tr>; })}</tbody>
     </table></div>
 
     <h2 className="sn-h2">Points d’entrée par destination</h2>
