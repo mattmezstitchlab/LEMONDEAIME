@@ -1,8 +1,8 @@
 {
  "tests/e2e/moments.py": {
   "date": "2026-10-28",
-  "commit": "35661e3",
-  "code_modifie_depuis_le_commit": true,
+  "commit": "0aea1ce",
+  "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
    {
@@ -177,8 +177,8 @@
  },
  "tests/e2e/navigation.py": {
   "date": "2026-10-28",
-  "commit": "35661e3",
-  "code_modifie_depuis_le_commit": true,
+  "commit": "0aea1ce",
+  "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), API simulées",
   "resultats": [
    {
@@ -245,8 +245,8 @@
  },
  "tests/e2e/systeme.py": {
   "date": "2026-10-28",
-  "commit": "35661e3",
-  "code_modifie_depuis_le_commit": true,
+  "commit": "0aea1ce",
+  "code_modifie_depuis_le_commit": false,
   "environnement": "aperçu local (vite preview), autorisation simulée",
   "resultats": [
    {
@@ -307,7 +307,7 @@
    },
    {
     "test": "inspection : modules, données et tests du point",
-    "ok": false
+    "ok": true
    },
    {
     "test": "inspection : l’audit des doublons, une ligne par fonction",
@@ -333,8 +333,8 @@
  },
  "tests/server/analyse.test.mjs": {
   "date": "2026-10-28",
-  "commit": "35661e3",
-  "code_modifie_depuis_le_commit": true,
+  "commit": "0aea1ce",
+  "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -349,8 +349,8 @@
  },
  "tests/server/buro.test.mjs": {
   "date": "2026-10-28",
-  "commit": "35661e3",
-  "code_modifie_depuis_le_commit": true,
+  "commit": "0aea1ce",
+  "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -389,8 +389,8 @@
  },
  "tests/server/cartographie.test.mjs": {
   "date": "2026-10-28",
-  "commit": "35661e3",
-  "code_modifie_depuis_le_commit": true,
+  "commit": "0aea1ce",
+  "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -425,8 +425,8 @@
  },
  "tests/server/musique.test.mjs": {
   "date": "2026-10-28",
-  "commit": "35661e3",
-  "code_modifie_depuis_le_commit": true,
+  "commit": "0aea1ce",
+  "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -449,8 +449,8 @@
  },
  "tests/server/orbe.test.mjs": {
   "date": "2026-10-28",
-  "commit": "35661e3",
-  "code_modifie_depuis_le_commit": true,
+  "commit": "0aea1ce",
+  "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -477,8 +477,8 @@
  },
  "tests/server/programme.test.mjs": {
   "date": "2026-10-28",
-  "commit": "35661e3",
-  "code_modifie_depuis_le_commit": true,
+  "commit": "0aea1ce",
+  "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
@@ -553,8 +553,8 @@
  },
  "tests/server/reseau.test.mjs": {
   "date": "2026-10-28",
-  "commit": "35661e3",
-  "code_modifie_depuis_le_commit": true,
+  "commit": "0aea1ce",
+  "code_modifie_depuis_le_commit": false,
   "environnement": "node --test, sans base ni clé",
   "resultats": [
    {
