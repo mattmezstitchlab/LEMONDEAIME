@@ -10,6 +10,12 @@ function json(res, code, o) { res.statusCode = code; res.setHeader('Content-Type
 export function adresseOrigine(url) {
   const u = new URL(url || '/', 'http://x');
   if (u.pathname.startsWith('/api/auth/')) return u.pathname + u.search;
+  const l = u.searchParams.get('__lien');
+  if (l !== null) {   /* /lien/<jeton>/<page> : le lien reçu par e-mail */
+    const m = /^([A-Za-z0-9_-]{8,200})(?:\/([a-z0-9-]{1,40}))?\/?$/.exec(l);
+    if (!m) return '/api/auth/magic-link/verify';
+    return '/api/auth/magic-link/verify?token=' + m[1] + '&callbackURL=' + encodeURIComponent('/' + (m[2] || 'buro')) + '&errorCallbackURL=' + encodeURIComponent('/entrer?erreur=lien');
+  }
   const c = u.searchParams.get('__chemin') || ''; u.searchParams.delete('__chemin');
   if (!/^[A-Za-z0-9_-]+(\/[A-Za-z0-9_-]+){0,5}$/.test(c)) return null;
   const q = u.searchParams.toString(); return '/api/auth/' + c + (q ? '?' + q : '');
@@ -17,6 +23,9 @@ export function adresseOrigine(url) {
 export default async function comptes(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   const origine = adresseOrigine(req.url); if (!origine) return json(res, 404, { ok: false }); req.url = origine;
+  if (/\/magic-link\/verify$/.test(origine.split('?')[0]) && !new URL(origine, 'http://x').searchParams.get('token')) {
+    res.statusCode = 302; res.setHeader('Location', '/entrer?erreur=lien'); return res.end();   /* lien coupé ou incomplet : retour à « Entrer », jamais une page d'erreur brute */
+  }
   const refus = R.ecriture(req); if (refus) return json(res, ...refus);   /* avant tout : même origine et JSON pour toute écriture */
   const a = auth();
   if (!a) return json(res, 503, { ok: false, raison: 'Les comptes ne sont pas encore ouverts sur cet environnement.' });

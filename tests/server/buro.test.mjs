@@ -28,3 +28,20 @@ test('fournisseurs : rien d’ouvert sans base, Google seulement avec ses deux v
   assert.equal(googlePret({ GOOGLE_CLIENT_ID: 'x' }), false);
   assert.equal(googlePret({ GOOGLE_CLIENT_ID: 'x', GOOGLE_CLIENT_SECRET: 'y' }), true);
 });
+test('lien e-mail : le jeton passe dans le chemin, puis redevient la vérification Better Auth', async () => {
+  const { lienPropre } = await import('../../api/_auth/auth.mjs');
+  assert.equal(lienPropre('https://www.lemondeaime.com/api/auth/magic-link/verify?token=AbCdEf123456&callbackURL=%2Fpoint-zero'), 'https://www.lemondeaime.com/lien/AbCdEf123456/point-zero');
+  assert.equal(lienPropre('https://x.fr/api/auth/magic-link/verify?token=AbCdEf123456&callbackURL=https%3A%2F%2Fmal.example'), 'https://x.fr/lien/AbCdEf123456/buro');
+  const a = adresseOrigine('/api/comptes?__lien=AbCdEf123456/point-zero');
+  const u = new URL(a, 'http://x');
+  assert.equal(u.pathname, '/api/auth/magic-link/verify');
+  assert.equal(u.searchParams.get('token'), 'AbCdEf123456');
+  assert.equal(u.searchParams.get('callbackURL'), '/point-zero');
+  assert.equal(u.searchParams.get('errorCallbackURL'), '/entrer?erreur=lien');
+  assert.equal(adresseOrigine('/api/comptes?__lien=..%2F..'), '/api/auth/magic-link/verify');
+});
+test('lien e-mail coupé (sans jeton) : retour à « Entrer », pas une erreur brute', async () => {
+  const { default: comptes } = await import('../../api/comptes.mjs');
+  const r = res(); await comptes({ method: 'GET', url: '/api/comptes?__chemin=magic-link/verify', headers: {} }, r);
+  assert.equal(r.statusCode, 302); assert.equal(r.headers.Location, '/entrer?erreur=lien');
+});

@@ -33,7 +33,18 @@ export async function envoyer({ to, subject, text, html, replyTo }) {
   const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ from: de, to: [to], subject, text, html }, replyTo && /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(replyTo) ? { reply_to: replyTo } : {})) });
   if (!r.ok) throw new Error('envoi refusé');
 }
-function envoyerLien({ email, url }) {
+/* Le lien envoyé par e-mail : tout dans le chemin (/lien/<jeton>/<page>), sans « ?token=… ».
+   Certaines messageries et certains navigateurs retirent les paramètres d'une adresse au clic : un chemin, lui, passe toujours. */
+export function lienPropre(url) {
+  try {
+    const u = new URL(url), t = u.searchParams.get('token') || '';
+    if (!/^[A-Za-z0-9_-]{8,200}$/.test(t)) return url;
+    const c = u.searchParams.get('callbackURL') || '/buro';
+    return u.origin + '/lien/' + t + '/' + (/^\/[a-z0-9-]{1,40}$/.test(c) ? c.slice(1) : 'buro');
+  } catch { return url; }
+}
+function envoyerLien({ email, url: brut }) {
+  const url = lienPropre(brut);
   return envoyer({ to: email, subject: 'Votre lien de connexion AIME',
     text: 'Bonjour,\n\nPour vous connecter à AIME, ouvrez ce lien (valable 15 minutes, une seule fois) :\n' + url + '\n\nSi vous n\'avez rien demandé, ignorez ce message.\n',
     html: '<p>Bonjour,</p><p>Pour vous connecter à AIME, cliquez sur ce lien (valable 15 minutes, une seule fois) :</p><p><a href="' + esc(url) + '">Me connecter à AIME</a></p><p style="color:#666">Si vous n\'avez rien demandé, ignorez ce message.</p>' });

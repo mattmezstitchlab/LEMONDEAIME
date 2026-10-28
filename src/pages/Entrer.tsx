@@ -13,7 +13,9 @@ export default function Entrer() {
   const [etat, setEtat] = useState<{ envoi?: string; ok?: boolean; raison?: string }>({});
   useEffect(() => {
     lireFournisseurs().then(setF);
-    if (new URLSearchParams(window.location.search).get('erreur') === 'google') setEtat({ ok: false, raison: 'Google n’a pas pu vous connecter : réessayez, ou utilisez un lien e-mail.' });
+    const q = new URLSearchParams(window.location.search), e = q.get('erreur');
+    if (e === 'google') setEtat({ ok: false, raison: 'Google n’a pas pu vous connecter : réessayez, ou utilisez un lien e-mail.' });
+    if (e === 'lien') setEtat({ ok: false, raison: q.get('error') === 'EXPIRED_TOKEN' ? 'Ce lien a expiré (15 minutes) : demandez-en un nouveau.' : 'Ce lien ne fonctionne plus (déjà utilisé, expiré ou incomplet) : demandez-en un nouveau ci-dessous.' });
   }, []);
   const lien = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
