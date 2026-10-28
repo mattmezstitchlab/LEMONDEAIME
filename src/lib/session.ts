@@ -45,9 +45,16 @@ export async function reduirePhoto(f: File): Promise<string> {
     throw new Error('trop lourde');
   } finally { URL.revokeObjectURL(url); }
 }
-export async function seDeconnecter() {
+/* effacerOuvrages : jamais par défaut ; efface de l'appareil les ouvrages de ce compte déjà rangés dans son espace (ils restent sur le compte) */
+export async function seDeconnecter({ effacerOuvrages = false }: { effacerOuvrages?: boolean } = {}): Promise<{ effaces: number; gardes: number } | null> {
+  let bilan: { effaces: number; gardes: number } | null = null;
+  if (effacerOuvrages && cache && cache.id) {
+    const { effacerOuvragesDuCompte } = await import('./ouvragesAppareil');
+    bilan = await effacerOuvragesDuCompte(cache.id).catch(() => null);
+  }
   await fetch('/api/auth/sign-out', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}', credentials: 'same-origin' }).catch(() => {});
   cache = null; abonnes.forEach(f => f(null));
+  return bilan;
 }
 export async function demanderLien(email: string, retour = '/buro'): Promise<{ ok: boolean; raison?: string }> {
   try {

@@ -11,6 +11,9 @@
     },
     "api/systeme.mjs": {
       "includeFiles": "cartographie/*.json"
+    },
+    "api/maintenance.mjs": {
+      "maxDuration": 60
     }
   },
   "rewrites": [
@@ -61,6 +64,12 @@
       "source": "/studio",
       "destination": "/studio/",
       "permanent": false
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/maintenance",
+      "schedule": "17 3 * * *"
     }
   ]
 }

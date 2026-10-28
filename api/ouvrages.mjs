@@ -1,6 +1,8 @@
 // /api/ouvrages : les ouvrages de l'atelier de broderie (le StudiO, sous /studio/) rangés dans le compte AIME.
 // GET          → mes ouvrages (sans leur contenu) : id, nom, dossier, w, h, progression, maj.
 // GET ?id=…    → le contenu d'un de mes ouvrages (le JSON de l'atelier, tel quel).
+// POST { action: 'verifier', ids } → parmi ces identifiants, ceux de mon compte et ceux d'un autre compte (rien d'autre).
+// Un ouvrage déjà rangé dans un autre compte est refusé (409, « autre-compte ») : jamais de copie d'un compte à l'autre.
 // POST         → { id, nom, dossier, w, h, progression, maj, contenu } : crée ou met à jour (le plus récent gagne).
 // POST         → { action: 'supprimer', id } : le retire du compte (il reste sur l'appareil qui l'a).
 // Chaque ouvrage a aussi sa ligne dans « spaces » : il apparaît dans Votre espace, comme un projet du Point Zéro.
@@ -65,6 +67,14 @@ export default async function ouvrages(req, res) {
       if (sid) await db.query(`delete from spaces where id = $1 and owner_id = $2`, [sid, moi.id]);   /* ses membres partent avec (clé étrangère) ou restent orphelins sans effet */
       return json(res, 200, { ok: true });
     }
+    /* les ouvrages anciens d'un appareil partagé (sans propriétaire connu) : lesquels sont à moi, lesquels à un autre compte.
+       On ne répond que par des identifiants (aléatoires) : ni nom, ni contenu, ni compte. */
+    if (b.action === 'verifier') {
+      const ids = (Array.isArray(b.ids) ? b.ids : []).filter(x => typeof x === 'string' && /^[A-Za-z0-9_-]{4,64}$/.test(x)).slice(0, 500);
+      if (!ids.length) return json(res, 200, { ok: true, siens: [], autres: [] });
+      const r = await db.query(`select id, bool_or(user_id = $1) as mien from ouvrages where id = any($2::text[]) group by id`, [moi.id, ids]);
+      return json(res, 200, { ok: true, siens: r.rows.filter(x => x.mien).map(x => x.id), autres: r.rows.filter(x => !x.mien).map(x => x.id) });
+    }
     const { ouvrage: o, raison, code } = nettoyerOuvrage(b);
     if (!o) return json(res, code || 400, { ok: false, raison });
     const c = await db.connect();
@@ -73,6 +83,9 @@ export default async function ouvrages(req, res) {
       const ex = await c.query(`select maj, space_id from ouvrages where user_id = $1 and id = $2 for update`, [moi.id, o.id]);
       if (ex.rows[0] && Number(ex.rows[0].maj) > o.maj) { await c.query('rollback'); return json(res, 409, { ok: false, raison: 'Une version plus récente est déjà dans votre espace.' }); }
       if (!ex.rows[0]) {
+        /* un ouvrage déjà rangé dans un AUTRE compte ne peut pas entrer dans celui-ci (copie laissée sur un appareil partagé) */
+        const autre = await c.query(`select 1 from ouvrages where id = $1 and user_id <> $2 limit 1`, [o.id, moi.id]);
+        if (autre.rowCount) { await c.query('rollback'); return json(res, 409, { ok: false, code: 'autre-compte', raison: 'Cet ouvrage appartient à un autre compte : il reste sur l’appareil.' }); }
         const n = await c.query(`select count(*)::int as n from ouvrages where user_id = $1`, [moi.id]);
         if (n.rows[0].n >= PAR_COMPTE) { await c.query('rollback'); return json(res, 429, { ok: false, raison: 'Votre espace est plein (500 ouvrages).' }); }
       }
