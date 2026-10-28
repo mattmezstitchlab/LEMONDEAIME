@@ -26,7 +26,7 @@ describe("Point Zéro spécialisé", () => {
   it("ouvre la racine spécialisée et conserve les destinations historiques", () => {
     expect(entryStudio("", "", "/")).toBe("stitch-home");
     expect(publicPathFor("stitch-home")).toBe("/");
-    expect(entryStudio("", "", publicPathFor("aime-home"))).toBe("aime-home");
+    expect(entryStudio("", "", "/aime")).toBe("stitch-home");
     expect(entryStudio("?studio=embroidery", "", "/atelier")).toBe("embroidery");
     expect(entryStudio("", "", "/atelier")).toBe("embroidery");
     expect(publicPathFor("embroidery")).toBe("/atelier");

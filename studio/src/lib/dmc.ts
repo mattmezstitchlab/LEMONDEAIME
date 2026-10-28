@@ -116,3 +116,26 @@ export function contrastOn(hex: string): string {
   const lum = .2126 * linear(r) + .7152 * linear(g) + .0722 * linear(b);
   return (lum + .05) / .05 > 1.05 / (lum + .05) ? "#1c1c1e" : "#ffffff";
 }
+/* Recherche d'un fil en français : les noms DMC sont en anglais ; « rouge », « vert foncé », « rose clair » ou « 310 » les trouvent.
+   Chaque mot cherché doit correspondre (au code, au nom anglais ou à sa traduction) ; accents et majuscules sont ignorés. */
+const FR: Record<string, string[]> = {
+  rouge: ["red", "cranberry", "garnet", "raspberry", "carnation", "geranium", "alizarin"], rose: ["pink", "rose", "carnation", "blossom"], fuchsia: ["fuschia", "cyclamen"],
+  bleu: ["blue", "cornflower", "wedgewood", "delft", "navy", "sky", "royal", "electric", "peacock", "blueberry"], marine: ["navy"], ciel: ["sky"],
+  vert: ["green", "grn", "olive", "avocado", "emerald", "forest", "moss", "jade", "celadon", "fern", "pistachio", "kelly", "hunter", "pine", "parrot", "nile", "chartreuse", "apple", "sea"],
+  jaune: ["yellow", "lemon", "canary", "straw", "mustard"], orange: ["orange", "tangerine", "pumpkin", "apricot", "spice", "burnt"],
+  violet: ["violet", "purple", "lavender", "plum", "grape", "eggplant", "mauve"], lavande: ["lavender"], prune: ["plum"], mauve: ["mauve"], aubergine: ["eggplant"],
+  brun: ["brown", "mocha", "mahogany", "beaver", "cocoa", "coffee", "hazelnut", "rosewood", "tawny"], marron: ["brown", "mocha", "mahogany", "cocoa", "coffee", "hazelnut"], chocolat: ["cocoa", "brown"],
+  noir: ["black"], blanc: ["white", "snow", "ecru"], ecru: ["ecru"], creme: ["cream", "ecru"], gris: ["gray", "pewter", "steel", "ash", "tin", "driftwood"],
+  beige: ["beige", "tan", "sand", "shell", "drab", "desert"], sable: ["sand"], or: ["gold", "golden", "topaz"], dore: ["gold", "golden"], cuivre: ["copper"],
+  turquoise: ["turquoise", "aquamarine", "teal"], corail: ["coral"], saumon: ["salmon", "shrimp"], peche: ["peach", "melon"], kaki: ["khaki", "drab", "olive"], terracotta: ["terra", "cotta"],
+  clair: ["light", "pale", "baby", "ultra", "very"], pale: ["pale", "light", "baby"], fonce: ["dark", "very", "deep", "vd"], vif: ["bright", "electric"], moyen: ["medium"], ancien: ["antique", "old"], tres: ["very", "ultra", "vy"],
+};
+/* « rouges », « foncée », « foncés » : on essaie le mot, puis sans sa marque de pluriel ou de féminin */
+const traductions = (m: string) => FR[m] || FR[m.replace(/s$/, "")] || FR[m.replace(/e?s?$/, "")] || [];
+const sansAccents = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+export function filCorrespond(f: Pick<Floss, "code" | "name">, recherche: string): boolean {
+  const mots = sansAccents(recherche).split(/[^a-z0-9]+/).filter(Boolean);
+  if (!mots.length) return true;
+  const code = f.code.toLowerCase(), nom = sansAccents(f.name), motsNom = nom.split(/[^a-z0-9]+/);
+  return mots.every(m => code.includes(m) || nom.includes(m) || traductions(m).some(en => motsNom.includes(en)));
+}

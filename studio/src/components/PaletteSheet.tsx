@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { BASE_FLOSS, contrastOn, FLOSS } from "../lib/dmc";
+import { BASE_FLOSS, contrastOn, filCorrespond, FLOSS } from "../lib/dmc";
 import { assignedSymbol, computeStats, type Pattern } from "../lib/pattern";
 import Sheet from "./Sheet";
 import SymbolIcon from "./SymbolIcon";
@@ -24,11 +24,7 @@ export default function PaletteSheet({ open, onClose, pattern, color, onPick }: 
     return m;
   }, [pattern]);
 
-  const term = q.trim().toLowerCase();
-  const list = FLOSS.map((f, idx) => ({ f, idx })).filter(
-    ({ f, idx }) =>
-      (!onlyUsed || usage.has(idx)) && (!term || f.code.toLowerCase().includes(term) || f.name.toLowerCase().includes(term)),
-  );
+  const list = FLOSS.map((f, idx) => ({ f, idx })).filter(({ f, idx }) => (!onlyUsed || usage.has(idx)) && filCorrespond(f, q));
 
   const active = FLOSS[color];
   const activePos = pattern.palette.includes(color) ? assignedSymbol(pattern, color) : -1;
@@ -55,8 +51,9 @@ export default function PaletteSheet({ open, onClose, pattern, color, onPick }: 
           <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-label-3" aria-hidden="true" />
           <input
             type="search"
-            className="field pl-9"
-            placeholder="Code ou nom (ex. 310, rose)"
+            className="field"
+            style={{ paddingLeft: 36 }}
+            placeholder="Code ou couleur (ex. 310, rouge, vert foncé)"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             aria-label="Rechercher un fil DMC"
