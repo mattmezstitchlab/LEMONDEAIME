@@ -1,3 +1,4 @@
+import { lirePhoto } from "./photoSource";
 import { FLOSS, flossIndex } from "./dmc";
 import { SYMBOL_COUNT } from "./symbols";
 
@@ -124,6 +125,8 @@ export interface Pattern {
   annotations?: Annotation[];
   notes?: string;
   reference?: string;
+  /** La photo d'origine et ses réglages : le Cadre reconvertit depuis elle à chaque nouveau format. */
+  photo?: import("./photoSource").PhotoSource;
   sessions?: Session[];
   layers?: Layer[];
   activeLayer?: string;
@@ -527,7 +530,7 @@ export function toObject(p: Pattern) {
     ornamentDone: p.ornamentDone,
     symbolMap: p.symbolMap, beadMap: p.beadMap, supplies: p.supplies, mistakes: p.mistakes,
     parked: p.parked, special: p.special, annotations: p.annotations,
-    notes: p.notes, reference: p.reference, sessions: p.sessions, layers: p.layers, activeLayer: p.activeLayer,
+    notes: p.notes, reference: p.reference, photo: p.photo, sessions: p.sessions, layers: p.layers, activeLayer: p.activeLayer,
     // Les points sont stockés par indices pour rester compacts. Cette table rend
     // le fichier stable même si l'ordre de la palette DMC évolue dans une version future.
     flossCodes: FLOSS.map((f) => f.code),
@@ -661,6 +664,7 @@ export function fromObject(input: unknown): Pattern | null {
     annotations: Array.isArray(o.annotations) ? o.annotations as Annotation[] : [],
     notes: typeof o.notes === "string" ? o.notes : "",
     reference: typeof o.reference === "string" ? o.reference : undefined,
+    photo: lirePhoto(o.photo),
     sessions: Array.isArray(o.sessions) ? o.sessions as Session[] : [],
     layers: Array.isArray(o.layers) ? o.layers as Layer[] : [],
     activeLayer: typeof o.activeLayer === "string" ? o.activeLayer : undefined,

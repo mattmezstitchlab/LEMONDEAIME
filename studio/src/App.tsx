@@ -37,6 +37,7 @@ import ExportStudio from "./components/ExportStudio";
 import ErrorBoundary from "./components/ErrorBoundary";
 import PeerShare from "./components/PeerShare";
 import OrbeGuide, { VISITE_CLE, visiteVue } from "./components/OrbeGuide";
+import Cadre, { TracerCadre } from "./components/Cadre";
 
 type Panel = "palette" | "library" | "share" | "export" | null;
 type RightSection = "properties" | "motifs" | "edit" | "prepare" | "follow" | "settings";
@@ -118,6 +119,7 @@ export default function App() {
   const [tool, setTool] = useState<Tool>("cross"), [color, setColor] = useState(Math.max(0, flossIndex("3801"))), [view, setView] = useState<ViewMode>("real"), [workspace, setWorkspace] = useState<Workspace>("create");
   const [symbols, setSymbols] = useState(false), [panel, setPanel] = useState<Panel>(null), [file, setFile] = useState<File | null>(null), [pdfFile, setPdfFile] = useState<File | null>(null), [promptOpen, setPromptOpen] = useState(false), [selection, setSelection] = useState<Selection | null>(null), [clipboard, setClipboard] = useState<Pattern | null>(null);
   const [prefs, setPrefs] = useState(initialPreferences), [inventory, setInventory] = useState(readInventory), [saving, setSaving] = useState("Sauvegarde locale"), [toast, setToast] = useState("");
+  const [tracer, setTracer] = useState(false);
   const [fitKey, setFitKey] = useState(0), wide = useMedia("(min-width: 1280px)");
   const ready = useRef(true), prevTool = useRef<Tool>("cross"), lastViews = useRef<{ create: ViewMode; stitch: ViewMode }>({ create: "real", stitch: "pattern" });
   const snapshot = useRef({ P, remote, prefs, workspace, store }); snapshot.current = { P, remote, prefs, workspace, store };
@@ -331,7 +333,7 @@ export default function App() {
     importAdvanced: (f: File) => { closePanel(); setFile(f); },
     openFile: (f: File) => { void openProjectFromFile(f); },
     export: () => setPanel("export" as Panel), save: () => { saveProjectFile(P); notify("Fichier projet téléchargé"); },
-    new: (w: number, h: number) => { try { const next = createPattern("Nouveau motif", w, h, P.count, P.strands); next.fabric = P.fabric; void loadPattern(next); } catch (e) { notify(e instanceof Error ? e.message : "Dimensions invalides"); } },
+    new: (w: number, h: number, nom = "Nouveau motif") => { try { const next = createPattern(nom, w, h, P.count, P.strands); next.fabric = P.fabric; void loadPattern(next); } catch (e) { notify(e instanceof Error ? e.message : "Dimensions invalides"); } },
     library: () => setPanel("library" as Panel), share: () => setPanel("share" as Panel), prompt: () => { closePanel(); setPromptOpen(true); }, notify,
   };
 
@@ -482,7 +484,7 @@ export default function App() {
       setWorkspace("create"); setView("flat"); setTool("hand");
       setActiveCategory("compose"); setRightSection("properties");
       setAutoImage(null); if (!keepGenerator) setPromptOpen(false); setPdfFile(null);
-      notify("Motif ouvert dans la grille. Composer / décomposer reste disponible dans Dessiner.");
+      notify(p.photo ? "Motif ouvert dans son cadre. Tirez un coin : la photo est recomptée ; le + règle la lumière et la palette." : "Motif ouvert dans son cadre. Tirez un coin pour l’agrandir.");
       return true;
     } catch { return false; }
   };
@@ -535,6 +537,12 @@ export default function App() {
       onPick={(idx) => { setColor(idx); if (tool === "pick") setTool(prevTool.current); }}
       onSubjectStart={subjectStart} onSubjectMove={subjectMoveTo} onSubjectEnd={subjectEnd}
       onMotifDrop={(id,x,y) => { const preset = getMotifPreset(id); if (preset) addStitchedPattern(preset,{x,y}); }} />
+    {!tracer && <Cadre pattern={P} readOnly={!!remote} onSet={p => setPattern(p)} onNotify={notify}
+      onBegin={() => { if (!remote) dispatch({ type: "begin" }); }} onLive={(p) => { if (!remote) dispatch({ type: "live", pattern: p }); }} onEnd={(changed) => { if (!remote) dispatch({ type: "end", changed }); }}
+      plus={[["Nouveau cadre", () => setTracer(true)], ["Motifs à glisser", () => openRightPanel("motifs")], ["Texte en croix, symétrie", () => { setActiveCategory("compose"); openRightPanel("edit"); }],
+        ["Calques", () => openRightPanel("properties")], ["Générer d’après une description", panelActions.prompt], ["Exporter le patron", () => setPanel("export" as Panel)], ["Télécharger le projet", panelActions.save]]} />}
+    {tracer && <TracerCadre count={P.count} over={P.fabric?.over ?? 1} onAnnuler={() => setTracer(false)}
+      onTrace={(w, h, nom) => { setTracer(false); panelActions.new(w, h, nom ?? "Nouveau motif"); notify(`Nouveau cadre : ${w} × ${h} points. Tirez ses coins pour l’agrandir.`); }} />}
     {depot && <div className="pzs-depot-voile" aria-hidden="true"><span>Déposez ici : l’ouvrage s’ouvre dans la grille</span></div>}
     {/* le point zéro : sur une grille vide, l'import se fait au centre, là où la broderie commence */}
     {atelierLibre && !remote && progression.total === 0 && !depot && dockPath === null &&
@@ -580,7 +588,7 @@ export default function App() {
         drawSettings: () => { setActiveCategory("compose"); openRightPanel("edit"); },
         layers: () => { if (mobileInspectorOpen && rightSection === "properties") setMobileInspectorOpen(false); else openRightPanel("properties"); },
         visite: () => setVisite(true),
-        nouveau: () => { panelActions.new(80, 80); setShowWelcome(false); setDockPath(null); },
+        nouveau: () => { if (remote) return; setTracer(true); setShowWelcome(false); setDockPath(null); },
       }}
       zoom={{
         zoomIn: () => window.dispatchEvent(new CustomEvent("pointzero:canvas", { detail: { action: "zoomIn" } })),

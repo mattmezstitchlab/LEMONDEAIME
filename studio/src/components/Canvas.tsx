@@ -75,6 +75,11 @@ interface Stroke {
 const MAX_S = 64;
 const FABRIC_A = "#f3f3f1";
 const PAPER = "#fbfbfa";
+/** Le fond autour du cadre : uni, gris très clair, sous la grille de points. */
+const FOND = "#e9e9e6";
+/** Chaque image dessinée annonce la vue : le Cadre (étiquette, coins, bords) se pose dessus. */
+export const VUE_CADRE = "pointzero:vue";
+export interface VueCadre { s: number; ox: number; oy: number; w: number; h: number; pw: number; ph: number; left: number; top: number }
 const AXIS = "#ff453a";
 const ACCENT = "#0a84ff";
 const DONE = "rgba(10,132,255,0.30)";
@@ -121,7 +126,9 @@ export default function Canvas(props: Props) {
     return out;
   };
 
-  const view = useRef({ s: 16, ox: 0, oy: 0, fit: 16, w: 1, h: 1, dpr: 1, ready: false });
+  const view = useRef({ s: 16, ox: 0, oy: 0, fit: 16, w: 1, h: 1, dpr: 1, ready: false, left: 0, top: 0 });
+  /** Le Cadre vient de changer le format : garder l'échelle et l'ancre au lieu de recadrer. */
+  const ancre = useRef(false);
   const frame = useRef<number | null>(null);
   const hoverPt = useRef<Pt | null>(null);
   const ptrs = useRef(new Map<number, { x: number; y: number }>());
@@ -157,13 +164,11 @@ export default function Canvas(props: Props) {
     const v = view.current;
     const gw = P.w * v.s;
     const gh = P.h * v.s;
-    const pad = 48;
-    const cw = c.x1 - c.x0;
-    const ch = c.y1 - c.y0;
-    if (gw + pad * 2 <= cw) v.ox = c.x0 + (cw - gw) / 2;
-    else v.ox = clamp(v.ox, c.x1 - gw - pad, c.x0 + pad);
-    if (gh + pad * 2 <= ch) v.oy = c.y0 + (ch - gh) / 2;
-    else v.oy = clamp(v.oy, c.y1 - gh - pad, c.y0 + pad);
+    const pad = 96;
+    // Le cadre peut glisser librement sur la grille de points, sans jamais la quitter tout à fait.
+    const ins = latest.current.insets, haut = ins.top + 56, bas = ins.bottom + 20;
+    v.ox = clamp(v.ox, Math.min(c.x0 + pad, c.x1 - gw - pad), Math.max(c.x1 - gw - pad, c.x0 + pad));
+    v.oy = clamp(v.oy, Math.min(c.y0 + haut, c.y1 - gh - bas), Math.max(c.y1 - gh - bas, c.y0 + haut));
   };
 
   const fitView = () => {
@@ -172,11 +177,13 @@ export default function Canvas(props: Props) {
     const v = view.current;
     const cw = c.x1 - c.x0;
     const ch = c.y1 - c.y0;
-    const s = Math.max(2, Math.min(cw / P.w, ch / P.h) * 0.94);
+    // Le cadre se pose entre les docks, avec la place de son étiquette au-dessus.
+    const ins = latest.current.insets, haut = ins.top + 56, bas = ins.bottom + 20, gauche = ins.left + 40, droite = ins.right + 40;
+    const s = Math.max(2, Math.min((cw - gauche - droite) / P.w, (ch - haut - bas) / P.h));
     v.fit = s;
     v.s = s;
-    v.ox = c.x0 + (cw - P.w * s) / 2;
-    v.oy = c.y0 + (ch - P.h * s) / 2;
+    v.ox = c.x0 + gauche + (cw - gauche - droite - P.w * s) / 2;
+    v.oy = c.y0 + haut + (ch - haut - bas - P.h * s) / 2;
     v.ready = true;
   };
 
@@ -200,6 +207,8 @@ export default function Canvas(props: Props) {
     const v = view.current;
     v.w = r.width;
     v.h = r.height;
+    v.left = r.left;
+    v.top = r.top;
     v.dpr = Math.min(window.devicePixelRatio || 1, 2.5);
     cv.width = Math.round(v.w * v.dpr);
     cv.height = Math.round(v.h * v.dpr);
@@ -224,19 +233,43 @@ export default function Canvas(props: Props) {
     const { w, h } = P;
     const isPattern = mode === "pattern";
 
-    // La grille se prolonge jusqu'aux quatre bords de l'écran : aucun
-    // cadre, ombre ou séparation entre le patron et la toile de travail.
+    // Le Cadre : autour de l'ouvrage, un fond uni et une grille de points magnétiques ;
+    // dans le cadre, la toile et sa grille (un trait tous les points, plus marqué tous les dix).
     ctx.setTransform(v.dpr, 0, 0, v.dpr, 0, 0);
     ctx.clearRect(0, 0, v.w, v.h);
     const toile = P.fabric?.color && P.fabric.color.toLowerCase() !== "#f7f2e8" ? P.fabric.color : FABRIC_A;
     const cloth = isPattern ? PAPER : toile;
-    ctx.fillStyle = cloth;
+    ctx.fillStyle = FOND;
     ctx.fillRect(0, 0, v.w, v.h);
-    if (s >= 4) {
-      const firstCol = Math.floor(-ox / s);
-      const lastCol = Math.ceil((v.w - ox) / s);
-      const firstRow = Math.floor(-oy / s);
-      const lastRow = Math.ceil((v.h - oy) / s);
+    const gx0 = Math.max(0, ox), gy0 = Math.max(0, oy), gx1 = Math.min(v.w, ox + w * s), gy1 = Math.min(v.h, oy + h * s);
+    {
+      // Les points : un à chaque trou de la toile quand on est assez près, sinon tous les dix.
+      const pas = s >= 7 ? 1 : s >= 2.5 ? 5 : 10;
+      const firstCol = Math.floor(-ox / s / pas) * pas, lastCol = Math.ceil((v.w - ox) / s);
+      const firstRow = Math.floor(-oy / s / pas) * pas, lastRow = Math.ceil((v.h - oy) / s);
+      const r0 = Math.max(.8, Math.min(1.4, s * .09));
+      for (const fort of [false, true]) {
+        ctx.beginPath();
+        for (let k = firstCol; k <= lastCol; k += pas) for (let j = firstRow; j <= lastRow; j += pas) {
+          if (((k % 10 === 0) && (j % 10 === 0)) !== fort) continue;
+          const x = ox + k * s, y = oy + j * s;
+          if (x > gx0 && x < gx1 && y > gy0 && y < gy1) continue;
+          const r = fort ? r0 * 1.6 : r0;
+          ctx.moveTo(x + r, y); ctx.arc(x, y, r, 0, Math.PI * 2);
+        }
+        ctx.fillStyle = fort ? "rgba(28,28,32,.34)" : "rgba(28,28,32,.2)";
+        ctx.fill();
+      }
+    }
+    if (gx1 > gx0 && gy1 > gy0) {
+      ctx.fillStyle = cloth;
+      ctx.fillRect(gx0, gy0, gx1 - gx0, gy1 - gy0);
+    }
+    if (s >= 4 && gx1 > gx0 && gy1 > gy0) {
+      const firstCol = Math.max(0, Math.floor(-ox / s));
+      const lastCol = Math.min(w, Math.ceil((v.w - ox) / s));
+      const firstRow = Math.max(0, Math.floor(-oy / s));
+      const lastRow = Math.min(h, Math.ceil((v.h - oy) / s));
       const minor = highContrast ? "rgba(0,0,0,.38)" : "rgba(28,28,32,.13)";
       const major = highContrast ? "rgba(0,0,0,.55)" : "rgba(28,28,32,.28)";
       for (const strong of [false, true]) {
@@ -244,28 +277,29 @@ export default function Canvas(props: Props) {
         for (let k = firstCol; k <= lastCol; k++) {
           if ((k % 10 === 0) !== strong) continue;
           const x = Math.round(ox + k * s) + 0.5;
-          ctx.moveTo(x, 0);
-          ctx.lineTo(x, v.h);
+          ctx.moveTo(x, gy0);
+          ctx.lineTo(x, gy1);
         }
         for (let k = firstRow; k <= lastRow; k++) {
           if ((k % 10 === 0) !== strong) continue;
           const y = Math.round(oy + k * s) + 0.5;
-          ctx.moveTo(0, y);
-          ctx.lineTo(v.w, y);
+          ctx.moveTo(gx0, y);
+          ctx.lineTo(gx1, y);
         }
         ctx.lineWidth = strong ? 1.2 : 1;
         ctx.strokeStyle = strong ? major : minor;
         ctx.stroke();
       }
     }
-    // Un repère discret indique le centre du motif, sans bordure.
+    // Un repère discret indique le centre du motif, dans le cadre.
     ctx.beginPath();
     const axisX = Math.round(ox + w * s / 2) + .5;
     const axisY = Math.round(oy + h * s / 2) + .5;
-    ctx.moveTo(axisX, 0); ctx.lineTo(axisX, v.h);
-    ctx.moveTo(0, axisY); ctx.lineTo(v.w, axisY);
+    ctx.moveTo(axisX, gy0); ctx.lineTo(axisX, gy1);
+    ctx.moveTo(gx0, axisY); ctx.lineTo(gx1, axisY);
     ctx.strokeStyle = AXIS; ctx.globalAlpha = .5; ctx.lineWidth = 1;
     ctx.stroke(); ctx.globalAlpha = 1;
+    window.dispatchEvent(new CustomEvent<VueCadre>(VUE_CADRE, { detail: { s, ox, oy, w: v.w, h: v.h, pw: w, ph: h, left: v.left, top: v.top } }));
     ctx.save();
     ctx.beginPath();
     ctx.rect(c.x0, c.y0, c.x1 - c.x0, c.y1 - c.y0);
@@ -951,6 +985,7 @@ export default function Canvas(props: Props) {
   useEffect(() => {
     const control = (e: Event) => {
       const d = (e as CustomEvent<{ action: string; x?: number; y?: number; scale?: number }>).detail;
+      const v0 = view.current;
       if (d.action === "fit") fitView();
       if (["zoomIn", "zoomOut", "magnify"].includes(d.action)) {
         const c = content();
@@ -961,6 +996,7 @@ export default function Canvas(props: Props) {
         v.s = d.scale ?? 24; v.ox = (c.x0 + c.x1) / 2 - (d.x ?? 0) * v.s; v.oy = (c.y0 + c.y1) / 2 - (d.y ?? 0) * v.s;
         clampView();
       }
+      if (d.action === "ancrer") { ancre.current = true; setTimeout(() => { ancre.current = false; }, 800); v0.ox += (d.x ?? 0) * v0.s; v0.oy += (d.y ?? 0) * v0.s; }
       if (d.action === "clearSelection") { selected.current = null; latest.current.onSelection?.(null); }
       schedule();
     };
@@ -972,7 +1008,7 @@ export default function Canvas(props: Props) {
   const insetsKey = `${insets.top}-${insets.right}-${insets.bottom}-${insets.left}`;
   useEffect(() => {
     layout();
-    fitView();
+    if (ancre.current && view.current.ready) { ancre.current = false; clampView(); } else fitView();
     schedule();
   }, [dimsKey, insetsKey, fitKey]); // eslint-disable-line react-hooks/exhaustive-deps
 

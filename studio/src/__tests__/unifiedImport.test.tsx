@@ -67,6 +67,9 @@ it("une nouvelle grille ne remplace pas l’ouvrage si son archivage échoue",as
   await act(async()=>host!.querySelector<HTMLButtonElement>(".pzs-profil")!.click());
   vi.mocked(saveLibrary).mockRejectedValueOnce(new Error("quota"));
   await act(async()=>[...host!.querySelectorAll<HTMLButtonElement>(".pzs-mini button")].find(b=>b.textContent==="+ Nouvelle grille")!.click());
+  // Le Cadre : on trace son format, ou on choisit un format tout fait.
+  expect(host!.textContent).toContain("Tracez votre format");
+  await act(async()=>[...host!.querySelectorAll<HTMLButtonElement>(".cadre-formats button")].find(b=>b.textContent?.startsWith("Carré"))!.click());
   expect(host!.textContent).toContain("PDF assemblé");
   expect(host!.textContent).toContain("Ouverture bloquée");
 });
