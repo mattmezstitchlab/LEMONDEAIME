@@ -71,6 +71,7 @@ const button = (label: string) => container?.querySelector(`button[aria-label="$
 beforeEach(() => {
   localStorage.clear();
   localStorage.setItem("pointzero:workspace","embroidery");
+  localStorage.setItem("pointzero:visite-docks:v1","vue"); // la visite de l'orbe a ses propres tests (orbeGuide.test.tsx)
   window.history.replaceState(null, "", "/");
 });
 afterEach(async () => {

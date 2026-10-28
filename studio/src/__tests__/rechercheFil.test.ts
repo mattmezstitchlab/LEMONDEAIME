@@ -25,3 +25,9 @@ describe("Nuancier : recherche en français", () => {
     expect(trouve("zzzz")).toHaveLength(0);
   });
 });
+describe("Nuancier : clair et foncé ne se mélangent pas", () => {
+  it("« rouge foncé » ne propose aucun fil clair, « vert clair » aucun fil foncé", () => {
+    expect(FLOSS.filter(f => filCorrespond(f, "rouge foncé")).some(f => /light|pale|baby/i.test(f.name))).toBe(false);
+    expect(FLOSS.filter(f => filCorrespond(f, "vert clair")).some(f => /dark/i.test(f.name))).toBe(false);
+  });
+});

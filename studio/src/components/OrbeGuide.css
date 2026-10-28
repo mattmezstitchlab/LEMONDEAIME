@@ -1,0 +1,27 @@
+/* L'orbe qui guide : une perle nacrée qui glisse d'un outil à l'autre, un cadre sur l'outil présenté, une bulle sombre à la charte des docks. */
+.og-couche { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
+.og-cadre, .og-orbe, .og-carte { position: absolute; top: 0; left: 0; will-change: transform; transition: transform .65s cubic-bezier(.22,.9,.26,1), width .45s ease, height .45s ease; }
+.og-cadre { border-radius: 14px; box-shadow: 0 0 0 2px #0b0b0c, 0 0 0 5px rgba(201,184,255,.9), 0 0 26px 6px rgba(201,184,255,.55); }
+.og-orbe { width: 30px; height: 30px; border-radius: 50%; }
+.og-orbe span { display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at 32% 30%, #ffffff 0%, #d9e8ff 22%, #c9b8ff 48%, #ffd6ec 72%, #b9f0e4 100%);
+  box-shadow: 0 0 0 2px #fff, 0 6px 20px rgba(155,120,255,.55), 0 0 30px 6px rgba(201,184,255,.6); animation: og-souffle 2.4s ease-in-out infinite; }
+@keyframes og-souffle { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+.og-carte { pointer-events: auto; box-sizing: border-box; padding: 16px 16px 14px; border-radius: 18px; background: #0b0b0c; color: #fff; border: 1px solid #3a3a38; box-shadow: 0 24px 60px rgba(11,11,12,.35); font-size: 15px; }
+.og-rang { display: flex; justify-content: space-between; margin: 0 0 6px; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: rgba(255,255,255,.62); }
+.og-titre { margin: 0 0 6px; font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
+.og-texte { margin: 0; line-height: 1.5; color: rgba(255,255,255,.88); }
+.og-barre { height: 3px; margin: 14px 0 12px; border-radius: 3px; background: rgba(255,255,255,.14); overflow: hidden; }
+.og-barre span { display: block; height: 100%; background: linear-gradient(90deg, #d9e8ff, #c9b8ff, #ffd6ec, #b9f0e4); transition: width .45s ease; }
+.og-boutons { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.og-boutons > span { display: flex; gap: 6px; }
+.og-boutons button { white-space: nowrap; height: 44px; padding: 0 14px; border-radius: 11px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+.og-passer { border: 0; background: transparent; color: rgba(255,255,255,.72); padding: 0 6px !important; text-decoration: underline; text-underline-offset: 3px; }
+.og-prec { border: 1px solid #3a3a38; background: transparent; color: #fff; }
+.og-suiv { border: 0; background: #fff; color: #0b0b0c; }
+.og-boutons button:focus-visible { outline: 2px solid #c9b8ff; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .og-cadre, .og-orbe, .og-carte, .og-barre span { transition: none; }
+  .og-orbe span { animation: none; }
+}
+/* pendant la visite, le fil d'Ariane du dock s'efface : l'orbe passe dessous */
+body:has(.og-couche) .pzs-crumbs { visibility: hidden; }

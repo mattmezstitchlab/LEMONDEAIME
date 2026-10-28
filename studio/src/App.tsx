@@ -39,6 +39,7 @@ import AutomaticImageImport from "./components/AutomaticImageImport";
 import ExportStudio from "./components/ExportStudio";
 import ErrorBoundary from "./components/ErrorBoundary";
 import PeerShare from "./components/PeerShare";
+import OrbeGuide, { visiteVue } from "./components/OrbeGuide";
 
 type Panel = "palette" | "library" | "share" | "export" | null;
 type RightSection = "properties" | "motifs" | "edit" | "prepare" | "follow" | "settings";
@@ -362,6 +363,9 @@ export default function App() {
   const deposeRef = useRef({ ouvrir: ouvrirOuvrage, importer: importAnyFile });
   deposeRef.current = { ouvrir: ouvrirOuvrage, importer: importAnyFile };
   const atelierLibre = studioMode === "embroidery" && !pdfFile && !promptOpen && !compositionInput && !file && !autoImage;
+  /* l'orbe qui guide : à la première ouverture de l'atelier, elle présente les deux docks, outil par outil */
+  const [visite, setVisite] = useState(false);
+  useEffect(() => { if (atelierLibre && !panel && !showWelcome && !visiteVue()) setVisite(true); }, [atelierLibre, panel, showWelcome]);
   useEffect(() => {
     if (!atelierLibre) return;
     const utile = (e: DragEvent) => { const t = Array.from(e.dataTransfer?.types ?? []); return t.includes(OUVRAGE_DRAG_TYPE) || t.includes("Files"); };
@@ -582,6 +586,7 @@ export default function App() {
         follow: () => openRightPanel("follow"),
         drawSettings: () => { setActiveCategory("compose"); openRightPanel("edit"); },
         layers: () => { if (mobileInspectorOpen && rightSection === "properties") setMobileInspectorOpen(false); else openRightPanel("properties"); },
+        visite: () => setVisite(true),
       }}
       zoom={{
         zoomIn: () => window.dispatchEvent(new CustomEvent("pointzero:canvas", { detail: { action: "zoomIn" } })),
@@ -592,6 +597,7 @@ export default function App() {
       progression={progression} onCouleur={pickColor}
       ouvrages={{ courant: P.id, ouvrir: id => { void ouvrirOuvrage(id); }, importer: importAnyFile }}
       fils={<FlossRail dock pattern={P} active={color} onActive={pickColor} onPattern={(p) => setPattern(p)} onSupply={updateSupply} onBrowse={() => setPanel("palette")} stitching={workspace === "stitch"} hidden={showWelcome || !!file} />} />}
+    {atelierLibre && <OrbeGuide ouverte={visite} onFermer={() => setVisite(false)} onChemin={setDockPath} />}
     <aside aria-label="Inspecteur de broderie"
       hidden={!mobileInspectorOpen}
       className="pz-embroidery-right pzs-panel thin-scroll fixed bottom-[96px] right-3 top-[112px] z-30 w-[min(300px,calc(100vw-24px))] overflow-y-auto rounded-[18px] border border-white/15 bg-[#09090b] text-white shadow-2xl">

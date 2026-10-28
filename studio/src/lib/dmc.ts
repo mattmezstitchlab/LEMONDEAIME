@@ -128,7 +128,7 @@ const FR: Record<string, string[]> = {
   noir: ["black"], blanc: ["white", "snow", "ecru"], ecru: ["ecru"], creme: ["cream", "ecru"], gris: ["gray", "pewter", "steel", "ash", "tin", "driftwood"],
   beige: ["beige", "tan", "sand", "shell", "drab", "desert"], sable: ["sand"], or: ["gold", "golden", "topaz"], dore: ["gold", "golden"], cuivre: ["copper"],
   turquoise: ["turquoise", "aquamarine", "teal"], corail: ["coral"], saumon: ["salmon", "shrimp"], peche: ["peach", "melon"], kaki: ["khaki", "drab", "olive"], terracotta: ["terra", "cotta"],
-  clair: ["light", "pale", "baby", "ultra", "very"], pale: ["pale", "light", "baby"], fonce: ["dark", "very", "deep", "vd"], vif: ["bright", "electric"], moyen: ["medium"], ancien: ["antique", "old"], tres: ["very", "ultra", "vy"],
+  clair: ["light", "pale", "baby"], pale: ["pale", "light", "baby"], fonce: ["dark", "deep", "vd", "darkv"], vif: ["bright", "electric"], moyen: ["medium"], ancien: ["antique", "old"], tres: ["very", "ultra", "vy"],
 };
 /* « rouges », « foncée », « foncés » : on essaie le mot, puis sans sa marque de pluriel ou de féminin */
 const traductions = (m: string) => FR[m] || FR[m.replace(/s$/, "")] || FR[m.replace(/e?s?$/, "")] || [];
