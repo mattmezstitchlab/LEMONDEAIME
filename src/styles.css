@@ -114,6 +114,8 @@ html.calme *, html.calme *::before, html.calme *::after { transition: none !impo
 .lieu { flex: none; display: flex; align-items: center; height: 50px; padding: 0 16px; border-radius: 11px; border: 1px solid var(--dock-trait); background: transparent; color: #fff; font-size: 15px; font-weight: 500; text-decoration: none; white-space: nowrap; }
 .lieu:hover { background: rgba(255,255,255,.12); color: #fff; }
 .lieu[aria-current="true"] { background: #fff; color: var(--encre); border: 2px solid #fff; font-weight: 700; }
+.lieu-case { gap: 8px; cursor: pointer; font-weight: 500; }
+.lieu-case input { width: 18px; height: 18px; margin: 0; accent-color: #fff; }
 .lieu:focus-visible { outline-color: #fff; }
 
 
