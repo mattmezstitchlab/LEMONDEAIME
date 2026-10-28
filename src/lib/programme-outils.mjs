@@ -198,3 +198,38 @@ export function construireSupport(p, { pour = 'tous', contenu = 'jour' } = {}) {
     total: sections.reduce((t, s) => t + s.moments.length, 0),
   };
 }
+
+/* ——— Causalité (simulation pédagogique) ———
+   Décaler un moment du Jour J : on suit les prérequis du programme. Un moment qui dépend d'un moment décalé
+   et qui commencerait avant sa fin est repoussé d'autant, et ainsi de suite. Rien n'est enregistré ni envoyé. */
+function decalerIso(iso, minutes) {
+  const t = Date.parse(iso) + minutes * 60000, dec = iso.slice(19), off = /([+-])(\d{2}):(\d{2})/.exec(dec);
+  const o = off ? (off[1] === '-' ? -1 : 1) * (Number(off[2]) * 60 + Number(off[3])) : 0;
+  const x = new Date(t + o * 60000), z = n => String(n).padStart(2, '0');
+  return x.getUTCFullYear() + '-' + z(x.getUTCMonth() + 1) + '-' + z(x.getUTCDate()) + 'T' + z(x.getUTCHours()) + ':' + z(x.getUTCMinutes()) + ':00' + dec;
+}
+export function decaler(p, id, minutes) {
+  const m = moment(p, id);
+  if (!m || m.etape !== 'day') throw new Error('Seuls les moments du Jour J se décalent ici.');
+  const nouveaux = new Map([[m.id, { debut: decalerIso(m.debut, minutes), fin: decalerIso(m.fin, minutes) }]]);
+  const decales = [];
+  if (minutes > 0) for (const x of p.moments.slice(rang(p, id) + 1)) {
+    const causes = x.prerequis.filter(q => nouveaux.has(q));
+    if (!causes.length) continue;
+    const limite = causes.map(q => nouveaux.get(q).fin).sort().pop();
+    if (x.debut >= limite) continue;
+    const delta = Math.round((Date.parse(limite) - Date.parse(x.debut)) / 60000);
+    nouveaux.set(x.id, { debut: decalerIso(x.debut, delta), fin: decalerIso(x.fin, delta) });
+    decales.push({ id: x.id, titre: x.titre, avant: heure(x), apres: nouveaux.get(x.id).debut.slice(11, 16), minutes: delta, cause: causes.map(q => moment(p, q).titre) });
+  }
+  const touches = [m, ...decales.map(d => moment(p, d.id))];
+  const metiers = uniqueParOrdre(touches.flatMap(x => x.metiers)).map(t => ({ id: t, nom: nomMetier(p, t) }));
+  const personnes = p.union.personnes.filter(pe => touches.some(x => concerne(p, x, pe.id)));
+  const supports = [{ pour: 'tous', nom: 'Toute l’équipe' }, ...(touches.some(x => pourLesMaries(p, x)) ? [{ pour: 'maries', nom: 'Les mariés' }] : []), ...metiers.map(t => ({ pour: t.id, nom: t.nom }))];
+  return {
+    moment: { id: m.id, titre: m.titre, avant: heure(m), apres: nouveaux.get(m.id).debut.slice(11, 16), minutes },
+    decales, metiers, personnes: personnes.map(x => ({ id: x.id, nom: x.nom, role: x.role })), supports,
+    notifications: { etat: 'prevu', destinataires: metiers.length + personnes.length },
+  };
+}
+function uniqueParOrdre(a) { return [...new Set(a)]; }

@@ -8,8 +8,10 @@ B=os.environ.get('BASE','http://localhost:4610'); OUT=tempfile.mkdtemp(prefix='a
 NP=int(subprocess.run(['node','-e',"import('./src/lib/programme-outils.mjs').then(P=>console.log(P.chercher(require('./src/data/programme.json'),'piscine').length))"],capture_output=True,text=True).stdout)
 echecs=[]
 res=[]; errs=[]
+resultats=[]
 def ok(c, nom):
     print(('OK ' if c else 'ÉCHEC ')+nom, flush=True)
+    resultats.append({'test': nom, 'ok': bool(c)})
     if not c: echecs.append(nom)
 def api_factory(connecte):
     def api(route):
@@ -105,5 +107,9 @@ with sync_playwright() as p:
     pg.close(); b.close()
 
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from preuves import enregistrer_preuve
+ok(not errs, 'aucune erreur dans la console')
+enregistrer_preuve('tests/e2e/moments.py', resultats, 'aperçu local (vite preview), API simulées')
 print('ERREURS', errs); print('Captures et PDF :', OUT)
 sys.exit(1 if echecs or errs else 0)

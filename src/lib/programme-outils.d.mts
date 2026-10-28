@@ -29,3 +29,6 @@ export function pourLesMaries(p: Programme, m: MomentP): boolean;
 export type LigneSupport = { n: number; id: string; heure: string; titre: string; lieu: string; description?: string; responsables?: string[]; metiers?: string[]; personnes?: string[]; consignes?: string[] };
 export type Support = { titre: string; lieu: string; jour: string; reference: boolean; pour: string; champs: string[]; sections: { id: string; nom: string; repere: string; moments: LigneSupport[] }[]; total: number };
 export function construireSupport(p: Programme, o?: { pour?: string; contenu?: 'jour' | 'autour' | 'tout' }): Support;
+export type Decalage = { moment: { id: string; titre: string; avant: string; apres: string; minutes: number }; decales: { id: string; titre: string; avant: string; apres: string; minutes: number; cause: string[] }[];
+  metiers: { id: string; nom: string }[]; personnes: { id: string; nom: string; role: string }[]; supports: { pour: string; nom: string }[]; notifications: { etat: 'prevu'; destinataires: number } };
+export function decaler(p: Programme, id: string, minutes: number): Decalage;

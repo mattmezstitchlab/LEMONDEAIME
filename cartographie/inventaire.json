@@ -1,0 +1,2058 @@
+{
+ "routes": {
+  "pages": [
+   {
+    "route": "/",
+    "composant": "LeMondeAime",
+    "titre": "LE MONDE AIME — le site officiel de l’union"
+   },
+   {
+    "route": "/a-propos",
+    "composant": "APropos",
+    "titre": "À propos d’AIME"
+   },
+   {
+    "route": "/point-zero",
+    "composant": "PointZero",
+    "titre": "LE MONDE AIME — Point Zéro"
+   },
+   {
+    "route": "/buro",
+    "composant": "Buro",
+    "titre": "LE MONDE AIME — Votre espace"
+   },
+   {
+    "route": "/reseau",
+    "composant": "Reseau",
+    "titre": "LE MONDE AIME — Prestataires et réseau"
+   },
+   {
+    "route": "/entrer",
+    "composant": "Entrer",
+    "titre": "LE MONDE AIME — Entrer"
+   },
+   {
+    "route": "/a-plus",
+    "composant": "APlus",
+    "titre": "LE MONDE AIME — A+"
+   },
+   {
+    "route": "/boutique",
+    "composant": "Boutique",
+    "titre": "LE MONDE AIME — Boutique"
+   },
+   {
+    "route": "/musique",
+    "composant": "Musique",
+    "titre": "LE MONDE AIME — La journée en musique"
+   },
+   {
+    "route": "/moments",
+    "composant": "Moments",
+    "titre": "LE MONDE AIME — Les moments de l’union"
+   },
+   {
+    "route": "/systeme-nerveux",
+    "composant": "SystemeNerveux",
+    "titre": "LE MONDE AIME — Le système nerveux"
+   },
+   {
+    "route": "/reseau/:id",
+    "composant": "FicheReseau",
+    "titre": ""
+   },
+   {
+    "route": "/moments/:id",
+    "composant": "Moments",
+    "titre": ""
+   }
+  ],
+  "anciennes": [
+   "/charte",
+   "/monde",
+   "/aime-wedding"
+  ],
+  "studio": "/studio/*"
+ },
+ "commandes": [
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": null,
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 34,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": "AIME, accueil",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 59,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": "AIME, accueil",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 59,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/buro",
+   "route": "/buro",
+   "libelle": null,
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 67,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/entrer",
+   "route": "/entrer",
+   "libelle": null,
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 67,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": "Accueil",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 77,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/a-propos",
+   "route": "/a-propos",
+   "libelle": "À propos d’AIME",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 77,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/buro?lieu=",
+   "route": "/buro",
+   "libelle": null,
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 89,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": null,
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 97,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/buro",
+   "route": "/buro",
+   "libelle": null,
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 97,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/buro",
+   "route": "/buro",
+   "libelle": "Ouvrir mon espace",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 113,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/point-zero",
+   "route": "/point-zero",
+   "libelle": "Point Zéro",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 113,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/a-plus",
+   "route": "/a-plus",
+   "libelle": "A+",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 113,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/a-propos",
+   "route": "/a-propos",
+   "libelle": "Pourquoi un compte ?",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 114,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/a-plus",
+   "route": "/a-plus",
+   "libelle": "A+ pour les pros",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 114,
+   "composant": "Tete"
+  },
+  {
+   "cible": "/#unions",
+   "route": "/",
+   "libelle": "Unions",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 130,
+   "composant": "VerbesSite"
+  },
+  {
+   "cible": "/reseau?domaine=mariage",
+   "route": "/reseau",
+   "libelle": "Prestataires",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 131,
+   "composant": "VerbesSite"
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": "Studio",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 132,
+   "composant": "VerbesSite"
+  },
+  {
+   "cible": "/boutique",
+   "route": "/boutique",
+   "libelle": "Boutique",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 133,
+   "composant": "VerbesSite"
+  },
+  {
+   "cible": "/musique",
+   "route": "/musique",
+   "libelle": "La journée en musique",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 230,
+   "composant": "Musique"
+  },
+  {
+   "cible": "/musique",
+   "route": "/musique",
+   "libelle": "La journée en musique",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 231,
+   "composant": "Musique"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": "AIME, accueil",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 294,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/#unions",
+   "route": "/",
+   "libelle": "Les unions",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 296,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/reseau?domaine=mariage",
+   "route": "/reseau",
+   "libelle": "Prestataires",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 296,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/#invites",
+   "route": "/",
+   "libelle": "Invités",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 296,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/#collections",
+   "route": "/",
+   "libelle": "Collections",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 296,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": "Studio",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 297,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/#studio",
+   "route": "/",
+   "libelle": "Brodez votre mariage",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 297,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/moments",
+   "route": "/moments",
+   "libelle": "Les 200 moments",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 297,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/musique",
+   "route": "/musique",
+   "libelle": "La journée en musique",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 297,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/point-zero",
+   "route": "/point-zero",
+   "libelle": "Point Zéro",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 297,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/boutique",
+   "route": "/boutique",
+   "libelle": "Boutique",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 297,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/entrer",
+   "route": "/entrer",
+   "libelle": "Entrer",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 298,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/buro",
+   "route": "/buro",
+   "libelle": "Mon espace",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 298,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/buro?lieu=profil",
+   "route": "/buro",
+   "libelle": "Mon profil",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 298,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/a-plus",
+   "route": "/a-plus",
+   "libelle": "A+",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 298,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/a-propos",
+   "route": "/a-propos",
+   "libelle": "À propos d’AIME",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 299,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/reseau/matthieu-lecointre",
+   "route": "/reseau",
+   "libelle": "Le fondateur",
+   "fichier": "src/charte/Charte.tsx",
+   "ligne": 299,
+   "composant": "Pied"
+  },
+  {
+   "cible": "/moments/",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/charte/LecturesMoment.tsx",
+   "ligne": 44,
+   "composant": "LienMoment"
+  },
+  {
+   "cible": "/musique",
+   "route": "/musique",
+   "libelle": "composer la journée en musique",
+   "fichier": "src/charte/LecturesMoment.tsx",
+   "ligne": 75,
+   "composant": "LectureMusique"
+  },
+  {
+   "cible": "/musique",
+   "route": "/musique",
+   "libelle": "Composer ma journée en musique",
+   "fichier": "src/charte/LecturesMoment.tsx",
+   "ligne": 84,
+   "composant": "LectureMusique"
+  },
+  {
+   "cible": "/musique#moment-",
+   "route": "/musique",
+   "libelle": "la journée en musique",
+   "fichier": "src/charte/LecturesMoment.tsx",
+   "ligne": 92,
+   "composant": "LectureMusique"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/charte/LecturesMoment.tsx",
+   "ligne": 107,
+   "composant": "LectureMetiers"
+  },
+  {
+   "cible": "/moments?qui=",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/charte/LecturesMoment.tsx",
+   "ligne": 108,
+   "composant": "LectureMetiers"
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": "Ouvrir le Studio",
+   "fichier": "src/charte/LecturesMoment.tsx",
+   "ligne": 135,
+   "composant": "LecturePatron"
+  },
+  {
+   "cible": "/moments?qui=",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/charte/LecturesMoment.tsx",
+   "ligne": 149,
+   "composant": "LecturePersonnes"
+  },
+  {
+   "cible": "/moments#etape-",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/charte/Programme.tsx",
+   "ligne": 13,
+   "composant": "BandeEtapes"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": "Accueil",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 10,
+   "composant": null
+  },
+  {
+   "cible": "/#unions",
+   "route": "/",
+   "libelle": "Les unions",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 10,
+   "composant": null
+  },
+  {
+   "cible": "/reseau?domaine=mariage",
+   "route": "/reseau",
+   "libelle": "Prestataires",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 10,
+   "composant": null
+  },
+  {
+   "cible": "/#invites",
+   "route": "/",
+   "libelle": "Invités",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 10,
+   "composant": null
+  },
+  {
+   "cible": "/#collections",
+   "route": "/",
+   "libelle": "Collections",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 10,
+   "composant": null
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": "Studio",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 12,
+   "composant": null
+  },
+  {
+   "cible": "/boutique",
+   "route": "/boutique",
+   "libelle": "Boutique",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 12,
+   "composant": null
+  },
+  {
+   "cible": "/moments",
+   "route": "/moments",
+   "libelle": "Les moments",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 12,
+   "composant": null
+  },
+  {
+   "cible": "/musique",
+   "route": "/musique",
+   "libelle": "Musique",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 12,
+   "composant": null
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": "Atelier de broderie",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 12,
+   "composant": null
+  },
+  {
+   "cible": "/point-zero",
+   "route": "/point-zero",
+   "libelle": "Point Zéro",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 12,
+   "composant": null
+  },
+  {
+   "cible": "/buro",
+   "route": "/buro",
+   "libelle": "Votre espace",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 14,
+   "composant": null
+  },
+  {
+   "cible": "/buro?lieu=profil",
+   "route": "/buro",
+   "libelle": "Mon profil",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 14,
+   "composant": null
+  },
+  {
+   "cible": "/entrer",
+   "route": "/entrer",
+   "libelle": "Entrer",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 14,
+   "composant": null
+  },
+  {
+   "cible": "/a-plus",
+   "route": "/a-plus",
+   "libelle": "A+",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 14,
+   "composant": null
+  },
+  {
+   "cible": "/a-propos",
+   "route": "/a-propos",
+   "libelle": "À propos d’AIME",
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 14,
+   "composant": null
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 17,
+   "composant": null
+  },
+  {
+   "cible": "/point-zero?q=",
+   "route": "/point-zero",
+   "libelle": null,
+   "fichier": "src/charte/Recherche.tsx",
+   "ligne": 18,
+   "composant": null
+  },
+  {
+   "cible": "/moments",
+   "route": "/moments",
+   "libelle": "‹ Les moments",
+   "fichier": "src/charte/Support.tsx",
+   "ligne": 29,
+   "composant": "SupportImprimable"
+  },
+  {
+   "cible": "/moments",
+   "route": "/moments",
+   "libelle": "‹ Les moments",
+   "fichier": "src/charte/Support.tsx",
+   "ligne": 32,
+   "composant": "SupportImprimable"
+  },
+  {
+   "cible": "/a-propos",
+   "route": "/a-propos",
+   "libelle": null,
+   "fichier": "src/pages/APropos.tsx",
+   "ligne": 13,
+   "composant": "APropos"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/APropos.tsx",
+   "ligne": 34,
+   "composant": "APropos"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": "Voir son profil",
+   "fichier": "src/pages/APropos.tsx",
+   "ligne": 39,
+   "composant": "APropos"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/Boutique.tsx",
+   "ligne": 21,
+   "composant": "CarteCreation"
+  },
+  {
+   "cible": "/boutique",
+   "route": "/boutique",
+   "libelle": null,
+   "fichier": "src/pages/Boutique.tsx",
+   "ligne": 44,
+   "composant": "Boutique"
+  },
+  {
+   "cible": "/a-plus",
+   "route": "/a-plus",
+   "libelle": "Découvrir A+",
+   "fichier": "src/pages/Boutique.tsx",
+   "ligne": 76,
+   "composant": "Boutique"
+  },
+  {
+   "cible": "/studio/atelier?ouvrage=",
+   "route": "/studio",
+   "libelle": "Ouvrir dans le Studio",
+   "fichier": "src/pages/Buro.tsx",
+   "ligne": 39,
+   "composant": "Buro"
+  },
+  {
+   "cible": "/buro",
+   "route": "/buro",
+   "libelle": null,
+   "fichier": "src/pages/Buro.tsx",
+   "ligne": 47,
+   "composant": "Buro"
+  },
+  {
+   "cible": "/entrer",
+   "route": "/entrer",
+   "libelle": "+ Entrer",
+   "fichier": "src/pages/Buro.tsx",
+   "ligne": 50,
+   "composant": "Buro"
+  },
+  {
+   "cible": "/point-zero",
+   "route": "/point-zero",
+   "libelle": null,
+   "fichier": "src/pages/Buro.tsx",
+   "ligne": 63,
+   "composant": "Buro"
+  },
+  {
+   "cible": "/entrer",
+   "route": "/entrer",
+   "libelle": null,
+   "fichier": "src/pages/Entrer.tsx",
+   "ligne": 18,
+   "composant": "Entrer"
+  },
+  {
+   "cible": "/buro",
+   "route": "/buro",
+   "libelle": "Ouvrir mon espace",
+   "fichier": "src/pages/Entrer.tsx",
+   "ligne": 23,
+   "composant": "Entrer"
+  },
+  {
+   "cible": "/point-zero",
+   "route": "/point-zero",
+   "libelle": "commencer au Point Zéro",
+   "fichier": "src/pages/Entrer.tsx",
+   "ligne": 23,
+   "composant": "Entrer"
+  },
+  {
+   "cible": "/buro",
+   "route": "/buro",
+   "libelle": null,
+   "fichier": "src/pages/Entrer.tsx",
+   "ligne": 25,
+   "composant": "Entrer"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/FicheReseau.tsx",
+   "ligne": 98,
+   "composant": "FicheExemple"
+  },
+  {
+   "cible": "/point-zero?q=",
+   "route": "/point-zero",
+   "libelle": "Commencer au Point Zéro",
+   "fichier": "src/pages/FicheReseau.tsx",
+   "ligne": 103,
+   "composant": "FicheExemple"
+  },
+  {
+   "cible": "/reseau",
+   "route": "/reseau",
+   "libelle": "Tout le Réseau",
+   "fichier": "src/pages/FicheReseau.tsx",
+   "ligne": 111,
+   "composant": "FicheExemple"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/FicheReseau.tsx",
+   "ligne": 112,
+   "composant": "FicheExemple"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/FicheReseau.tsx",
+   "ligne": 137,
+   "composant": "Demander"
+  },
+  {
+   "cible": "/reseau",
+   "route": "/reseau",
+   "libelle": "Retour au Réseau",
+   "fichier": "src/pages/FicheReseau.tsx",
+   "ligne": 163,
+   "composant": "FicheProfil"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/FicheReseau.tsx",
+   "ligne": 166,
+   "composant": "FicheProfil"
+  },
+  {
+   "cible": "/reseau",
+   "route": "/reseau",
+   "libelle": "Réseau",
+   "fichier": "src/pages/FicheReseau.tsx",
+   "ligne": 204,
+   "composant": "FicheReseau"
+  },
+  {
+   "cible": "/reseau",
+   "route": "/reseau",
+   "libelle": "Réseau",
+   "fichier": "src/pages/FicheReseau.tsx",
+   "ligne": 206,
+   "composant": "FicheReseau"
+  },
+  {
+   "cible": "/reseau",
+   "route": "/reseau",
+   "libelle": "Retour au Réseau",
+   "fichier": "src/pages/FicheReseau.tsx",
+   "ligne": 207,
+   "composant": "FicheReseau"
+  },
+  {
+   "cible": "/moments",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 180,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/point-zero?q=Nous%20nous%20marions",
+   "route": "/point-zero",
+   "libelle": "Créer la page de notre union",
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 184,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/reseau?domaine=mariage",
+   "route": "/reseau",
+   "libelle": "Tous les prestataires",
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 188,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 194,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": "Ouvrir le Studio",
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 200,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/studio/boutique",
+   "route": "/studio",
+   "libelle": "Les patrons à broder",
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 200,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/#invites",
+   "route": "/",
+   "libelle": null,
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 216,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/boutique",
+   "route": "/boutique",
+   "libelle": "Toute la boutique",
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 223,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/buro",
+   "route": "/buro",
+   "libelle": "Ouvrir mon espace",
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 237,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": "Ouvrir le Studio",
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 237,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/a-plus",
+   "route": "/a-plus",
+   "libelle": "Découvrir A+",
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 244,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": null,
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 251,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/moments/",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "ligne": 272,
+   "composant": "LeMondeAime"
+  },
+  {
+   "cible": "/moments",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 79,
+   "composant": "TousLesMoments"
+  },
+  {
+   "cible": "/moments/",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 149,
+   "composant": "Ligne"
+  },
+  {
+   "cible": "/musique#moment-",
+   "route": "/musique",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 168,
+   "composant": "SegmentMusique"
+  },
+  {
+   "cible": "/point-zero?q=Nous%20nous%20marions",
+   "route": "/point-zero",
+   "libelle": "Commencer mon union",
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 183,
+   "composant": "Aside"
+  },
+  {
+   "cible": "/moments/support?pour=",
+   "route": "/moments",
+   "libelle": "Version imprimable",
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 195,
+   "composant": "Aside"
+  },
+  {
+   "cible": "/moments",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 212,
+   "composant": "UnMoment"
+  },
+  {
+   "cible": "/moments#",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 215,
+   "composant": "UnMoment"
+  },
+  {
+   "cible": "/moments#etape-",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 215,
+   "composant": "UnMoment"
+  },
+  {
+   "cible": "/moments/",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 223,
+   "composant": "UnMoment"
+  },
+  {
+   "cible": "/moments/",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 232,
+   "composant": "UnMoment"
+  },
+  {
+   "cible": "/moments#",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 233,
+   "composant": "UnMoment"
+  },
+  {
+   "cible": "/moments#",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 233,
+   "composant": "UnMoment"
+  },
+  {
+   "cible": "/moments/",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 234,
+   "composant": "UnMoment"
+  },
+  {
+   "cible": "/moments",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 244,
+   "composant": "Introuvable"
+  },
+  {
+   "cible": "/moments",
+   "route": "/moments",
+   "libelle": "Voir les moments",
+   "fichier": "src/pages/Moments.tsx",
+   "ligne": 248,
+   "composant": "Introuvable"
+  },
+  {
+   "cible": "/reseau",
+   "route": "/reseau",
+   "libelle": "Voir le Réseau",
+   "fichier": "src/pages/MonProfil.tsx",
+   "ligne": 137,
+   "composant": "MonProfil"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/MonProfil.tsx",
+   "ligne": 143,
+   "composant": "MonProfil"
+  },
+  {
+   "cible": "/reseau",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/MonProfil.tsx",
+   "ligne": 143,
+   "composant": "MonProfil"
+  },
+  {
+   "cible": "/musique",
+   "route": "/musique",
+   "libelle": null,
+   "fichier": "src/pages/Musique.tsx",
+   "ligne": 22,
+   "composant": "Musique"
+  },
+  {
+   "cible": "/musique",
+   "route": "/musique",
+   "libelle": null,
+   "fichier": "src/pages/Musique.tsx",
+   "ligne": 29,
+   "composant": "Musique"
+  },
+  {
+   "cible": "/moments?lecture=musique#",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/Musique.tsx",
+   "ligne": 37,
+   "composant": "Musique"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": null,
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 16,
+   "composant": "FEEDS"
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": null,
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 16,
+   "composant": "FEEDS"
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": null,
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 16,
+   "composant": "FEEDS"
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": null,
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 16,
+   "composant": "FEEDS"
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": null,
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 16,
+   "composant": "FEEDS"
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": null,
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 16,
+   "composant": "FEEDS"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": null,
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 79,
+   "composant": "PointZero"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": null,
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 79,
+   "composant": "PointZero"
+  },
+  {
+   "cible": "/point-zero",
+   "route": "/point-zero",
+   "libelle": null,
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 84,
+   "composant": "PointZero"
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": "Point Zéro : importer une image ou un PDF dans le Studio",
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 111,
+   "composant": "PointZero"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": null,
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 157,
+   "composant": "PointZero"
+  },
+  {
+   "cible": "/studio/atelier",
+   "route": "/studio",
+   "libelle": null,
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 157,
+   "composant": "PointZero"
+  },
+  {
+   "cible": "/entrer",
+   "route": "/entrer",
+   "libelle": "+ Entrer",
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 159,
+   "composant": "PointZero"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/Reseau.tsx",
+   "ligne": 12,
+   "composant": null
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/Reseau.tsx",
+   "ligne": 23,
+   "composant": "Reseau"
+  },
+  {
+   "cible": "/reseau/",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/Reseau.tsx",
+   "ligne": 25,
+   "composant": "Reseau"
+  },
+  {
+   "cible": "/reseau",
+   "route": "/reseau",
+   "libelle": null,
+   "fichier": "src/pages/Reseau.tsx",
+   "ligne": 32,
+   "composant": "Reseau"
+  },
+  {
+   "cible": "/buro?lieu=profil",
+   "route": "/buro",
+   "libelle": "Mon profil",
+   "fichier": "src/pages/Reseau.tsx",
+   "ligne": 37,
+   "composant": "Reseau"
+  },
+  {
+   "cible": "/entrer",
+   "route": "/entrer",
+   "libelle": "+ Entrer pour rejoindre le Réseau",
+   "fichier": "src/pages/Reseau.tsx",
+   "ligne": 37,
+   "composant": "Reseau"
+  },
+  {
+   "cible": "/a-plus",
+   "route": "/a-plus",
+   "libelle": null,
+   "fichier": "src/pages/Simples.tsx",
+   "ligne": 8,
+   "composant": "APlus"
+  },
+  {
+   "cible": "/point-zero",
+   "route": "/point-zero",
+   "libelle": "Commencer au Point Zéro",
+   "fichier": "src/pages/Simples.tsx",
+   "ligne": 13,
+   "composant": "APlus"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": "Revenir à l’accueil",
+   "fichier": "src/pages/Simples.tsx",
+   "ligne": 28,
+   "composant": "Introuvable"
+  },
+  {
+   "cible": "/#unions",
+   "route": "/",
+   "libelle": "voir les unions",
+   "fichier": "src/pages/Simples.tsx",
+   "ligne": 28,
+   "composant": "Introuvable"
+  },
+  {
+   "cible": "/systeme-nerveux",
+   "route": "/systeme-nerveux",
+   "libelle": null,
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "ligne": 46,
+   "composant": "SystemeNerveux"
+  },
+  {
+   "cible": "/systeme-nerveux",
+   "route": "/systeme-nerveux",
+   "libelle": null,
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "ligne": 92,
+   "composant": "AccesInspection"
+  },
+  {
+   "cible": "/blob/",
+   "route": "/blob",
+   "libelle": null,
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "ligne": 171,
+   "composant": "InspectionNoeud"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": null,
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "ligne": 171,
+   "composant": "InspectionNoeud"
+  },
+  {
+   "cible": "/systeme-nerveux?noeud=",
+   "route": "/systeme-nerveux",
+   "libelle": "Voir sur la carte",
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "ligne": 202,
+   "composant": "Parcours"
+  },
+  {
+   "cible": "/moments/support?pour=",
+   "route": "/moments",
+   "libelle": null,
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "ligne": 231,
+   "composant": "Causalite"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": null,
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "ligne": 246,
+   "composant": "Inventaire"
+  },
+  {
+   "cible": "/blob/",
+   "route": "/blob",
+   "libelle": null,
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "ligne": 254,
+   "composant": "Inventaire"
+  },
+  {
+   "cible": "/",
+   "route": "/",
+   "libelle": null,
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "ligne": 254,
+   "composant": "Inventaire"
+  }
+ ],
+ "docks": [
+  {
+   "fichier": "src/pages/APropos.tsx",
+   "tete": true,
+   "verbes": true,
+   "dockBas": 1,
+   "dockBasLieux": false,
+   "dockBasContenuPropre": 0,
+   "modes": [],
+   "pied": true
+  },
+  {
+   "fichier": "src/pages/Boutique.tsx",
+   "tete": true,
+   "verbes": true,
+   "dockBas": 1,
+   "dockBasLieux": true,
+   "dockBasContenuPropre": 0,
+   "modes": [],
+   "pied": true
+  },
+  {
+   "fichier": "src/pages/Buro.tsx",
+   "tete": true,
+   "verbes": false,
+   "dockBas": 1,
+   "dockBasLieux": false,
+   "dockBasContenuPropre": 1,
+   "modes": [],
+   "pied": true
+  },
+  {
+   "fichier": "src/pages/Entrer.tsx",
+   "tete": true,
+   "verbes": false,
+   "dockBas": 0,
+   "dockBasLieux": false,
+   "dockBasContenuPropre": 0,
+   "modes": [],
+   "pied": true
+  },
+  {
+   "fichier": "src/pages/FicheReseau.tsx",
+   "tete": true,
+   "verbes": true,
+   "dockBas": 1,
+   "dockBasLieux": false,
+   "dockBasContenuPropre": 0,
+   "modes": [],
+   "pied": true
+  },
+  {
+   "fichier": "src/pages/LeMondeAime.tsx",
+   "tete": true,
+   "verbes": true,
+   "dockBas": 1,
+   "dockBasLieux": true,
+   "dockBasContenuPropre": 0,
+   "modes": [
+    "jourj"
+   ],
+   "pied": true
+  },
+  {
+   "fichier": "src/pages/Moments.tsx",
+   "tete": true,
+   "verbes": true,
+   "dockBas": 2,
+   "dockBasLieux": false,
+   "dockBasContenuPropre": 2,
+   "modes": [],
+   "pied": true
+  },
+  {
+   "fichier": "src/pages/MonProfil.tsx",
+   "tete": false,
+   "verbes": false,
+   "dockBas": 0,
+   "dockBasLieux": false,
+   "dockBasContenuPropre": 0,
+   "modes": [],
+   "pied": false
+  },
+  {
+   "fichier": "src/pages/Musique.tsx",
+   "tete": true,
+   "verbes": true,
+   "dockBas": 1,
+   "dockBasLieux": true,
+   "dockBasContenuPropre": 0,
+   "modes": [],
+   "pied": true
+  },
+  {
+   "fichier": "src/pages/PointZero.tsx",
+   "tete": true,
+   "verbes": true,
+   "dockBas": 1,
+   "dockBasLieux": false,
+   "dockBasContenuPropre": 0,
+   "modes": [],
+   "pied": true
+  },
+  {
+   "fichier": "src/pages/Reseau.tsx",
+   "tete": true,
+   "verbes": true,
+   "dockBas": 1,
+   "dockBasLieux": false,
+   "dockBasContenuPropre": 0,
+   "modes": [],
+   "pied": true
+  },
+  {
+   "fichier": "src/pages/Simples.tsx",
+   "tete": true,
+   "verbes": true,
+   "dockBas": 1,
+   "dockBasLieux": false,
+   "dockBasContenuPropre": 0,
+   "modes": [],
+   "pied": true
+  },
+  {
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "tete": true,
+   "verbes": true,
+   "dockBas": 1,
+   "dockBasLieux": true,
+   "dockBasContenuPropre": 0,
+   "modes": [],
+   "pied": true
+  }
+ ],
+ "appels": [
+  {
+   "api": "/api/buro",
+   "fichier": "src/lib/buro.ts",
+   "ligne": 4
+  },
+  {
+   "api": "/api/buro",
+   "fichier": "src/lib/buro.ts",
+   "ligne": 8
+  },
+  {
+   "api": "/api/auth",
+   "fichier": "src/lib/cles.ts",
+   "ligne": 4
+  },
+  {
+   "api": "/api/auth",
+   "fichier": "src/lib/cles.ts",
+   "ligne": 20
+  },
+  {
+   "api": "/api/musique",
+   "fichier": "src/lib/musique.ts",
+   "ligne": 21
+  },
+  {
+   "api": "/api/musique",
+   "fichier": "src/lib/musique.ts",
+   "ligne": 22
+  },
+  {
+   "api": "/api/musique",
+   "fichier": "src/lib/musique.ts",
+   "ligne": 23
+  },
+  {
+   "api": "/api/musique",
+   "fichier": "src/lib/musique.ts",
+   "ligne": 24
+  },
+  {
+   "api": "/api/musique",
+   "fichier": "src/lib/musique.ts",
+   "ligne": 25
+  },
+  {
+   "api": "/api/musique",
+   "fichier": "src/lib/musique.ts",
+   "ligne": 38
+  },
+  {
+   "api": "/api/reseau",
+   "fichier": "src/lib/reseau.ts",
+   "ligne": 14
+  },
+  {
+   "api": "/api/reseau",
+   "fichier": "src/lib/reseau.ts",
+   "ligne": 15
+  },
+  {
+   "api": "/api/reseau",
+   "fichier": "src/lib/reseau.ts",
+   "ligne": 16
+  },
+  {
+   "api": "/api/reseau",
+   "fichier": "src/lib/reseau.ts",
+   "ligne": 17
+  },
+  {
+   "api": "/api/reseau",
+   "fichier": "src/lib/reseau.ts",
+   "ligne": 18
+  },
+  {
+   "api": "/api/reseau",
+   "fichier": "src/lib/reseau.ts",
+   "ligne": 19
+  },
+  {
+   "api": "/api/reseau",
+   "fichier": "src/lib/reseau.ts",
+   "ligne": 20
+  },
+  {
+   "api": "/api/orbe",
+   "fichier": "src/lib/reseau.ts",
+   "ligne": 21
+  },
+  {
+   "api": "/api/reseau",
+   "fichier": "src/lib/reseau.ts",
+   "ligne": 22
+  },
+  {
+   "api": "/api/auth",
+   "fichier": "src/lib/session.ts",
+   "ligne": 9
+  },
+  {
+   "api": "/api/auth",
+   "fichier": "src/lib/session.ts",
+   "ligne": 27
+  },
+  {
+   "api": "/api/auth",
+   "fichier": "src/lib/session.ts",
+   "ligne": 49
+  },
+  {
+   "api": "/api/auth",
+   "fichier": "src/lib/session.ts",
+   "ligne": 54
+  },
+  {
+   "api": "/api/fournisseurs",
+   "fichier": "src/lib/session.ts",
+   "ligne": 63
+  },
+  {
+   "api": "/api/auth",
+   "fichier": "src/lib/session.ts",
+   "ligne": 69
+  },
+  {
+   "api": "/api/analyse",
+   "fichier": "src/pages/PointZero.tsx",
+   "ligne": 40
+  },
+  {
+   "api": "/api/systeme",
+   "fichier": "src/pages/SystemeNerveux.tsx",
+   "ligne": 33
+  }
+ ],
+ "serveur": [
+  {
+   "fichier": "api/_auth/auth.mjs",
+   "route": null,
+   "methodes": [],
+   "actions": [],
+   "parametres": [
+    "callbackURL",
+    "token"
+   ],
+   "tables": [
+    "ouvrages",
+    "profils",
+    "space_members",
+    "spaces"
+   ],
+   "ecrit": [
+    "ouvrages",
+    "profils",
+    "space_members",
+    "spaces"
+   ],
+   "session": true,
+   "quotas": [],
+   "configuration": true
+  },
+  {
+   "fichier": "api/analyse.mjs",
+   "route": "/api/analyse",
+   "methodes": [
+    "GET",
+    "OPTIONS",
+    "POST"
+   ],
+   "actions": [],
+   "parametres": [],
+   "tables": [],
+   "ecrit": [],
+   "session": false,
+   "quotas": [],
+   "configuration": true
+  },
+  {
+   "fichier": "api/buro.mjs",
+   "route": "/api/buro",
+   "methodes": [
+    "GET",
+    "POST"
+   ],
+   "actions": [
+    "maj"
+   ],
+   "parametres": [],
+   "tables": [
+    "space_members",
+    "spaces"
+   ],
+   "ecrit": [
+    "space_members",
+    "spaces"
+   ],
+   "session": true,
+   "quotas": [],
+   "configuration": false
+  },
+  {
+   "fichier": "api/comptes.mjs",
+   "route": "/api/comptes",
+   "methodes": [
+    "POST"
+   ],
+   "actions": [],
+   "parametres": [
+    "__chemin",
+    "__lien",
+    "token"
+   ],
+   "tables": [],
+   "ecrit": [],
+   "session": false,
+   "quotas": [
+    "lien:ip"
+   ],
+   "configuration": false
+  },
+  {
+   "fichier": "api/fournisseurs.mjs",
+   "route": "/api/fournisseurs",
+   "methodes": [],
+   "actions": [],
+   "parametres": [],
+   "tables": [],
+   "ecrit": [],
+   "session": false,
+   "quotas": [],
+   "configuration": false
+  },
+  {
+   "fichier": "api/musique.mjs",
+   "route": "/api/musique",
+   "methodes": [
+    "GET",
+    "POST"
+   ],
+   "actions": [
+    "ajouter",
+    "moment",
+    "retirer"
+   ],
+   "parametres": [
+    "envoi",
+    "extrait",
+    "q",
+    "ref"
+   ],
+   "tables": [
+    "musiques",
+    "profils"
+   ],
+   "ecrit": [
+    "musiques"
+   ],
+   "session": true,
+   "quotas": [
+    "envoi:personne",
+    "musique:ip"
+   ],
+   "configuration": true
+  },
+  {
+   "fichier": "api/orbe.mjs",
+   "route": "/api/orbe",
+   "methodes": [
+    "GET",
+    "POST"
+   ],
+   "actions": [],
+   "parametres": [],
+   "tables": [
+    "profils",
+    "reseau_dates",
+    "reseau_questions"
+   ],
+   "ecrit": [
+    "reseau_questions"
+   ],
+   "session": false,
+   "quotas": [],
+   "configuration": true
+  },
+  {
+   "fichier": "api/ouvrages.mjs",
+   "route": "/api/ouvrages",
+   "methodes": [
+    "GET",
+    "POST"
+   ],
+   "actions": [
+    "supprimer"
+   ],
+   "parametres": [],
+   "tables": [
+    "ouvrages",
+    "space_members",
+    "spaces"
+   ],
+   "ecrit": [
+    "ouvrages",
+    "space_members",
+    "spaces"
+   ],
+   "session": true,
+   "quotas": [],
+   "configuration": false
+  },
+  {
+   "fichier": "api/reseau.mjs",
+   "route": "/api/reseau",
+   "methodes": [
+    "GET",
+    "POST"
+   ],
+   "actions": [
+    "dates",
+    "demande",
+    "demande-lue"
+   ],
+   "parametres": [],
+   "tables": [
+    "profils",
+    "reseau_dates",
+    "reseau_demandes",
+    "reseau_questions",
+    "spaces",
+    "user"
+   ],
+   "ecrit": [
+    "profils",
+    "reseau_dates",
+    "reseau_demandes"
+   ],
+   "session": true,
+   "quotas": [
+    "demande:personne"
+   ],
+   "configuration": false
+  },
+  {
+   "fichier": "api/systeme.mjs",
+   "route": "/api/systeme",
+   "methodes": [
+    "GET"
+   ],
+   "actions": [],
+   "parametres": [],
+   "tables": [],
+   "ecrit": [],
+   "session": false,
+   "quotas": [],
+   "configuration": true
+  }
+ ],
+ "stockages": [
+  {
+   "cle": "aime-selection",
+   "fichier": "src/lib/boutique.ts"
+  },
+  {
+   "cle": "aime-mon-confort",
+   "fichier": "src/lib/confort.ts"
+  },
+  {
+   "cle": "aime-metamorphose",
+   "fichier": "src/lib/metamorphose.ts"
+  }
+ ],
+ "evenements": [
+  {
+   "nom": "aime:confort",
+   "fichier": "src/lib/confort.ts",
+   "sens": "emet"
+  },
+  {
+   "nom": "aime:confort",
+   "fichier": "src/lib/confort.ts",
+   "sens": "ecoute"
+  },
+  {
+   "nom": "play",
+   "fichier": "src/lib/lecteur.ts",
+   "sens": "ecoute"
+  },
+  {
+   "nom": "pause",
+   "fichier": "src/lib/lecteur.ts",
+   "sens": "ecoute"
+  },
+  {
+   "nom": "timeupdate",
+   "fichier": "src/lib/lecteur.ts",
+   "sens": "ecoute"
+  },
+  {
+   "nom": "ended",
+   "fichier": "src/lib/lecteur.ts",
+   "sens": "ecoute"
+  },
+  {
+   "nom": "aime:metamorphose",
+   "fichier": "src/lib/metamorphose.ts",
+   "sens": "emet"
+  },
+  {
+   "nom": "aime:metamorphose",
+   "fichier": "src/lib/metamorphose.ts",
+   "sens": "ecoute"
+  },
+  {
+   "nom": "popstate",
+   "fichier": "src/lib/router.tsx",
+   "sens": "ecoute"
+  }
+ ],
+ "tests": {
+  "serveur": [
+   {
+    "fichier": "tests/server/analyse.test.mjs",
+    "tests": [
+     "analyse : fermée sans clé, origine contrôlée, réponse nettoyée",
+     "nettoyer : domaine inconnu devient projet, sujet identique ignoré"
+    ]
+   },
+   {
+    "fichier": "tests/server/buro.test.mjs",
+    "tests": [
+     "nettoyerProjet : titre requis, briques connues et sans doublon, au plus 20",
+     "buro : fermé sans base (503), écriture d’un autre site refusée (403)",
+     "comptes : /api/auth/<chemin> reconstruit depuis la réécriture Vercel",
+     "fournisseurs : rien d’ouvert sans base, Google seulement avec ses deux variables",
+     "lien e-mail : le jeton passe dans le chemin, puis redevient la vérification Better Auth",
+     "lien e-mail coupé (sans jeton) : retour à « Entrer », pas une erreur brute",
+     "ouvrages : un ouvrage de l’atelier est vérifié avant d’entrer dans le compte",
+     "ouvrages : fermé sans base (503), écriture d’un autre site refusée (403)"
+    ]
+   },
+   {
+    "fichier": "tests/server/cartographie.test.mjs",
+    "tests": [
+     "la carte est vraie : chaque point, chaque lien, chaque test existe dans le dépôt",
+     "l’inventaire committé est celui du code (relancer node cartographie/scanner.mjs)",
+     "la lecture publique ne montre ni fichier, ni test, ni donnée technique",
+     "inspection : fermée sans compte, refusée sans autorisation, jamais de secret",
+     "le premier parcours va du dock du haut à une donnée, chaque étape reliée aux précédentes",
+     "les doublons signalés sont tirés du code, et rien n’est retiré",
+     "causalité : décaler un moment suit les prérequis, sans rien modifier ni envoyer"
+    ]
+   },
+   {
+    "fichier": "tests/server/musique.test.mjs",
+    "tests": [
+     "lireLien : Deezer reconnu, autres plateformes gardées comme liens, http refusé",
+     "deDeezer : jamais l’adresse de l’extrait, pochette seulement depuis Deezer",
+     "musique : extrait mal formé refusé, écriture d’un autre site refusée",
+     "fichierOk : seulement notre stockage et le dossier de la personne"
+    ]
+   },
+   {
+    "fichier": "tests/server/orbe.test.mjs",
+    "tests": [
+     "lireDate : formats français, année suivante quand le jour est passé, dates impossibles refusées",
+     "repondreLocal : les dates du calendrier, les prestations, jamais un tarif inventé",
+     "nettoyerProfil : prestations, liens et tarif bornés ; un lien invalide refusé",
+     "nettoyerDemande et jourOk",
+     "orbe : la consigne ne parle que de la fiche ; sans base, fermé ; question vide refusée"
+    ]
+   },
+   {
+    "fichier": "tests/server/programme.test.mjs",
+    "tests": [
+     "200 moments, numérotés dans l’ordre, identifiants uniques",
+     "les dix étapes de la Grille 200, dans l’ordre, avec leurs effectifs",
+     "les identifiants de la Grille 200 sont conservés",
+     "une seule union : Camille & Gabriel, aucun reste de l’ancienne partition",
+     "chaque description est propre au moment",
+     "lieux, métiers, responsables et prérequis renvoient à des entrées qui existent",
+     "tous les métiers : chacun des métiers de la taxonomie tient ou peut tenir au moins un moment",
+     "le Jour J se lit dans l’ordre des heures, de 06:00 au lever du jour",
+     "/musique : ses dix moments couvrent tout le Jour J, dans l’ordre",
+     "les huit photos du Jour J sont raccordées à un moment, à la même heure",
+     "les chiffres affichés sont comptés, jamais recopiés",
+     "le patron d’un moment est stable et ne brode qu’avec ses voix",
+     "les personnes : chacune retrouve ses moments",
+     "aucune donnée personnelle ni projet réel : le programme est marqué comme démonstration",
+     "la recherche trouve par titre, lieu, métier et personne, sans accents ni casse",
+     "la Grille 200 de référence et le programme d’une union restent distincts",
+     "le support imprimable : chacun ses moments, et seulement les champs autorisés"
+    ]
+   },
+   {
+    "fichier": "tests/server/reseau.test.mjs",
+    "tests": [
+     "nettoyerProfil : nom et métier requis, caché par défaut, site en https",
+     "reseau : fermé sans base (503), écriture d’un autre site refusée (403)",
+     "exemples du Réseau : chaque brique existe, chaque « travaille avec » mène à un exemple, chaque photo existe"
+    ]
+   }
+  ],
+  "e2e": [
+   {
+    "fichier": "tests/e2e/moments.py",
+    "tests": [
+     "bandeau : 10 étapes",
+     "liste : 200 moments",
+     "dock : un seul repère, pas de doublon du bandeau",
+     "lecture Musique : 10 bandeaux = /musique",
+     "onglets au clavier",
+     "recherche « piscine » : %d moments",
+     "recherche « malik alliances » : 3 moments",
+     "tout afficher",
+     "filtre personne/métier : DJ 31",
+     "dock du moment : précédent, position, suivant (pas les onglets)",
+     "suivant garde la lecture",
+     "mobile : pas de défilement horizontal de la page",
+     "mobile : bandeau défilant",
+     "mobile : l’étape choisie arrive à l’écran (%d)",
+     "mobile : le dock indique l’étape",
+     "mobile : le bandeau allume l’étape",
+     "mobile : moment sans débordement",
+     "impression %s : aucun élément interactif",
+     "/musique : 10 moments",
+     "/musique : 10 liens vers le programme",
+     "/musique : mes morceaux affichés",
+     "/musique : écouter toute la journée",
+     "/musique : ajouter un morceau par moment",
+     "/musique → programme, lecture Musique",
+     "le morceau apparaît aussi dans le programme",
+     "accueil : diapo raccordée et bande des étapes",
+     "aucune erreur dans la console"
+    ]
+   },
+   {
+    "fichier": "tests/e2e/navigation.py",
+    "tests": [
+     "dock du haut : la loupe ouvre la recherche",
+     "recherche : « musique » mène à /musique sans recharger",
+     "routeur : la page est ajoutée à l’historique",
+     "dock du bas : les lieux de /musique sont ses dix moments",
+     "dock du bas : un lieu fait défiler la page sans revenir en haut",
+     "dock du bas : le cercle ouvre ses modes (Navigation, Musique)",
+     "dock du bas, mode Musique : fichiers de l’appareil et lien vers la journée en musique",
+     "ajouter un morceau : la recherche interroge /api/musique?q",
+     "ajouter un morceau : POST /api/musique { action: ajouter, deezer, moment }",
+     "ajout : la réponse du serveur apparaît dans le bon moment",
+     "ajout : l’identité ne part jamais dans le corps (le serveur la lit dans la session)",
+     "dock du haut : le rond du profil ouvre les dossiers de l’espace",
+     "orbe : choisir une orbe enregistre Mon confort sur l’appareil",
+     "retour : la flèche revient en arrière (ici, à l’accueil)",
+     "aucune erreur dans la console"
+    ]
+   },
+   {
+    "fichier": "tests/e2e/preuves.py",
+    "tests": []
+   },
+   {
+    "fichier": "tests/e2e/systeme.py",
+    "tests": [
+     "carte : six familles sur une branche",
+     "carte : un point par nœud du modèle",
+     "lecture publique : aucun fichier ni test affiché",
+     "sélection : la fiche du point s’ouvre",
+     "sélection : les connexions apparaissent (%d)",
+     "lecture publique : modules et tests réservés à l’inspection",
+     "fiche : un lien mène au point voisin",
+     "parcours : chaque étape avec son état",
+     "parcours : l’écriture en base reste annoncée « à vérifier »",
+     "causalité : la chaîne des conséquences, notifications annoncées comme prévues",
+     "causalité : avancer ne repousse personne",
+     "lecture publique : pas d’inventaire",
+     "inspection sans compte : entrer d’abord, rien d’autre",
+     "inspection refusée : la lecture publique reste",
+     "inspection : modules, données et tests du point",
+     "inspection : l’audit des doublons, une ligne par fonction",
+     "inspection : points d’entrée et preuves des parcours",
+     "mobile : pas de défilement horizontal",
+     "mobile : la fiche s’ouvre au-dessus du dock du bas",
+     "aucune erreur dans la console"
+    ]
+   }
+  ],
+  "studio": []
+ }
+}

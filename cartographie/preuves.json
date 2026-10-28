@@ -1,0 +1,574 @@
+{
+ "tests/e2e/moments.py": {
+  "date": "2026-10-28",
+  "commit": "35661e3",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "aperçu local (vite preview), API simulées",
+  "resultats": [
+   {
+    "test": "bandeau : 10 étapes",
+    "ok": true
+   },
+   {
+    "test": "liste : 200 moments",
+    "ok": true
+   },
+   {
+    "test": "dock : un seul repère, pas de doublon du bandeau",
+    "ok": true
+   },
+   {
+    "test": "liste, lecture Musique",
+    "ok": true
+   },
+   {
+    "test": "lecture Musique : 10 bandeaux = /musique",
+    "ok": true
+   },
+   {
+    "test": "liste, lecture Métiers",
+    "ok": true
+   },
+   {
+    "test": "liste, lecture Patron",
+    "ok": true
+   },
+   {
+    "test": "liste, lecture Personnes",
+    "ok": true
+   },
+   {
+    "test": "liste, lecture Chronologie",
+    "ok": true
+   },
+   {
+    "test": "onglets au clavier",
+    "ok": true
+   },
+   {
+    "test": "recherche « piscine » : 42 moments",
+    "ok": true
+   },
+   {
+    "test": "recherche « malik alliances » : 3 moments",
+    "ok": true
+   },
+   {
+    "test": "tout afficher",
+    "ok": true
+   },
+   {
+    "test": "filtre personne/métier : DJ 31",
+    "ok": true
+   },
+   {
+    "test": "moment, lecture Chronologie",
+    "ok": true
+   },
+   {
+    "test": "moment, lecture Musique",
+    "ok": true
+   },
+   {
+    "test": "moment, lecture Métiers",
+    "ok": true
+   },
+   {
+    "test": "moment, lecture Patron",
+    "ok": true
+   },
+   {
+    "test": "moment, lecture Personnes",
+    "ok": true
+   },
+   {
+    "test": "dock du moment : précédent, position, suivant (pas les onglets)",
+    "ok": true
+   },
+   {
+    "test": "suivant garde la lecture",
+    "ok": true
+   },
+   {
+    "test": "mobile : pas de défilement horizontal de la page",
+    "ok": true
+   },
+   {
+    "test": "mobile : bandeau défilant",
+    "ok": true
+   },
+   {
+    "test": "mobile : l’étape choisie arrive à l’écran (209)",
+    "ok": true
+   },
+   {
+    "test": "mobile : le dock indique l’étape",
+    "ok": true
+   },
+   {
+    "test": "mobile : le bandeau allume l’étape",
+    "ok": true
+   },
+   {
+    "test": "mobile : moment sans débordement",
+    "ok": true
+   },
+   {
+    "test": "impression tous : aucun élément interactif",
+    "ok": true
+   },
+   {
+    "test": "impression tous : A4 (5 pages)",
+    "ok": true
+   },
+   {
+    "test": "impression maries : aucun élément interactif",
+    "ok": true
+   },
+   {
+    "test": "impression maries : A4 (6 pages)",
+    "ok": true
+   },
+   {
+    "test": "impression dj : aucun élément interactif",
+    "ok": true
+   },
+   {
+    "test": "impression dj : A4 (2 pages)",
+    "ok": true
+   },
+   {
+    "test": "/musique : 10 moments",
+    "ok": true
+   },
+   {
+    "test": "/musique : 10 liens vers le programme",
+    "ok": true
+   },
+   {
+    "test": "/musique : mes morceaux affichés",
+    "ok": true
+   },
+   {
+    "test": "/musique : écouter toute la journée",
+    "ok": true
+   },
+   {
+    "test": "/musique : ajouter un morceau par moment",
+    "ok": true
+   },
+   {
+    "test": "/musique → programme, lecture Musique",
+    "ok": true
+   },
+   {
+    "test": "le morceau apparaît aussi dans le programme",
+    "ok": true
+   },
+   {
+    "test": "accueil : diapo raccordée et bande des étapes",
+    "ok": true
+   },
+   {
+    "test": "aucune erreur dans la console",
+    "ok": true
+   }
+  ]
+ },
+ "tests/e2e/navigation.py": {
+  "date": "2026-10-28",
+  "commit": "35661e3",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "aperçu local (vite preview), API simulées",
+  "resultats": [
+   {
+    "test": "dock du haut : la loupe ouvre la recherche",
+    "ok": true
+   },
+   {
+    "test": "recherche : « musique » mène à /musique sans recharger",
+    "ok": true
+   },
+   {
+    "test": "routeur : la page est ajoutée à l’historique",
+    "ok": true
+   },
+   {
+    "test": "dock du bas : les lieux de /musique sont ses dix moments",
+    "ok": true
+   },
+   {
+    "test": "dock du bas : un lieu fait défiler la page sans revenir en haut",
+    "ok": true
+   },
+   {
+    "test": "dock du bas : le cercle ouvre ses modes (Navigation, Musique)",
+    "ok": true
+   },
+   {
+    "test": "dock du bas, mode Musique : fichiers de l’appareil et lien vers la journée en musique",
+    "ok": true
+   },
+   {
+    "test": "ajouter un morceau : la recherche interroge /api/musique?q",
+    "ok": true
+   },
+   {
+    "test": "ajouter un morceau : POST /api/musique { action: ajouter, deezer, moment }",
+    "ok": true
+   },
+   {
+    "test": "ajout : la réponse du serveur apparaît dans le bon moment",
+    "ok": true
+   },
+   {
+    "test": "ajout : l’identité ne part jamais dans le corps (le serveur la lit dans la session)",
+    "ok": true
+   },
+   {
+    "test": "dock du haut : le rond du profil ouvre les dossiers de l’espace",
+    "ok": true
+   },
+   {
+    "test": "orbe : choisir une orbe enregistre Mon confort sur l’appareil",
+    "ok": true
+   },
+   {
+    "test": "retour : la flèche revient en arrière (ici, à l’accueil)",
+    "ok": true
+   },
+   {
+    "test": "aucune erreur dans la console",
+    "ok": true
+   }
+  ]
+ },
+ "tests/e2e/systeme.py": {
+  "date": "2026-10-28",
+  "commit": "35661e3",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "aperçu local (vite preview), autorisation simulée",
+  "resultats": [
+   {
+    "test": "carte : six familles sur une branche",
+    "ok": true
+   },
+   {
+    "test": "carte : un point par nœud du modèle",
+    "ok": true
+   },
+   {
+    "test": "lecture publique : aucun fichier ni test affiché",
+    "ok": true
+   },
+   {
+    "test": "sélection : la fiche du point s’ouvre",
+    "ok": true
+   },
+   {
+    "test": "sélection : les connexions apparaissent (6)",
+    "ok": true
+   },
+   {
+    "test": "lecture publique : modules et tests réservés à l’inspection",
+    "ok": true
+   },
+   {
+    "test": "fiche : un lien mène au point voisin",
+    "ok": true
+   },
+   {
+    "test": "parcours : chaque étape avec son état",
+    "ok": true
+   },
+   {
+    "test": "parcours : l’écriture en base reste annoncée « à vérifier »",
+    "ok": true
+   },
+   {
+    "test": "causalité : la chaîne des conséquences, notifications annoncées comme prévues",
+    "ok": true
+   },
+   {
+    "test": "causalité : avancer ne repousse personne",
+    "ok": true
+   },
+   {
+    "test": "lecture publique : pas d’inventaire",
+    "ok": true
+   },
+   {
+    "test": "inspection sans compte : entrer d’abord, rien d’autre",
+    "ok": true
+   },
+   {
+    "test": "inspection refusée : la lecture publique reste",
+    "ok": true
+   },
+   {
+    "test": "inspection : modules, données et tests du point",
+    "ok": false
+   },
+   {
+    "test": "inspection : l’audit des doublons, une ligne par fonction",
+    "ok": true
+   },
+   {
+    "test": "inspection : points d’entrée et preuves des parcours",
+    "ok": true
+   },
+   {
+    "test": "mobile : pas de défilement horizontal",
+    "ok": true
+   },
+   {
+    "test": "mobile : la fiche s’ouvre au-dessus du dock du bas",
+    "ok": true
+   },
+   {
+    "test": "aucune erreur dans la console",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/analyse.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "35661e3",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "analyse : fermée sans clé, origine contrôlée, réponse nettoyée",
+    "ok": true
+   },
+   {
+    "test": "nettoyer : domaine inconnu devient projet, sujet identique ignoré",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/buro.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "35661e3",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "nettoyerProjet : titre requis, briques connues et sans doublon, au plus 20",
+    "ok": true
+   },
+   {
+    "test": "buro : fermé sans base (503), écriture d’un autre site refusée (403)",
+    "ok": true
+   },
+   {
+    "test": "comptes : /api/auth/<chemin> reconstruit depuis la réécriture Vercel",
+    "ok": true
+   },
+   {
+    "test": "fournisseurs : rien d’ouvert sans base, Google seulement avec ses deux variables",
+    "ok": true
+   },
+   {
+    "test": "lien e-mail : le jeton passe dans le chemin, puis redevient la vérification Better Auth",
+    "ok": true
+   },
+   {
+    "test": "lien e-mail coupé (sans jeton) : retour à « Entrer », pas une erreur brute",
+    "ok": true
+   },
+   {
+    "test": "ouvrages : un ouvrage de l’atelier est vérifié avant d’entrer dans le compte",
+    "ok": true
+   },
+   {
+    "test": "ouvrages : fermé sans base (503), écriture d’un autre site refusée (403)",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/cartographie.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "35661e3",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "la carte est vraie : chaque point, chaque lien, chaque test existe dans le dépôt",
+    "ok": true
+   },
+   {
+    "test": "l’inventaire committé est celui du code (relancer node cartographie/scanner.mjs)",
+    "ok": true
+   },
+   {
+    "test": "la lecture publique ne montre ni fichier, ni test, ni donnée technique",
+    "ok": true
+   },
+   {
+    "test": "inspection : fermée sans compte, refusée sans autorisation, jamais de secret",
+    "ok": true
+   },
+   {
+    "test": "le premier parcours va du dock du haut à une donnée, chaque étape reliée aux précédentes",
+    "ok": true
+   },
+   {
+    "test": "les doublons signalés sont tirés du code, et rien n’est retiré",
+    "ok": true
+   },
+   {
+    "test": "causalité : décaler un moment suit les prérequis, sans rien modifier ni envoyer",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/musique.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "35661e3",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "lireLien : Deezer reconnu, autres plateformes gardées comme liens, http refusé",
+    "ok": true
+   },
+   {
+    "test": "deDeezer : jamais l’adresse de l’extrait, pochette seulement depuis Deezer",
+    "ok": true
+   },
+   {
+    "test": "musique : extrait mal formé refusé, écriture d’un autre site refusée",
+    "ok": true
+   },
+   {
+    "test": "fichierOk : seulement notre stockage et le dossier de la personne",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/orbe.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "35661e3",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "lireDate : formats français, année suivante quand le jour est passé, dates impossibles refusées",
+    "ok": true
+   },
+   {
+    "test": "repondreLocal : les dates du calendrier, les prestations, jamais un tarif inventé",
+    "ok": true
+   },
+   {
+    "test": "nettoyerProfil : prestations, liens et tarif bornés ; un lien invalide refusé",
+    "ok": true
+   },
+   {
+    "test": "nettoyerDemande et jourOk",
+    "ok": true
+   },
+   {
+    "test": "orbe : la consigne ne parle que de la fiche ; sans base, fermé ; question vide refusée",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/programme.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "35661e3",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "200 moments, numérotés dans l’ordre, identifiants uniques",
+    "ok": true
+   },
+   {
+    "test": "les dix étapes de la Grille 200, dans l’ordre, avec leurs effectifs",
+    "ok": true
+   },
+   {
+    "test": "les identifiants de la Grille 200 sont conservés",
+    "ok": true
+   },
+   {
+    "test": "une seule union : Camille & Gabriel, aucun reste de l’ancienne partition",
+    "ok": true
+   },
+   {
+    "test": "chaque description est propre au moment",
+    "ok": true
+   },
+   {
+    "test": "lieux, métiers, responsables et prérequis renvoient à des entrées qui existent",
+    "ok": true
+   },
+   {
+    "test": "tous les métiers : chacun des métiers de la taxonomie tient ou peut tenir au moins un moment",
+    "ok": true
+   },
+   {
+    "test": "le Jour J se lit dans l’ordre des heures, de 06:00 au lever du jour",
+    "ok": true
+   },
+   {
+    "test": "/musique : ses dix moments couvrent tout le Jour J, dans l’ordre",
+    "ok": true
+   },
+   {
+    "test": "les huit photos du Jour J sont raccordées à un moment, à la même heure",
+    "ok": true
+   },
+   {
+    "test": "les chiffres affichés sont comptés, jamais recopiés",
+    "ok": true
+   },
+   {
+    "test": "le patron d’un moment est stable et ne brode qu’avec ses voix",
+    "ok": true
+   },
+   {
+    "test": "les personnes : chacune retrouve ses moments",
+    "ok": true
+   },
+   {
+    "test": "aucune donnée personnelle ni projet réel : le programme est marqué comme démonstration",
+    "ok": true
+   },
+   {
+    "test": "la recherche trouve par titre, lieu, métier et personne, sans accents ni casse",
+    "ok": true
+   },
+   {
+    "test": "la Grille 200 de référence et le programme d’une union restent distincts",
+    "ok": true
+   },
+   {
+    "test": "le support imprimable : chacun ses moments, et seulement les champs autorisés",
+    "ok": true
+   }
+  ]
+ },
+ "tests/server/reseau.test.mjs": {
+  "date": "2026-10-28",
+  "commit": "35661e3",
+  "code_modifie_depuis_le_commit": true,
+  "environnement": "node --test, sans base ni clé",
+  "resultats": [
+   {
+    "test": "nettoyerProfil : nom et métier requis, caché par défaut, site en https",
+    "ok": true
+   },
+   {
+    "test": "reseau : fermé sans base (503), écriture d’un autre site refusée (403)",
+    "ok": true
+   },
+   {
+    "test": "exemples du Réseau : chaque brique existe, chaque « travaille avec » mène à un exemple, chaque photo existe",
+    "ok": true
+   }
+  ]
+ }
+}

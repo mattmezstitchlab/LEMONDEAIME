@@ -1,0 +1,696 @@
+{
+ "titre": "Le système nerveux de LE MONDE AIME",
+ "perimetre": "Première branche : les docks et la navigation, jusqu'à la page /musique, sa fonctionnalité « ajouter un morceau » et sa donnée. Les autres sujets viendront un par un.",
+ "familles": [
+  {
+   "id": "interfaces",
+   "nom": "Interfaces",
+   "texte": "Ce que l'on voit et touche : docks, blocs, pages."
+  },
+  {
+   "id": "actions",
+   "nom": "Actions",
+   "texte": "Ce que l'on fait : aller, chercher, ajouter, écouter."
+  },
+  {
+   "id": "moteurs",
+   "nom": "Moteurs",
+   "texte": "Ce qui exécute : routeur, confort, lecteur, session, fonctions serveur."
+  },
+  {
+   "id": "donnees",
+   "nom": "Données",
+   "texte": "Ce qui est gardé : sur l'appareil, en base, ou chez un tiers."
+  },
+  {
+   "id": "relations",
+   "nom": "Relations",
+   "texte": "Qui a le droit de quoi : visiteur, personne connectée, inspection."
+  },
+  {
+   "id": "evenements",
+   "nom": "Événements",
+   "texte": "Ce qui circule entre les parties, ou circulera."
+  }
+ ],
+ "parcours": [
+  {
+   "id": "premier",
+   "nom": "Du dock du haut à la donnée",
+   "texte": "Le premier parcours réel : on cherche « musique » depuis le dock du haut, on arrive sur la journée en musique, le dock du bas montre ses moments, on ajoute un morceau, la demande part au serveur, qui l'enregistre.",
+   "etapes": [
+    "dock-haut",
+    "bloc-recherche",
+    "naviguer",
+    "routeur",
+    "page-musique",
+    "dock-bas",
+    "ajouter-morceau",
+    "api-musique",
+    "table-musiques"
+   ]
+  }
+ ],
+ "noeuds": [
+  {
+   "id": "dock-haut",
+   "famille": "interfaces",
+   "nom": "Dock du haut",
+   "fonction": "En haut de chaque page : retour, orbe, AIME®, les rubriques, la loupe et le rond du profil. L'orbe, la loupe et le profil ouvrent le même bloc vers le bas.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "verbes",
+   "famille": "interfaces",
+   "nom": "Rubriques du dock du haut",
+   "fonction": "Unions, Prestataires, Studio, Boutique : des mots, toujours les mêmes, au centre du dock du haut.",
+   "pages": [
+    "*"
+   ],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "bloc-aime",
+   "famille": "interfaces",
+   "nom": "Orbe : menu et Mon confort",
+   "fonction": "L'orbe ouvre le menu (accueil, à propos, déconnexion) et le choix de l'orbe : chaque orbe règle la taille du texte, l'espacement, le contraste, le mouvement et les sons.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "bloc-recherche",
+   "famille": "interfaces",
+   "nom": "Loupe : chercher et plan du site",
+   "fonction": "Chercher dans tout AIME sans quitter la page : les pages, le Réseau, les briques. Sans rien taper, c'est le plan du site.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "bloc-espace",
+   "famille": "interfaces",
+   "nom": "Rond du profil : l'espace",
+   "fonction": "Sans compte : entrer dans AIME sans quitter la page. Avec un compte : les dossiers de l'espace (projets, partagés, archives, profil).",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "dock-bas",
+   "famille": "interfaces",
+   "nom": "Dock du bas",
+   "fonction": "En bas de chaque page : le cercle progresse avec la lecture ; ses modes changent le dock (Navigation, Musique, et ceux qu'apporte la page).",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "mode-navigation",
+   "famille": "interfaces",
+   "nom": "Dock du bas · Navigation",
+   "fonction": "Les sections de la page, et celle où l'on se trouve.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "mode-musique",
+   "famille": "interfaces",
+   "nom": "Dock du bas · Musique",
+   "fonction": "Écouter sans quitter la page : les fichiers choisis sur l'appareil, ou les extraits lancés depuis le site ; un lien vers la journée en musique.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "pied",
+   "famille": "interfaces",
+   "nom": "Pied de page",
+   "fonction": "Le plan du site en quatre colonnes, en bas de chaque page.",
+   "pages": [
+    "*"
+   ],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "page-musique",
+   "famille": "interfaces",
+   "nom": "La journée en musique",
+   "fonction": "Les dix moments du Jour J, dans l'ordre, avec les morceaux de chacun. La playlist est la timeline.",
+   "pages": [
+    "/musique"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "page-moments",
+   "famille": "interfaces",
+   "nom": "Les 200 moments",
+   "fonction": "L'aperçu global du programme : dix étapes, cinq lectures, une recherche, un support imprimable.",
+   "pages": [
+    "/moments"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "page-systeme",
+   "famille": "interfaces",
+   "nom": "Le système nerveux",
+   "fonction": "Cette page : la carte de ce qui fonctionne, ce qui reste à vérifier et ce qui fait doublon.",
+   "pages": [
+    "/systeme-nerveux"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "naviguer",
+   "famille": "actions",
+   "nom": "Aller à une page",
+   "fonction": "Un lien interne change de page sans recharger le site, et garde la position pour le retour.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "revenir",
+   "famille": "actions",
+   "nom": "Revenir",
+   "fonction": "La flèche du dock du haut revient là où l'on était ; sans historique, elle mène à l'accueil.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "choisir-orbe",
+   "famille": "actions",
+   "nom": "Choisir son orbe",
+   "fonction": "Un geste règle tout le site pour soi, sur cet appareil.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "ajouter-morceau",
+   "famille": "actions",
+   "nom": "Ajouter un morceau",
+   "fonction": "Chercher un titre (extrait de 30 secondes), coller un lien d'une autre plateforme ou envoyer sa propre création, puis le ranger dans un moment du Jour J.",
+   "pages": [
+    "/musique"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "ecouter-extrait",
+   "famille": "actions",
+   "nom": "Écouter un extrait",
+   "fonction": "Lire les 30 secondes d'un morceau : l'adresse de l'extrait est demandée au moment de jouer, jamais gardée.",
+   "pages": [
+    "*"
+   ],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "chercher-moment",
+   "famille": "actions",
+   "nom": "Chercher un moment",
+   "fonction": "Retrouver un moment par son titre, son lieu, un métier ou une personne, sans accents ni majuscules.",
+   "pages": [
+    "/moments"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "routeur",
+   "famille": "moteurs",
+   "nom": "Routeur du site",
+   "fonction": "Sert chaque adresse, garde l'historique et la position de lecture, sans bibliothèque.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "routeur-studio",
+   "famille": "moteurs",
+   "nom": "Routeur du Studio",
+   "fonction": "Le Studio est une application à part, avec son propre routeur.",
+   "pages": [
+    "/studio/*"
+   ],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "confort",
+   "famille": "moteurs",
+   "nom": "Mon confort",
+   "fonction": "Applique la taille, l'espacement, le contraste, le mouvement et les sons à tout le site, et prévient chaque partie quand ils changent.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "lecteur",
+   "famille": "moteurs",
+   "nom": "Lecteur de musique",
+   "fonction": "Une seule file de lecture pour tout le site : extraits et fichiers de l'appareil, précédent, suivant, pause.",
+   "pages": [
+    "*"
+   ],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "session",
+   "famille": "moteurs",
+   "nom": "Session",
+   "fonction": "Sait qui est connecté, à partir du cookie vérifié par le serveur ; l'identité ne vient jamais du navigateur.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "api-musique",
+   "famille": "moteurs",
+   "nom": "Fonction serveur Musique",
+   "fonction": "Cherche les morceaux, donne l'extrait au moment de jouer, enregistre, range et retire les morceaux de la personne connectée.",
+   "pages": [
+    "/musique",
+    "/moments"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "programme-outils",
+   "famille": "moteurs",
+   "nom": "Programme et ses lectures",
+   "fonction": "Une seule source pour les 200 moments : chronologie, musique, métiers, patron, personnes, recherche, support imprimable.",
+   "pages": [
+    "/",
+    "/moments",
+    "/musique"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "prefs-confort",
+   "famille": "donnees",
+   "nom": "Réglages Mon confort",
+   "fonction": "Les réglages de confort, gardés sur l'appareil seulement, vus par personne d'autre.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "fichiers-appareil",
+   "famille": "donnees",
+   "nom": "Fichiers de l'appareil",
+   "fonction": "Les morceaux choisis depuis le dock du bas restent sur l'appareil : rien n'est envoyé.",
+   "pages": [
+    "*"
+   ],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "extraits-deezer",
+   "famille": "donnees",
+   "nom": "Extraits de 30 secondes",
+   "fonction": "Lus chez Deezer, qui en garde les droits ; jamais copiés ni gardés ici.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "table-musiques",
+   "famille": "donnees",
+   "nom": "Les morceaux de chacun",
+   "fonction": "Les morceaux qu'une personne a ajoutés, rangés par moment ; chacun ne lit et ne modifie que les siens.",
+   "pages": [
+    "/musique",
+    "/moments"
+   ],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "session-compte",
+   "famille": "donnees",
+   "nom": "Compte et session",
+   "fonction": "Le compte et la session, gérés par le service d'authentification ; le site ne voit jamais de mot de passe.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "programme",
+   "famille": "donnees",
+   "nom": "Grille 200 de référence",
+   "fonction": "Les 200 moments de l'union d'exemple : un fichier statique, jamais modifié par une union.",
+   "pages": [
+    "/",
+    "/moments",
+    "/musique"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "visiteur",
+   "famille": "relations",
+   "nom": "Visiteur",
+   "fonction": "Lit tout ce qui est public, écoute les extraits, règle son confort ; n'écrit rien sur le serveur.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "personne-connectee",
+   "famille": "relations",
+   "nom": "Personne connectée",
+   "fonction": "Ajoute, range et retire ses propres morceaux ; son identité vient de la session, jamais de la requête.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "inspection",
+   "famille": "relations",
+   "nom": "Inspection",
+   "fonction": "Lit la carte complète : modules, données, tests, doublons. Réservée aux personnes autorisées par le serveur.",
+   "pages": [
+    "/systeme-nerveux"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "evt-confort",
+   "famille": "evenements",
+   "nom": "Le confort a changé",
+   "fonction": "Quand une orbe est choisie, chaque dock et chaque page se règlent aussitôt, sans recharger.",
+   "pages": [
+    "*"
+   ],
+   "etat": "a-verifier"
+  },
+  {
+   "id": "evt-adresse",
+   "famille": "evenements",
+   "nom": "L'adresse a changé",
+   "fonction": "Retour, avance ou lien de section : le routeur suit l'adresse ; un lien de section ne ramène plus en haut.",
+   "pages": [
+    "*"
+   ],
+   "etat": "verifie"
+  },
+  {
+   "id": "notifications",
+   "famille": "evenements",
+   "nom": "Prévenir les personnes concernées",
+   "fonction": "Quand un moment change, prévenir les métiers et les personnes qu'il concerne.",
+   "pages": [],
+   "etat": "prevu"
+  }
+ ],
+ "liens": [
+  {
+   "de": "dock-haut",
+   "vers": "verbes",
+   "nature": "contient",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "dock-haut",
+   "vers": "bloc-aime",
+   "nature": "ouvre",
+   "etat": "verifie"
+  },
+  {
+   "de": "dock-haut",
+   "vers": "bloc-recherche",
+   "nature": "ouvre",
+   "etat": "verifie"
+  },
+  {
+   "de": "dock-haut",
+   "vers": "bloc-espace",
+   "nature": "ouvre",
+   "etat": "verifie"
+  },
+  {
+   "de": "dock-haut",
+   "vers": "revenir",
+   "nature": "declenche",
+   "etat": "verifie"
+  },
+  {
+   "de": "bloc-aime",
+   "vers": "choisir-orbe",
+   "nature": "declenche",
+   "etat": "verifie"
+  },
+  {
+   "de": "choisir-orbe",
+   "vers": "confort",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "confort",
+   "vers": "prefs-confort",
+   "nature": "ecrit",
+   "etat": "verifie"
+  },
+  {
+   "de": "confort",
+   "vers": "evt-confort",
+   "nature": "emet",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "evt-confort",
+   "vers": "dock-bas",
+   "nature": "previent",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "evt-confort",
+   "vers": "dock-haut",
+   "nature": "previent",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "bloc-recherche",
+   "vers": "naviguer",
+   "nature": "declenche",
+   "etat": "verifie"
+  },
+  {
+   "de": "verbes",
+   "vers": "naviguer",
+   "nature": "declenche",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "pied",
+   "vers": "naviguer",
+   "nature": "declenche",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "naviguer",
+   "vers": "routeur",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "revenir",
+   "vers": "routeur",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "routeur",
+   "vers": "evt-adresse",
+   "nature": "ecoute",
+   "etat": "verifie"
+  },
+  {
+   "de": "routeur",
+   "vers": "page-musique",
+   "nature": "affiche",
+   "etat": "verifie"
+  },
+  {
+   "de": "routeur",
+   "vers": "page-moments",
+   "nature": "affiche",
+   "etat": "verifie"
+  },
+  {
+   "de": "page-musique",
+   "vers": "dock-bas",
+   "nature": "contient",
+   "etat": "verifie"
+  },
+  {
+   "de": "page-moments",
+   "vers": "dock-bas",
+   "nature": "contient",
+   "etat": "verifie"
+  },
+  {
+   "de": "dock-bas",
+   "vers": "mode-navigation",
+   "nature": "contient",
+   "etat": "verifie"
+  },
+  {
+   "de": "dock-bas",
+   "vers": "mode-musique",
+   "nature": "contient",
+   "etat": "verifie"
+  },
+  {
+   "de": "mode-musique",
+   "vers": "lecteur",
+   "nature": "appelle",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "mode-musique",
+   "vers": "page-musique",
+   "nature": "ouvre",
+   "etat": "verifie"
+  },
+  {
+   "de": "lecteur",
+   "vers": "fichiers-appareil",
+   "nature": "lit",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "page-musique",
+   "vers": "ajouter-morceau",
+   "nature": "declenche",
+   "etat": "verifie"
+  },
+  {
+   "de": "page-moments",
+   "vers": "chercher-moment",
+   "nature": "declenche",
+   "etat": "verifie"
+  },
+  {
+   "de": "chercher-moment",
+   "vers": "programme-outils",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "programme-outils",
+   "vers": "programme",
+   "nature": "lit",
+   "etat": "verifie"
+  },
+  {
+   "de": "page-musique",
+   "vers": "programme-outils",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "ajouter-morceau",
+   "vers": "api-musique",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "ecouter-extrait",
+   "vers": "api-musique",
+   "nature": "appelle",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "ecouter-extrait",
+   "vers": "lecteur",
+   "nature": "appelle",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "api-musique",
+   "vers": "session",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "session",
+   "vers": "session-compte",
+   "nature": "lit",
+   "etat": "verifie"
+  },
+  {
+   "de": "bloc-espace",
+   "vers": "session",
+   "nature": "appelle",
+   "etat": "verifie"
+  },
+  {
+   "de": "api-musique",
+   "vers": "table-musiques",
+   "nature": "ecrit",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "api-musique",
+   "vers": "extraits-deezer",
+   "nature": "lit",
+   "etat": "verifie"
+  },
+  {
+   "de": "personne-connectee",
+   "vers": "ajouter-morceau",
+   "nature": "autorise",
+   "etat": "verifie"
+  },
+  {
+   "de": "visiteur",
+   "vers": "ecouter-extrait",
+   "nature": "autorise",
+   "etat": "a-verifier"
+  },
+  {
+   "de": "inspection",
+   "vers": "page-systeme",
+   "nature": "autorise",
+   "etat": "verifie"
+  },
+  {
+   "de": "routeur",
+   "vers": "page-systeme",
+   "nature": "affiche",
+   "etat": "verifie"
+  },
+  {
+   "de": "api-musique",
+   "vers": "notifications",
+   "nature": "emet",
+   "etat": "prevu"
+  }
+ ]
+}
