@@ -2,3 +2,6 @@ node_modules
 dist
 .vercel
 .env*
+
+# archives personnelles : jamais dans le dépôt public
+*.zip
