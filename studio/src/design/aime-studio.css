@@ -1,0 +1,53 @@
+/*
+ * Le studio (l'atelier) sur le socle AIME, Jour et Nuit (html[data-aime-studio="jour"|"nuit"]) : le thème suit le Confort
+ * du Point (Clair → Jour, Sombre → Nuit, ou l'appareil) ; ?aime=jour|nuit pour forcer, ?aime=off pour revenir au Confort.
+ * Ne touche ni au Point (disque, noyau), ni au moteur 5D, ni au Cadre, ni à la toile dessinée par l'outil :
+ * seulement le chrome (dock du haut, menus, panneau Ouvrages, boutons du point zéro), et la typographie.
+ */
+@import "@fontsource-variable/inter-tight/index.css";
+
+/* la police seulement sur le chrome : jamais sur le Cadre ni la toile (leur mise en page reste celle de l'outil) */
+html[data-aime-studio] :is(.pzs-head, .pzs-bottom) { font-family: "Inter Tight Variable", "Inter Tight", "Inter", system-ui, sans-serif; }
+html[data-aime-studio] :is(.pzs-tool, .pzs-cercle, .pzs-parent, .pzs-fichier, .pzs-depot, .pzs-champ) { border-radius: 12px; }
+html[data-aime-studio] :is(.pzs-marque, .pzs-brand) { font-weight: 650; }
+html[data-aime-studio] .pzs-tool[data-on="1"] { font-weight: 600; }
+html[data-aime-studio] .pzs-top, html[data-aime-studio] .pzs-menu { border-radius: 20px; }
+
+/* ——— Jour : blanc et gris très clair (le studio d'aujourd'hui), ombres plus douces, graisses moyennes ——— */
+html[data-aime-studio="jour"] .pzs-top { border-color: rgba(10,10,11,.08); box-shadow: 0 14px 34px rgba(20,20,24,.10), 0 1px 2px rgba(20,20,24,.06); }
+html[data-aime-studio="jour"] .pzs-menu { border-color: rgba(10,10,11,.08); box-shadow: 0 24px 60px rgba(20,20,24,.14); }
+html[data-aime-studio="jour"] .pzs-tool:hover:not(:disabled) { background: #ececea; }
+
+/* ——— Nuit : noir doux, anthracite, blanc ——— */
+html[data-aime-studio="nuit"] .pz-embroidery-studio { color-scheme: dark; }
+html[data-aime-studio="nuit"] :is(.pzs-top, .pzs-menu) { background: #161618; color: #f4f4f2; border-color: rgba(255,255,255,.10); box-shadow: 0 18px 48px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05); }
+html[data-aime-studio="nuit"] .pzs-tool { background: transparent; color: #f4f4f2; }
+html[data-aime-studio="nuit"] .pzs-tool:hover:not(:disabled) { background: rgba(255,255,255,.08); }
+html[data-aime-studio="nuit"] .pzs-tool[data-on="1"] { border-color: #f4f4f2; }
+html[data-aime-studio="nuit"] :is(.pzs-tool, .pzs-menu button):focus-visible { outline-color: #8fb8ff; }
+html[data-aime-studio="nuit"] .pzs-count { color: #b5b5b1; }
+html[data-aime-studio="nuit"] .pzs-sep { background: rgba(255,255,255,.12); }
+html[data-aime-studio="nuit"] .pzs-up { border-color: rgba(255,255,255,.14); }
+html[data-aime-studio="nuit"] .pzs-parent, html[data-aime-studio="nuit"] .pzh-entrer { background: #f4f4f2 !important; color: #0a0a0b !important; }
+html[data-aime-studio="nuit"] .pzs-loupe { background: rgba(255,255,255,.08); }
+html[data-aime-studio="nuit"] .pzs-menu li button, html[data-aime-studio="nuit"] .pzs-bloc-menu :is(a, button), html[data-aime-studio="nuit"] .pzs-resultats button { color: #f4f4f2; }
+html[data-aime-studio="nuit"] .pzs-menu li button:hover, html[data-aime-studio="nuit"] .pzs-resultats button:hover { background: rgba(255,255,255,.08); }
+html[data-aime-studio="nuit"] .pzs-bloc-menu :is(a, button):hover { color: #b5b5b1; }
+html[data-aime-studio="nuit"] :is(.pzs-note, .pzs-resultats button > span:last-child, .pzs-fichier span:not(.pzs-fichier-image), .pzs-depot span) { color: #b5b5b1; }
+html[data-aime-studio="nuit"] .pzs-bloc-corps { border-top-color: rgba(255,255,255,.1); }
+html[data-aime-studio="nuit"] .pzs-champ { background: #1f1f22; color: #f4f4f2; border-color: #6a6a6e; }
+html[data-aime-studio="nuit"] .pzs-crumbs { background: rgba(22,22,24,.9); color: #d4d4d0; }
+html[data-aime-studio="nuit"] .pzs-dossiers button { background: transparent; color: #f4f4f2; border-color: rgba(255,255,255,.2); }
+html[data-aime-studio="nuit"] .pzs-dossiers button[aria-pressed="true"] { background: #f4f4f2; color: #0a0a0b; border-color: #f4f4f2; }
+html[data-aime-studio="nuit"] :is(.pzs-fichier, .pzs-depot) { background: #1f1f22; color: #f4f4f2; border-color: rgba(255,255,255,.1); }
+html[data-aime-studio="nuit"] :is(.pzs-fichier, .pzs-depot):hover { border-color: #f4f4f2; }
+html[data-aime-studio="nuit"] .pzs-fichier[aria-current="true"] { border-color: #f4f4f2; }
+html[data-aime-studio="nuit"] .pzs-depot { border-color: #6a6a6e; }
+html[data-aime-studio="nuit"] .pzs-depot.survol { background: #26262a; }
+/* le point zéro, au centre de la toile : ses étiquettes et ses boutons passent en anthracite */
+html[data-aime-studio="nuit"] .pz-point-zero p { background: rgba(22,22,24,.94); color: #f4f4f2; }
+html[data-aime-studio="nuit"] :is(.pz-point-zero-composer, .pz-point-zero-aide) { background: #161618; color: #f4f4f2; border-color: rgba(255,255,255,.16); }
+html[data-aime-studio="nuit"] .pzs-orbe { color: #f4f4f2; }
+html[data-aime-studio="nuit"] .pzs-orbe:hover { background: rgba(255,255,255,.08); }
+html[data-aime-studio="nuit"] .pzs-aide-bouton { background: transparent; color: #f4f4f2; border-color: rgba(255,255,255,.2); }
+html[data-aime-studio="nuit"] .pzs-crumbs :is(b, strong, a, span) { color: #f4f4f2; }

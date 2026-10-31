@@ -71,7 +71,8 @@ const button = (label: string) => container?.querySelector(`button[aria-label="$
 beforeEach(() => {
   localStorage.clear();
   localStorage.setItem("pointzero:workspace","embroidery");
-  localStorage.setItem("pointzero:visite-docks:v1","vue"); // la visite de l'orbe a ses propres tests (orbeGuide.test.tsx)
+  localStorage.setItem("pointzero:visite-docks:v1","vue"); // les visites du Point ont leurs propres tests (orbeGuide.test.tsx)
+  localStorage.setItem("pointzero:visite-buro:v1","vue");
   window.history.replaceState(null, "", "/");
 });
 afterEach(async () => {
@@ -107,19 +108,24 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     await click(used);
     expect(used?.getAttribute("aria-pressed")).toBe("true");
     await click(button("Ajouter ou rechercher un fil DMC"));
-    expect(dialog("Nuancier DMC")?.classList.contains("is-open")).toBe(true);
+    // le nuancier se déplie dans le dock du haut, plus dans un panneau à droite
+    expect(nav()?.querySelector("#dg-cherche-fil")).toBeTruthy();
+    expect(dialog("Nuancier DMC")).toBeFalsy();
     await click(button("Remonter d’un niveau"));
     expect(container?.querySelector('[aria-label="Fils du motif"]')).toBeNull();
   });
-  it("change le dock du bas depuis son cercle : Progression, puis retour aux repères", async () => {
+  it("change le dock du bas depuis le Point (mode Broderie) : Progression, puis retour aux repères", async () => {
     await mount();
     const cercle = () => bottom()?.querySelector(".pzs-cercle") as HTMLButtonElement | null;
+    const secteur = (id: string) => document.querySelector(`.lp-anneau [data-mode="${id}"]`) as HTMLButtonElement | null;
     await click(cercle());
     expect(cercle()?.getAttribute("aria-expanded")).toBe("true");
+    await click(secteur("broderie"));
     await click(inBottom("Progression"));
     expect(bottom()?.textContent).toContain("Rien à broder");
     expect(inBottom("Tout voir")).toBeUndefined();
     await click(cercle());
+    await click(secteur("broderie"));
     await click(inBottom("Repères"));
     expect(inBottom("Tout voir")).toBeTruthy();
   });
@@ -134,8 +140,8 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     await click(res);
     expect(container?.querySelector("#pzs-cherche")).toBeNull();
     expect(category("Gomme")?.getAttribute("aria-pressed")).toBe("true");
-    await click(button("Mes ouvrages, et inviter quelqu’un à rejoindre la grille"));
-    expect([...(container?.querySelectorAll(".pzs-bloc button") ?? [])].some(b => b.textContent === "+ Inviter à rejoindre la grille")).toBe(true);
+    await click(button("Mes ouvrages"));
+    expect([...(container?.querySelectorAll(".pzs-bloc button") ?? [])].some(b => b.textContent === "Partager en direct")).toBe(true);
     expect(container?.querySelector(".pzs-bloc .pzs-depot")).toBeTruthy();
   });
   it("ouvre et ferme le panneau Calques sans masquer la grille", async () => {
@@ -197,17 +203,18 @@ describe("POINTZERO : atelier unique sans assistant", () => {
   it("conserve l’outil actif et rend les autres accessibles en Débutant", async () => {
     await mount();
     await click(category("Dessiner"));
-    await click(category("Plus d’outils"));
+    // Dessiner déplie la grille de tous les points ; choisir la replie
+    expect(nav()?.querySelectorAll(".dg-case").length).toBeGreaterThan(15);
     await click(category("Quart"));
+    expect(nav()?.querySelector(".dg-case")).toBeNull();
+    await click(category("Tous les points"));
     expect(category("Quart")?.getAttribute("aria-pressed")).toBe("true");
     await click(container?.querySelector("#pzs-brand"));
     await click([...container!.querySelectorAll('[aria-label="Affichage du studio"] button')].find(b => b.textContent === "Débutant"));
-    await click(container?.querySelector("#pzs-brand"));
+    await click(category("Tous les points"));
     expect(category("Quart")?.getAttribute("aria-pressed")).toBe("true");
-    await click(button("Remonter d’un niveau"));
     expect(category("Remplir")).toBeUndefined();
     expect(category("Croix")).toBeTruthy();
-    expect(category("Plus d’outils")).toBeTruthy();
   });
 
   it("centralise la navigation et protège le redimensionnement", async () => {
@@ -216,6 +223,7 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     await click(category("Calques"));
     const sections=container!.querySelector(".pz-embroidery-right nav");
     expect([...sections!.querySelectorAll("button")].map(b=>b.textContent)).toEqual(["Calques","Motifs","Réglages"]);
+    await click(category("Tous les points"));
     await click(category("Réglages du dessin"));
     expect(container!.textContent).toContain("Redimensionner la grille");
     const confirm=vi.spyOn(window,"confirm").mockReturnValue(false);
@@ -225,13 +233,16 @@ describe("POINTZERO : atelier unique sans assistant", () => {
 
   it("relie le dock du bas au zoom et au recentrage, et le dock du haut à l’import et à l’export", async () => {
     await mount();
-    const send=vi.spyOn(window,"dispatchEvent");
-    await click(inBottom("Loupe : doubler le zoom de la zone visible"));
-    expect(send).toHaveBeenCalledWith(expect.objectContaining({detail:{action:"magnify"}}));
-    await click(inBottom("Zoomer"));
-    expect(send).toHaveBeenCalledWith(expect.objectContaining({detail:{action:"zoomIn"}}));
-    await click(inBottom("Dézoomer"));
-    expect(send).toHaveBeenCalledWith(expect.objectContaining({detail:{action:"zoomOut"}}));
+    vi.spyOn(window,"dispatchEvent");
+    // la loupe déplie un dock : la grille agrandie sous le pointeur, qui suit la case survolée
+    await click(inBottom("Loupe : la grille agrandie sous le pointeur"));
+    expect(container?.querySelector('[aria-label="Loupe : la grille agrandie sous le pointeur ou à la case choisie au clavier"][role="region"]')).toBeTruthy();
+    await act(async () => { window.dispatchEvent(new CustomEvent("pointzero:survol", { detail: { x: 12, y: 7 } })); });
+    expect(container?.querySelector(".pzs-loupe-dock")?.textContent).toContain("X 13 · Y 8");
+    await click(button("Fermer la loupe"));
+    expect(container?.querySelector(".pzs-loupe-dock")).toBeNull();
+    // plus de − et + dans le dock : le zoom se fait à la molette, aux touches + et −, ou à deux doigts
+    expect(inBottom("Zoomer")).toBeFalsy();
     await click(inBottom("Tout voir"));
     await click(category("Partager"));
     await click(category("Exporter"));
@@ -240,7 +251,7 @@ describe("POINTZERO : atelier unique sans assistant", () => {
 
   it("ouvre directement la préparation depuis l’accueil spécialisé", async () => {
     await mount(true);
-    const prepare = [...(container?.querySelectorAll("button") ?? [])].find(b => b.textContent?.includes("Préparer mes fils"));
+    const prepare = [...(container?.querySelectorAll("button") ?? [])].find(b => b.textContent === "Préparer");
     await click(prepare);
     expect(inspector()?.hasAttribute("hidden")).toBe(false);
     expect(inspector()?.textContent).toContain("Fils & toile");
@@ -294,17 +305,17 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     await click(category("Broder"));
     expect(category("Marquer")).toBeTruthy();
     expect(nav()?.querySelector('button[aria-label^="Fil actif"]')).toBeTruthy();
-    await click(category("Suivi"));
+    await click(category("Suivi de broderie"));
     expect(inspector()?.querySelector(".pz-embroidery-inline")).toBeTruthy();
     expect(inspector()?.textContent).toContain("Journal du projet");
     expect(dialog("Broder")?.classList.contains("is-open")).toBeFalsy();
     expect(window.location.hash).toBe("");
   });
-  it("garde le BurO et les Réglages dans le menu Point Zéro, et Exporter dans Partager", async () => {
+  it("garde les Réglages dans le menu Point Zéro (sans BurO), et Exporter dans Partager", async () => {
     await mount();
     await click(container?.querySelector("#pzs-brand"));
     const items=[...(container?.querySelectorAll("#pzs-menu button")??[])].map(b=>b.textContent);
-    expect(items).toContain("BurO");
+    expect(items).not.toContain("BurO");
     expect(items).toContain("Réglages et aide");
     await click([...(container?.querySelectorAll("#pzs-menu button")??[])].find(b=>b.textContent==="Réglages et aide"));
     expect(inspector()?.textContent).toContain("Confort et accessibilité");
@@ -312,25 +323,19 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     await click(category("Partager"));
     expect(category("Exporter")).toBeTruthy();
   });
-  it("ouvre le BurO : créer, importer et retrouver ses projets, avec des lieux en bas", async () => {
+  it("range les ouvrages dans le dock (plus de BurO) : nouvelle grille, import au point zéro", async () => {
     await mount();
-    await brandMenu("BurO");
-    expect(window.location.pathname).toBe("/buro");
-    expect(container?.querySelector("h1")?.textContent).toBe("BurO");
-    const top = () => container?.querySelector('nav[aria-label="Dock des actions du BurO"]');
-    const inTop = (name: string) => [...(top()?.querySelectorAll("button") ?? [])].find(b => b.textContent?.replace(/\d+$/, "") === name);
-    expect(["Créer","Rejoindre","Échanger"].every(name => inTop(name))).toBe(true);
-    const places = [...(container?.querySelectorAll('nav[aria-label="Lieux du BurO"] button') ?? [])].map(b => b.textContent?.replace(/\s*\d+$/, ""));
-    expect(places).toEqual(["Projets","Partagés avec moi","Archives"]);
-    await click(inTop("Créer"));
-    expect(["Grille vierge","Importer","Générer"].every(name => inTop(name))).toBe(true);
-    const picker = container!.querySelector<HTMLInputElement>('input[aria-label="Importer une image, un PDF ou un projet dans le BurO"]')!;
-    expect(picker.accept).toContain(".pdf"); expect(picker.accept).toContain(".oxs"); expect(picker.accept).toContain(".json"); expect(picker.accept).toContain("image/png");
-    const choose = vi.spyOn(picker, "click"); await click(inTop("Importer")); expect(choose).toHaveBeenCalled();
-    await click(button("Remonter d’un niveau"));
-    await click([...(container?.querySelectorAll('nav[aria-label="Lieux du BurO"] button') ?? [])].find(b => b.textContent?.startsWith("Partagés")));
-    expect(container?.textContent).toContain("Regarder un ouvrage en direct");
-    await click([...(container?.querySelectorAll("button") ?? [])].find(b => b.textContent === "Continuer →") ?? [...(container?.querySelectorAll("#buro-brand") ?? [])][0]);
+    expect(container?.querySelector('[data-guide="point-zero"]')).toBeTruthy();
+    const picker = container!.querySelector<HTMLInputElement>('input[aria-label="Importer une image, un PDF ou un projet"]')!;
+    const choose = vi.spyOn(picker, "click");
+    await click(button("Importer au point zéro : une image, un patron PDF ou un projet"));
+    expect(choose).toHaveBeenCalled();
+    await click(container?.querySelector(".pzs-ouvrages"));
+    expect(container?.textContent).toContain("Mes ouvrages");
+    expect(container?.textContent).not.toContain("Votre espace AIME");
+    await click([...(container?.querySelectorAll(".pzs-mini button") ?? [])].find(b => b.textContent === "+ Nouveau motif"));
+    expect(container?.querySelector('canvas[role="application"]')).toBeTruthy();
+    expect(container?.querySelector("h1")).toBeNull(); // on reste dans l'atelier
   });
   it("choisit la visibilité du projet dans Partager, avec son orbe et son mot", async () => {
     await mount();
@@ -340,7 +345,9 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     await click(category("Restreint"));
     expect(category("Restreint")?.getAttribute("aria-pressed")).toBe("true");
     expect(JSON.stringify(JSON.parse(localStorage.getItem("pointzero:visibilite") ?? "{}"))).toContain("restreint");
-    expect(bottom()?.textContent).toContain("Restreint");
+    // le dock du bas est réduit à l'essentiel : la visibilité se lit dans Partager, en haut
+    expect(bottom()?.textContent).not.toContain("Restreint");
+    expect([...(bottom()?.querySelectorAll("button") ?? [])].map(b => b.textContent?.trim()).filter(Boolean)).toEqual(["Symboles", "À plat", "Patron", "Réaliste", "Tout voir", "Loupe"]);
   });
   it("réutilise un seul panneau pour Fils, Suivi et Réglages, sans feuilles superposées", async () => {
     await mount();
@@ -349,7 +356,7 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     expect(inspector()?.textContent).toContain("Mon profil brodeuse");
     await click(button("Remonter d’un niveau"));
     await click(category("Broder"));
-    await click(category("Suivi"));
+    await click(category("Suivi de broderie"));
     expect(inspector()?.textContent).toContain("Journal du projet");
     await brandMenu("Réglages et aide");
     expect(inspector()?.textContent).toContain("Confort et accessibilité");
@@ -368,9 +375,10 @@ describe("POINTZERO : atelier unique sans assistant", () => {
   it("remonte d’un niveau avec Échap dans le dock", async () => {
     await mount();
     await click(category("Dessiner"));
-    await click(category("Plus d’outils"));
+    expect(nav()?.querySelector(".dg-case")).toBeTruthy();
     await act(async () => { nav()!.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })); });
-    expect(category("Plus d’outils")).toBeTruthy();
+    expect(nav()?.querySelector(".dg-case")).toBeNull();
+    expect(category("Tous les points")).toBeTruthy();
     await act(async () => { nav()!.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })); });
     expect(category("Partager")).toBeTruthy();
   });

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm ci --prefix ../../studio",
+  "buildCommand": "cd ../../studio && AIME_BASE=/ VITE_SITE=broderie VITE_POINTZERO_NAV0=1 npx vite build --outDir ../sites/point-zero/dist --emptyOutDir && cp ../sites/point-zero/dist/index.html ../sites/point-zero/dist/404.html",
+  "outputDirectory": "dist",
+  "cleanUrls": false,
+  "rewrites": [
+    {
+      "source": "/atelier",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tambour",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
+  ]
+}

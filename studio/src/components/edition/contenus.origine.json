@@ -1,0 +1,250 @@
+{
+  "histoire": {
+    "origine": {
+      "kicker": "01 · L’origine",
+      "titre": "Garance & indigo",
+      "sous": "Des couleurs qui traversent les siècles.",
+      "corps": "Avant les fils, il y eut des plantes, des voyages et des mains expertes : la racine de garance pour le rouge, les feuilles d’indigotier pour le bleu.",
+      "geste": "Passez la souris, le doigt, ou Tab puis les flèches : sous la loupe, l’image se brode, point par point, aux fils DMC.",
+      "media": {
+        "src": "images/histoire/reconstitution-pigments.webp",
+        "licence": "reconstitution",
+        "reconstitution": true,
+        "provenance": "",
+        "alt": "Reconstitution : poudres de garance et d’indigo, racines, feuilles et une étoffe imprimée, rendues en broderie",
+        "legende": "Reconstitution générée (pigments, racines, étoffe), brodée sous la loupe par la conversion du studio. Pas une photographie d’époque.",
+        "cadrage": {
+          "ordinateur": {
+            "x": 50,
+            "y": 50
+          },
+          "mobile": {
+            "x": 50,
+            "y": 50
+          }
+        }
+      }
+    },
+    "indiennes": {
+      "kicker": "02 · Les indiennes",
+      "titre": "Indiennes",
+      "sous": "Des étoffes venues d’Inde, un savoir-faire inégalé.",
+      "corps": "Peintes et imprimées sur coton, fixées par des mordants, elles portaient des rouges et des bleus qui résistaient au temps. L’Europe s’en éprend ; la France en interdit l’importation et la fabrication de 1686 à 1759.",
+      "rouge": {
+        "nom": "Garance",
+        "texte": "La racine de Rubia tinctorum. Un rouge qu’un mordant fixe sur le coton.",
+        "media": {
+          "src": "images/histoire/met-palampore-2010-337.webp",
+          "licence": "domaine-public",
+          "reconstitution": false,
+          "provenance": "The Metropolitan Museum of Art, 2010.337",
+          "alt": "Palampore de la côte de Coromandel : un grand arbre fleuri, rouges de garance et bleus",
+          "legende": "Palampore, côte de Coromandel (Inde), pour le marché sri-lankais, premier quart du XVIIIᵉ siècle. The Metropolitan Museum of Art, 2010.337, domaine public. Brodée sous la loupe par le studio.",
+          "cadrage": {
+            "ordinateur": {
+              "x": 50,
+              "y": 50
+            },
+            "mobile": {
+              "x": 50,
+              "y": 50
+            }
+          }
+        }
+      },
+      "bleu": {
+        "nom": "Indigo",
+        "texte": "Les feuilles de l’indigotier. Un bleu profond, posé autour de réserves qui protègent le fond.",
+        "media": {
+          "src": "images/histoire/met-reserve-bleue-40-128.webp",
+          "licence": "domaine-public",
+          "reconstitution": false,
+          "provenance": "The Metropolitan Museum of Art, 40.128",
+          "alt": "Panneau à réserve bleue : oiseaux et feuillages en bleus d’indigo",
+          "legende": "Panneau de rideau à réserve bleue, vers 1725–1775. The Met, 40.128, domaine public. Brodée sous la loupe par le studio.",
+          "cadrage": {
+            "ordinateur": {
+              "x": 50,
+              "y": 50
+            },
+            "mobile": {
+              "x": 50,
+              "y": 50
+            }
+          }
+        }
+      }
+    },
+    "mulhouse": {
+      "kicker": "03 · Mulhouse, 1746",
+      "titre": "Mulhouse",
+      "sous": "Une manufacture, un nouveau chapitre.",
+      "corps": "En 1746, Samuel Koechlin, Jean-Jacques Schmaltzer, Jean-Henri Dollfus et Jean-Jacques Feer lancent l’impression de cotonnades à la planche. La ville n’est pas encore française : une république alliée aux cantons suisses, qui rejoint la France en 1798. De la lignée Dollfus naîtra Dollfus-Mieg et Compagnie : DMC.",
+      "aparte": [
+        "1746",
+        "Mulhouse"
+      ],
+      "media": {
+        "src": "images/histoire/reconstitution-atelier.webp",
+        "licence": "reconstitution",
+        "reconstitution": true,
+        "provenance": "",
+        "alt": "Reconstitution : un artisan imprime une étoffe à la planche de bois",
+        "legende": "Reconstitution générée d’un atelier d’impression à la planche, brodée sous la loupe. Pas un document d’époque.",
+        "cadrage": {
+          "ordinateur": {
+            "x": 50,
+            "y": 50
+          },
+          "mobile": {
+            "x": 50,
+            "y": 50
+          }
+        }
+      }
+    },
+    "brodeuses": {
+      "kicker": "04 · Les brodeuses",
+      "titre": "Brodeuses",
+      "sous": "Des gestes transmis de génération en génération.",
+      "corps": "Elles ont fait vivre ces motifs, les ont adaptés, enseignés, enrichis. En 1884, Thérèse de Dillmont commence à travailler avec DMC ; en 1886 paraît son *Encyclopédie des ouvrages de dames*, qui diffuse les points bien au-delà de l’Alsace.",
+      "media": {
+        "src": "images/histoire/reconstitution-ouvrages.webp",
+        "licence": "reconstitution",
+        "reconstitution": true,
+        "provenance": "",
+        "alt": "Reconstitution : des ouvrages anciens ouverts sur des motifs brodés, des écheveaux et des ciseaux, rendus en broderie",
+        "legende": "Reconstitution générée (ouvrages, écheveaux), brodée sous la loupe. Couvertures et étiquettes imaginées.",
+        "cadrage": {
+          "ordinateur": {
+            "x": 50,
+            "y": 50
+          },
+          "mobile": {
+            "x": 50,
+            "y": 50
+          }
+        }
+      }
+    },
+    "sources": {
+      "titre": "Sources de cette séquence",
+      "liens": [
+        {
+          "libelle": "Palampore, 2010.337 — The Met",
+          "url": "https://www.metmuseum.org/art/collection/search/75909"
+        },
+        {
+          "libelle": "Curtain panel, blue-resist textile, 40.128 — The Met",
+          "url": "https://www.metmuseum.org/art/collection/search/13797"
+        },
+        {
+          "libelle": "Indienne — Wikipédia (mordants, garance, indigo ; interdiction 1686–1759)",
+          "url": "https://en.wikipedia.org/wiki/Indienne"
+        },
+        {
+          "libelle": "Mulhouse — Encyclopædia Universalis (1746, alliance suisse, réunion de 1798)",
+          "url": "https://www.universalis.fr/encyclopedie/mulhouse/"
+        },
+        {
+          "libelle": "Thérèse de Dillmont — Wikipédia (DMC dès 1884, Encyclopédie, 1886)",
+          "url": "https://en.wikipedia.org/wiki/Th%C3%A9r%C3%A8se_de_Dillmont"
+        }
+      ]
+    }
+  },
+  "rencontres": {
+    "structure": {
+      "titre": "La forme",
+      "question": "Ces étoffes répètent leurs motifs, encore et encore. Et vous, quelle forme aimeriez-vous donner à votre création ?",
+      "reaction": "{reponse} : votre création existe déjà. Elle vous suivra pendant toute la visite."
+    },
+    "trace": {
+      "titre": "Les lignes",
+      "question": "À Mulhouse, on gravait les motifs dans le bois, ligne après ligne. Quelles lignes pour la vôtre ?",
+      "reaction": "{reponse} : les lignes sont posées."
+    },
+    "echelle": {
+      "titre": "La finesse",
+      "question": "Les brodeuses choisissaient la finesse de leurs points. Grands aplats ou dentelle ?",
+      "reaction": "{reponse} : votre motif a trouvé sa finesse."
+    },
+    "palette": {
+      "titre": "Les couleurs",
+      "question": "Certaines couleurs traversent les siècles. Et vous, quelles couleurs aimeriez-vous retrouver dans votre création ?",
+      "reaction": "{reponse} : voilà, votre création vient de prendre ses couleurs."
+    },
+    "densite": {
+      "titre": "Le plein",
+      "question": "Dernier geste : laisser respirer la toile, ou la remplir ?",
+      "reaction": "{reponse} : votre rosace est complète. Elle vous attend, un peu plus bas."
+    }
+  },
+  "fils": {
+    "kicker": "05 · Aujourd’hui",
+    "titre": "489 fils, un seul geste.",
+    "chapeau": "Le même amour des couleurs, maintenant dans vos mains : explorez les fils du nuancier, famille par famille.",
+    "etapes": [
+      "Les fils apparaissent autour du centre",
+      "Une famille de couleurs",
+      "Ses nuances, du clair au foncé",
+      "Un numéro DMC"
+    ]
+  },
+  "rosace": {
+    "kicker": "06 · Créez maintenant",
+    "titreAvant": "Et si c’était votre rosace ?",
+    "titreApres": "Votre rosace naît.",
+    "legende": "Motif réel du moteur 5D, rendu à l’écran (simulation de broderie)."
+  },
+  "cadeau": {
+    "kicker": "07 · Le cadeau",
+    "titreFini": "Cette rosace est la vôtre.",
+    "orbeFini": "Vous venez de créer votre première rosace POINT ZÉRO. Nous vous l’offrons.",
+    "texteFini": "Vous pouvez la modifier, changer ses couleurs, la broder… ou simplement la conserver comme une création artistique.",
+    "titreEnCours": "Votre rosace vous attend.",
+    "orbeEnCours": "Il reste {n} choix. Vous pouvez les faire, ou me laisser choisir pour vous.",
+    "boutonReste": "Choisir pour moi les {n} restants",
+    "titreVide": "Et si nous imaginions la vôtre ?",
+    "orbeVide": "Ces motifs ont traversé les siècles. Cinq choix suffisent pour créer le vôtre.",
+    "boutonVide": "Choisir pour moi",
+    "usages": [
+      {
+        "titre": "Une œuvre à regarder",
+        "texte": "Vous ne brodez pas ? Ce n’est pas grave. Une rosace peut aussi être une œuvre à regarder, à partager, bientôt à exposer à la Galerie des Vivants."
+      },
+      {
+        "titre": "Un ouvrage à broder",
+        "texte": "Le jour où vous le souhaitez : son patron, ses fils DMC, ses symboles, le suivi de vos points."
+      }
+    ],
+    "note": "Ouverte dans l’atelier, votre rosace rejoint Mes ouvrages, enregistrée dans ce navigateur, sur cet appareil, sans compte. Elle peut disparaître en navigation privée, si les données du navigateur sont effacées, ou sur un autre appareil : pour la garder à coup sûr, téléchargez son projet (Exporter). Rien n’est publié sans votre accord."
+  },
+  "appareils": {
+    "ipad": {
+      "src": "images/ecrans/atelier-ipad-patron.webp",
+      "licence": "capture",
+      "reconstitution": false,
+      "provenance": "Capture de l’atelier Point Zéro",
+      "alt": "L’atelier Point Zéro sur iPad : une rosace en lecture Patron, symboles et grille",
+      "legende": ""
+    },
+    "ordinateur": {
+      "src": "images/ecrans/atelier-ordinateur.webp",
+      "licence": "capture",
+      "reconstitution": false,
+      "provenance": "Capture de l’atelier Point Zéro",
+      "alt": "L’atelier Point Zéro sur ordinateur : la rosace offerte dans son cadre, les docks de l’atelier",
+      "legende": ""
+    },
+    "iphone": {
+      "src": "images/ecrans/atelier-iphone-fils.webp",
+      "licence": "capture",
+      "reconstitution": false,
+      "provenance": "Capture de l’atelier Point Zéro",
+      "alt": "L’atelier sur iPhone : le Point du bloc ouvert sur les nuances DMC",
+      "legende": ""
+    },
+    "legende": "L’atelier, sur ordinateur, tablette et téléphone. Captures de l’atelier actuel."
+  }
+}

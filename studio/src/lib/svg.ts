@@ -61,7 +61,7 @@ export function patternToSvg(input: Pattern, options: SvgOptions = {}): SvgResul
   const gh = p.h * S;
   const symbolsOmitted = o.symbols && p.w * p.h > o.symbolLimit;
   const drawSymbols = o.symbols && !symbolsOmitted;
-  const paper = o.bw ? "#ffffff" : (p.fabric?.color ?? "#f7f2e8");
+  const paper = o.bw ? "#ffffff" : (p.fabric?.color ?? "#f3f3f1");
   const gridMinor = o.bw ? "rgba(30,30,30,0.16)" : "rgba(92,70,48,0.22)";
   const gridMajor = o.bw ? "rgba(20,20,20,0.55)" : "rgba(92,70,48,0.5)";
   const inkOf = (idx: number) => (o.bw ? "#141210" : contrastOn(FLOSS[idx]?.hex ?? "#ffffff"));

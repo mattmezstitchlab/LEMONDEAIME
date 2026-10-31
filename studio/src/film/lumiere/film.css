@@ -1,0 +1,114 @@
+/* LUMIERE — la page du film. Noir profond pendant le film ; le blanc AIME à la fin. */
+.lf { position: fixed; inset: 0; background: #020309; color: #f2f1f7; font-family: var(--aime-police, "Inter", system-ui, sans-serif); overflow: hidden; }
+.lf-cadre { position: absolute; inset: 0; }
+.lf-toile, .lf-calque { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.lf-barre { position: absolute; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; opacity: .82; transition: opacity .3s; }
+.lf-barre:hover, .lf-barre:focus-within { opacity: 1; }
+.lf-bouton { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.28); background: rgba(10,10,18,.55); color: #f2f1f7; font: inherit; font-size: .92rem; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.lf-bouton[aria-pressed="true"] { border-color: rgba(201,184,255,.8); }
+.lf-bouton:disabled { opacity: .4; cursor: default; }
+.lf-plein { background: #f4f2fb; color: #111; border-color: #f4f2fb; }
+.lf-bouton:focus-visible, .lf-lien:focus-visible { outline: 3px solid #c9b8ff; outline-offset: 2px; }
+.lf-lien { background: none; border: 0; color: #d9d6e6; font: inherit; font-size: .92rem; text-decoration: underline; cursor: pointer; padding: 8px 4px; min-height: 40px; }
+.lf-passer { position: relative; }
+.lf-sous-titre { position: absolute; left: 50%; bottom: calc(max(16px, env(safe-area-inset-bottom)) + 56px); transform: translateX(-50%); width: min(720px, calc(100% - 32px)); margin: 0; text-align: center; font-size: .95rem; line-height: 1.45; color: #ece9f6; text-shadow: 0 1px 8px rgba(0,0,0,.9); }
+.lf-sous-titre b { display: block; font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: #c9c3e0; margin-bottom: 2px; font-weight: 600; }
+
+.lf-accueil, .lf-texte, .lf-fixe { display: grid; place-items: center; overflow-y: auto; background: radial-gradient(ellipse at 50% 40%, #0d0c1c 0%, #020309 70%); }
+.lf-accueil-corps, .lf-texte-corps { width: min(640px, calc(100% - 32px)); padding: 48px 0; text-align: center; }
+.lf-point { display: block; width: 14px; height: 14px; margin: 0 auto 28px; border-radius: 50%; background: var(--aime-nacre, radial-gradient(circle at 32% 30%, #fff, #d9e8ff 22%, #c9b8ff 48%, #ffd6ec 72%, #b9f0e4)); box-shadow: 0 0 18px 4px rgba(201,184,255,.45), 0 0 60px 10px rgba(201,184,255,.15); }
+.lf-sur { margin: 0 0 8px; font-size: .78rem; letter-spacing: .2em; text-transform: uppercase; color: #b9b4cf; }
+.lf h1 { margin: 0 0 12px; font-weight: 500; font-size: clamp(1.9rem, 5vw, 3rem); letter-spacing: -.01em; }
+.lf h2 { margin: 18px 0 4px; font-weight: 600; font-size: 1.05rem; }
+.lf-chapeau { margin: 0 auto 28px; max-width: 46ch; color: #d8d5e6; line-height: 1.55; }
+.lf-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; margin-top: 20px; }
+.lf-note { margin: 18px 0 0; font-size: .82rem; color: #a7a3bc; }
+.lf-fichier { display: block; margin: 26px auto 0; max-width: 46ch; font-size: .82rem; color: #a7a3bc; }
+.lf-fichier input { display: block; margin: 8px auto 0; color: #d8d5e6; font: inherit; }
+.lf-texte ol { list-style: none; padding: 0; margin: 20px 0; text-align: left; }
+.lf-texte li p, .lf-fixe p { color: #d8d5e6; line-height: 1.6; margin: 0; }
+.lf-image { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 14px; margin: 14px 0 6px; background: #05060d; }
+.lf-fixe .lf-texte-corps { text-align: left; } .lf-fixe .lf-actions { justify-content: flex-start; }
+
+/* le contrôle de montage */
+.lf-controle { position: absolute; left: 16px; right: 16px; top: 14px; padding: 10px 14px 26px; border-radius: 14px; background: rgba(6,6,12,.72); backdrop-filter: blur(8px); font-size: .8rem; }
+.lf-mesure { margin: 0 0 6px; font-family: "JetBrains Mono", ui-monospace, monospace; color: #e8e6f2; }
+.lf-controle input[type=range] { width: 100%; }
+.lf-reperes { position: relative; height: 18px; }
+.lf-reperes button { position: absolute; top: 2px; transform: translateX(-50%) rotate(-30deg); transform-origin: top center; padding: 0; border: 0; background: none; color: #c9c3e0; font: inherit; font-size: .66rem; cursor: pointer; white-space: nowrap; }
+
+/* la fin : le voile blanc et le Point qui rejoint la marque .0NE */
+.lf-voile { position: fixed; inset: 0; z-index: 50; background: #fbfbfd; pointer-events: none; display: grid; place-items: center; }
+.lf-orbe { width: 22px; height: 22px; border-radius: 50%; background: var(--aime-nacre, radial-gradient(circle at 32% 30%, #fff, #d9e8ff 22%, #c9b8ff 48%, #ffd6ec 72%, #b9f0e4)); box-shadow: 0 6px 16px rgba(201,184,255,.55); transform-origin: center; }
+
+@media (max-width: 600px) { .lf-bouton { padding: 0 12px; font-size: .86rem; } .lf-sous-titre { font-size: .86rem; bottom: calc(max(16px, env(safe-area-inset-bottom)) + 104px); } }
+@media (prefers-reduced-motion: reduce) { .lf * { transition: none !important; } }
+
+/* la musique absente en ligne : dit clairement, avec un geste pour la choisir */
+.lf-son-absent { margin: 22px auto 0; max-width: 46ch; padding: 12px 16px; border-radius: 14px; border: 1px solid rgba(201,184,255,.45); background: rgba(201,184,255,.08); text-align: left; font-size: .88rem; line-height: 1.5; color: #e4e1f0; }
+.lf-son-absent p { margin: 0; } .lf-son-absent p + p { margin-top: 6px; color: #c9c5da; }
+.lf-fichier { position: relative; display: inline-flex; align-items: center; justify-content: center; min-height: 40px; margin: 14px auto 0; padding: 0 16px; border-radius: 999px; border: 1px dashed rgba(255,255,255,.35); font-size: .88rem; color: #d8d5e6; cursor: pointer; max-width: none; }
+.lf-fichier-visible { border-style: solid; border-color: rgba(201,184,255,.8); color: #fff; }
+.lf-fichier input { position: absolute; inset: 0; opacity: 0; cursor: pointer; margin: 0; width: 100%; }
+.lf-fichier:focus-within { outline: 3px solid #c9b8ff; outline-offset: 2px; }
+.lf-pret { color: #9ee6b4; }
+.lf-message { margin: 14px auto 0; max-width: 46ch; padding: 10px 14px; border-radius: 12px; background: #f4f2fb; color: #111; font-size: .9rem; }
+.lf-message-film { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); width: min(560px, calc(100% - 32px)); box-sizing: border-box; text-align: center; z-index: 5; }
+
+/* l'ouverture : deux commandes discrètes, dans deux coins opposés ; rien d'autre sur l'image */
+.lf-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; }
+.lf-coin { position: absolute; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 5; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px;
+  border-radius: 999px; border: 1px solid rgba(255,255,255,.26); background: rgba(6,6,14,.42); color: #ecebf4; font: inherit; font-size: .88rem; letter-spacing: .01em; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: .72; transition: opacity .3s ease, border-color .3s ease; }
+.lf-coin:hover, .lf-coin:focus-visible { opacity: 1; border-color: rgba(255,255,255,.6); }
+.lf-coin:focus-visible { outline: 3px solid #c9b8ff; outline-offset: 3px; }
+.lf-coin:disabled { cursor: progress; }
+.lf-coin-gauche { left: max(18px, env(safe-area-inset-left)); } .lf-coin-droite { right: max(18px, env(safe-area-inset-right)); }
+.lf-icone { font-size: .7rem; letter-spacing: -.1em; opacity: .9; } .lf-fleche { margin-left: 2px; }
+/* l'image fixe (mouvement réduit) */
+.lf-fixe-plein { display: grid; place-items: center; background: #020309; }
+.lf-fixe-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.lf-point-seul { width: 18px; height: 18px; margin: 0; }
+@media (max-width: 600px) { .lf-coin { min-height: 44px; padding: 0 14px; font-size: .84rem; } }
+
+/* Vivre LUMIERE : l'interface s'efface pendant la lecture */
+.lf-vivre-tete { position: absolute; top: 0; left: 0; right: 0; z-index: 6; display: flex; align-items: center; gap: 14px; padding: max(14px, env(safe-area-inset-top)) 18px 14px; background: linear-gradient(rgba(2,3,9,.6), transparent); transition: opacity .4s ease; }
+.lf-vivre-titre { font-size: .78rem; letter-spacing: .24em; color: #cfcbe2; }
+.lf-version select { min-height: 36px; border-radius: 999px; border: 1px solid rgba(255,255,255,.28); background: rgba(6,6,14,.6); color: #f2f1f7; font: inherit; font-size: .84rem; padding: 0 12px; }
+.lf-coin-lien { margin-left: auto; display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,.26); color: #ecebf4; font-size: .86rem; text-decoration: none; }
+.lf-coin-lien:focus-visible, .lf-version select:focus-visible { outline: 3px solid #c9b8ff; outline-offset: 2px; }
+.lf-vivre-barre { position: absolute; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 14px 18px max(14px, env(safe-area-inset-bottom)); background: linear-gradient(transparent, rgba(2,3,9,.75)); transition: opacity .4s ease; }
+.lf-temps { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .8rem; color: #d8d5e6; min-width: 92px; }
+.lf-piste { position: relative; flex: 1 1 240px; min-width: 160px; }
+.lf-piste input { width: 100%; }
+.lf-marques { position: absolute; left: 0; right: 0; top: -6px; height: 4px; pointer-events: none; }
+.lf-marques i { position: absolute; width: 1px; height: 6px; background: rgba(255,255,255,.45); }
+.lf-marques b { position: absolute; width: 9px; height: 9px; margin: -3px 0 0 -4px; border-radius: 50%; background: radial-gradient(circle at 32% 30%, #fff, #c9b8ff 55%, #ffd6ec); box-shadow: 0 0 8px rgba(201,184,255,.8); }
+.lf-efface .lf-vivre-tete, .lf-efface .lf-vivre-barre { opacity: 0; pointer-events: none; }
+.lf-efface { cursor: none; }
+.lf-depart { position: absolute; inset: 0; z-index: 5; display: grid; place-content: center; justify-items: center; gap: 12px; text-align: center; }
+.lf-grand { min-height: 56px; padding: 0 30px; border-radius: 999px; border: 1px solid rgba(255,255,255,.55); background: rgba(244,242,251,.12); color: #fff; font: inherit; font-size: 1.05rem; cursor: pointer; backdrop-filter: blur(8px); }
+.lf-grand:focus-visible { outline: 3px solid #c9b8ff; outline-offset: 3px; }
+.lf-scenes { position: absolute; right: 18px; bottom: 76px; z-index: 7; width: min(340px, calc(100% - 36px)); max-height: 60vh; overflow: auto; padding: 8px; border-radius: 16px; background: rgba(8,8,16,.92); border: 1px solid rgba(255,255,255,.14); }
+.lf-scenes ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.lf-scenes button { display: flex; gap: 12px; width: 100%; min-height: 40px; align-items: center; padding: 0 10px; border: 0; border-radius: 10px; background: none; color: #ecebf4; font: inherit; font-size: .9rem; text-align: left; cursor: pointer; }
+.lf-scenes button:hover, .lf-scenes button[aria-current="true"] { background: rgba(255,255,255,.08); }
+.lf-scenes span { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .76rem; color: #a7a3bc; min-width: 40px; }
+.lf-scenes small { color: #8f8aa6; }
+.lf-controle-vivre { top: 64px; }
+
+/* la Perle-Play : au centre, l'identité de l'Orbe ; un triangle à peine dessiné ; un souffle lent ; elle se fond une fois touchée */
+.lf-perle-play { position: absolute; left: 50%; top: 50%; z-index: 6; width: 76px; height: 76px; margin: -38px 0 0 -38px; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer;
+  animation: lf-perle-arrive 1.6s ease-out both; }
+.lf-perle-coeur { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #fff 0%, #e9f1ff 18%, #d9e8ff 30%, #c9b8ff 52%, #ffd6ec 74%, #b9f0e4 100%);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.35), 0 0 26px 6px rgba(201,184,255,.45), 0 0 90px 24px rgba(201,184,255,.18); animation: lf-perle-souffle 3.6s ease-in-out infinite; }
+.lf-perle-triangle { position: absolute; left: 50%; top: 50%; width: 0; height: 0; margin: -9px 0 0 -5px; border-style: solid; border-width: 9px 0 9px 15px; border-color: transparent transparent transparent rgba(70, 58, 120, .55); }
+.lf-perle-play:focus-visible { outline: 3px solid #f2eeff; outline-offset: 6px; }
+.lf-perle-play:hover .lf-perle-coeur { box-shadow: 0 0 0 1px rgba(255,255,255,.6), 0 0 34px 10px rgba(201,184,255,.6), 0 0 110px 30px rgba(201,184,255,.22); }
+.lf-perle-naissance { pointer-events: none; animation: lf-perle-fond 1.4s cubic-bezier(.5,0,.2,1) forwards; }
+.lf-perle-naissance .lf-perle-triangle { opacity: 0; transition: opacity .3s; }
+@keyframes lf-perle-arrive { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }
+@keyframes lf-perle-souffle { 50% { transform: scale(1.06); filter: brightness(1.06); } }
+@keyframes lf-perle-fond { to { opacity: 0; transform: scale(.08); } }
+.lf-coin-discret { opacity: .45; }
+@media (prefers-reduced-motion: reduce) { .lf-perle-play, .lf-perle-coeur { animation: none !important; } }

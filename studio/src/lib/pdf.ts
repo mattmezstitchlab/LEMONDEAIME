@@ -1,3 +1,4 @@
+import { DIMENSIONS, lireCode } from "./motif5d/code";
 import type { jsPDF } from "jspdf";
 import { FLOSS } from "./dmc";
 import { beadByCode, GLASS_LABEL, loadBeads, type Bead } from "./beads";
@@ -414,6 +415,69 @@ export async function buildPdf(input: Pattern, opts: PdfOptions = { bw: false })
     }
   }
   doc.setTextColor(0);
+
+  /* ------------------ 1ter. La recette 5D (motif composé) ------------------ */
+  const recette = input.recette ? lireCode(input.recette.code) : null;
+  if (recette) {
+    doc.addPage();
+    y = 22;
+    heading("La recette");
+    y += 8;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(90);
+    doc.text(wrap("Ce motif a été composé en cinq gestes. Le même code redonne exactement le même motif, à la même taille.", printW), LEFT, y);
+    // le sceau : le Point, puis un anneau par geste
+    const cx = LEFT + 38, cy = y + 46, k = 0.42, ink: [number, number, number] = [160, 23, 46];
+    const ring = (r: number) => { doc.setDrawColor(215, 215, 210); doc.setLineWidth(0.2); doc.circle(cx, cy, r * k, "S"); };
+    [22, 34, 46, 58, 70].forEach(ring);
+    const autour = (n: number, r: number, f: (x: number, yy: number, i: number) => void) => { for (let i = 0; i < n; i++) { const t = (i / n) * Math.PI * 2 - Math.PI / 2; f(cx + r * k * Math.cos(t), cy + r * k * Math.sin(t), i); } };
+    const arc = (r: number, a0: number, a1: number, largeur: number, rgb: [number, number, number]) => {
+      doc.setDrawColor(...rgb); doc.setLineWidth(largeur);
+      const n = Math.max(6, Math.ceil((a1 - a0) * 40));
+      for (let i = 0; i < n; i++) { const t0 = a0 + ((a1 - a0) * i) / n - Math.PI / 2, t1 = a0 + ((a1 - a0) * (i + 1)) / n - Math.PI / 2; doc.line(cx + r * k * Math.cos(t0), cy + r * k * Math.sin(t0), cx + r * k * Math.cos(t1), cy + r * k * Math.sin(t1)); }
+    };
+    const sg = recette.signature;
+    doc.setFillColor(...ink); doc.setDrawColor(...ink);
+    if (sg.structure === 0) autour(8, 22, (x, yy) => doc.circle(x, yy, 5 * k, "F"));
+    else if (sg.structure === 1) { doc.setLineWidth(0.8); doc.circle(cx, cy, 19 * k, "S"); doc.circle(cx, cy, 25 * k, "S"); }
+    else if (sg.structure === 2) autour(12, 22, (x, yy) => { doc.setLineWidth(1.2); const dx = (x - cx) / (22 * k), dy = (yy - cy) / (22 * k); doc.line(x - dx * 4 * k, yy - dy * 4 * k, x + dx * 4 * k, yy + dy * 4 * k); });
+    else autour(12, 22, (x, yy) => doc.rect(x - 3 * k, yy - 3 * k, 6 * k, 6 * k, "F"));
+    doc.setLineWidth(1.2);
+    if (sg.trace === 0) doc.rect(cx - 27 * k, cy - 27 * k, 54 * k, 54 * k, "S");
+    else if (sg.trace === 1) { const r = 34 * k; doc.lines([[r, r], [-r, r], [-r, -r], [r, -r]], cx, cy - r, [1, 1], "S", true); }
+    else if (sg.trace === 2) doc.circle(cx, cy, 34 * k, "S");
+    else autour(20, 34, (x, yy, i) => { const z = (i % 2 ? 2.6 : 4.2) * k; doc.rect(x - z, yy - z, z * 2, z * 2, "F"); });
+    arc(46, 0, Math.PI * 2 * [0.25, 0.5, 0.75, 1][sg.densite], 2.4, ink);
+    const [n4, z4] = [[8, 5], [16, 3.4], [24, 2.4], [36, 1.5]][sg.echelle];
+    doc.setFillColor(...ink); autour(n4, 58, (x, yy) => doc.circle(x, yy, z4 * k, "F"));
+    const fils = p.palette.slice(0, 12);
+    fils.forEach((idx, i) => { const rgb = FLOSS[idx].rgb as [number, number, number]; const seg = (Math.PI * 2) / fils.length; arc(70, i * seg + 0.03, (i + 1) * seg - 0.03, 3.6, rgb); });
+    doc.setFillColor(...ink); doc.circle(cx, cy, 9 * k, "F");
+    // le code et les cinq choix
+    const tx = LEFT + 84;
+    let ty = y + 18;
+    doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.setTextColor(0);
+    doc.text(input.recette!.code.replace(/\.(?=[gv])/g, " · "), tx, ty); ty += 9;
+    doc.setFontSize(10);
+    for (const dim of DIMENSIONS) {
+      const [nom, phrase] = dim.reponses[sg[dim.cle]];
+      doc.setFont("helvetica", "bold"); doc.text(`${dim.nom} :`, tx, ty);
+      doc.setFont("helvetica", "normal"); doc.text(wrap(`${nom}, ${phrase}`, pageW - RIGHT - tx - 26), tx + 26, ty);
+      ty += 8;
+    }
+    y = Math.max(cy + 36, ty + 4);
+    doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.text("Pour broder", LEFT, y); y += 6;
+    doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(40);
+    const conseils = [
+      recette.signature.structure === 2 ? "Commencez au milieu de la bande, puis brodez vers chaque bout." : recette.signature.structure === 3 ? "Commencez par le carreau du centre, puis rayonnez de carreau en carreau." : "Commencez au centre (le croisement des deux flèches de la grille), puis brodez de l'intérieur vers l'extérieur.",
+      "Un fil à la fois : la légende donne l'ordre, du plus présent au plus rare.",
+      `Format : ${p.w} × ${p.h} points ; ${totals.colors} fils ; estimation des fils dans la légende.`,
+      "Création Point Zéro, pour un usage personnel. Le patron ne se revend pas.",
+    ];
+    for (const c of conseils) { const lignes = wrap("· " + c, printW); doc.text(lignes, LEFT, y); y += lignes.length * 5 + 1.5; }
+    doc.setTextColor(0);
+  }
 
   /* --------------------------- 2. Légende des fils --------------------------- */
   doc.addPage();

@@ -1,0 +1,133 @@
+/*
+ * AIME — le socle visuel commun (tokens). Une seule source, partagée : jamais recopiée dans une page.
+ *
+ * Direction (Matt, 29 octobre) : l'esprit des meilleurs outils de création (Framer) — noir doux, anthracite, blanc,
+ * gris très clair ; navigation en pilule de verre, boutons pilules, grands titres moyens dont la fin s'estompe,
+ * médias posés dans un cadre. Deux thèmes, Nuit et Jour, tous deux complets.
+ *
+ * Deux couches à ne jamais confondre :
+ *  - l'interface (ces tokens) : neutre, universelle, accessible ;
+ *  - le contenu éditorial (photographies, couleurs d'un univers) : il vit dans les médias et dans --aime-univers-*,
+ *    jamais dans les fonds, textes ou contrôles de l'interface.
+ *
+ * Usage : un conteneur porte data-aime="nuit" | "jour" ; « Auto » est résolu par design/theme.ts (il suit le système),
+ * pour qu'aucune valeur ne soit recopiée. Rien n'est appliqué au studio
+ * existant tant que la généralisation n'est pas validée.
+ * Contrastes vérifiés par src/__tests__/aimeTokens.test.ts (WCAG AA : texte 4,5:1, contrôles et focus 3:1).
+ */
+@import "@fontsource-variable/inter-tight/index.css";
+
+[data-aime] {
+  /* — constantes, communes aux deux thèmes — */
+  --aime-police: "Inter Tight Variable", "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --aime-titre-graisse: 560;          /* jamais de très gras : des titres moyens, comme les références */
+  --aime-titre-chasse: -0.035em;
+  --aime-texte-taille: 15px;
+  --aime-r-petit: 8px;                /* boutons rectangulaires discrets, champs */
+  --aime-r: 14px;                     /* cartes, panneaux */
+  --aime-r-grand: 22px;               /* grands panneaux, médias */
+  --aime-r-cadre: 30px;               /* le cadre autour d'un média */
+  --aime-pilule: 999px;
+  --aime-cadre-epaisseur: 10px;
+  --aime-flou: 18px;
+  --aime-duree: 180ms;
+  --aime-courbe: cubic-bezier(.2, .7, .2, 1);
+  /* l'identité du Point : la sphère nacrée, inchangée, dans les deux thèmes */
+  --aime-nacre: radial-gradient(circle at 32% 30%, #ffffff 0%, #d9e8ff 22%, #c9b8ff 48%, #ffd6ec 72%, #b9f0e4 100%);
+  /* le voile qui rend un texte lisible sur une photographie (contenu éditorial) : toujours sombre, jamais clair */
+  --aime-voile: linear-gradient(180deg, rgba(8, 8, 9, .18) 0%, rgba(8, 8, 9, .38) 45%, rgba(8, 8, 9, .72) 100%);
+  --aime-texte-sur-photo: #ffffff;
+
+  font-family: var(--aime-police);
+  font-size: var(--aime-texte-taille);
+  color: var(--aime-texte);
+  background: var(--aime-fond);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* — Nuit : noir doux et anthracite — */
+[data-aime="nuit"] {
+  color-scheme: dark;
+  --aime-fond: #0a0a0b;
+  --aime-fond-2: #111113;
+  --aime-surface: #161618;
+  --aime-surface-2: #1f1f22;
+  --aime-verre: rgba(24, 24, 27, .66);
+  --aime-verre-bord: rgba(255, 255, 255, .10);
+  --aime-texte: #f4f4f2;
+  --aime-texte-2: #b5b5b1;
+  --aime-texte-3: #8d8d89;
+  --aime-titre-fondu: #6f6f6c;          /* la fin d'un grand titre qui s'estompe */
+  --aime-bordure: rgba(255, 255, 255, .09);
+  --aime-bordure-forte: rgba(255, 255, 255, .18);
+  --aime-bordure-champ: #6a6a6e;
+  --aime-champ: #121214;
+  --aime-primaire: #f4f4f2;
+  --aime-primaire-texte: #0a0a0b;
+  --aime-primaire-survol: #ffffff;
+  --aime-secondaire: rgba(255, 255, 255, .07);
+  --aime-secondaire-texte: #f4f4f2;
+  --aime-selection: #f4f4f2;
+  --aime-selection-texte: #0a0a0b;
+  --aime-focus: #8fb8ff;
+  --aime-erreur: #ff8f80;
+  --aime-erreur-fond: rgba(255, 143, 128, .12);
+  --aime-succes: #86dc9d;
+  --aime-desactive: #5e5e62;
+  --aime-desactive-fond: rgba(255, 255, 255, .05);
+  --aime-cadre: #f4f4f2;
+  --aime-ombre: 0 24px 60px rgba(0, 0, 0, .55), 0 2px 6px rgba(0, 0, 0, .4);
+  --aime-halo: radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, .07), transparent 60%);
+}
+
+/* — Jour : blanc et gris très clair — */
+[data-aime="jour"] {
+  color-scheme: light;
+  --aime-fond: #f3f3f1;
+  --aime-fond-2: #ffffff;
+  --aime-surface: #ffffff;
+  --aime-surface-2: #ececea;
+  --aime-verre: rgba(255, 255, 255, .72);
+  --aime-verre-bord: rgba(10, 10, 11, .08);
+  --aime-texte: #0e0e10;
+  --aime-texte-2: #55555a;
+  --aime-texte-3: #6a6a6f;
+  --aime-titre-fondu: #9a9a9e;
+  --aime-bordure: rgba(10, 10, 11, .08);
+  --aime-bordure-forte: rgba(10, 10, 11, .16);
+  --aime-bordure-champ: #7d7d82;
+  --aime-champ: #ffffff;
+  --aime-primaire: #0e0e10;
+  --aime-primaire-texte: #ffffff;
+  --aime-primaire-survol: #2a2a2e;
+  --aime-secondaire: rgba(10, 10, 11, .05);
+  --aime-secondaire-texte: #0e0e10;
+  --aime-selection: #0e0e10;
+  --aime-selection-texte: #ffffff;
+  --aime-focus: #2c5fd4;
+  --aime-erreur: #b3261e;
+  --aime-erreur-fond: rgba(179, 38, 30, .08);
+  --aime-succes: #1d7a3c;
+  --aime-desactive: #a2a2a6;
+  --aime-desactive-fond: rgba(10, 10, 11, .04);
+  --aime-cadre: #ffffff;
+  --aime-ombre: 0 24px 60px rgba(20, 20, 24, .14), 0 2px 6px rgba(20, 20, 24, .08);
+  --aime-halo: radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, .9), transparent 60%);
+}
+
+/* — Les univers : une ambiance éditoriale, jamais l'interface. Seuls les médias, les illustrations et les accents
+     de contenu les utilisent (un liseré d'une carte, un fond de section éditoriale), jamais un bouton ni un texte. — */
+[data-aime-univers="neutre"]    { --aime-univers: #8d8d89; --aime-univers-fond: linear-gradient(135deg, #2a2a2d, #121214); }
+[data-aime-univers="broderie"]  { --aime-univers: #b5473a; --aime-univers-fond: linear-gradient(135deg, #3a1f1a, #1b2340); }   /* garance et indigo */
+[data-aime-univers="mariage"]   { --aime-univers: #d9b9a0; --aime-univers-fond: linear-gradient(135deg, #3b2f2a, #1d1a1f); }
+[data-aime-univers="spectacle"] { --aime-univers: #8a6cf0; --aime-univers-fond: linear-gradient(135deg, #22164a, #0f0d1c); }
+[data-aime-univers="culture"]   { --aime-univers: #4f8f7a; --aime-univers-fond: linear-gradient(135deg, #16302a, #0f1715); }
+[data-aime-univers="art"]       { --aime-univers: #e0805c; --aime-univers-fond: linear-gradient(135deg, #3d1f16, #1a1210); }
+
+/* l'éclat d'un univers : un dégradé vif, réservé aux cartes éditoriales (une mise en avant, un chiffre clé), toujours avec un texte blanc */
+[data-aime-univers] { --aime-univers-eclat: linear-gradient(150deg, #3a3a40, #121214); }
+[data-aime-univers="broderie"]  { --aime-univers-eclat: linear-gradient(150deg, #e2553f 0%, #b5263f 48%, #2b3a8f 100%); }
+[data-aime-univers="mariage"]   { --aime-univers-eclat: linear-gradient(150deg, #c98f6d 0%, #a8556f 55%, #5b3c78 100%); }
+[data-aime-univers="spectacle"] { --aime-univers-eclat: linear-gradient(150deg, #ff5a36 0%, #e8195f 45%, #8a1fc0 100%); }
+[data-aime-univers="culture"]   { --aime-univers-eclat: linear-gradient(150deg, #2f8f74 0%, #1d6577 50%, #213f7a 100%); }
+[data-aime-univers="art"]       { --aime-univers-eclat: linear-gradient(150deg, #f08a3c 0%, #d6345a 50%, #6a2bb8 100%); }

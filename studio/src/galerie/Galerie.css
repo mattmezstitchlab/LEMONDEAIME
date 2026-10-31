@@ -1,0 +1,71 @@
+/* La Galerie des Vivants, sur le socle AIME (Jour) : un grand blanc, une toile discrète, des cartels sobres. */
+.ga { min-height: 100vh; padding-bottom: 80px; background-color: var(--aime-fond);
+  background-image: linear-gradient(rgba(10,10,11,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(10,10,11,.035) 1px, transparent 1px); background-size: 12px 12px; }
+.ga-tete { position: sticky; top: 0; z-index: 10; background: linear-gradient(var(--aime-fond) 55%, transparent); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 14px clamp(16px, 3vw, 32px); }
+.ga-marque { display: inline-flex; align-items: center; gap: 10px; color: var(--aime-texte); font-weight: 650; font-size: 16px; text-decoration: none; }
+.ga-marque .aime-point { width: 26px; height: 26px; }
+.ga-section { max-width: 1240px; margin: 0 auto; padding: clamp(32px, 6vw, 72px) clamp(16px, 4vw, 40px) 0; display: grid; gap: 20px; }
+.ga-titre { font-size: clamp(40px, 6vw, 80px); }
+.ga-note { margin: 0; color: var(--aime-texte-2); font-size: 14.5px; line-height: 1.5; }
+.ga-ligne { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.ga-cache { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* le mur : une œuvre par rangée sur téléphone, trois à quatre sur ordinateur */
+.ga-mur { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 28px 20px; }
+.ga-mur-case { display: grid; gap: 10px; align-content: start; justify-items: start; }
+.ga-carte { list-style: none; display: grid; gap: 12px; width: 100%; }
+.ga-carte-lien { display: block; border-radius: 18px; }
+.ga-carte-image { display: grid; place-items: center; aspect-ratio: 1; padding: 18px; border-radius: 18px; background: var(--aime-surface); box-shadow: inset 0 0 0 1px var(--aime-bordure), var(--aime-ombre-douce, 0 14px 34px rgba(20,20,24,.08)); transition: transform .2s var(--aime-courbe); }
+.ga-carte-lien:hover .ga-carte-image { transform: translateY(-2px); }
+.ga-carte-image img, .ga-fiche-image img, .ga-apercu-petit img { max-width: 100%; max-height: 100%; min-height: 0; image-rendering: pixelated; object-fit: contain; }
+.ga-cartel { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.ga-cartel-titre { margin: 0; font-size: 12.5px; font-weight: 650; letter-spacing: .1em; text-transform: uppercase; color: var(--aime-texte); }
+.ga-cartel-sous { margin: 3px 0 0; font-size: 13px; color: var(--aime-texte-2); }
+
+/* le cœur : discret, un bouton à bascule */
+.ga-coeur { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--aime-surface); color: var(--aime-texte);
+  box-shadow: inset 0 0 0 1px var(--aime-bordure-forte); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; font-variant-numeric: tabular-nums; }
+.ga-coeur[aria-pressed="true"] { color: #b3261e; box-shadow: inset 0 0 0 1.5px #b3261e; }
+.ga-coeur:disabled { cursor: default; opacity: .8; }
+.ga-coeur > span:first-child { font-size: 16px; }
+
+/* la fiche */
+.ga-fiche { max-width: 1240px; margin: 0 auto; padding: 24px clamp(16px, 4vw, 40px) 0; }
+.ga-retour { margin-bottom: 18px; }
+.ga-fiche-grille { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 56px); align-items: start; }
+.ga-fiche-cadre { position: sticky; top: 90px; }
+.ga-fiche-image { display: grid; place-items: center; aspect-ratio: 1; padding: 24px; background: #f6f4ef; }
+.ga-fiche-texte { display: grid; gap: 14px; align-content: start; }
+.ga-fiche-h1 { margin: 0; font-size: clamp(34px, 4.4vw, 58px); font-weight: 560; line-height: 1; letter-spacing: -.04em; }
+.ga-fiche-par { margin: 0; font-size: 17px; color: var(--aime-texte-2); }
+.ga-fiche-par b { color: var(--aime-texte); font-weight: 600; }
+.ga-fiche-desc, .ga-fiche-histoire { margin: 0; font-size: 16px; line-height: 1.6; white-space: pre-line; }
+.ga-h2 { margin: 10px 0 0; font-size: 12px; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; color: var(--aime-texte-3); }
+.ga-fils { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 6px 14px; font-size: 13.5px; }
+.ga-fils li { display: flex; align-items: center; gap: 8px; }
+.ga-pastille { width: 14px; height: 14px; border-radius: 50%; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.2); }
+.ga-sceau { display: flex; align-items: center; gap: 14px; }
+.ga-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.ga-droits { font-size: 13px; }
+.ga-lien { justify-self: start; padding: 4px 0; border: 0; background: none; color: var(--aime-texte); font: inherit; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ga-signaler { display: grid; gap: 10px; padding: 16px; border-radius: 16px; background: var(--aime-surface); box-shadow: inset 0 0 0 1px var(--aime-bordure); }
+.ga-signaler fieldset { margin: 0; padding: 0; border: 0; display: grid; gap: 2px; }
+.ga-signaler legend { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+
+/* la feuille « Exposer » */
+.ga-voile { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; padding: 16px; background: rgba(10,10,11,.42); }
+.ga-feuille { width: min(560px, 100%); max-height: calc(100dvh - 32px); overflow-y: auto; border-radius: 24px; background: var(--aime-fond-2); box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+.ga-feuille-tete { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 20px 12px; background: var(--aime-fond-2); }
+.ga-feuille-tete h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -.02em; }
+.ga-feuille-corps { display: grid; gap: 14px; padding: 4px 20px 22px; }
+.ga-form textarea { resize: vertical; }
+.ga-apercu-petit { display: grid; place-items: center; height: 180px; overflow: hidden;
+  & img { max-height: 156px; }
+  padding: 12px; border-radius: 16px; background: #f6f4ef; box-shadow: inset 0 0 0 1px var(--aime-bordure); }
+.ga-titre-ok { margin: 0; font-size: 20px; font-weight: 600; }
+
+@media (max-width: 860px) {
+  .ga-tete { grid-template-columns: 1fr auto; } .ga-tete > span { display: none; }
+  .ga-fiche-grille { grid-template-columns: 1fr; } .ga-fiche-cadre { position: static; }
+}
+@media (max-width: 520px) { .ga-tete { grid-template-columns: 1fr; justify-items: center; } }

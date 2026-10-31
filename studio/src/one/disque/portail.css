@@ -1,0 +1,58 @@
+/* Le Portail : le PRÉSENT au centre, le PASSÉ à gauche (en plein), le FUTUR à droite (en pointillés). Le Disque ne bouge pas. */
+.dq-scene { position: relative; }
+.pt-sur { margin: 0; font-size: .64rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #6f52ff; }
+
+/* — le Présent, dans le cercle — */
+.pt-present { display: grid; justify-items: center; gap: 5px; text-align: center; width: 100%; }
+.pt-present > * { margin: 0; }
+.pt-titre { font-size: clamp(1.25rem, 2.6vw, 1.75rem); font-weight: 650; letter-spacing: -.01em; line-height: 1.05; overflow-wrap: anywhere; }
+.pt-etat { font-size: .74rem; color: var(--aime-texte-2, #55555a); line-height: 1.3; }
+.pt-action { font-size: .76rem; line-height: 1.3; max-width: 30ch; }
+.pt-action b { display: block; font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--aime-texte-3, #77777d); }
+.pt-pourquoi { list-style: none; padding: 0; margin: 2px 0 0; display: grid; gap: 1px; font-size: .7rem; color: var(--aime-texte-2, #55555a); line-height: 1.3; }
+.pt-rien { font-size: .86rem; max-width: 26ch; color: var(--aime-texte-2, #55555a); }
+.pt-reprendre { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 22px; margin-top: 4px; border-radius: 999px; border: 0; cursor: pointer;
+  background: var(--aime-texte, #0b0b0c); color: var(--aime-fond, #fff); font: inherit; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-size: .8rem; }
+.pt-reprendre svg { width: 15px; height: 15px; }
+.pt-gestes { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+.pt-gestes button { min-height: 40px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--aime-bordure, rgba(0,0,0,.14)); background: transparent; color: var(--aime-texte, #111);
+  font: inherit; font-size: .72rem; cursor: pointer; }
+.pt-gestes button[aria-pressed="true"] { border-color: #6f52ff; color: #4b33d1; font-weight: 600; }
+.pt-reprendre:focus-visible, .pt-gestes button:focus-visible { outline: 3px solid var(--aime-focus, #4b6bfb); outline-offset: 2px; }
+
+/* — la Chronologie : la bague prend tout le cercle — */
+.dq-centre > .pt-temps, .dq-centre-mobile .pt-temps { width: 100%; height: 100%; max-width: none; display: grid; place-items: center; }
+
+/* — le Disque seul, au centre exact de l'écran : l'en-tête et la zone des messages ne prennent pas de place — */
+.dq[data-contexte="accueil"] .dq-tete { position: absolute; top: 0; left: 0; right: 0; z-index: 2; }
+.dq[data-contexte="accueil"] .dq-scene { position: relative; padding: 0 16px; min-height: 100vh; min-height: 100dvh; align-content: center; }
+.dq[data-contexte="accueil"] .one-disque-hote { position: relative; }
+.dq[data-contexte="accueil"] .one-disque-cartouche { display: none; }   /* rien sous le Disque : le nom de la commande visée est déjà sur la couronne */
+.dq[data-contexte="accueil"] .dq-zone { position: absolute; left: 50%; bottom: clamp(8px, 2.5vh, 24px); transform: translateX(-50%); height: auto; }
+
+/* — en grand : une page éditoriale (Pourquoi, une période, les projets, Ajouter) — */
+.pt-grand { width: min(860px, 92vw); max-height: 84vh; overflow: auto; text-align: left; padding: clamp(20px, 4vw, 48px); }
+.pt-grand-titre { margin: 6px 0 10px; font-size: clamp(1.8rem, 5vw, 3.4rem); font-weight: 650; letter-spacing: -.02em; line-height: 1; }
+.pt-grand h3 { margin: 22px 0 6px; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--aime-texte-3, #77777d); }
+.pt-grand-aide { color: var(--aime-texte-2, #55555a); font-size: .9rem; line-height: 1.5; max-width: 60ch; }
+.pt-raisons, .pt-liste { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 10px; }
+.pt-raisons li { display: flex; gap: 12px; align-items: baseline; font-size: 1rem; }
+.pt-raisons small, .pt-liste small { display: block; font-size: .78rem; color: var(--aime-texte-3, #77777d); }
+.pt-marque { width: 1.2em; text-align: center; color: #6f52ff; }
+.pt-raisons li[data-nature="manque"] { color: var(--aime-texte-3, #77777d); }
+.pt-liste li { display: grid; gap: 3px; padding: 12px 0; border-top: 1px solid var(--aime-bordure, rgba(0,0,0,.1)); }
+.pt-liste li > span { font-size: .86rem; line-height: 1.45; }
+.pt-projets button { display: grid; gap: 3px; width: 100%; text-align: left; border: 0; background: none; font: inherit; color: inherit; cursor: pointer; padding: 6px; min-height: 44px; border-radius: 10px; }
+.pt-projets button:hover { background: rgba(111, 82, 255, .07); }
+.pt-entrees { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
+.pt-entree { position: relative; display: inline-flex; align-items: center; min-height: 48px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--aime-bordure-forte, rgba(0,0,0,.25));
+  font-weight: 600; cursor: pointer; }
+.pt-entree input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.pt-entree:focus-within { outline: 3px solid var(--aime-focus, #4b6bfb); outline-offset: 2px; }
+.pt-coller { display: grid; gap: 6px; font-weight: 600; font-size: .9rem; }
+.pt-coller textarea { font: inherit; font-weight: 400; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--aime-bordure-champ, #c9c9cc); background: var(--aime-surface, #fff); color: inherit; }
+.pt-reconnu h3 { text-transform: none; letter-spacing: 0; font-size: 1.1rem; color: inherit; }
+.pt-statut { font-style: normal; font-size: .72rem; font-weight: 600; justify-self: start; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; }
+li[data-etat="disponible"] .pt-statut { color: #1e7a39; } li[data-etat="hors-studio"] .pt-statut { color: #2457ac; } li[data-etat="en-attente"] .pt-statut { color: #8a6a2a; }
+.pt-aller { justify-self: start; min-height: 40px; padding: 0 16px; border-radius: 999px; border: 0; background: var(--aime-texte, #111); color: var(--aime-fond, #fff); font: inherit; font-weight: 600; cursor: pointer; }
+.pt-etat, .pt-pourquoi { max-width: 28ch; }

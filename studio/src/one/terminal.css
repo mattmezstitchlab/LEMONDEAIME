@@ -1,0 +1,83 @@
+/* .0NE — le Disque Terminal : sobre, lisible ; le centre est un écran de contexte, pas une console noire */
+.ot .one-tete { gap: 16px; }
+.ot-titre { margin: 0; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.ot-source { margin: 0 0 0 auto; display: inline-flex; align-items: center; gap: 8px; max-width: 40vw; padding: 6px 12px; border-radius: 999px; background: var(--aime-surface-2); font-size: .85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ot-source svg { width: 16px; height: 16px; flex: none; }
+.ot-scene { display: grid; place-items: center; padding: 0 16px 40px; }
+.ot-scene .one-disque-hote { width: min(720px, 100%); }
+.ot-scene .one-centre > * { max-width: none; }
+
+/* les indicateurs lumineux du Terminal (règles du Disque Terminal) : blanc doux, violet, bleu (pulsation), vert, orange, rouge, notification (clignotement doux) */
+.ot .pzt, .ot .lp { --lp-i-repos: rgba(255, 255, 255, .5); --lp-i-guide: #b9a3ff; --lp-i-encours: #5aa2ff; --lp-i-reussite: #5fd68a; --lp-i-action: #ffa94d; --lp-i-erreur: #ff6b6b; --lp-i-info: #9ec5ff; }
+.ot .lp-indic[data-etat="encours"] { background: var(--lp-i-encours); -webkit-mask: none; mask: none; width: 7px; height: 7px; margin-left: -3.5px; animation: ot-pulsation 1.4s ease-in-out infinite; }
+.ot .lp-indic[data-etat="info"] { animation: ot-clignote 2.4s ease-in-out infinite; }
+@keyframes ot-pulsation { 0%, 100% { box-shadow: 0 0 0 0 rgba(90, 162, 255, .55); } 50% { box-shadow: 0 0 0 5px rgba(90, 162, 255, 0); } }
+@keyframes ot-clignote { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .ot .lp-indic { animation: none !important; } }
+html[data-pz-motion="reduce"] .ot .lp-indic { animation: none !important; }
+
+/* le centre */
+.ot-centre { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; padding: 13% 12% 10%; box-sizing: border-box; text-align: left; font-size: calc(13.5px * var(--pz-user-font-scale, 1)); }
+.ot-etendu .ot-centre { height: auto; min-height: calc(100vh - 120px); padding: 8px clamp(16px, 5vw, 64px) 120px; max-width: 980px; margin: 0 auto; font-size: calc(15px * var(--pz-user-font-scale, 1)); }
+.ot-chemin { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; margin: 0 0 6px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .88em; }
+.ot-chemin span { display: inline-flex; align-items: center; } .ot-chemin svg { width: 14px; height: 14px; color: var(--aime-texte-3); }
+.ot-chemin button { min-height: 28px; padding: 0 6px; border: 0; border-radius: 6px; background: none; color: var(--aime-texte); font: inherit; cursor: pointer; }
+.ot-chemin button:hover { background: var(--aime-surface-2); }
+.ot-selection { display: flex; align-items: center; gap: 6px; margin: 0 0 6px; font-size: .88em; color: var(--aime-texte-2); }
+.ot-selection b { color: var(--aime-texte); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ot-selection button { width: 24px; height: 24px; border-radius: 50%; border: 0; background: var(--aime-surface-2); color: var(--aime-texte); cursor: pointer; }
+.ot-corps { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.ot-scene .ot-corps { -webkit-mask-image: linear-gradient(#000 88%, transparent); mask-image: linear-gradient(#000 88%, transparent); padding-bottom: 18px; }
+.ot-sur { margin: 0 0 6px; font-size: .78em; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--aime-texte-2); }
+.ot-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.ot-liste li { display: flex; align-items: center; gap: 2px; }
+.ot-entree { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; min-height: calc(36px * var(--one-cible, 1)); padding: 4px 8px; border-radius: 10px; border: 1px solid transparent; background: none; color: var(--aime-texte); font: inherit; text-align: left; cursor: pointer; }
+.ot-entree:hover { background: var(--aime-surface-2); }
+.ot-entree[aria-pressed="true"] { background: var(--aime-selection); color: var(--aime-selection-texte); }
+.ot-entree[aria-pressed="true"] .ot-detail { color: inherit; opacity: .75; }
+.ot-ico svg { width: 17px; height: 17px; display: block; }
+.ot-nom { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ot-detail { font-size: .82em; color: var(--aime-texte-2); white-space: nowrap; }
+.ot-ouvrir { width: calc(34px * var(--one-cible, 1)); height: calc(34px * var(--one-cible, 1)); border-radius: 50%; border: 0; background: none; color: var(--aime-texte-2); cursor: pointer; display: grid; place-items: center; }
+.ot-ouvrir:hover { background: var(--aime-surface-2); color: var(--aime-texte); } .ot-ouvrir svg { width: 16px; height: 16px; }
+.ot-vide { color: var(--aime-texte-2); margin: 10px 0; }
+.ot-sortie { margin: 0; white-space: pre-wrap; word-break: break-word; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .86em; line-height: 1.55; }
+.ot-sortie [data-ton="ajout"] { color: #1f8a4c; } .ot-sortie [data-ton="retrait"] { color: #c0392b; } .ot-sortie [data-ton="attention"] { color: #b4610e; }
+[data-aime="nuit"] .ot-sortie [data-ton="ajout"] { color: #6fdc96; } [data-aime="nuit"] .ot-sortie [data-ton="retrait"] { color: #ff8f80; } [data-aime="nuit"] .ot-sortie [data-ton="attention"] { color: #ffb86b; }
+.ot-message, .ot-progression, .ot-saisie, .ot-destination { display: grid; gap: 8px; justify-items: center; text-align: center; padding-top: 6px; }
+.ot-msg-titre { margin: 0; font-weight: 650; font-size: 1.12em; letter-spacing: -.01em; color: var(--aime-texte); }
+.ot-msg-texte { margin: 0; color: var(--aime-texte-2); }
+.ot-lumiere { width: 14px; height: 14px; border-radius: 50%; background: rgba(0, 0, 0, .25); }
+[data-lumiere="succes"] .ot-lumiere { background: #2f9e5b; } [data-lumiere="attention"] .ot-lumiere { background: #e8890c; transform: rotate(45deg); border-radius: 3px; }
+[data-lumiere="erreur"] .ot-lumiere { background: #d63b3b; border-radius: 2px; } [data-lumiere="encours"] .ot-lumiere { background: #3a86ff; } [data-lumiere="recommande"] .ot-lumiere { background: #8b6cf0; } [data-lumiere="notification"] .ot-lumiere { background: #6aa6ff; }
+.ot-boutons { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 4px; }
+.ot-boutons .one-bouton { min-height: calc(40px * var(--one-cible, 1)); padding: 0 16px; }
+.ot-saisie label { display: grid; gap: 6px; width: 100%; text-align: left; font-weight: 600; font-size: .9em; }
+.ot-saisie input { min-height: calc(44px * var(--one-cible, 1)); padding: 0 12px; border-radius: 10px; border: 1px solid var(--aime-bordure-champ); background: var(--aime-champ, var(--aime-surface)); color: var(--aime-texte); font: inherit; font-weight: 450; }
+.ot-mono { font-family: ui-monospace, "SF Mono", Menlo, monospace !important; }
+.ot-destination .ot-liste { width: 100%; text-align: left; max-height: 40%; overflow-y: auto; }
+.ot-progression svg { width: 96px; height: 96px; } .ot-piste { fill: none; stroke: var(--aime-surface-2); stroke-width: 6; } .ot-arc { fill: none; stroke: #2f9e5b; stroke-width: 6; stroke-linecap: round; }
+.ot-commande { margin: 6px 0 0; padding: 6px 10px; border-radius: 8px; background: var(--aime-surface-2); font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .8em; color: var(--aime-texte); overflow-x: auto; white-space: nowrap; }
+.ot-commande span { color: var(--aime-texte-3); }
+.ot-etendre { position: absolute; right: 50%; bottom: 2.5%; transform: translateX(50%); width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--aime-bordure-forte); background: var(--aime-surface); color: var(--aime-texte); display: grid; place-items: center; cursor: pointer; }
+.ot-etendu .ot-etendre { right: clamp(16px, 5vw, 64px); top: 0; bottom: auto; transform: none; } .ot-etendre svg { width: 16px; height: 16px; }
+.ot-occupe .ot-corps { opacity: .55; }
+
+/* l'aperçu audio : la forme d'onde autour du cœur */
+.ot-audio { position: relative; display: grid; place-items: center; min-height: 100%; }
+.ot-onde { position: absolute; inset: -6% -6%; width: 112%; height: 112%; pointer-events: none; }
+.ot-onde line { stroke: #b9a3ff; stroke-width: 1.6; stroke-linecap: round; } .ot-onde line[data-joue="oui"] { stroke: #7562ce; }
+.ot-audio-coeur { position: relative; display: grid; gap: 8px; justify-items: center; text-align: center; max-width: 64%; }
+.ot-lire { width: calc(52px * var(--one-cible, 1)); height: calc(52px * var(--one-cible, 1)); border-radius: 50%; border: 0; background: #0b0b0c; color: #fff; display: grid; place-items: center; cursor: pointer; box-shadow: 0 6px 18px rgba(0, 0, 0, .25); }
+[data-aime="nuit"] .ot-lire { background: #f4f4f2; color: #0b0b0c; } .ot-lire svg { width: 22px; height: 22px; }
+.ot-meta { display: grid; grid-template-columns: auto auto; gap: 2px 10px; margin: 0; font-size: .82em; text-align: left; }
+.ot-meta div { display: contents; } .ot-meta dt { color: var(--aime-texte-2); } .ot-meta dd { margin: 0; }
+.ot-etendu .ot-audio { min-height: 420px; } .ot-etendu .ot-onde { inset: auto; width: min(420px, 90vw); height: min(420px, 90vw); }
+
+/* étendu (téléphone d'abord) : le contenu prend la place, le Point reste là */
+.ot-etendu { padding: 0 0 24px; }
+.ot-point { position: fixed; left: 16px; bottom: 16px; z-index: 30; padding: 4px; border-radius: 14px; background: #0b0b0c; box-shadow: 0 10px 30px rgba(11, 11, 12, .25); }
+html[data-one-point="droite"] .ot-point { left: auto; right: 16px; } html[data-one-point="centre"] .ot-point { left: 50%; transform: translateX(-50%); }
+.ot-point .lp-panneau { bottom: 84px; }
+@media (max-width: 720px) { .ot-titre { font-size: .92em; } .ot-source { display: none; } }
+.ot-scene .ot-commande { margin: 6px 10% 0; text-align: center; }

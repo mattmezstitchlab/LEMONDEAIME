@@ -1,0 +1,78 @@
+/* L'Orbe relationnelle : la même nacre que le Point ; la lumière révèle un état réel (ou se dit illustrative) */
+.or { position: relative; display: grid; justify-items: center; gap: 8px; margin: 0 0 6px; }
+.or-coeur { position: relative; width: 64px; height: 64px; transition: width .3s ease, height .3s ease; }
+.or-orbe { position: absolute; inset: 0; border: 0; border-radius: 50%; padding: 0; background: none; cursor: pointer; }
+.or-nacre { position: absolute; inset: 10px; border-radius: 50%; background: var(--aime-nacre, radial-gradient(circle at 32% 30%, #fff, #d9e8ff 22%, #c9b8ff 48%, #ffd6ec 72%, #b9f0e4)); box-shadow: 0 6px 18px rgba(117, 98, 206, .28); transition: transform .3s ease, box-shadow .3s ease; }
+.or-orbe:focus-visible { outline: 3px solid var(--aime-focus, #7562ce); outline-offset: 2px; }
+.or-impulsion { position: absolute; inset: 10px; border-radius: 50%; opacity: 0; }
+/* retrait : le centre montre un fichier, une onde, un résultat : l'Orbe se fait petite, en haut */
+.or-retrait .or-coeur { width: 34px; height: 34px; } .or-retrait .or-nacre, .or-retrait .or-impulsion { inset: 5px; }
+/* les phases (illustratives : elles montrent la progression du cycle) */
+.or[data-phase="reception"] .or-impulsion { animation: or-impulsion .6s ease-out; border: 2px solid #c9b8ff; }
+.or[data-phase="contexte"] .or-nacre { box-shadow: 0 0 0 4px rgba(201, 184, 255, .35), 0 6px 18px rgba(117, 98, 206, .3); }
+.or[data-phase="clarification"] .or-nacre { box-shadow: 0 0 0 4px rgba(255, 184, 107, .55); }
+.or[data-phase="action"] .or-nacre { animation: or-souffle 1.2s ease-in-out infinite; }
+.or[data-phase="verification"] .or-nacre { box-shadow: 0 0 0 3px rgba(138, 180, 255, .6); }
+/* l'écho : sa couleur vient de l'ISSUE réelle (donnée), jamais d'une émotion */
+.or[data-phase="echo"][data-issue="reussite"] .or-nacre { box-shadow: 0 0 0 4px #5fd68a, 0 0 22px rgba(95, 214, 138, .5); }
+.or[data-phase="echo"][data-issue="echec"] .or-nacre { box-shadow: 0 0 0 4px #ff6b6b, 0 0 22px rgba(255, 107, 107, .45); }
+.or[data-phase="echo"][data-issue="refus"] .or-nacre, .or[data-issue="confirmation"] .or-nacre { box-shadow: 0 0 0 4px #ffa94d, 0 0 22px rgba(255, 169, 77, .45); }
+.or[data-phase="echo"][data-issue="information"] .or-nacre { box-shadow: 0 0 0 4px #9ec5ff; }
+.or[data-phase="echo"] .or-impulsion { animation: or-onde .9s ease-out; border: 2px solid currentColor; }
+@keyframes or-impulsion { from { transform: scale(2.4); opacity: .9; } to { transform: scale(1); opacity: 0; } }
+@keyframes or-onde { from { transform: scale(1); opacity: .7; } to { transform: scale(2.6); opacity: 0; } }
+@keyframes or-souffle { 50% { transform: scale(.9); } }
+
+/* les points relationnels, sur une orbite autour de l'Orbe */
+.or-points { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; pointer-events: none; }
+.or-points li { position: absolute; left: 50%; top: 50%; transform: rotate(var(--or-a)) translateX(calc(50% + 34px)) translateX(-50%); }
+.or-retrait .or-points li { transform: rotate(var(--or-a)) translateX(24px); }
+.or-point { display: block; width: 7px; height: 7px; border-radius: 50%; background: rgba(0, 0, 0, .3); }
+[data-aime="nuit"] .or-point { background: rgba(255, 255, 255, .5); }
+.or-points [data-etat="encours"] .or-point { background: #5aa2ff; animation: ot-pulsation 1.4s ease-in-out infinite; }
+.or-points [data-etat="reussite"] .or-point { background: #2f9e5b; }
+.or-points [data-etat="erreur"] .or-point { background: #d63b3b; border-radius: 1px; transform: rotate(45deg); }
+.or-points [data-etat="action"] .or-point { background: #e8890c; box-shadow: 0 0 0 2px #fff, 0 0 0 3px #e8890c; }
+.or-points [data-etat="guide"] .or-point { background: #8b6cf0; }
+.or-points [data-etat="info"] .or-point { background: #6aa6ff; animation: ot-clignote 2.4s ease-in-out infinite; }
+
+/* les intentions : une couleur ET un mot */
+.or-intentions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; width: 100%; max-width: 360px; }
+.or-intentions.or-liste { grid-template-columns: 1fr; }
+.or-intentions button { display: flex; align-items: center; gap: 8px; min-height: calc(40px * var(--one-cible, 1)); padding: 0 12px; border-radius: 999px; border: 1px solid var(--aime-bordure-forte); background: var(--aime-surface); color: var(--aime-texte); font: inherit; font-size: .92em; cursor: pointer; text-align: left; }
+.or-couleur { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0, 0, 0, .25); flex: none; }
+
+/* l'écho écrit */
+.or-echo { width: 100%; max-width: 420px; padding: 10px 12px; border-radius: 14px; background: var(--aime-surface-2); text-align: left; font-size: .92em; }
+.or-echo-tete { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; }
+.or-marque { width: 10px; height: 10px; border-radius: 50%; background: #9ec5ff; }
+[data-issue="reussite"] .or-marque { background: #2f9e5b; } [data-issue="echec"] .or-marque { background: #d63b3b; border-radius: 2px; }
+[data-issue="refus"] .or-marque, [data-issue="confirmation"] .or-marque { background: #e8890c; transform: rotate(45deg); border-radius: 2px; } [data-issue="precision"] .or-marque { background: #8b6cf0; }
+.or-mot { font-size: .78em; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--aime-texte-2); }
+.or-fermer { margin-left: auto; width: 26px; height: 26px; border-radius: 50%; border: 0; background: none; color: var(--aime-texte-2); cursor: pointer; }
+.or-titre { margin: 0; font-weight: 650; } .or-texte { margin: 2px 0 0; color: var(--aime-texte-2); } .or-preuve { margin: 4px 0 0; font-size: .86em; color: #1f8a4c; }
+[data-aime="nuit"] .or-preuve { color: #6fdc96; }
+.or-choix { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; } .or-choix .one-bouton { min-height: calc(36px * var(--one-cible, 1)); padding: 0 12px; font-size: .9em; }
+.or-saisie { display: flex; gap: 6px; margin-top: 8px; } .or-saisie input { flex: 1; min-height: 38px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--aime-bordure-champ); background: var(--aime-surface); color: var(--aime-texte); font: inherit; }
+.or-saisie label { flex: 1; display: flex; }
+.or-pourquoi { margin-top: 8px; padding: 0; border: 0; background: none; color: var(--aime-texte-2); font: inherit; font-size: .84em; text-decoration: underline; cursor: pointer; }
+.or-etapes { margin: 6px 0 0; padding-left: 18px; font-size: .84em; display: grid; gap: 3px; }
+.or-etapes small { display: block; color: var(--aime-texte-3, #8d8d89); }
+.or-etapes [data-genre="donnee"] small::before { content: "● "; color: #2f9e5b; } .or-etapes [data-genre="illustratif"] small::before { content: "○ "; }
+
+@media (prefers-reduced-motion: reduce) { .or *, .or-points .or-point { animation: none !important; transition: none !important; } }
+html[data-pz-motion="reduce"] .or *, html[data-pz-motion="reduce"] .or-points .or-point { animation: none !important; transition: none !important; }
+/* dans le Disque, l'Orbe prend place en haut du centre ; le contenu reste lisible dessous */
+.ot-relation .ot-scene .ot-centre { padding: 9% 13% 9%; }
+.ot-relation .ot-scene .ot-chemin { justify-content: center; }
+.ot-relation .ot-scene .or-echo { padding: 8px 10px; font-size: .86em; }
+.ot-relation .ot-scene .or-coeur { width: 52px; height: 52px; } .ot-relation .ot-scene .or-retrait .or-coeur { width: 30px; height: 30px; }
+
+/* en retrait (un fichier, une onde, un résultat au centre) : l'écho tient en une ligne ; le détail reste à un geste */
+.or-echo[data-compact="oui"] { padding: 6px 10px; } .or-echo[data-compact="oui"] .or-texte, .or-echo[data-compact="oui"] .or-choix { display: none; }
+.or-echo[data-compact="oui"] .or-echo-tete { margin: 0; }
+
+/* un événement réel (ex. Git) : une impulsion bleu clair, et une ligne à part qui ne recouvre pas la réponse */
+.or-evenement { width: 100%; max-width: 420px; display: grid; gap: 4px; padding: 6px 10px; border-radius: 12px; border: 1px solid #9ec5ff; font-size: .86em; text-align: left; }
+.or-evenement p { margin: 0; } .or-evenement .or-marque { display: none; } .or-evenement .or-choix { margin-top: 2px; }
+.or-signal .or-impulsion { border: 2px solid #9ec5ff; animation: or-onde 2.4s ease-out infinite; }

@@ -1,0 +1,45 @@
+/* Le Tambour vivant, sur le socle AIME (Jour ou Nuit, comme l'atelier). Le tambour est l'objet : un cercle de toile, un anneau de bois clair. */
+.tb { min-height: 100vh; min-height: 100dvh; background: var(--aime-fond); color: var(--aime-texte); font-family: "Inter Tight", Inter, system-ui, sans-serif; }
+.tb-tete { position: fixed; top: 0; left: 0; right: 0; z-index: 30; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px clamp(16px, 3vw, 32px); }
+.tb-marque { display: inline-flex; align-items: center; gap: 10px; color: var(--aime-texte); font-weight: 650; text-decoration: none; }
+.tb-marque .aime-point { width: 24px; height: 24px; }
+.tb-retour { min-height: 40px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: var(--aime-verre); box-shadow: inset 0 0 0 1px var(--aime-verre-bord); color: var(--aime-texte); text-decoration: none; font-weight: 600; font-size: 14px; backdrop-filter: blur(14px); }
+.tb-retour:focus-visible, .tb-marque:focus-visible, .tb-ouvrir:focus-visible, .tb-lien:focus-visible { outline: 3px solid var(--aime-texte); outline-offset: 3px; }
+
+.tb-scene { min-height: 100vh; min-height: 100dvh; box-sizing: border-box; padding: 84px 120px 48px 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+.tb-titre { text-align: center; }
+.tb-sur { margin: 0 0 6px; font-size: 12px; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; color: var(--aime-texte-3); }
+.tb-titre h1 { margin: 0; font-size: clamp(26px, 3.6vw, 44px); font-weight: 560; letter-spacing: -.035em; line-height: 1.05; }
+.tb-titre h1 span { color: var(--aime-titre-fondu); }
+
+/* le tambour : la toile ronde, l'anneau de bois, la vis en haut */
+.tb-tambour { --pad: 14px; --d: min(62vh, 560px, calc(100vw - 160px)); position: relative; width: var(--d); height: var(--d); flex: none; border-radius: 50%;
+  padding: var(--pad); box-sizing: border-box; background: linear-gradient(145deg, #efe3cc, #d9c29b 45%, #e9dbbf 70%, #cdb38a);
+  box-shadow: 0 0 0 3px rgba(0,0,0,.06), 0 30px 70px rgba(0,0,0,.28), inset 0 2px 3px rgba(255,255,255,.6), inset 0 -3px 6px rgba(0,0,0,.12); }
+.tb-tambour::before { content: ""; position: absolute; left: 50%; top: -14px; width: 26px; height: 22px; margin-left: -13px; border-radius: 6px; background: linear-gradient(#e4e4e2, #a9a9a6); box-shadow: 0 2px 4px rgba(0,0,0,.25); }
+.tb-toile { display: block; width: 100%; height: 100%; border-radius: 50%; background: #f4f1ea; box-shadow: inset 0 0 0 6px rgba(0,0,0,.05), inset 0 6px 18px rgba(0,0,0,.18); }
+.tb-video { position: absolute; width: 2px; height: 2px; opacity: 0; pointer-events: none; }
+.tb-envoi .tb-toile { opacity: .6; }
+.tb-invite { position: absolute; inset: var(--pad); border-radius: 50%; display: grid; place-content: center; justify-items: center; gap: 10px; text-align: center; }
+.tb-ouvrir { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: #0a0a0b; color: #fff; font: inherit; font-weight: 600; font-size: 15px; cursor: pointer; box-shadow: 0 12px 30px rgba(0,0,0,.25); }
+.tb-ouvrir svg { width: 18px; height: 18px; }
+.tb-lien { min-height: 36px; border: 0; background: none; color: #3a3a38; font: inherit; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.tb-direct { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); padding: 4px 10px; border-radius: 999px; background: rgba(10,10,11,.66); color: #fff; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
+.tb-etat { margin: 4px 0 0; padding: 6px 14px; border-radius: 999px; background: var(--aime-surface); box-shadow: inset 0 0 0 1px var(--aime-bordure, rgba(0,0,0,.08)); font-size: 13px; color: var(--aime-texte-2); max-width: min(640px, calc(100vw - 48px)); text-align: center; }
+.tb-note { margin: 0; max-width: 520px; font-size: 13px; line-height: 1.45; color: var(--aime-texte-3); text-align: center; }
+
+@media (max-width: 720px) {
+  .tb-scene { padding: 76px 16px 132px; gap: 12px; }
+  .tb-tambour { --pad: 14px; --d: min(calc(100vw - 32px), 58vh); padding: 10px; }
+  .tb-invite { inset: 10px; }
+}
+html[data-pz-motion="reduce"] .tb * { transition: none !important; }
+
+/* lot B : le patron posé sur la toile filmée, et ses quatre coins */
+.tb-calque-fenetre { position: absolute; inset: var(--pad); border-radius: 50%; overflow: hidden; pointer-events: none; }
+.tb-calque { position: absolute; left: 0; top: 0; transform-origin: 0 0; image-rendering: pixelated; }
+.tb-coins { position: absolute; inset: var(--pad); pointer-events: none; }
+.tb-coin { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: grab; touch-action: none; pointer-events: auto; }
+.tb-coin span { position: absolute; left: 50%; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px #0a0a0b, 0 4px 12px rgba(0,0,0,.35); }
+.tb-coin:active { cursor: grabbing; }
+.tb-coin:focus-visible { outline: none; } .tb-coin:focus-visible span { box-shadow: 0 0 0 3px #0a0a0b, 0 0 0 6px #fff; }

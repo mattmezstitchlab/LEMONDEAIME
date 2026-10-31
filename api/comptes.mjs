@@ -28,6 +28,9 @@ export default async function comptes(req, res) {
   }
   const refus = R.ecriture(req); if (refus) return json(res, ...refus);   /* avant tout : même origine et JSON pour toute écriture */
   const a = auth();
+  /* comptes fermés : « qui est connecté ? » répond simplement « personne » (comme Better Auth sans session), au lieu d'une erreur
+     sur chaque page ; toute autre demande reste refusée et le dit */
+  if (!a && req.method === 'GET' && /\/get-session$/.test(origine.split('?')[0])) { res.statusCode = 200; res.setHeader('Content-Type', 'application/json; charset=utf-8'); return res.end('null'); }
   if (!a) return json(res, 503, { ok: false, raison: 'Les comptes ne sont pas encore ouverts sur cet environnement.' });
   if (/\/sign-in\/magic-link$/.test((req.url || '').split('?')[0]) && req.method === 'POST') {
     const q = await Q.quota('lien:ip', Q.ipDe(req), { db: _pool() || undefined });

@@ -1,10 +1,10 @@
-import StudioDocks, { type DockPath } from "./components/StudioDocks";
-import Buro from "./components/Buro";
+import StudioDocks, { lireNav0, type BlocDemande, type DockPath } from "./components/StudioDocks";
 import { VISIBILITY, visibilityOf, writeVisibility } from "./lib/visibility";
 import { readInterfaceLevel, INTERFACE_LEVEL_KEY, type InterfaceLevel } from "./lib/interfaceLevel";
+import { EVENEMENT_NIVEAU } from "./lib/point/profils";
 import CrossStitchHome, { type StitchEntry } from "./components/CrossStitchHome";
 import {writeStoredJSON} from "./lib/storageSafety";
-import { useCallback, useDeferredValue, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { BASE_FLOSS, FLOSS, flossIndex } from "./lib/dmc";
 import { blankPattern, initState, loadStored, reducer, saveStored } from "./lib/store";
 import { clonePattern, compositePattern, computeStats, createPattern, ensurePalette, toObject, fromObject, type Pattern, type Supply } from "./lib/pattern";
@@ -24,7 +24,6 @@ import MotifLibrary from "./components/MotifLibrary";
 import EmbroideryInspector from "./components/EmbroideryInspector";
 import { getMotifPreset } from "./lib/motifPresets";
 import { attachSubject, changeSubject, duplicateSubject, recomposeSubjects, removeSubject, reorderSubject, sceneFromPattern, type SubjectScene, type SubjectLayer } from "./lib/subjectEngine";
-import PaletteSheet from "./components/PaletteSheet";
 import FlossRail from "./components/FlossRail";
 import WorkspacePanel, { DEFAULT_PREFS, type Preferences } from "./components/WorkspacePanel";
 import LibrarySheet from "./components/LibrarySheet";
@@ -39,6 +38,19 @@ import ExportStudio from "./components/ExportStudio";
 import ErrorBoundary from "./components/ErrorBoundary";
 import PeerShare from "./components/PeerShare";
 import OrbeGuide, { VISITE_CLE, visiteVue } from "./components/OrbeGuide";
+import Cadre, { TracerCadre } from "./components/Cadre";
+import ComposerRosace from "./components/ComposerRosace";
+import { formatParDefaut, generer } from "./lib/motif5d/generer";
+import { OFFERTE_CLE } from "./components/edition/creation";
+import Sceau from "./components/Sceau";
+import { lireCode } from "./lib/motif5d/code";
+import { lireRetour } from "./lib/one/contextes";
+import { reprendre as reprendreTambour } from "./lib/tambour/capture";
+import { lireContenu } from "./galerie/api";
+const Exposer = lazy(() => import("./galerie/Exposer"));
+
+/** Après avoir ouvert une recette partagée, l'adresse redevient celle de l'atelier. */
+const retirerParametreRosace = () => { try { const u = new URL(window.location.href); if (u.searchParams.has("rosace")) { u.searchParams.delete("rosace"); window.history.replaceState(window.history.state, "", u.pathname + u.search + u.hash); } } catch { /* rien */ } };
 
 type Panel = "palette" | "library" | "share" | "export" | null;
 type RightSection = "properties" | "motifs" | "edit" | "prepare" | "follow" | "settings";
@@ -75,7 +87,6 @@ export default function App() {
   });
   useEffect(()=>{
     if(studioMode==="stitch-home")document.title="Point Zéro — Studio de point de croix";
-    else if(studioMode==="buro")document.title="BurO — Point Zéro";
   },[studioMode]);
   // Public pages are addressable and reversible with browser back/forward.
   // Workspace data remains in its original localStorage keys, untouched.
@@ -103,9 +114,16 @@ export default function App() {
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
   const subjectMove = useRef<{ scene: SubjectScene; base: Pattern; id: string; x: number; y: number } | null>(null);
   const [interfaceLevel, setInterfaceLevel] = useState(readInterfaceLevel);
+  /* un profil choisi dans le Confort du Point change aussi le niveau d'affichage (lib/point/profils) */
+  useEffect(() => {
+    const suivre = (e: Event) => { const v = (e as CustomEvent<InterfaceLevel>).detail; if (v === "beginner" || v === "intermediate" || v === "expert") setInterfaceLevel(v); };
+    window.addEventListener(EVENEMENT_NIVEAU, suivre); return () => window.removeEventListener(EVENEMENT_NIVEAU, suivre);
+  }, []);
   const [, setShowDrawingTools] = useState(() => readInterfaceLevel() === "expert");
   const [, setMobileLibraryOpen] = useState(false);
   const [dockPath, setDockPath] = useState<DockPath>(null);
+  /* un bloc du dock du haut à ouvrir depuis ailleurs (Mes ouvrages depuis l'accueil, le nuancier depuis le rail de fils) */
+  const [blocDemande, setBlocDemande] = useState<{ bloc: BlocDemande; n: number } | null>(null);
   const [, setVisibilityTick] = useState(0);
   const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
   const [rightSection, setRightSection] = useState<RightSection>("properties");
@@ -117,14 +135,24 @@ export default function App() {
   const progression = useMemo(() => { const st = computeStats(Pdiffere);
     return { total: st.rows.reduce((n, r) => n + r.cells, 0), done: st.rows.reduce((n, r) => n + r.done, 0), couleurs: st.rows.map(r => ({ idx: r.idx, hex: r.hex, code: r.code, cells: r.cells, done: r.done })) }; }, [Pdiffere]);
   const [tool, setTool] = useState<Tool>("cross"), [color, setColor] = useState(Math.max(0, flossIndex("3801"))), [view, setView] = useState<ViewMode>("real"), [workspace, setWorkspace] = useState<Workspace>("create");
+  const [grille, setGrille] = useState<"visible" | "masquee">(() => { try { return localStorage.getItem("pointzero:grille") === "masquee" ? "masquee" : "visible"; } catch { return "visible"; } });
+  const basculerGrille = () => setGrille(g => { const n = g === "masquee" ? "visible" : "masquee"; try { localStorage.setItem("pointzero:grille", n); } catch { /* pour cette visite */ } return n; });
   const [symbols, setSymbols] = useState(false), [panel, setPanel] = useState<Panel>(null), [file, setFile] = useState<File | null>(null), [pdfFile, setPdfFile] = useState<File | null>(null), [promptOpen, setPromptOpen] = useState(false), [selection, setSelection] = useState<Selection | null>(null), [clipboard, setClipboard] = useState<Pattern | null>(null);
   const [prefs, setPrefs] = useState(initialPreferences), [inventory, setInventory] = useState(readInventory), [saving, setSaving] = useState("Sauvegarde locale"), [toast, setToast] = useState("");
+  const [tracer, setTracer] = useState(false);
+  /** Composer une rosace : ouvert depuis le point zéro, le + du Cadre, ou un lien ?rosace= (lecture seule, sans compte) */
+  const [aidePointZero, setAidePointZero] = useState(false);
+  const [composer, setComposer] = useState<{ depart?: string | null; lecture?: boolean } | null>(() => {
+    try { const c = new URLSearchParams(window.location.search).get("rosace"); return c && lireCode(c) ? { depart: c, lecture: true } : null; } catch { return null; }
+  });
   const [fitKey, setFitKey] = useState(0), wide = useMedia("(min-width: 1280px)");
   const ready = useRef(true), prevTool = useRef<Tool>("cross"), lastViews = useRef<{ create: ViewMode; stitch: ViewMode }>({ create: "real", stitch: "pattern" });
   const snapshot = useRef({ P, remote, prefs, workspace, store }); snapshot.current = { P, remote, prefs, workspace, store };
   const checked = useRef(false);
   const notify = useCallback((msg: string) => setToast(msg), []);
   const closePanel = useCallback(() => setPanel(null), []);
+  /* le nuancier DMC se déplie dans le dock du haut (Fils), plus dans un panneau à droite */
+  const ouvrirNuancier = useCallback(() => { setDockPath("fils"); setBlocDemande(d => ({ bloc: "nuancier", n: (d?.n ?? 0) + 1 })); }, []);
   // Les outils sont de véritables panneaux, comme dans Photo.
   // Canvas conserve son moteur plein écran mais centre/ajuste le patron
   // dans la surface libre, entre les panneaux et la bande DMC.
@@ -219,7 +247,12 @@ export default function App() {
     let fini = false;
     void (async () => {
       const connecte = await estConnecte(); if (fini) return; setCompteAime(connecte);
-      if (!connecte) return;
+      if (!connecte) {
+        /* depuis le Disque (.0NE → Bureau → Ouvrir) : l'ouvrage choisi, rangé sur cet appareil */
+        const local = new URLSearchParams(window.location.search).get("ouvrage");
+        if (local) { const r = (await listProjects()).find(x => x.id === local), p = r && getProject(r); if (p && !fini) void loadPattern(p); else if (!fini) notify("Cet ouvrage n’est pas sur cet appareil."); }
+        return;
+      }
       const ecrits = await tirerDuCompte().catch(() => [] as string[]);
       const id = new URLSearchParams(window.location.search).get("ouvrage");
       if (id) { const r = (await listProjects()).find(x => x.id === id), p = r && getProject(r); if (p && !fini) void loadPattern(p); else if (!fini) notify("Cet ouvrage n’est pas dans votre espace AIME."); }
@@ -293,8 +326,8 @@ export default function App() {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       const key = e.key.toLowerCase();
       if (KEYS[key]) chooseTool(KEYS[key]);
-      else if (key === "p") { if (workspace === "stitch") chooseTool("park"); else setPanel("palette"); }
-      else if (key === "f") setPanel("palette");
+      else if (key === "p") { if (workspace === "stitch") chooseTool("park"); else ouvrirNuancier(); }
+      else if (key === "f") ouvrirNuancier();
       else if (key === "t") setView((v) => v === "real" ? "flat" : v === "flat" ? "pattern" : "real");
       else if (key === "escape") { closePanel(); setSelection(null); }
     };
@@ -330,7 +363,7 @@ export default function App() {
     importAdvanced: (f: File) => { closePanel(); setFile(f); },
     openFile: (f: File) => { void openProjectFromFile(f); },
     export: () => setPanel("export" as Panel), save: () => { saveProjectFile(P); notify("Fichier projet téléchargé"); },
-    new: (w: number, h: number) => { try { const next = createPattern("Nouveau motif", w, h, P.count, P.strands); next.fabric = P.fabric; void loadPattern(next); } catch (e) { notify(e instanceof Error ? e.message : "Dimensions invalides"); } },
+    new: (w: number, h: number, nom = "Nouveau motif") => { try { const next = createPattern(nom, w, h, P.count, P.strands); next.fabric = P.fabric; void loadPattern(next); } catch (e) { notify(e instanceof Error ? e.message : "Dimensions invalides"); } },
     library: () => setPanel("library" as Panel), share: () => setPanel("share" as Panel), prompt: () => { closePanel(); setPromptOpen(true); }, notify,
   };
 
@@ -363,7 +396,8 @@ export default function App() {
   const atelierLibre = studioMode === "embroidery" && !pdfFile && !promptOpen && !compositionInput && !file && !autoImage;
   /* l'orbe qui guide : à la première ouverture de l'atelier, elle présente les deux docks, outil par outil */
   const [visite, setVisite] = useState(false);
-  useEffect(() => { if (atelierLibre && !panel && !showWelcome && !visiteVue()) setVisite(true); }, [atelierLibre, panel, showWelcome]);
+  /* avec le tambour (navigation .0), la visite des docks ne s'impose plus : elle décrit une autre interface ; elle reste proposée par la landing */
+  useEffect(() => { if (atelierLibre && !panel && !showWelcome && !composer && !visiteVue() && !lireRetour() && !lireNav0()) setVisite(true); }, [atelierLibre, panel, showWelcome, composer]);
   useEffect(() => {
     if (!atelierLibre) return;
     const utile = (e: DragEvent) => { const t = Array.from(e.dataTransfer?.types ?? []); return t.includes(OUVRAGE_DRAG_TYPE) || t.includes("Files"); };
@@ -481,10 +515,64 @@ export default function App() {
       setWorkspace("create"); setView("flat"); setTool("hand");
       setActiveCategory("compose"); setRightSection("properties");
       setAutoImage(null); if (!keepGenerator) setPromptOpen(false); setPdfFile(null);
-      notify("Motif ouvert dans la grille. Composer / décomposer reste disponible dans Dessiner.");
+      notify(p.recette ? "Votre rosace est dans son cadre. Tirez un coin : le motif se recalcule à la nouvelle taille." : p.photo ? "Motif ouvert dans son cadre. Tirez un coin : la photo est recomptée ; le + règle la lumière et la palette." : "Motif ouvert dans son cadre. Tirez un coin pour l’agrandir.");
       return true;
     } catch { return false; }
   };
+  /* Le cadeau de la landing : « ?offerte=<recette> » ouvre la rosace du visiteur dans son cadre, une seule fois.
+     La recette passe, pas une image : le même moteur, à la même taille que le compositeur, redonne le même motif ;
+     l'ouvrage rejoint Mes ouvrages (stockage de cet appareil), avec sa recette pour pouvoir y revenir. */
+  /* la Galerie des Vivants : la feuille « Exposer », et « Ouvrir dans mon atelier » (?galerie=<id>) qui copie une œuvre exposée */
+  const [exposerOuvert, setExposerOuvert] = useState(false);
+  const galerieVue = useRef(false);
+  useEffect(() => {
+    if (galerieVue.current) return; galerieVue.current = true;
+    let id: string | null = null;
+    try { id = new URLSearchParams(window.location.search).get("galerie"); } catch { return; }
+    if (!id || !/^[a-z0-9]{12}$/.test(id)) return;
+    try { const u = new URL(window.location.href); u.searchParams.delete("galerie"); window.history.replaceState(window.history.state, "", u.pathname + u.search + u.hash); } catch { /* rien */ }
+    void lireContenu(id).then(r => {
+      if (!r.ok) { notify(r.raison); return; }
+      let p: Pattern | null = null; try { p = fromObject(JSON.parse(r.contenu)); } catch { p = null; }
+      if (!p) { notify("Cette œuvre n’a pas pu être ouverte."); return; }
+      p.name = `${r.titre} (d’après ${r.pseudo})`;
+      p.provenance = { kind: "galerie", source: "Galerie des Vivants", author: r.pseudo, license: "Usage personnel", personalOnly: true };
+      void useImportedPattern(p).then(ok => { if (ok) notify(`« ${r.titre} », de ${r.pseudo}, est dans votre atelier : une copie pour votre usage personnel.`); });
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  /* le Tambour vivant : « Broder ce motif » dépose l'ouvrage dans la session de l'onglet, puis ouvre l'atelier avec « ?tambour=1 » */
+  const tambourVu = useRef(false);
+  useEffect(() => {
+    if (tambourVu.current) return; tambourVu.current = true;
+    let oui = false; try { oui = new URLSearchParams(window.location.search).has("tambour"); } catch { return; }
+    if (!oui) return;
+    try { const u = new URL(window.location.href); u.searchParams.delete("tambour"); window.history.replaceState(window.history.state, "", u.pathname + u.search + u.hash); } catch { /* rien */ }
+    const p = reprendreTambour();
+    if (!p) { notify("L’ouvrage du Tambour n’a pas été retrouvé : il reste dans l’onglet où il a été pris."); return; }
+    void useImportedPattern(p).then(ok => { if (ok) notify("Votre motif du Tambour est dans l’atelier, avec sa photo. Il est enregistré dans Mes ouvrages, sur cet appareil."); });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const offerteVue = useRef(false);
+  useEffect(() => {
+    if (offerteVue.current) return; offerteVue.current = true;
+    let code: string | null = null;
+    try { code = new URLSearchParams(window.location.search).get("offerte"); } catch { return; }
+    if (!code) return;
+    try { const u = new URL(window.location.href); u.searchParams.delete("offerte"); window.history.replaceState(window.history.state, "", u.pathname + u.search + u.hash); } catch { /* rien */ }
+    const recette = lireCode(code);
+    if (!recette) { notify("Ce lien de rosace n’est pas lisible."); return; }
+    let deja: string | null = null; try { deja = localStorage.getItem(OFFERTE_CLE); } catch { /* rien */ }
+    if (deja === code) { notify("Votre rosace offerte est déjà dans Mes ouvrages."); return; }
+    const [w, h] = formatParDefaut(recette.signature);
+    const { pattern } = generer({ ...recette, w, h, nom: "Ma rosace offerte" });
+    void useImportedPattern(pattern).then(ok => {
+      if (!ok) return;
+      try { localStorage.setItem(OFFERTE_CLE, code!); } catch { /* rien */ }
+      notify("Voici votre rosace offerte. Elle est enregistrée dans Mes ouvrages, sur cet appareil.");
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const createActions = {
     prompt: promptText, onPrompt: setPromptText,
     onGenerate: () => setPromptOpen(true),
@@ -495,27 +583,17 @@ export default function App() {
   const contextSection: "prepare" | "edit" | "follow" | "settings" =
     rightSection === "properties" || rightSection === "motifs" ? "edit" : rightSection;
   const enterStitchStudio = (entry: StitchEntry) => {
-    if (entry === "library") { switchStudio("buro"); return; }
+    if (entry === "library") { setBlocDemande(n => ({ bloc: "inviter", n: (n?.n ?? 0) + 1 })); switchStudio("embroidery"); return; }
     switchStudio("embroidery");
     openCategory(entry === "prepare" ? "threads" : entry === "stitch" ? "stitch" : "create");
   };
-  return studioMode === "buro"
-    ? <Buro currentName={P.name}
-        onOpen={p => { void loadPattern(p).then(ok => { if (ok) { setShowWelcome(false); setTool("hand"); setDockPath(null); switchStudio("embroidery"); } }); }}
-        onContinue={() => { setShowWelcome(false); switchStudio("embroidery"); }}
-        onNew={() => { panelActions.new(80, 80); setShowWelcome(false); setActiveCategory("compose"); setDockPath("dessiner"); switchStudio("embroidery"); }}
-        onImport={f => { importAnyFile(f); switchStudio("embroidery"); }}
-        onGenerate={() => { setShowWelcome(false); switchStudio("embroidery"); setPromptOpen(true); }}
-        onWatch={() => { setShowWelcome(false); switchStudio("embroidery"); setPanel("share"); }}
-        onInvite={p => { void loadPattern(p).then(ok => { if (ok) { setShowWelcome(false); switchStudio("embroidery"); setPanel("share"); } }); }}
-        onHome={() => switchStudio("stitch-home")} />
-    : studioMode === "stitch-home"
+  return studioMode === "stitch-home"
     ? <CrossStitchHome projectName={P.name} onOpen={enterStitchStudio}
-        onBuro={() => switchStudio("buro")}
+        onOuvrages={() => enterStitchStudio("library")}
         onShare={() => { switchStudio("embroidery"); setPanel("share"); }}
         onImport={chosen => { switchStudio("embroidery"); importAnyFile(chosen); }}
         onVisite={() => { try { localStorage.removeItem(VISITE_CLE); } catch { /* la visite s'ouvrira quand même */ } setPanel(null); setDockPath(null); setShowWelcome(false); setVisite(true); switchStudio("embroidery"); }}/>
-    : <div data-interface-level={interfaceLevel} className={`pz-atelier pz-embroidery-studio fixed inset-0 h-[100dvh] w-full overflow-hidden bg-[#faf9f7] ${prefs.largeText ? "large-text" : ""} ${prefs.highContrast ? "high-contrast" : ""}`}>
+    : <div data-interface-level={interfaceLevel} className={`pz-atelier pz-embroidery-studio fixed inset-0 h-[100dvh] w-full overflow-hidden bg-[#f3f3f1] ${prefs.largeText ? "large-text" : ""} ${prefs.highContrast ? "high-contrast" : ""}`}>
     <input
       ref={imageInputRef}
       type="file"
@@ -537,15 +615,37 @@ export default function App() {
       }}
     />
     <input ref={actionImportRef} type="file" className="sr-only" aria-label="Importer une image, un PDF ou un projet" accept="image/png,image/jpeg,image/webp,.pdf,.json,.oxs" onChange={e=>{const selected=e.target.files?.[0];e.target.value="";if(selected)importAnyFile(selected);}}/>
-    <Canvas pattern={P} tool={remote ? "hand" : tool} color={color} view={view} symbols={symbols} highlightActive={workspace === "stitch"} insets={insets} fitKey={fitKey} onlyActive={prefs.onlyActive} highContrast={prefs.highContrast} pencilOnly={prefs.pencilOnly} symmetry={prefs.symmetry} annotation={prefs.annotation} readOnly={!!remote} selection={selection} halfDirection={prefs.halfDirection}
+    <Canvas pattern={P} tool={remote ? "hand" : tool} color={color} view={view} symbols={symbols} grille={grille} highlightActive={workspace === "stitch"} insets={insets} fitKey={fitKey} onlyActive={prefs.onlyActive} highContrast={prefs.highContrast} pencilOnly={prefs.pencilOnly} symmetry={prefs.symmetry} annotation={prefs.annotation} readOnly={!!remote} selection={selection} halfDirection={prefs.halfDirection}
       onSelection={setSelection} onBegin={() => { if (!remote) dispatch({ type: "begin" }); }}
       onLive={(p) => { if (!remote) dispatch({ type: "live", pattern: p }); }}
       onEnd={(changed) => { if (!remote) dispatch({ type: "end", changed }); }}
       onPick={(idx) => { setColor(idx); if (tool === "pick") setTool(prevTool.current); }}
       onSubjectStart={subjectStart} onSubjectMove={subjectMoveTo} onSubjectEnd={subjectEnd}
       onMotifDrop={(id,x,y) => { const preset = getMotifPreset(id); if (preset) addStitchedPattern(preset,{x,y}); }} />
+    {!tracer && <Cadre pattern={P} readOnly={!!remote} onSet={p => setPattern(p)} onNotify={notify}
+      onBegin={() => { if (!remote) dispatch({ type: "begin" }); }} onLive={(p) => { if (!remote) dispatch({ type: "live", pattern: p }); }} onEnd={(changed) => { if (!remote) dispatch({ type: "end", changed }); }}
+      plus={[["Composer une rosace", () => setComposer({})], ["Nouveau cadre", () => setTracer(true)], ["Motifs à glisser", () => openRightPanel("motifs")], ["Texte en croix, symétrie", () => { setActiveCategory("compose"); openRightPanel("edit"); }],
+        ["Calques", () => openRightPanel("properties")], ["Générer d’après une description", panelActions.prompt], ["Exporter le patron", () => setPanel("export" as Panel)], ["Télécharger le projet", panelActions.save]]} />}
+    {tracer && <TracerCadre count={P.count} over={P.fabric?.over ?? 1} onAnnuler={() => setTracer(false)}
+      onTrace={(w, h, nom) => { setTracer(false); panelActions.new(w, h, nom ?? "Nouveau motif"); notify(`Nouveau cadre : ${w} × ${h} points. Tirez ses coins pour l’agrandir.`); }} />}
     {depot && <div className="pzs-depot-voile" aria-hidden="true"><span>Déposez ici : l’ouvrage s’ouvre dans la grille</span></div>}
+    {/* le point zéro : sur une grille vide, l'import se fait au centre, là où la broderie commence */}
+    {atelierLibre && !remote && progression.total === 0 && !depot && dockPath === null &&
+      <div className="pz-point-zero" data-guide="point-zero">
+        <button type="button" className="pz-point-zero-bouton" onClick={() => actionImportRef.current?.click()} aria-label="Importer au point zéro : une image, un patron PDF ou un projet">
+          <span aria-hidden="true">+</span>
+        </button>
+        {/* deux actions, pas de paragraphe : l'explication est derrière « ? », à la demande */}
+        <p className="pz-point-zero-titre"><b>Importer</b>
+          <button type="button" className="pz-point-zero-aide" aria-expanded={aidePointZero} aria-controls="pz-aide-zero" onClick={() => setAidePointZero(v => !v)}>?<span className="sr-only"> Aide : que peut-on importer ?</span></button></p>
+        {aidePointZero && <p id="pz-aide-zero" className="pz-point-zero-bulle">Une image, un patron PDF ou un projet (.json, .oxs) ; vous pouvez aussi le glisser sur la grille. Pour dessiner case par case : Dessiner, en haut.</p>}
+        <button type="button" className="pz-point-zero-composer" data-guide="composer" onClick={() => setComposer({})}><Sceau signature={{ structure: 0, trace: 2, densite: 1, echelle: 1, palette: 1 }} faits={4} taille={30} />Composer une rosace</button>
+      </div>}
+    {composer && <ComposerRosace depart={composer.depart} lecture={composer.lecture} onFermer={() => { setComposer(null); retirerParametreRosace(); }}
+      onBroder={(p) => { void useImportedPattern(p).then(ok => { if (ok) { setComposer(null); retirerParametreRosace(); } }); }} />}
     {!pdfFile && !promptOpen && !compositionInput && !file && !autoImage && <StudioDocks
+      sansPoint={!!composer}
+      grille={grille} onGrille={basculerGrille} onImporter={genre => { const el = actionImportRef.current; if (!el) return; el.accept = genre === "image" ? "image/png,image/jpeg,image/webp" : genre === "pdf" ? ".pdf,application/pdf" : genre === "projet" ? ".json,.oxs" : "image/png,image/jpeg,image/webp,.pdf,.json,.oxs"; el.click(); }} onComposer={() => setComposer({})}
       patternName={P.name} saving={saving} workspace={workspace}
       onWorkspace={mode => { chooseWorkspace(mode); setActiveCategory(mode === "stitch" ? "stitch" : "compose"); setShowWelcome(false); }}
       tool={remote ? "hand" : tool} onTool={chooseTool}
@@ -568,19 +668,20 @@ export default function App() {
         else notify("Cet appareil refuse d’enregistrer ce réglage.");
       }}
       actions={{
-        buro: () => switchStudio("buro"),
         home: () => switchStudio("stitch-home"),
         settings: () => openRightPanel("settings"),
         share: () => setPanel("share"),
         motifs: () => openRightPanel("motifs"),
         exportPanel: () => setPanel("export"),
         save: panelActions.save,
-        palette: () => setPanel("palette"),
+        palette: () => ouvrirNuancier(),
         threadsSettings: () => openRightPanel("prepare"),
         follow: () => openRightPanel("follow"),
         drawSettings: () => { setActiveCategory("compose"); openRightPanel("edit"); },
         layers: () => { if (mobileInspectorOpen && rightSection === "properties") setMobileInspectorOpen(false); else openRightPanel("properties"); },
         visite: () => setVisite(true),
+        exposer: () => { setDockPath(null); setExposerOuvert(true); },
+        nouveau: () => { if (remote) return; setTracer(true); setShowWelcome(false); setDockPath(null); },
       }}
       zoom={{
         zoomIn: () => window.dispatchEvent(new CustomEvent("pointzero:canvas", { detail: { action: "zoomIn" } })),
@@ -588,10 +689,15 @@ export default function App() {
         magnify: () => window.dispatchEvent(new CustomEvent("pointzero:canvas", { detail: { action: "magnify" } })),
         fit: () => setFitKey(k => k + 1),
       }}
-      progression={progression} onCouleur={pickColor}
+      progression={progression} onCouleur={pickColor} onPattern={p => setPattern(p)} pattern={P} couleur={color} blocDemande={blocDemande}
       ouvrages={{ courant: P.id, ouvrir: id => { void ouvrirOuvrage(id); }, importer: importAnyFile }}
-      fils={<FlossRail dock pattern={P} active={color} onActive={pickColor} onPattern={(p) => setPattern(p)} onSupply={updateSupply} onBrowse={() => setPanel("palette")} stitching={workspace === "stitch"} hidden={showWelcome || !!file} />} />}
-    {atelierLibre && <OrbeGuide ouverte={visite} onFermer={() => setVisite(false)} onChemin={setDockPath} />}
+      fils={<FlossRail dock pattern={P} active={color} onActive={pickColor} onPattern={(p) => setPattern(p)} onSupply={updateSupply} onBrowse={() => ouvrirNuancier()} stitching={workspace === "stitch"} hidden={showWelcome || !!file} />} />}
+    {atelierLibre && <OrbeGuide ouverte={visite && !composer} onFermer={() => setVisite(false)} onChemin={c => {
+      /* « dessiner:grille » : Le Point ouvre aussi la grille des points, pour y imiter les gestes */
+      const [chemin, grille] = (c ?? "").split(":");
+      setDockPath((chemin || null) as DockPath);
+      setBlocDemande(d => ({ bloc: grille ? "outils" : "aucun", n: (d?.n ?? 0) + 1 }));
+    }} />}
     <aside aria-label="Inspecteur de broderie"
       hidden={!mobileInspectorOpen}
       className="pz-embroidery-right pzs-panel thin-scroll fixed bottom-[96px] right-3 top-[112px] z-30 w-[min(300px,calc(100vw-24px))] overflow-y-auto rounded-[18px] border border-white/15 bg-[#09090b] text-white shadow-2xl">
@@ -614,7 +720,7 @@ export default function App() {
       ) : rightSection === "properties" ? (
         <EmbroideryInspector pattern={P} activeColor={color}
           onSettings={() => openRightPanel("settings")}
-          onBrowse={() => { setMobileInspectorOpen(false); setPanel("palette"); }} workspace={workspace}
+          onBrowse={() => { setMobileInspectorOpen(false); ouvrirNuancier(); }} workspace={workspace}
           scene={sceneFromPattern(P)} selectedId={selectedSubjectId}
           onSelect={id => {setSelectedSubjectId(id);setActiveCategory("compose");setTool("hand");}}
           onChange={changeSelectedSubject} onReorder={(id,delta) => updateScene(scene=>reorderSubject(scene,id,delta))}
@@ -636,7 +742,6 @@ export default function App() {
     </aside>
     {showWelcome && !remote && <div className="pointer-events-none fixed inset-0 z-[28] flex items-center justify-center px-3 pb-12 pt-12"><div className="pointer-events-auto"><AtelierCreate {...createActions} /></div></div>}
     {!showWelcome && selection && workspace === "create" && !remote && <SelectionBar selection={selection} hasClipboard={!!clipboard} onAction={selectionAction} />}
-    <PaletteSheet open={panel === "palette"} onClose={closePanel} pattern={P} color={color} onPick={pickColor} />
     <LibrarySheet compte={compteAime} open={panel === "library"} onClose={closePanel} onLoad={(p) => void loadPattern(p)} onNew={() => panelActions.new(80, 80)} inventory={inventory} />
     {autoImage && <AutomaticImageImport file={autoImage}
       onCancel={() => setAutoImage(null)}
@@ -654,6 +759,7 @@ export default function App() {
         />
       </ErrorBoundary>
     )}
+    {exposerOuvert && <Suspense fallback={null}><Exposer pattern={P} onFermer={() => setExposerOuvert(false)} /></Suspense>}
     {promptOpen && <PromptStudio initialPrompt={promptText} onClose={() => setPromptOpen(false)} onImport={p => { void useImportedPattern(p, true); }} embedded /> }
     {compositionInput && (
       <ErrorBoundary label="Le moteur de composition" onReset={() => setCompositionInput(null)}>

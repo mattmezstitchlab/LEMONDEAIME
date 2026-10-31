@@ -27,7 +27,11 @@
       "destination": "/api/comptes?__lien=:chemin*"
     },
     {
-      "source": "/((?!api/|media/|assets/|studio/).*)",
+      "source": "/:fiche(projets|reseau)/:cle",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:page(projets|aime-wedding|admin|a-propos|point-zero|buro|reseau|entrer|a-plus|boutique|musique|charte|monde)",
       "destination": "/index.html"
     }
   ],
@@ -58,13 +62,18 @@
   "installCommand": "npm ci && npm ci --prefix studio",
   "redirects": [
     {
-      "source": "/",
-      "destination": "/studio/",
+      "source": "/atlas",
+      "destination": "https://atlas-de-pique-de-coeur.vercel.app/",
       "permanent": false
     },
     {
       "source": "/studio",
       "destination": "/studio/",
+      "permanent": false
+    },
+    {
+      "source": "/bureau",
+      "destination": "/studio/bureau",
       "permanent": false
     }
   ],

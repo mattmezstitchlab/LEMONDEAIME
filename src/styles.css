@@ -159,6 +159,7 @@ html.calme *, html.calme *::before, html.calme *::after { transition: none !impo
 .pied h2 { margin: 0 0 12px; font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--encre-3); }
 .pied ul { list-style: none; margin: 0; padding: 0; font-size: 18px; font-weight: 600; }
 .pied li { min-height: 40px; display: flex; align-items: center; gap: 8px; }
+.pied li a { display: inline-flex; align-items: center; min-height: 32px; }   /* la cible fait la hauteur de la ligne, pas seulement du texte */
 .pied a { text-decoration: none; }
 .pied a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .pied .bas { margin-top: 56px; padding-top: 24px; border-top: 2px dotted #BDBDB8; display: flex; justify-content: space-between; gap: 12px 32px; flex-wrap: wrap; font-size: 15px; color: var(--encre-2); }
@@ -377,6 +378,7 @@ html.calme .carte-flip > .dos { opacity: 0; } html.calme .carte-flip.retournee >
 
 /* LE MONDE AIME · le portfolio (accueil, pages projet) */
 .pf-tete { padding: clamp(40px, 6vw, 88px) var(--marge) 48px; }
+.pf-autres { margin: 22px 0 0; font-size: 15px; line-height: 2; color: var(--encre-2); } .pf-autres a { color: var(--encre); text-underline-offset: 3px; display: inline-block; min-height: 24px; }
 .pf-tete .signature { font-size: clamp(48px, 10.4vw, 188px); }
 .pf-attente { padding: 0 var(--marge) 48px; font-size: 17px; color: var(--encre-3); }
 .pf-une-section { padding: 0 var(--marge) clamp(64px, 8vw, 120px); }
@@ -461,3 +463,13 @@ html.calme .carte-flip > .dos { opacity: 0; } html.calme .carte-flip.retournee >
 .ad-ok { margin: 0 0 16px; padding: 12px 16px; border-radius: 12px; background: #EEF8EF; border: 1px solid #9BCBA0; font-size: 15px; }
 .ad-confirmer { display: inline-flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 15px; font-weight: 600; }
 
+
+/* téléphone : les docks du bas ne sont plus coupés — ils laissent la place au bouton « Naviguer », se resserrent,
+   défilent avec un aimant, et un fondu dit qu'il y a une suite */
+@media (max-width: 640px) {
+  .dock-bas { padding: 0 68px 0 10px; justify-content: flex-start; bottom: max(12px, env(safe-area-inset-bottom)); }
+  .dock-bas > div { gap: 4px; padding: 5px; scroll-snap-type: x proximity; scroll-padding: 0 8px; overscroll-behavior-x: contain;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent); padding-right: 22px; }
+  .dock-bas .lieu { height: 44px; padding: 0 12px; font-size: 14px; scroll-snap-align: start; }
+  .dock-bas .orbe-dock, .dock-bas .orbe-choix { width: 44px; height: 44px; }
+}

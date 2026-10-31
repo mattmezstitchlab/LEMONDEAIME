@@ -1,0 +1,15 @@
+/* L'anneau des choix : la même écriture que la bague du temps (BagueTemps.css) — des mots sobres sur un cercle, des points discrets. */
+.ac { position: relative; margin: auto; }
+.ac-fond { position: absolute; inset: 0; pointer-events: none; }
+.ac-choix { position: absolute; transform: translate(-50%, -50%); min-width: 40px; min-height: 40px; padding: 0 6px; border: 0; border-radius: 999px; background: transparent;
+  font: inherit; font-size: .74rem; font-weight: 600; letter-spacing: .06em; color: var(--aime-texte-2, #4a4a50); cursor: pointer; white-space: nowrap; max-width: 108px; overflow: hidden; text-overflow: ellipsis; }
+.ac-choix:hover { color: var(--aime-texte, #0b0b0c); background: rgba(111, 82, 255, .07); }
+.ac-choix.ac-on { color: var(--aime-fond, #fff); background: var(--aime-texte, #0b0b0c); }
+.ac-choix:focus-visible { outline: 3px solid var(--aime-focus, #4b6bfb); outline-offset: 2px; }
+.ac-nav { font-size: 1.1rem; }
+.ac-point { position: absolute; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: #8ab4ff; box-shadow: 0 0 0 1.5px #fff; pointer-events: none; }
+.ac-point.ac-on { background: #6f52ff; }
+/* le centre : la lecture ; il défile si besoin, il ne déborde jamais du cercle */
+.ac-centre { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 60%; max-height: 64%; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; overflow: hidden; }
+.ac-centre > * { flex: 0 0 auto; max-width: 100%; }
+.ac-groupe { position: absolute; inset: 0; z-index: 2; pointer-events: none; } .ac-groupe .ac-choix { pointer-events: auto; }

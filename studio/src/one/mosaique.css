@@ -1,0 +1,53 @@
+/* .0NE — la mosaïque : des cases identiques, beaucoup de blanc, le Disque comme seule pièce forte */
+.om-heros { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); align-items: center; max-width: 1360px; margin: 0 auto; padding: clamp(16px, 4vw, 56px) clamp(16px, 5vw, 80px) clamp(40px, 6vw, 96px); }
+.om-heros h1 { font-size: clamp(52px, 7.2vw, 108px); }
+.om-fondu { color: var(--aime-titre-fondu); }
+.om-orbe { width: 46px; height: 46px; }
+.om-section { max-width: 1360px; margin: 0 auto; padding: 0 clamp(16px, 5vw, 80px) 96px; }
+.om-titre-section { margin: 0 0 8px; font-size: clamp(28px, 3.4vw, 44px); font-weight: var(--aime-titre-graisse); letter-spacing: var(--aime-titre-chasse); }
+.om-grille { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 16px; }
+.om-case { position: relative; display: grid; grid-template-rows: auto auto 1fr auto auto; gap: 6px; padding: 18px; border-radius: var(--aime-r-grand); background: var(--aime-surface); box-shadow: 0 1px 0 var(--aime-bordure), 0 12px 32px rgba(11, 11, 12, .06); }
+[data-aime="nuit"] .om-case { box-shadow: 0 0 0 1px var(--aime-bordure); }
+.om-case h3 { margin: 8px 0 0; font-size: 1.3em; font-weight: 600; letter-spacing: -.02em; }
+.om-case > p { margin: 0; color: var(--aime-texte-2); font-size: .92em; }
+.om-case-tete { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.om-statut { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: var(--aime-pilule); font-size: .75em; font-weight: 600; border: 1px solid var(--aime-bordure-forte); color: var(--aime-texte); }
+.om-statut::before { content: ""; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: currentColor; }
+.om-disponible::before { background: #2f9e5b; } .om-experimental::before { background: #7562ce; } .om-preparation::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+.om-voir { display: inline-flex; align-items: center; gap: 8px; justify-self: start; min-height: calc(44px * var(--one-cible, 1)); padding: 0 4px; border: 0; background: none; color: var(--aime-texte); font: inherit; font-weight: 600; cursor: pointer; }
+.om-voir::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }   /* toute la case ouvre la présentation */
+.om-voir:focus-visible { outline: none; } .om-case:has(.om-voir:focus-visible) { outline: 3px solid var(--aime-focus); outline-offset: 3px; }
+.om-voir svg { width: 16px; height: 16px; }
+
+/* l'aperçu du Disque d'un univers */
+.om-mini { position: relative; width: min(100%, 220px); aspect-ratio: 1; margin: 10px auto 6px; border-radius: 50%; background: radial-gradient(circle at 50% 35%, #262626, #0c0c0c 70%); box-shadow: 0 18px 40px rgba(11, 11, 12, .22); }
+.om-mini-cmd { position: absolute; width: 15%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; display: grid; place-items: center; background: #1f1f1f; color: #f4f4f2; border: 1px solid rgba(255, 255, 255, .14); }
+.om-mini-cmd svg { width: 50%; height: 50%; }
+.om-mini-centre { position: absolute; inset: 24%; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: #fff; color: var(--om-teinte); box-shadow: 0 0 0 5px #e6d5b5, 0 0 0 6px rgba(0, 0, 0, .25); }
+.om-mini-centre img { width: 100%; height: 100%; object-fit: cover; }
+.om-mini-centre svg { width: 38%; height: 38%; }
+.om-case[data-statut="preparation"] .om-mini { opacity: .78; }
+
+/* la présentation d'un univers */
+.om-voile { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: rgba(11, 11, 12, .38); }
+.om-panneau { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: center; width: min(1040px, 100%); max-height: calc(100vh - 32px); overflow: auto; padding: clamp(20px, 4vw, 48px);
+  border-radius: var(--aime-r-grand); background: var(--aime-fond-2, #fff); color: var(--aime-texte); box-shadow: var(--aime-ombre); }
+.om-panneau h2 { margin: 12px 0 10px; font-size: clamp(32px, 4vw, 52px); font-weight: var(--aime-titre-graisse); letter-spacing: var(--aime-titre-chasse); }
+.om-panneau h2:focus { outline: none; }
+.om-fermer { position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--aime-bordure-forte); background: var(--aime-surface); color: var(--aime-texte); display: grid; place-items: center; cursor: pointer; z-index: 2; }
+.om-familles { color: var(--aime-texte-2); } .om-credit { font-size: .82em; color: var(--aime-texte-2); } .om-prep { margin: 0; font-weight: 600; }
+.om-centre-media { width: 100%; height: 100%; max-width: none; object-fit: cover; }
+.om-panneau .one-centre > .om-centre-media { max-width: none; }
+.om-ico-grand { width: 64px; height: 64px; } .om-ico-grand svg { width: 30px; height: 30px; }
+
+@media (max-width: 860px) {
+  .om-heros, .om-panneau { grid-template-columns: 1fr; }
+  .om-panneau-disque { order: -1; max-width: 340px; width: 100%; margin: 0 auto; }
+}
+@media (max-width: 600px) {
+  .om-grille { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .om-case { padding: 12px; gap: 4px; }
+  .om-case h3 { font-size: 1.05em; } .om-case > p { font-size: .82em; }
+  .om-case-tete .one-ico { width: 30px; height: 30px; } .om-statut { font-size: .68em; padding: 3px 8px; }
+  .om-voir { font-size: .82em; }
+}

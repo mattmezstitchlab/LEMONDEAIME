@@ -1,6 +1,11 @@
+import { lirePhoto } from "./photoSource";
+import { lireRecetteOuvrage } from "./motif5d/code";
 import { FLOSS, flossIndex } from "./dmc";
 import { SYMBOL_COUNT } from "./symbols";
 
+/** La toile par défaut : un Aida gris très clair (l'ancien crème, jamais choisi par la brodeuse, est relu comme tel). */
+export const TOILE_DEFAUT = "#f3f3f1";
+export const TOILE_ANCIENNE = "#f7f2e8";
 export type Count = 7 | 11 | 14 | 16 | 18 | 20 | 22 | 25 | 28 | 32 | 36 | 40;
 export const COUNTS: Count[] = [7, 11, 14, 16, 18, 20, 22, 25, 28, 32, 36, 40];
 export const SIZES = [40, 80, 120, 200, 300];
@@ -13,7 +18,7 @@ export interface FabricSettings {
   units: "cm" | "in";
 }
 export interface Provenance {
-  kind: "original" | "image" | "pdf" | "oxs" | "demo";
+  kind: "original" | "image" | "pdf" | "oxs" | "demo" | "galerie";
   source: string;
   author: string;
   license: string;
@@ -121,6 +126,10 @@ export interface Pattern {
   annotations?: Annotation[];
   notes?: string;
   reference?: string;
+  /** La photo d'origine et ses réglages : le Cadre reconvertit depuis elle à chaque nouveau format. */
+  photo?: import("./photoSource").PhotoSource;
+  /** La recette 5D d'un motif composé : le Cadre la régénère à une autre taille. */
+  recette?: import("./motif5d/code").RecetteOuvrage;
   sessions?: Session[];
   layers?: Layer[];
   activeLayer?: string;
@@ -162,7 +171,7 @@ export function createPattern(name: string, w: number, h: number, count: Count =
     knots: [],
     palette: [],
     stock: {},
-    fabric: { type: "aida", over: 1, color: "#f7f2e8", margin: 7.5, units: "cm" },
+    fabric: { type: "aida", over: 1, color: TOILE_DEFAUT, margin: 7.5, units: "cm" },
     provenance: { kind: "original", source: "", author: "", license: "Tous droits réservés", personalOnly: false },
     symbolMap: {}, supplies: {}, mistakes: [], parked: [], special: [], annotations: [], notes: "", sessions: [], layers: [],
     updated: Date.now(),
@@ -524,7 +533,7 @@ export function toObject(p: Pattern) {
     ornamentDone: p.ornamentDone,
     symbolMap: p.symbolMap, beadMap: p.beadMap, supplies: p.supplies, mistakes: p.mistakes,
     parked: p.parked, special: p.special, annotations: p.annotations,
-    notes: p.notes, reference: p.reference, sessions: p.sessions, layers: p.layers, activeLayer: p.activeLayer,
+    notes: p.notes, reference: p.reference, photo: p.photo, recette: p.recette, sessions: p.sessions, layers: p.layers, activeLayer: p.activeLayer,
     // Les points sont stockés par indices pour rester compacts. Cette table rend
     // le fichier stable même si l'ordre de la palette DMC évolue dans une version future.
     flossCodes: FLOSS.map((f) => f.code),
@@ -588,7 +597,7 @@ export function fromObject(input: unknown): Pattern | null {
   const fabric: FabricSettings = {
     type: rawFabric.type === "linen" || rawFabric.type === "evenweave" ? rawFabric.type : "aida",
     over: rawFabric.type !== "aida" && rawFabric.over === 2 ? 2 : 1,
-    color: typeof rawFabric.color === "string" && /^#[0-9a-f]{6}$/i.test(rawFabric.color) ? rawFabric.color : "#f7f2e8",
+    color: typeof rawFabric.color === "string" && /^#[0-9a-f]{6}$/i.test(rawFabric.color) && rawFabric.color.toLowerCase() !== TOILE_ANCIENNE ? rawFabric.color : TOILE_DEFAUT,
     margin: Number.isFinite(rawFabric.margin) ? clampN(Number(rawFabric.margin), 0, 30) : 7.5,
     units: rawFabric.units === "in" ? "in" : "cm",
   };
@@ -658,6 +667,8 @@ export function fromObject(input: unknown): Pattern | null {
     annotations: Array.isArray(o.annotations) ? o.annotations as Annotation[] : [],
     notes: typeof o.notes === "string" ? o.notes : "",
     reference: typeof o.reference === "string" ? o.reference : undefined,
+    photo: lirePhoto(o.photo),
+    recette: lireRecetteOuvrage(o.recette),
     sessions: Array.isArray(o.sessions) ? o.sessions as Session[] : [],
     layers: Array.isArray(o.layers) ? o.layers as Layer[] : [],
     activeLayer: typeof o.activeLayer === "string" ? o.activeLayer : undefined,
