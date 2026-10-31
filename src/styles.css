@@ -159,7 +159,8 @@ html.calme *, html.calme *::before, html.calme *::after { transition: none !impo
 .pied h2 { margin: 0 0 12px; font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--encre-3); }
 .pied ul { list-style: none; margin: 0; padding: 0; font-size: 18px; font-weight: 600; }
 .pied li { min-height: 40px; display: flex; align-items: center; gap: 8px; }
-.pied li a { display: inline-flex; align-items: center; min-height: 32px; }   /* la cible fait la hauteur de la ligne, pas seulement du texte */
+.pied li a { display: inline-flex; align-items: center; min-height: 32px; }
+@media (pointer: coarse), (max-width: 720px) { .pied li { min-height: 44px; } .pied li a, .pied > a { min-height: 44px; } }   /* au doigt : 44 px (vérifié sur téléphone, phase 01) */   /* la cible fait la hauteur de la ligne, pas seulement du texte */
 .pied a { text-decoration: none; }
 .pied a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .pied .bas { margin-top: 56px; padding-top: 24px; border-top: 2px dotted #BDBDB8; display: flex; justify-content: space-between; gap: 12px 32px; flex-wrap: wrap; font-size: 15px; color: var(--encre-2); }
@@ -473,3 +474,43 @@ html.calme .carte-flip > .dos { opacity: 0; } html.calme .carte-flip.retournee >
   .dock-bas .lieu { height: 44px; padding: 0 12px; font-size: 14px; scroll-snap-align: start; }
   .dock-bas .orbe-dock, .dock-bas .orbe-choix { width: 44px; height: 44px; }
 }
+
+/* ===== Première page (/) : Accueil. Les classes ac-* ne servent qu'à cette page ; le reste vient de la charte. ===== */
+.ac-cadre { padding: 16px var(--marge) 0; }
+.ac-hero { position: relative; min-height: max(540px, calc(100svh - 104px)); border-radius: 24px; overflow: hidden; background: #111; color: #fff; display: flex; align-items: flex-end; }
+.ac-hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ac-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.35) 45%, rgba(0,0,0,.15) 100%); pointer-events: none; }
+.ac-hero-contenu { position: relative; z-index: 1; width: 100%; padding: clamp(28px, 5vw, 72px) clamp(20px, 4vw, 64px) calc(clamp(36px, 5vw, 72px) + 76px); }
+.ac-hero .surtitre { color: rgba(255,255,255,.82); }
+.ac-hero-sous { margin: clamp(14px, 2vw, 26px) 0 0; max-width: 30ch; font-size: clamp(20px, 2.4vw, 36px); line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+.ac-question { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+.ac-question .titre { font-size: clamp(40px, 6vw, 88px); line-height: .95; }
+.ac-zone { display: grid; gap: 16px; padding: clamp(18px, 2.4vw, 28px); border-radius: 20px; background: var(--fond); border: 1px solid var(--trait); transition: border-color .2s; }
+.ac-zone.depot { border-color: var(--encre); border-style: dashed; }
+.ac-zone label { font-size: 16px; font-weight: 600; }
+.ac-ligne { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.ac-ligne .champ { flex: 1 1 100%; width: auto; }
+.ac-puce { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 6px 0 16px; border-radius: 999px; background: var(--carte); border: 1px solid var(--trait-2); font-size: 15px; font-weight: 500; }
+.ac-puce button { width: 44px; height: 44px; border-radius: 50%; border: 0; background: transparent; color: var(--encre); font-size: 20px; line-height: 1; cursor: pointer; }
+.ac-resultat { display: grid; gap: 8px; min-height: 5.2em; align-content: start; }
+.ac-resultat .type { font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--encre-3); margin: 0; }
+.ac-resultat .chemin { display: flex; align-items: center; gap: 12px; font-size: 18px; margin: 0; }
+.ac-resultat .note { font-size: 15px; color: var(--encre-2); line-height: 1.45; margin: 0; }
+.ac-etat-puce { display: inline-block; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--trait-2); font-size: 13px; font-weight: 600; background: var(--carte); }
+.ac-etat-puce[data-etat="disponible"] { border-color: var(--encre); }
+.ac-etat-puce[data-etat="indisponible"] { background: var(--doux); color: var(--encre-2); }
+.ac-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.ac-chemins { list-style: none; margin: 56px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 14px; }
+.ac-chemin { height: 100%; min-height: 200px; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; padding: 22px; border-radius: 20px; border: 1px solid var(--trait-2); background: var(--carte); color: var(--encre); text-decoration: none; transition: border-color .2s; }
+.ac-chemin:hover { border-color: var(--encre); }
+.ac-chemin b { display: block; font-size: clamp(26px, 2.6vw, 34px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
+.ac-chemin span { display: block; margin-top: 8px; font-size: 16px; line-height: 1.45; color: var(--encre-2); }
+.ac-chemin em { font-style: normal; font-size: 13px; font-weight: 600; letter-spacing: .06em; color: var(--encre-3); }
+.ac-chemin[data-conseil="true"] { border: 2px solid var(--encre); padding: 21px; }
+.ac-entete { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: clamp(36px, 5vw, 64px); }
+.ac-entete p { max-width: 36ch; font-size: 17px; line-height: 1.5; color: var(--encre-2); margin: 0; }
+.ac-bande { padding: clamp(64px, 9vw, 112px) var(--marge); background: var(--encre); color: #fff; }
+.ac-bande .grand-mot { max-width: 12ch; color: #fff; }
+.ac-ensemble { list-style: none; margin: 48px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 28px; }
+.ac-ensemble li { padding-top: 18px; border-top: 1px solid rgba(255,255,255,.3); font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+@media (max-width: 900px) { .ac-question { grid-template-columns: minmax(0, 1fr); } }

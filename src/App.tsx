@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useChemin } from './lib/router';
 import Portfolio from './pages/Portfolio';
+import Accueil from './pages/Accueil';
 import AimeWedding from './pages/AimeWedding';
 import Projet from './pages/Projet';
 import Admin from './pages/Admin';
@@ -16,7 +17,7 @@ import { APlus, Introuvable } from './pages/Simples';
 import { aller } from './lib/router';
 
 const PAGES: Record<string, [() => React.JSX.Element, string]> = {
-  '/': [Portfolio, 'LE MONDE AIME — les projets d’AIME'],
+  '/': [Accueil, 'LE MONDE AIME — Tout commence ici'],
   '/projets': [Portfolio, 'LE MONDE AIME — les projets d’AIME'],
   '/aime-wedding': [AimeWedding, 'AIME Wedding — le site officiel de l’union'],
   '/admin': [Admin, 'LE MONDE AIME — Administration'],
@@ -31,7 +32,8 @@ const PAGES: Record<string, [() => React.JSX.Element, string]> = {
 };
 /* « Le Monde AIME » est la page des projets : /monde y mène (et non plus à la landing Broderie) */
 const ANCIENNES: Record<string, string> = { '/charte': '/projets', '/monde': '/projets' };
-/* l'accueil du site : Le Monde AIME, la page des projets (décision de Matt, 31/10/2026) */
+/* Phase 01 (branche de dev) : « / » est la première page (Accueil) ; la page des projets reste à /projets. Cela remplace, sur cette branche seulement,
+   la décision du 31/10/2026 « l'accueil = la page des projets » : à valider par Matt avant toute fusion. */
 export default function App() {
   const chemin = useChemin().replace(/\/+$/, '') || '/';
   useEffect(() => { if (ANCIENNES[chemin]) aller(ANCIENNES[chemin] + window.location.search + window.location.hash); }, [chemin]);
