@@ -62,10 +62,17 @@ with sync_playwright() as p:
         ok(hrefs == ['/aime-wedding', '/studio/atelier', '/buro', '/projets'], tag + 'quatre chemins = quatre liens réels', hrefs)
         verbes = pg.eval_on_selector_all('.dock-haut .rangee a.outil', 'els => els.map(e => e.textContent.trim() + "|" + e.getAttribute("href"))')
         ok(verbes == ['Mariage|/aime-wedding', 'Prestataires|/reseau?domaine=mariage', 'Projets & Créations|/projets', 'Mon espace|/buro'], tag + 'le dock du haut : quatre entrées, quatre destinations réelles', verbes)
-        # téléphone : les quatre entrées sont visibles sous le héros (le dock du haut défile) ; ordinateur : le dock suffit
-        sous = pg.eval_on_selector_all('.ac-entrees a', 'els => els.map(e => e.textContent.trim() + "|" + e.getAttribute("href") + "|" + (e.getBoundingClientRect().width > 0))')
-        if largeur < 700: ok(sous == ['Mariage|/aime-wedding|true', 'Prestataires|/reseau?domaine=mariage|true', 'Projets & Créations|/projets|true', 'Mon espace|/buro|true'], tag + 'les quatre entrées sont visibles sous le héros', sous)
-        else: ok(all(x.endswith('|false') for x in sous), tag + 'sur ordinateur, les entrées du dock suffisent (rangée de téléphone masquée)', sous)
+        # docks, lot 1 : ordinateur = la rangée du dock ; téléphone = un bouton « Menu » explicite (plus de défilement invisible)
+        rang = pg.evaluate("getComputedStyle(document.querySelector('.dock-haut .rangee')).display")
+        menu = pg.locator('.dock-haut .menu-mobile')
+        if largeur < 700:
+            ok(rang == 'none' and menu.is_visible(), tag + 'téléphone : la rangée qui défilait est remplacée par le bouton Menu')
+            menu.click(); pg.wait_for_selector('.bloc-entrees')
+            liens = pg.eval_on_selector_all('.bloc-entrees a', 'els => els.map(e => e.textContent.trim() + "|" + e.getAttribute("href") + "|" + Math.round(e.getBoundingClientRect().height))')
+            ok([x.rsplit('|', 1)[0] for x in liens] == ['Mariage|/aime-wedding', 'Prestataires|/reseau?domaine=mariage', 'Projets & Créations|/projets', 'Mon espace|/buro'] and all(int(x.rsplit('|', 1)[1]) >= 44 for x in liens), tag + 'le menu : quatre entrées, destinations réelles, cibles >= 44 px', liens)
+            pg.keyboard.press('Escape'); pg.wait_for_selector('.bloc-entrees', state='detached')
+            ok(pg.evaluate("document.activeElement.classList.contains('menu-mobile')"), tag + 'Échap referme le menu et rend le focus au bouton Menu')
+        else: ok(rang != 'none' and not menu.is_visible(), tag + 'ordinateur : la rangée du dock suffit (bouton Menu masqué)')
         # Porte 1 : le sous-titre, les deux actions du héros, la photographie conservée
         ok(pg.locator('.ac-hero-sous').inner_text().strip() == 'Tout votre mariage, au même endroit.', tag + 'le sous-titre')
         acts = pg.eval_on_selector_all('.ac-hero-actions a', 'els => els.map(e => e.textContent.trim() + "|" + e.getAttribute("href"))')

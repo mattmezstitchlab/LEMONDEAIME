@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Tete, VerbesProjets, DockBas, Pied } from '../charte/Charte';
+import {Tete, DockBas, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { FONDATEUR } from '../lib/reseau-exemples';
 import { CarteReseau } from './Reseau';
@@ -56,7 +56,7 @@ export default function Portfolio() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/projets" verbes={<VerbesProjets />} />
+      <Tete courant="/projets" />
       <main id="contenu">
         <section aria-labelledby="titre-monde" className="pf-tete">
           <p className="surtitre">Les projets de {FONDATEUR.nom}</p>

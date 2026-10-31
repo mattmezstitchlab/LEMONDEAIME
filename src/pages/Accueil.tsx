@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Tete, Verbe, DockBas, Pied, Orbe } from '../charte/Charte';
+import { Tete, DockBas, Pied, Orbe } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { useProjets } from '../lib/projets';
@@ -32,12 +32,7 @@ export default function Accueil() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/" verbes={<>
-        <Verbe href="/aime-wedding">Mariage</Verbe>
-        <Verbe href="/reseau?domaine=mariage">Prestataires</Verbe>
-        <Verbe href="/projets">Projets &amp; Créations</Verbe>
-        <Verbe href="/buro">Mon espace</Verbe>
-      </>} />
+      <Tete courant="/" />
       <main id="contenu">
         <div className="ac-cadre">
           <section className="ac-hero" id="entree" aria-labelledby="titre-entree">
@@ -52,12 +47,6 @@ export default function Accueil() {
               </p>
             </div>
           </section>
-          <nav className="ac-entrees" aria-label="Les quatre entrées de l’accueil">
-            <Lien href="/aime-wedding">Mariage</Lien>
-            <Lien href="/reseau?domaine=mariage">Prestataires</Lien>
-            <Lien href="/projets">Projets &amp; Créations</Lien>
-            <Lien href="/buro">Mon espace</Lien>
-          </nav>
         </div>
 
         <section className="section ac-aujourdhui" id="aujourdhui" aria-labelledby="titre-aujourdhui" style={{ paddingInline: 'var(--marge)' }}>

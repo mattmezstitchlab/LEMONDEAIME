@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { Tete, DockBas, Pied, Orbe } from '../charte/Charte';
+import {Tete, DockBas, Pied, Orbe } from '../charte/Charte';
 import { EntrerBloc } from '../charte/EntrerBloc';
 import { Lien, useRecherche } from '../lib/router';
 import { useSession } from '../lib/session';
@@ -235,17 +235,19 @@ export default function Buro() {
     await charger(); setOccupe(false);
   };
   const B = data.briques as Record<string, { name: string }>;
-  const verbes = sel && sel.role === 'owner'
+  /* Actions sur le projet choisi : avant dans le dock du haut, désormais dans la page (le dock du haut est la navigation globale).
+     Mêmes boutons, mêmes appels, même condition de propriétaire ; le serveur contrôle toujours les droits et la révision. */
+  const actionsProjet = sel && sel.role === 'owner'
     ? <>
-      {sel.ouvrage && <a className="outil" href={'/studio/atelier?ouvrage=' + encodeURIComponent(sel.ouvrage)} style={{ fontWeight: 600 }}>Ouvrir dans le Studio</a>}
-      <button className="outil" type="button" disabled={occupe} onClick={() => maj({ visibilite: ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4] }, '« ' + sel.titre + ' » : ' + VIS[ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4]] + '.')}>Partager · {VIS[sel.visibilite] || 'Privé'}</button>
-      <button className="outil" type="button" disabled={occupe} onClick={() => { maj({ archive: !sel.archive }, sel.archive ? '« ' + sel.titre + ' » restauré.' : '« ' + sel.titre + ' » rangé aux archives.'); setChoisi(null); }}>{sel.archive ? 'Restaurer' : 'Archiver'}</button>
+      {sel.ouvrage && <a className="bouton" href={'/studio/atelier?ouvrage=' + encodeURIComponent(sel.ouvrage)} style={{ height: 46 }}>Ouvrir dans le Studio</a>}
+      <button className="bouton" type="button" style={{ height: 46 }} disabled={occupe} onClick={() => maj({ visibilite: ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4] }, '« ' + sel.titre + ' » : ' + VIS[ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4]] + '.')}>Partager · {VIS[sel.visibilite] || 'Privé'}</button>
+      <button className="bouton" type="button" style={{ height: 46 }} disabled={occupe} onClick={() => { maj({ archive: !sel.archive }, sel.archive ? '« ' + sel.titre + ' » restauré.' : '« ' + sel.titre + ' » rangé aux archives.'); setChoisi(null); }}>{sel.archive ? 'Restaurer' : 'Archiver'}</button>
     </>
-    : <>{['Rejoindre', 'Échanger', 'Modèles'].map(v => <span key={v} className="outil" aria-disabled="true" style={{ color: '#55555A' }}>{v}<span className="bientot">Bientôt</span></span>)}</>;
+    : <>{['Rejoindre', 'Échanger', 'Modèles'].map(v => <span key={v} className="bouton" aria-disabled="true" style={{ height: 46, color: '#55555A', borderStyle: 'dashed' }}>{v}<span className="bientot">Bientôt</span></span>)}</>;
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/buro" verbes={verbes} />
+      <Tete courant="/buro" />
       <main id="contenu" style={{ padding: 'clamp(48px, 7vw, 96px) var(--marge) 170px' }}>
         <h1 className="titre" style={{ fontSize: 'clamp(44px, 7vw, 108px)', lineHeight: .92 }}>Votre espace AIME</h1>
         {session === null && <>
@@ -266,6 +268,7 @@ export default function Buro() {
           {lieu === 'projets' && !nouveau && !mariage && <p style={{ margin: '20px 0 0', display: 'flex', gap: 10, flexWrap: 'wrap' }}><button type="button" className="bouton noir" onClick={() => { setNouveau(true); setChoisi(null); setMsg(''); }}>Nouveau projet</button><button type="button" className="bouton" onClick={() => { setMariage(true); setChoisi(null); setMsg(''); }}>Créer notre mariage</button></p>}
           {lieu === 'projets' && mariage && <NouveauMariage annuler={() => setMariage(false)} fini={(id, t) => { setMariage(false); setMsg('Le mariage « ' + t + ' » est enregistré dans votre espace.'); charger().then(() => setChoisi(id)); }} />}
           {lieu === 'projets' && nouveau && <NouveauProjet annuler={() => setNouveau(false)} fini={(id, t) => { setNouveau(false); setMsg('« ' + t + ' » enregistré dans votre espace.'); charger().then(() => setChoisi(id)); }} />}
+          {sel && <div role="group" aria-label={'Actions sur le projet « ' + sel.titre + ' »'} className="buro-actions">{actionsProjet}</div>}
           {sel && (sel.mariage
             ? <FicheMariage key={sel.id + ':' + (sel.rev || 0)} p={sel} fermer={() => setChoisi(null)} apres={m => { setMsg(m); charger(); }} />
             : <Fiche key={sel.id + ':' + (sel.rev || 0)} p={sel} fermer={() => setChoisi(null)} apres={m => { setMsg(m); charger(); }} />)}

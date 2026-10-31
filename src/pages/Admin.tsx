@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Tete, VerbesProjets } from '../charte/Charte';
+import {Tete } from '../charte/Charte';
 import { Lien, useRecherche } from '../lib/router';
 import { useSession } from '../lib/session';
 import { slugDe } from '../../api/_projets.mjs';
@@ -87,7 +87,7 @@ export default function Admin() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/admin" verbes={<VerbesProjets />} />
+      <Tete courant="/admin" />
       <main id="contenu" className="ad">
         <p className="surtitre">LE MONDE AIME</p>
         <h1 className="titre">Administration des projets</h1>

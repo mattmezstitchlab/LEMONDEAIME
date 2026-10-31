@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Tete, VerbesProjets, Pied } from '../charte/Charte';
+import {Tete, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { ETATS, externe, lireProjet, useAdmin, useProjets, type Projet as P } from '../lib/projets';
 import { CarteProjet, Visiter } from './Portfolio';
@@ -18,7 +18,7 @@ export default function Projet({ slug }: { slug: string }) {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant={'/projets/' + slug} verbes={<VerbesProjets actif="projets" />} />
+      <Tete courant={'/projets/' + slug} />
       <main id="contenu">
         {p === undefined && <p className="pf-attente" role="status">Chargement du projet…</p>}
         {p === null && <section className="pf-tete" aria-labelledby="titre-introuvable">
