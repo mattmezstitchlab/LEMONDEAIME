@@ -1,6 +1,9 @@
 // /api/buro : les projets du BurO de la personne connectée, rangés dans la table « spaces » (la même base que les comptes).
 // GET  → ses projets (dont elle est propriétaire) et ceux qu'on lui partage.
-// POST → { titre, briques, studio, intention } crée un projet ; { action: 'maj', id, archive?, visibilite? } le modifie (propriétaire seulement).
+// POST → { titre, description?, briques, studio, intention } crée un projet ;
+//        { action: 'maj', id, titre?, description?, archive?, visibilite?, rev? } le modifie (propriétaire seulement).
+// « rev » : la révision que la personne a vue. Si le projet a changé depuis (autre onglet, autre appareil), la modification est refusée (409)
+// et rien n'est écrasé. La révision vit dans « data » (jsonb) : aucune migration ; un projet plus ancien est à la révision 0.
 // L'identité vient toujours de la session vérifiée, jamais du corps de la requête.
 import { auth, personne, _pool } from './_auth/auth.mjs';
 import R from './_auth/requete.cjs';
@@ -13,11 +16,14 @@ async function corps(req) {
   let s = ''; for await (const c of req) { s += c; if (s.length > 20000) throw new Error('trop long'); }
   return s ? JSON.parse(s) : {};
 }
+export function nettoyerTitre(v) { return String(v || '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 120); }
+/* la description garde ses retours à la ligne ; les autres caractères de contrôle partent */
+export function nettoyerDescription(v) { return String(v || '').replace(/\r\n?/g, '\n').replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, ' ').trim().slice(0, 2000); }
 export function nettoyerProjet(b) {
-  const titre = String(b.titre || '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 120);
+  const titre = nettoyerTitre(b.titre);
   if (!titre) return null;
   const briques = (Array.isArray(b.briques) ? b.briques : []).filter((x, i, l) => IDS.includes(x) && l.indexOf(x) === i).slice(0, 20);
-  return { titre, data: { briques, studio: String(b.studio || '').slice(0, 60), intention: String(b.intention || '').slice(0, 1000), visibilite: 'prive', archive: false, source: 'point-zero' } };
+  return { titre, data: { briques, studio: String(b.studio || '').slice(0, 60), intention: String(b.intention || '').slice(0, 1000), description: nettoyerDescription(b.description), rev: 0, visibilite: 'prive', archive: false, source: 'point-zero' } };
 }
 export default async function buro(req, res) {
   const refus = R.ecriture(req); if (refus) return json(res, ...refus);
@@ -28,7 +34,7 @@ export default async function buro(req, res) {
   try {
     if (req.method === 'GET') {
       const r = await db.query(`select s.id::text as id, s.kind, s.title, s.data, s.updated_at, m.role from spaces s join space_members m on m.space_id = s.id where m.user_id = $1 order by s.updated_at desc limit 200`, [moi.id]);
-      return json(res, 200, { ok: true, projets: r.rows.map(x => ({ id: x.id, genre: x.kind, titre: x.title, role: x.role, maj: x.updated_at, briques: (x.data && x.data.briques) || [], studio: (x.data && x.data.studio) || '', ouvrage: (x.data && x.data.ouvrage) || null, visibilite: (x.data && x.data.visibilite) || 'prive', archive: !!(x.data && x.data.archive) })) });
+      return json(res, 200, { ok: true, projets: r.rows.map(x => ({ id: x.id, genre: x.kind, titre: x.title, role: x.role, maj: x.updated_at, briques: (x.data && x.data.briques) || [], studio: (x.data && x.data.studio) || '', ouvrage: (x.data && x.data.ouvrage) || null, visibilite: (x.data && x.data.visibilite) || 'prive', archive: !!(x.data && x.data.archive), description: (x.data && x.data.description) || '', rev: Number(x.data && x.data.rev) || 0, intention: (x.data && x.data.intention) || '' })) });
     }
     if (req.method !== 'POST') return json(res, 405, { ok: false });
     const b = await corps(req);
@@ -36,8 +42,23 @@ export default async function buro(req, res) {
       const patch = {};
       if (typeof b.archive === 'boolean') patch.archive = b.archive;
       if (VISIBILITES.includes(b.visibilite)) patch.visibilite = b.visibilite;
-      const r = await db.query(`update spaces set data = data || $3::jsonb, updated_at = now() where id::text = $1 and owner_id = $2 returning id::text as id`, [String(b.id || ''), moi.id, JSON.stringify(patch)]);
-      return r.rowCount ? json(res, 200, { ok: true }) : json(res, 404, { ok: false, raison: 'Projet introuvable, ou vous n’en êtes pas propriétaire.' });
+      let titre = null;
+      if (b.titre !== undefined) { titre = nettoyerTitre(b.titre); if (!titre) return json(res, 400, { ok: false, raison: 'Donnez un nom au projet.' }); }
+      if (b.description !== undefined) patch.description = nettoyerDescription(b.description);
+      if (titre === null && !Object.keys(patch).length) return json(res, 400, { ok: false, raison: 'Rien à modifier.' });
+      const rev = b.rev === undefined || b.rev === null ? null : Number(b.rev);
+      if (rev !== null && !(Number.isInteger(rev) && rev >= 0 && rev < 1e9)) return json(res, 400, { ok: false, raison: 'Révision invalide.' });
+      /* la même requête vérifie l'appartenance (owner_id) et la révision, puis écrit : pas de course entre lire et écrire */
+      const r = await db.query(
+        `update spaces set title = coalesce($4::text, title), data = data || $3::jsonb || jsonb_build_object('rev', coalesce((data->>'rev')::int, 0) + 1), updated_at = now()
+          where id::text = $1 and owner_id = $2 and ($5::int is null or coalesce((data->>'rev')::int, 0) = $5::int)
+          returning id::text as id, title, updated_at, coalesce((data->>'rev')::int, 0) as rev`,
+        [String(b.id || ''), moi.id, JSON.stringify(patch), titre, rev]);
+      if (r.rowCount) return json(res, 200, { ok: true, id: r.rows[0].id, titre: r.rows[0].title, rev: r.rows[0].rev, maj: r.rows[0].updated_at });
+      const la = await db.query(`select coalesce((data->>'rev')::int, 0) as rev from spaces where id::text = $1 and owner_id = $2`, [String(b.id || ''), moi.id]);
+      return la.rowCount
+        ? json(res, 409, { ok: false, conflit: true, rev: la.rows[0].rev, raison: 'Ce projet a été modifié ailleurs depuis que vous l’avez ouvert. Rien n’a été écrasé : rechargez-le pour voir la dernière version.' })
+        : json(res, 404, { ok: false, raison: 'Projet introuvable, ou vous n’en êtes pas propriétaire.' });
     }
     const p = nettoyerProjet(b);
     if (!p) return json(res, 400, { ok: false, raison: 'Donnez un nom au projet.' });
