@@ -74,3 +74,38 @@ test('nettoyerDescription / nettoyerTitre : retours à la ligne gardés, contrô
   const p = nettoyerProjet({ titre: 'T', description: 'D' });
   assert.equal(p.data.description, 'D'); assert.equal(p.data.rev, 0); assert.equal(p.data.source, 'point-zero');
 });
+test('mariage : dateValide refuse les dates qui n’existent pas et les années hors bornes', async () => {
+  const { dateValide } = await import('../../api/buro.mjs');
+  assert.equal(dateValide('2027-06-12'), true);
+  assert.equal(dateValide('2028-02-29'), true);
+  assert.equal(dateValide('2027-02-29'), false);
+  assert.equal(dateValide('2027-13-01'), false);
+  assert.equal(dateValide('1999-12-31'), false);
+  assert.equal(dateValide('2101-01-01'), false);
+  assert.equal(dateValide('12/06/2027'), false);
+  assert.equal(dateValide(20270612), false);
+});
+test('mariage : nettoyerMariage exige les deux noms à la création, ne touche que les clés envoyées ensuite', async () => {
+  const { nettoyerMariage } = await import('../../api/buro.mjs');
+  assert.ok(nettoyerMariage({ noms: ['Camille', ''] }, true).erreur);
+  assert.ok(nettoyerMariage({}, true).erreur);
+  assert.ok(nettoyerMariage({ noms: 'Camille & Gabriel' }, true).erreur);
+  assert.deepEqual(nettoyerMariage({ noms: [' Camille\u0007 ', 'Gabriel'] }, true).mariage.noms, ['Camille', 'Gabriel']);
+  assert.deepEqual(nettoyerMariage({ date: '2027-06-12' }, false).mariage, { date: '2027-06-12' });
+  assert.deepEqual(nettoyerMariage({ date: '' }, false).mariage, { date: '' });
+  assert.ok(nettoyerMariage({ date: '2027-02-30' }, false).erreur);
+  assert.deepEqual(nettoyerMariage({ lieu: { nom: 'Domaine', ville: 'Aix', iban: 'x' } }, false).mariage, { lieu: { nom: 'Domaine', ville: 'Aix' } });
+  assert.equal(nettoyerMariage({ noms: ['a', 'b'], iban: 'FR00', contact: 'x' }, true).mariage.iban, undefined);
+  assert.equal(nettoyerMariage({ lieu: { nom: 'x'.repeat(500) } }, false).mariage.lieu.nom.length, 120);
+});
+test('mariage : nettoyerProjet(genre mariage) = espace « evenement », modèle mariage, titre tiré des noms, rien d’autre dans la fiche', async () => {
+  const p = nettoyerProjet({ genre: 'mariage', mariage: { noms: ['Camille', 'Gabriel'], date: '2027-06-12', lieu: { nom: 'Domaine', ville: 'Aix' }, iban: 'FR00' } });
+  assert.equal(p.kind, 'evenement');
+  assert.equal(p.titre, 'Camille & Gabriel');
+  assert.equal(p.data.modele, 'mariage');
+  assert.equal(p.data.rev, 0);
+  assert.equal(p.data.visibilite, 'prive');
+  assert.deepEqual(Object.keys(p.data.mariage).sort(), ['date', 'lieu', 'noms']);
+  assert.ok(nettoyerProjet({ genre: 'mariage', mariage: { noms: ['Seul', ''] } }).erreur);
+  assert.equal(nettoyerProjet({ titre: 'Autre' }).kind, undefined);   /* un projet ordinaire reste « projet » (kind absent → 'projet' côté serveur) */
+});
