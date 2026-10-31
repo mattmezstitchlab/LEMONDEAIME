@@ -54,7 +54,9 @@ with sync_playwright() as p:
         pg.get_by_role('button', name='Jour').click()
         # 9. les adresses courtes et le registre
         r = pg.request.get(B + '/atlas', max_redirects=0)
-        ok(r.status in (301, 302, 307, 308) and r.headers.get('location', '').startswith(ATLAS), f'{N} /atlas redirige vers ATLAS ({r.status})')
+        ok(r.status in (301, 302, 307, 308) and r.headers.get('location', '').endswith('/atlas/'), f'{N} /atlas mène à /atlas/ ({r.status})')
+        r = pg.request.get(B + '/atlas/', max_redirects=0)
+        ok(r.status == 200 and 'ATLAS' in r.text(), f'{N} /atlas/ sert ATLAS sans quitter lemondeaime.com ({r.status})')
         pg.goto(B + '/accueil'); pg.wait_for_selector('.ac-porte'); ok(pg.url.endswith('/studio/accueil'), f'{N} /accueil → l’accueil de choix')
         pg.goto(B + '/studio/explorer'); pg.wait_for_timeout(1200)
         ok(pg.locator(f'a[href="{ATLAS}"]').count() >= 1 and pg.locator('a[href$="/studio/accueil"]').count() >= 1, f'{N} « Tous les accès » montre l’accueil et ATLAS')
