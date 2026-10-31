@@ -15,8 +15,8 @@
   },
   "rewrites": [
     {
-      "source": "/atlas/:chemin*",
-      "destination": "https://atlas.lemondeaime.com/:chemin*"
+      "source": "/atlas/(.*)",
+      "destination": "https://atlas.lemondeaime.com/$1"
     },
     {
       "source": "/studio/:chemin*",
