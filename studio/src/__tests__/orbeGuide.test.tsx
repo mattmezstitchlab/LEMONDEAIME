@@ -41,17 +41,17 @@ afterEach(async () => { await act(async () => root?.unmount()); root = null; con
 describe("L'orbe qui guide", () => {
   it("chaque étape vise un outil qui existe dans les docks", () => {
     const cibles = new Set(ETAPES.map(e => e.cible));
-    expect([...cibles].sort()).toEqual(["broder", "cercle", "chercher", "dessiner", "fils", "historique", "lectures", "orbe", "outils", "ouvrage", "partager", "profil", "symboles", "tout-voir", "zoom"].sort());
+    expect([...cibles].sort()).toEqual(["broder", "cercle", "chercher", "dessiner", "fils", "historique", "lectures", "loupe", "orbe", "outil-back", "outil-cross", "outil-fill", "outil-half", "outils", "partager", "point-zero", "profil", "symboles", "tout-voir"].sort());
     expect(ETAPES[0].dock).toBe("haut");
     expect(ETAPES[ETAPES.length - 1].dock).toBe("bas");
-    expect(ETAPES.findIndex(e => e.dock === "bas")).toBe(ETAPES.filter(e => e.dock === "haut").length); // tout le haut, puis tout le bas
+    expect(ETAPES.findIndex(e => e.dock === "bas")).toBe(ETAPES.filter(e => e.dock !== "bas").length); // tout le haut, puis tout le bas
   });
 
   it("s'ouvre dès la première ouverture de l'atelier et parcourt les deux docks de bout en bout", async () => {
     await ouvrirAtelier();
     expect(titre()).toBe("Bonjour, je suis Le Point");
     expect(bulle()?.textContent).toContain(`1 / ${ETAPES.length}`);
-    for (const e of ETAPES) expect(container?.querySelector(`[data-guide="${e.cible}"]`), e.cible).toBeTruthy();
+    for (const e of ETAPES) if (!e.cible.startsWith("outil-")) expect(container?.querySelector(`[data-guide="${e.cible}"]`), e.cible).toBeTruthy();
     const vus: string[] = [titre()!];
     for (let k = 1; k < ETAPES.length; k++) {
       await cliquer(bouton("Suivant"));
@@ -59,6 +59,7 @@ describe("L'orbe qui guide", () => {
       const e = ETAPES[k];
       expect(container?.querySelector(`[data-guide="${e.cible}"]`), e.titre).toBeTruthy();
       if (e.chemin === "dessiner") expect(dockHaut()?.querySelector('button[aria-label="Croix"]')).toBeTruthy();
+      if (e.geste) { expect(dockHaut()?.querySelector(".dg-case"), e.titre).toBeTruthy(); expect(document.querySelector(".og-geste path")?.getAttribute("d"), e.titre).toBeTruthy(); }
       if (e.chemin === "broder") expect(dockHaut()?.querySelector('button[aria-label="Marquer"]')).toBeTruthy();
     }
     expect(vus).toEqual(ETAPES.map(e => e.titre));
@@ -93,7 +94,7 @@ describe("L'orbe qui guide", () => {
     expect(titre()).toBe("Bonjour, je suis Le Point");
   });
 
-  it("ne passe pas devant l'accueil ni le BurO", async () => {
+  it("la visite de l'atelier ne passe pas devant l'accueil", async () => {
     for (const chemin of ["/", "/boutique", "/buro"]) {
       window.history.replaceState(null, "", chemin);
       container = document.createElement("div"); document.body.appendChild(container); root = createRoot(container);

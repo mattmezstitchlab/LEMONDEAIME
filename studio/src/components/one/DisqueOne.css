@@ -1,0 +1,9 @@
+/* .0NE — le Disque posé dans une page : la même pièce que l'atelier, dans un carré au lieu de l'écran */
+.one-disque { position: relative; width: 100%; margin: 0 auto; }
+.pzt.pzt-pose { position: absolute; inset: 0; z-index: auto; }
+.pzt.pzt-pose .pzt-couronne-zone { filter: drop-shadow(0 30px 60px rgba(11, 11, 12, .22)); }
+.one-centre { position: absolute; border-radius: 50%; overflow: hidden; pointer-events: auto; background: var(--aime-surface, #fff); color: var(--aime-texte, #0b0b0c);
+  display: grid; place-items: center; text-align: center; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06); }
+.one-centre > * { max-width: 74%; }
+.one-disque-hote { width: 100%; margin: 0 auto; }
+.one-disque-cartouche { min-height: 1.5em; margin: 14px auto 0; max-width: 90%; text-align: center; font-size: .9em; color: var(--aime-texte-2, #55555a); }

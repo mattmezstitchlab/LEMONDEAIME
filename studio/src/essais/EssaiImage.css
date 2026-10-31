@@ -1,0 +1,28 @@
+/* Essai privé : le bloc Image. La charte du studio : clair, sobre ; le Point reste le même, sombre et nacré. */
+.ei { min-height: 100vh; background: #ecebe6 radial-gradient(circle, rgba(0,0,0,.09) 1px, transparent 1.4px) 0 0 / 14px 14px; color: #0b0b0c; font-family: inherit; }
+.ei-tete { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 30; display: flex; align-items: center; gap: 16px; max-width: calc(100vw - 24px); box-sizing: border-box; padding: 8px 10px 8px 18px; border-radius: 18px; background: #fff; box-shadow: 0 10px 30px rgba(11,11,12,.1); }
+.ei-marque { margin: 0; font-weight: 800; white-space: nowrap; } .ei-marque span { font-weight: 500; color: #5f5e5a; }
+.ei-tete h1 { margin: 0; font-size: 14px; font-weight: 600; color: #3a3a38; }
+.ei-retour { min-height: 40px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 12px; border: 1px solid #d6d4cc; color: #0b0b0c; text-decoration: none; font-weight: 600; white-space: nowrap; }
+.ei-retour:focus-visible, .ei-cadre:focus-visible { outline: 3px solid #0b0b0c; outline-offset: 3px; }
+.ei-scene { min-height: 100vh; box-sizing: border-box; padding: 92px 96px 64px 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+.ei-cadre { position: relative; max-width: min(760px, calc(100vw - 140px)); max-height: calc(100vh - 220px); border: 1px solid #c9c7bf; cursor: pointer; line-height: 0; }
+.ei-choisi { border: 1.5px solid #1a73e8; }
+.ei-vue { max-width: inherit; max-height: inherit; overflow: hidden; }
+.ei-toile { display: block; max-width: min(760px, calc(100vw - 140px)); max-height: calc(100vh - 220px); width: auto; height: auto; }
+.ei-reel .ei-vue { overflow: auto; width: min(760px, calc(100vw - 140px)); height: calc(100vh - 220px); }
+.ei-reel .ei-toile { max-width: none; max-height: none; }
+.ei-fond-clair { background: #f4f2ee; } .ei-fond-sombre { background: #1b1b1a; }
+.ei-fond-damier { background: repeating-conic-gradient(#d9d9d9 0 25%, #fff 0 50%) 0 0 / 16px 16px; }
+.ei-tiers { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.ei-tiers path { stroke: rgba(255,255,255,.85); stroke-width: .012; fill: none; vector-effect: non-scaling-stroke; stroke-width: 1.5; filter: drop-shadow(0 0 1px rgba(0,0,0,.6)); }
+.ei-poignee { position: absolute; width: 10px; height: 10px; border: 1.5px solid #1a73e8; background: #fff; border-radius: 2px; }
+.ei-nw { left: -6px; top: -6px; } .ei-ne { right: -6px; top: -6px; } .ei-sw { left: -6px; bottom: -6px; } .ei-se { right: -6px; bottom: -6px; }
+.ei-etat { margin: 4px 0 0; padding: 6px 12px; border-radius: 10px; background: #fff; font-size: 13px; color: #3a3a38; max-width: min(760px, calc(100vw - 48px)); text-align: center; }
+.ei-consigne { margin: 0; font-size: 14px; color: #3a3a38; text-align: center; }
+@media (max-width: 720px) {
+  .ei-tete { gap: 8px; padding-left: 12px; } .ei-tete h1 { display: none; }
+  .ei-scene { padding: 84px 12px 120px; }
+  .ei-cadre, .ei-toile { max-width: calc(100vw - 24px); max-height: calc(100vh - 300px); }
+  .ei-reel .ei-vue { width: calc(100vw - 24px); height: calc(100vh - 300px); }
+}

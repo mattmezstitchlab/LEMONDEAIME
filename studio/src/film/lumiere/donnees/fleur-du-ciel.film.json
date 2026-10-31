@@ -1,0 +1,1959 @@
+{
+ "id": "lumiere-fleur-du-ciel",
+ "titre": "LUMIERE — La Fleur du Ciel",
+ "sousTitre": "Voir l'invisible.",
+ "morceau": "fleur-du-ciel",
+ "format": {
+  "largeur": 3840,
+  "hauteur": 2160,
+  "images": 24,
+  "extraction": [
+   "2.39:1 · 3840 × 1607, bande centrale",
+   "9:16 · 1215 × 2160, centrée"
+  ]
+ },
+ "mouvements": [
+  {
+   "id": "I",
+   "titre": "L'appel",
+   "debut": 0,
+   "fin": 72.25
+  },
+  {
+   "id": "II",
+   "titre": "La traversée",
+   "debut": 72.25,
+   "fin": 112.25
+  },
+  {
+   "id": "III",
+   "titre": "Au-dessus des nuages",
+   "debut": 112.25,
+   "fin": 160.25
+  },
+  {
+   "id": "IV",
+   "titre": "La Terre préparée",
+   "debut": 160.25,
+   "fin": 198.255
+  },
+  {
+   "id": "V",
+   "titre": "L'activation",
+   "debut": 198.255,
+   "fin": 229.25
+  },
+  {
+   "id": "VI",
+   "titre": "Le commencement",
+   "debut": 229.25,
+   "fin": 253.0
+  }
+ ],
+ "references": [
+  {
+   "id": "orbe",
+   "titre": "Planche 1 — l'Orbe et ses transformations"
+  },
+  {
+   "id": "disque",
+   "titre": "Planche 2 — le Disque exact, perle éteinte"
+  },
+  {
+   "id": "gold",
+   "titre": "Planche 3 — Gold, forme de lumière (provisoire)"
+  },
+  {
+   "id": "prairie",
+   "titre": "Planche 4 — la prairie : nuit, aube, lever"
+  },
+  {
+   "id": "lumiere-reference-matt",
+   "titre": "Image envoyée par Matt (auteur inconnu) — référence de lumière seulement, jamais dans le film"
+  }
+ ],
+ "plans": [
+  {
+   "id": "P01",
+   "titre": "Noir habité",
+   "mouvement": "I",
+   "debut": 0,
+   "fin": 8.25,
+   "registre": "silence visuel",
+   "image": "Noir profond, grain d'espace, quatre étoiles lointaines immobiles",
+   "camera": "fixe",
+   "lumiere": "aucune source ; grain fin",
+   "transition": "la lumière s'ouvre au centre",
+   "fabrication": "moteur",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        0
+       ],
+       [
+        8.25,
+        8.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P02",
+   "titre": "L'éveil",
+   "mouvement": "I",
+   "debut": 8.25,
+   "fin": 24.25,
+   "registre": "contemplation",
+   "image": "Au centre, un point s'ouvre comme un œil, en deux pulsations sur la mesure",
+   "camera": "avancée de 5 % en 16 s",
+   "lumiere": "nacre froide, halo serré",
+   "transition": "continu",
+   "fabrication": "manus",
+   "synchro": [
+    "fleur-du-ciel:lumiere"
+   ],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        8.25
+       ],
+       [
+        16.0,
+        24.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nDeep space, almost black, faint distant stars. In the exact centre, a tiny point of pearl light opens slowly like an eye waking, pulsing twice, gently, as if breathing for the first time. Very slow push-in, 5% over the shot. Silence, stillness, mystery.",
+      "references": [
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P03",
+   "titre": "Elle écoute",
+   "mouvement": "I",
+   "debut": 24.25,
+   "fin": 40.25,
+   "registre": "émotion",
+   "image": "Gros plan : l'Orbe, courants irisés lents ; sa lumière intérieure s'incline quand la musique enfle",
+   "camera": "85 mm, flou d'avant-plan",
+   "lumiere": "auto-éclairée, reflets rosés et lavande",
+   "transition": "fondu par la lumière",
+   "fabrication": "manus",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        24.25
+       ],
+       [
+        16.0,
+        40.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nClose-up portrait of the Orb filling one third of the frame, 85mm lens, shallow depth of field, out-of-focus cosmic dust drifting in the foreground. Inside its nacre, slow iridescent currents of lavender and pink move like breath. Its inner glow slowly tilts to one side, as if it were listening. Intimate, alive, emotional.",
+      "references": [
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P04",
+   "titre": "L'immensité",
+   "mouvement": "I",
+   "debut": 40.25,
+   "fin": 56.25,
+   "registre": "immensité",
+   "image": "Très large : l'Orbe n'est qu'un point dans une bande galactique",
+   "camera": "orbite lente, 8°",
+   "lumiere": "bande violette, poussière",
+   "transition": "coupe sur la mesure",
+   "fabrication": "manus",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        40.25
+       ],
+       [
+        16.0,
+        56.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nExtreme wide shot: a vast band of galaxy in violet and blue, layered dust lanes, millions of faint stars. The Orb is a single tiny pearl point at the centre of the frame. The camera orbits very slowly, 8 degrees, revealing depth and parallax. Majestic, silent scale.",
+      "references": []
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P05",
+   "titre": "L'appel",
+   "mouvement": "I",
+   "debut": 56.25,
+   "fin": 64.25,
+   "registre": "surprise",
+   "image": "Très loin, un minuscule point ambré s'allume ; l'Orbe se tourne vers lui",
+   "camera": "bascule de point",
+   "lumiere": "seule couleur chaude du cosmos",
+   "transition": "l'Orbe s'élance",
+   "fabrication": "hybride",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        56.25
+       ],
+       [
+        8.0,
+        64.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nMedium shot of the Orb in deep space, centred, then a slow rack focus toward a very distant point in the darkness behind it. The Orb slowly turns its inner glow toward that point. Leave the far background clean and dark for compositing.",
+      "references": [
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P06",
+   "titre": "Poussière en pétales",
+   "mouvement": "I",
+   "debut": 64.25,
+   "fin": 72.25,
+   "registre": "mouvement",
+   "image": "L'Orbe part ; sa traînée de poussière devient pétales lumineux",
+   "camera": "travelling latéral",
+   "lumiere": "pétales nacre-lavande translucides",
+   "transition": "la traînée entraîne la caméra",
+   "fabrication": "manus",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        64.25
+       ],
+       [
+        8.0,
+        72.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nSide tracking shot, accelerating gently. The Orb begins to travel through space, leaving a trail of luminous dust. As the trail slows behind it, the dust softly turns into translucent glowing petals, pearl and lavender, drifting and turning. Poetic, subtle, organic.",
+      "references": [
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P07",
+   "titre": "La poursuite",
+   "mouvement": "II",
+   "debut": 72.25,
+   "fin": 80.25,
+   "registre": "mouvement",
+   "image": "Poursuite derrière l'Orbe dans un couloir de nébuleuse",
+   "camera": "embarquée, 24 mm",
+   "lumiere": "violet, bleu, nacre",
+   "transition": "les pétales s'ouvrent",
+   "fabrication": "manus",
+   "synchro": [
+    "fleur-du-ciel:section2"
+   ],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        72.25
+       ],
+       [
+        8.0,
+        80.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nChase camera close behind the Orb, 24mm lens, flying through a corridor of nebula, veils of violet and blue dust rushing past with strong parallax. Glowing petals trail behind the Orb. Fluid, exhilarating, never chaotic.",
+      "references": [
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P08",
+   "titre": "La Fleur du Ciel",
+   "mouvement": "II",
+   "debut": 80.25,
+   "fin": 90.25,
+   "registre": "révélation",
+   "image": "Les pétales s'ouvrent en une fleur géante faite d'étoiles ; l'Orbe en est le cœur",
+   "camera": "large, face, recul lent",
+   "lumiere": "pétale → étoile",
+   "transition": "raccord dans le reflet",
+   "fabrication": "manus",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        80.25
+       ],
+       [
+        10.0,
+        90.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nWide frontal shot, slow pull-back. The trail of petals behind the Orb opens into an immense flower made of stars, its petals becoming constellations of soft light. The Orb is the luminous heart of the flower, centred. Breathtaking, delicate, a revelation.",
+      "references": [
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P09",
+   "titre": "Le regard",
+   "mouvement": "II",
+   "debut": 90.25,
+   "fin": 102.25,
+   "registre": "émotion",
+   "image": "Dans la nacre de l'Orbe se reflète la fleur d'étoiles",
+   "camera": "macro, 100 mm",
+   "lumiere": "reflets, profondeur",
+   "transition": "l'Orbe repart",
+   "fabrication": "manus",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        90.25
+       ],
+       [
+        12.0,
+        102.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nMacro close-up of the Orb's nacre surface, 100mm. Reflected in its pearl skin, the flower of stars, curved and shimmering. The Orb slightly rotates, as if looking back at what it left behind. Tender, contemplative.",
+      "references": [
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P10",
+   "titre": "Le seuil de l'atmosphère",
+   "mouvement": "II",
+   "debut": 102.25,
+   "fin": 112.25,
+   "registre": "seuil",
+   "image": "Le limbe bleu de la Terre ; l'Orbe entre dans l'atmosphère",
+   "camera": "large, plongée sur la courbure",
+   "lumiere": "bleu atmosphère",
+   "transition": "bleu → blanc des nuages",
+   "fabrication": "manus",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        102.25
+       ],
+       [
+        10.0,
+        112.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nWide high-angle shot over the curved blue limb of the Earth from space. The Orb descends into the thin glowing layer of atmosphere, a delicate halo forming around it. The blue of the atmosphere fills more and more of the frame, ending on bright white cloud tops.",
+      "references": [
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P11",
+   "titre": "La mer de nuages",
+   "mouvement": "III",
+   "debut": 112.25,
+   "fin": 124.25,
+   "registre": "contemplation",
+   "image": "Mer de nuages au soleil couchant, l'Orbe flotte au tiers bas",
+   "camera": "grue latérale très lente",
+   "lumiere": "soleil bas, nuages laiteux rosés",
+   "transition": "continu",
+   "fabrication": "manus",
+   "synchro": [
+    "fleur-du-ciel:section3"
+   ],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        112.25
+       ],
+       [
+        12.0,
+        124.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nMajestic wide shot above an endless sea of clouds at sunset, low golden sun, clouds in milky pink, coral and lavender. The pearl Orb floats in the lower third, its surface reflecting the sky and the sun, slightly inverted like a lens. Very slow lateral crane move. Serene, sacred, warm.",
+      "references": [
+       "orbe",
+       "lumiere-reference-matt"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P12",
+   "titre": "La caresse",
+   "mouvement": "III",
+   "debut": 124.25,
+   "fin": 129.25,
+   "registre": "intimité",
+   "image": "L'Orbe frôle un nuage et l'éclaire de l'intérieur",
+   "camera": "rasant, 50 mm",
+   "lumiere": "vapeur translucide",
+   "transition": "coupe sur l'attaque de 02:09",
+   "fabrication": "manus",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        124.25
+       ],
+       [
+        5.0,
+        129.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nLow grazing shot at cloud level, 50mm. The Orb glides just above a cloud surface; its light illuminates the vapour from inside, wisps curling around it. Soft, intimate.",
+      "references": [
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P13",
+   "titre": "Gold, première apparition",
+   "mouvement": "III",
+   "debut": 129.25,
+   "fin": 135.25,
+   "registre": "surprise",
+   "image": "Gold, cheval de lumière dorée, galope derrière l'Orbe puis se dissout dans le soleil",
+   "camera": "large, caméra immobile",
+   "lumiere": "or fin, poussière dorée",
+   "transition": "dans le soleil",
+   "fabrication": "manus",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        129.25
+       ],
+       [
+        6.0,
+        135.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nWide static shot over the sunset sea of clouds, the Orb small at centre. From a bank of clouds, a horse made of golden light gallops across the frame behind the Orb, mane and tail dissolving into fine gold dust, noble and weightless. It does not look at the camera. It vanishes into the glare of the sun. Rare, majestic, miraculous, not fantasy armour, no rider, no wings.",
+      "references": [
+       "gold",
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P14",
+   "titre": "Les témoins",
+   "mouvement": "III",
+   "debut": 135.25,
+   "fin": 147.25,
+   "registre": "témoins",
+   "image": "Cinq ou six silhouettes translucides tournent la tête au passage de l'Orbe",
+   "camera": "très large, longue focale",
+   "lumiere": "contre-jour",
+   "transition": "le ciel s'assombrit",
+   "fabrication": "manus",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        135.25
+       ],
+       [
+        12.0,
+        147.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nVery wide telephoto shot over distant cloud crests at dusk. Five or six tall translucent silhouettes stand still on the crests, backlit, undefined, almost made of mist, human-like but not detailed. As the small Orb passes in the sky, they slowly turn their heads to follow it. Quiet awe, no faces, no features.",
+      "references": []
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P15",
+   "titre": "Le soir tombe",
+   "mouvement": "III",
+   "debut": 147.25,
+   "fin": 160.25,
+   "registre": "passage du temps",
+   "image": "Rose, violet, premières étoiles ; l'Orbe de plus en plus visible",
+   "camera": "fixe, temps accéléré",
+   "lumiere": "crépuscule",
+   "transition": "plongée dans les nuages",
+   "fabrication": "manus",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        147.25
+       ],
+       [
+        13.0,
+        160.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nStatic wide shot, time-lapse feeling: the sky above the sea of clouds shifts from pink to violet to deep blue, the first stars appear. The Orb's light becomes more and more visible as the world darkens. Calm passage of time.",
+      "references": [
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P16",
+   "titre": "Dans la nuit",
+   "mouvement": "IV",
+   "debut": 160.25,
+   "fin": 168.25,
+   "registre": "silence visuel",
+   "image": "L'Orbe descend dans les nuages de nuit ; seul son battement est visible",
+   "camera": "plongée verticale",
+   "lumiere": "nuit bleu-noir",
+   "transition": "coupe vers la Terre",
+   "fabrication": "manus",
+   "synchro": [
+    "fleur-du-ciel:section4"
+   ],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        160.25
+       ],
+       [
+        8.0,
+        168.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nTop-down shot following the Orb as it sinks slowly into dark night clouds. Almost black frame; only the Orb's soft heartbeat of light is visible, dimming and returning. Silence.",
+      "references": [
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P17",
+   "titre": "Les mains du fondateur",
+   "mouvement": "IV",
+   "debut": 168.25,
+   "fin": 180.25,
+   "registre": "pilier 1",
+   "image": "Les mains posent le Disque dans l'herbe de nuit, le mettent à niveau, essuient la perle éteinte, se retirent",
+   "camera": "ras du sol, 35 mm, fixe",
+   "lumiere": "lune froide, lampe chaude hors champ",
+   "transition": "coupe vers le ciel",
+   "fabrication": "tournage",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "substitution",
+     "nature": "substitution",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "disque-prepare",
+      "narratif": [
+       [
+        0,
+        168.25
+       ],
+       [
+        12.0,
+        180.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "substitution non destructive en attendant le tournage des mains : le Disque déjà préparé, seul dans la prairie de nuit"
+    },
+    {
+     "id": "tournage",
+     "nature": "tournage",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Matt (fondateur)",
+      "droits": "proprietaire",
+      "note": "prise de vue réelle des mains, quand elle sera réalisable"
+     }
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nNight meadow, dew on the grass, low ground-level shot, 35mm, static. A man's hands only, no face, kneel into frame and place a round disc into the grass: a matte black outer ring with small points, a thin sand-coloured ring, a warm white centre holding an unlit pearl. The hands level it carefully, then a thumb gently wipes the pearl. The hands withdraw. The disc remains alone under a cold moonlit sky, a faint warm lamp glow from off-screen. Intimate, devoted, quiet.",
+      "references": [
+       "disque",
+       "prairie"
+      ]
+     }
+    }
+   ],
+   "active": "substitution"
+  },
+  {
+   "id": "P18",
+   "titre": "L'étoile devient goutte",
+   "mouvement": "IV",
+   "debut": 180.25,
+   "fin": 186.25,
+   "registre": "incarnation",
+   "image": "Dans les nuages, l'Orbe s'alourdit ; sa nacre devient plus transparente, comme une goutte de lumière, sans perdre sa forme ronde",
+   "camera": "gros plan, 85 mm",
+   "lumiere": "nacre plus dense",
+   "transition": "les nuages s'ouvrent",
+   "fabrication": "manus",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "voyage",
+      "narratif": [
+       [
+        0,
+        180.25
+       ],
+       [
+        6.0,
+        186.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nClose-up inside night clouds, 85mm. The Orb grows heavier; its nacre becomes more transparent and liquid, like a drop of light, but it stays perfectly round, a pearl, never a pointed drop. Faint multicoloured particles (lavender, pink, mint, pale gold) drift around it. Gravity is felt. Incarnation.",
+      "references": [
+       "orbe"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P19",
+   "titre": "L'arc-en-ciel, Gold",
+   "mouvement": "IV",
+   "debut": 186.25,
+   "fin": 194.25,
+   "registre": "seuil",
+   "image": "L'aube bleue sous les nuages, un arc-en-ciel au-dessus de la prairie ; Gold le traverse une fois",
+   "camera": "très large, descente lente",
+   "lumiere": "heure bleue, premier soleil",
+   "transition": "plongée vers le Disque",
+   "fabrication": "manus",
+   "synchro": [
+    "fleur-du-ciel:sombre"
+   ],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        186.25
+       ],
+       [
+        8.0,
+        194.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nVery wide shot below the cloud ceiling at blue-hour dawn, the last rain falling, a soft rainbow forming over a green meadow. A horse of golden light gallops once through the rainbow and fades into the morning air. Slow descending camera toward the meadow. Hope, threshold, quiet wonder.",
+      "references": [
+       "gold",
+       "prairie"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P20",
+   "titre": "L'approche",
+   "mouvement": "IV",
+   "debut": 194.25,
+   "fin": 196.275,
+   "registre": "approche",
+   "image": "Vue verticale : l'Orbe, nacrée et transparente, descend exactement au-dessus du centre du Disque, entourée de particules de couleur",
+   "camera": "plongée verticale, légère descente",
+   "lumiere": "aube, rosée",
+   "transition": "coupe sur le creux",
+   "fabrication": "hybride",
+   "synchro": [
+    "fleur-du-ciel:goutte"
+   ],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        194.25
+       ],
+       [
+        2.0250000000000057,
+        196.275
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nPerfect top-down locked shot of a dewy meadow at dawn, the round disc lying in the grass exactly at frame centre. Very slight downward drift. A round pearl of light (nacre, partly transparent, with soft multicoloured particles around it) descends exactly above the disc's centre. Keep the disc geometry clean and unoccluded for compositing.",
+      "references": [
+       "disque",
+       "prairie"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P21",
+   "titre": "Le temps s'arrête",
+   "mouvement": "IV",
+   "debut": 196.275,
+   "fin": 196.775,
+   "registre": "suspension",
+   "image": "Macro : l'Orbe suspendue ; dans sa nacre transparente, le monde inversé",
+   "camera": "fixe, figé",
+   "lumiere": "verre, nacre, réfraction",
+   "transition": "coupe sur les aigus",
+   "fabrication": "manus",
+   "synchro": [
+    "fleur-du-ciel:creux"
+   ],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        196.275
+       ],
+       [
+        0.5,
+        196.775
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nExtreme macro of a round pearl of light frozen in mid-air at dawn, perfectly still: pearly white, lavender, pink and mint nacre, partly transparent. Inside it, like a lens, the world appears inverted: sky, rainbow, green meadow, and a small round disc. A few soft multicoloured particles float around it. Only light shimmers. Nacre, crystal, refraction.",
+      "references": [
+       "orbe",
+       "disque",
+       "prairie"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P22",
+   "titre": "La chute",
+   "mouvement": "IV",
+   "debut": 196.775,
+   "fin": 198.25,
+   "registre": "chute",
+   "image": "L'Orbe tombe droit vers la perle, en accélérant",
+   "camera": "verticale verrouillée",
+   "lumiere": "aube",
+   "transition": "contact",
+   "fabrication": "hybride",
+   "synchro": [
+    "fleur-du-ciel:chute"
+   ],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        196.775
+       ],
+       [
+        1.4749999999999943,
+        198.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nSame top-down locked framing as the previous shot. The round pearl of light falls straight down toward the centre of the disc, accelerating. End exactly before contact.",
+      "references": [
+       "disque",
+       "prairie"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P23",
+   "titre": "L'activation",
+   "mouvement": "V",
+   "debut": 198.25,
+   "fin": 202.25,
+   "registre": "activation",
+   "image": "L'Orbe rejoint la perle éteinte et l'allume ; la première onde RIPPLE ; les points de la couronne un par temps",
+   "camera": "verticale fixe",
+   "lumiere": "nacre, sable, noir mat",
+   "transition": "l'onde sort du Disque",
+   "fabrication": "hybride",
+   "synchro": [
+    "fleur-du-ciel:impact"
+   ],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        198.25
+       ],
+       [
+        4.0,
+        202.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nSame top-down locked framing on the disc in the dewy meadow at sunrise, low warm side light, subtle wind in the grass. No drop, no effects: a clean plate for compositing.",
+      "references": [
+       "disque",
+       "prairie"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P24",
+   "titre": "La rosée s'allume",
+   "mouvement": "V",
+   "debut": 202.25,
+   "fin": 206.25,
+   "registre": "émotion",
+   "image": "L'onde traverse l'herbe ; chaque goutte de rosée s'allume",
+   "camera": "macro, 100 mm",
+   "lumiere": "rosée",
+   "transition": "grue vers le ciel",
+   "fabrication": "hybride",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "previz",
+     "nature": "previz",
+     "statut": "provisoire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        202.25
+       ],
+       [
+        4.0,
+        206.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "prévisualisation par les moteurs LUMIERE"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nGround-level macro, 100mm, across grass blades covered in dew at sunrise. A soft wave of light passes through the grass from the background toward the camera; each dew drop lights up as it passes, like a thousand tiny pearls. Delicate, joyful.",
+      "references": [
+       "prairie"
+      ]
+     }
+    }
+   ],
+   "active": "previz"
+  },
+  {
+   "id": "P25",
+   "titre": "L'onde devient grille",
+   "mouvement": "V",
+   "debut": 206.25,
+   "fin": 214.25,
+   "registre": "révélation",
+   "image": "Les anneaux dépassent le Disque ; la prairie révèle la grille ATLAS",
+   "camera": "montée verticale",
+   "lumiere": "lignes de lumière sur l'herbe",
+   "transition": "la grille se densifie",
+   "fabrication": "hybride",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "attente",
+     "nature": "attente",
+     "statut": "a-faire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        206.25
+       ],
+       [
+        8.0,
+        214.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "en attente des moteurs ATLAS / broderie / AIME ; image provisoire du Disque activé"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nTop-down shot rising slowly and straight up from the disc in the meadow to a height where the whole meadow is visible, sunrise light, the disc always at frame centre. Clean plate, no effects.",
+      "references": [
+       "disque",
+       "prairie"
+      ]
+     }
+    }
+   ],
+   "active": "attente"
+  },
+  {
+   "id": "P26",
+   "titre": "La grille devient broderie",
+   "mouvement": "V",
+   "debut": 214.25,
+   "fin": 222.25,
+   "registre": "fabrication",
+   "image": "La grille devient toile ; les points de croix apparaissent un par un",
+   "camera": "verticale / macro",
+   "lumiere": "fils mats et satinés",
+   "transition": "les lettres se forment",
+   "fabrication": "moteur",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "attente",
+     "nature": "attente",
+     "statut": "a-faire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        214.25
+       ],
+       [
+        8.0,
+        222.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "en attente des moteurs ATLAS / broderie / AIME ; image provisoire du Disque activé"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nExtreme macro of embroidery thread crossing over an even-weave canvas: one cross-stitch forming, the second diagonal pulled tight over the first. Visible fibres, soft satin sheen, warm morning light. Thread colour: pearl white with a lavender sheen.",
+      "references": []
+     }
+    }
+   ],
+   "active": "attente"
+  },
+  {
+   "id": "P27",
+   "titre": "AIME se compose",
+   "mouvement": "V",
+   "debut": 222.25,
+   "fin": 229.25,
+   "registre": "composition",
+   "image": "A, M, E puis le jambage du « i » se brodent ; il manque le point du « i »",
+   "camera": "montée continue",
+   "lumiere": "broderie sur herbe",
+   "transition": "la caméra s'arrête",
+   "fabrication": "moteur",
+   "synchro": [
+    "fleur-du-ciel:detente"
+   ],
+   "versions": [
+    {
+     "id": "attente",
+     "nature": "attente",
+     "statut": "a-faire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        222.25
+       ],
+       [
+        7.0,
+        229.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "en attente des moteurs ATLAS / broderie / AIME ; image provisoire du Disque activé"
+    }
+   ],
+   "active": "attente"
+  },
+  {
+   "id": "P28",
+   "titre": "Le point du « i »",
+   "mouvement": "VI",
+   "debut": 229.25,
+   "fin": 236.25,
+   "registre": "révélation, silence",
+   "image": "Le mot se lit en entier : le Disque et sa perle sont le point du « i »",
+   "camera": "fixe",
+   "lumiere": "aube",
+   "transition": "la perle respire",
+   "fabrication": "moteur",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "attente",
+     "nature": "attente",
+     "statut": "a-faire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        229.25
+       ],
+       [
+        7.0,
+        236.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "en attente des moteurs ATLAS / broderie / AIME ; image provisoire du Disque activé"
+    }
+   ],
+   "active": "attente"
+  },
+  {
+   "id": "P29",
+   "titre": "Les fils prennent la lumière",
+   "mouvement": "VI",
+   "debut": 236.25,
+   "fin": 242.75,
+   "registre": "montée",
+   "image": "Les fils du mot prennent la lumière en partant du « i »",
+   "camera": "fixe, légère avancée",
+   "lumiere": "lumière qui gagne",
+   "transition": "retour de la basse",
+   "fabrication": "moteur",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "attente",
+     "nature": "attente",
+     "statut": "a-faire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        236.25
+       ],
+       [
+        6.5,
+        242.75
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "en attente des moteurs ATLAS / broderie / AIME ; image provisoire du Disque activé"
+    }
+   ],
+   "active": "attente"
+  },
+  {
+   "id": "P30",
+   "titre": "Le rayonnement",
+   "mouvement": "VI",
+   "debut": 242.75,
+   "fin": 248.25,
+   "registre": "rayonnement",
+   "image": "Une vague de lumière chaude part de la perle ; le soleil franchit l'horizon",
+   "camera": "bascule vers l'horizon",
+   "lumiere": "lever or-nacre",
+   "transition": "élévation",
+   "fabrication": "hybride",
+   "synchro": [
+    "fleur-du-ciel:perle"
+   ],
+   "versions": [
+    {
+     "id": "attente",
+     "nature": "attente",
+     "statut": "a-faire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        242.75
+       ],
+       [
+        5.5,
+        248.25
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "en attente des moteurs ATLAS / broderie / AIME ; image provisoire du Disque activé"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nCamera tilts up from the meadow to the horizon at the exact moment the sun breaks the horizon, golden-pearl light flooding over the land, long shadows, morning haze. Warm, not overexposed, no lens flare.",
+      "references": [
+       "prairie"
+      ]
+     }
+    }
+   ],
+   "active": "attente"
+  },
+  {
+   "id": "P31",
+   "titre": "Le commencement",
+   "mouvement": "VI",
+   "debut": 248.25,
+   "fin": 253.0,
+   "registre": "commencement",
+   "image": "Très haut, l'aube sur la Terre ; un seul point de nacre qui respire au milieu de la prairie",
+   "camera": "fixe",
+   "lumiere": "aube",
+   "transition": "le Point rejoint la Première rencontre",
+   "fabrication": "hybride",
+   "synchro": [],
+   "versions": [
+    {
+     "id": "attente",
+     "nature": "attente",
+     "statut": "a-faire",
+     "source": {
+      "genre": "procedural",
+      "scene": "atterrissage",
+      "narratif": [
+       [
+        0,
+        248.25
+       ],
+       [
+        4.75,
+        253.0
+       ]
+      ]
+     },
+     "provenance": {
+      "auteur": "AIME (rendu procédural WebGL)",
+      "outil": "LUMIERE · rendu.ts",
+      "droits": "proprietaire",
+      "note": "prévisualisation, remplaçable"
+     },
+     "note": "en attente des moteurs ATLAS / broderie / AIME ; image provisoire du Disque activé"
+    },
+    {
+     "id": "manus",
+     "nature": "generation",
+     "statut": "a-faire",
+     "source": null,
+     "provenance": {
+      "auteur": "Manus (modèle vidéo à préciser)",
+      "outil": "Manus",
+      "droits": "a-verifier",
+      "note": "conditions d'usage commercial à vérifier avant publication"
+     },
+     "generation": {
+      "outil": "Manus",
+      "prompt": "Cinematic poetic short film, 16:9, 4K, 24 fps, anamorphic-safe composition (all key action inside the central 2.39:1 band), subject centred. Photographic realism, natural optics, subtle film grain, deep atmospheric perspective. Minimalist, calm, sacred but not religious. Palette: night blue, lavender, pearl white, soft pink, iridescent highlights; warm amber used only when specified. The Orb: a living pearl of light, nacre surface with slow iridescent currents inside, gently breathing, never a glossy CG sphere. Avoid: lens flares, blown-out white sun (keep the sun soft, creamy, never saturated), pointed drop shapes, text, logos, fantasy armour, game-like VFX, sparks, explosions, fast cuts, religious symbols, faces in close-up.\n\nVery high aerial view of a green landscape at sunrise, soft haze, a meadow at the centre of the frame. Static. Calm beginning of a day. Leave the centre of the meadow clean for compositing a single point of light.",
+      "references": [
+       "prairie"
+      ]
+     }
+    }
+   ],
+   "active": "attente"
+  }
+ ]
+}

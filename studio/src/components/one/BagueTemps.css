@@ -1,0 +1,40 @@
+/* La bague du temps : des chiffres, des points, un cercle. Rien d'autre. */
+.bt { position: relative; display: grid; place-items: center; margin: auto; }
+.bt-svg { position: absolute; inset: 0; touch-action: none; cursor: grab; outline: none; border-radius: 50%; }
+.bt-svg:active { cursor: grabbing; }
+.bt-svg:focus-visible { box-shadow: 0 0 0 3px var(--aime-focus, #4b6bfb); }
+.bt-cercle { fill: none; stroke: var(--aime-bordure, rgba(0,0,0,.12)); stroke-width: 1; }
+.bt-sillon { fill: none; stroke: var(--aime-bordure, rgba(0,0,0,.08)); stroke-width: 1; stroke-dasharray: 2 5; }
+.bt-repere { fill: var(--aime-texte, #0b0b0c); }
+.bt-cible { fill: transparent; cursor: pointer; }
+.bt-chiffre { pointer-events: none; fill: var(--aime-texte-2, #4a4a50); font-family: var(--aime-police, inherit); font-variant-numeric: tabular-nums; cursor: pointer; user-select: none;
+  transition: font-size .25s ease, fill .25s ease; }
+.bt-chiffre.bt-on { fill: var(--aime-texte, #0b0b0c); font-weight: 700; }
+/* les points lumineux : discrets, jamais clignotants ; la forme et le texte disent le sens, pas la couleur seule */
+.bt-point { fill: #8ab4ff; stroke: #fff; stroke-width: 1.5; }
+.bt-point.bt-on { fill: #6f52ff; }
+.bt-centre { position: relative; z-index: 1; display: grid; justify-items: center; gap: 2px; width: 50%; text-align: center; pointer-events: none; }
+.bt-centre > * { margin: 0; }
+.bt-echelle { font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--aime-texte-3, #77777d); }
+.bt-nom { font-size: clamp(.9rem, 2.1vw, 1.12rem); font-weight: 650; line-height: 1.15; overflow-wrap: anywhere; }
+.bt-compte { font-size: .72rem; color: var(--aime-texte-2, #4a4a50); }
+.bt-el { font-size: .7rem; line-height: 1.25; color: var(--aime-texte-2, #4a4a50); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bt-actions { display: flex; gap: 6px; margin-top: 4px; pointer-events: auto; }
+.bt-btn { min-width: 40px; min-height: 40px; border-radius: 999px; border: 1px solid var(--aime-bordure-forte, rgba(0,0,0,.2)); background: var(--aime-surface, #fff);
+  font: inherit; font-size: .95rem; cursor: pointer; color: var(--aime-texte, #0b0b0c); }
+.bt-voir { padding: 0 14px; font-size: .8rem; font-weight: 600; }
+.bt-btn:focus-visible { outline: 3px solid var(--aime-focus, #4b6bfb); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .bt-chiffre { transition: none; } }
+:root[data-pz-motion="reduce"] .bt-chiffre { transition: none; }
+.bt-trait { fill: var(--aime-texte-3, #9a9aa0); pointer-events: none; }
+/* petit cadran : le centre prend plus de place, les noms se resserrent ; les boutons gardent 40 px */
+.bt-petit .bt-centre { width: 66%; gap: 1px; }
+.bt-petit .bt-nom { font-size: .8rem; }
+.bt-petit .bt-el { display: none; }
+.bt-petit .bt-compte { font-size: .66rem; }
+.bt-petit .bt-actions { gap: 4px; margin-top: 2px; }
+.bt-petit .bt-voir { padding: 0 10px; }
+.bt-nom-voir { pointer-events: auto; border: 0; background: none; color: inherit; font: inherit; font-weight: 650; text-decoration: underline; text-underline-offset: 3px; min-height: 40px; padding: 0 4px; cursor: pointer; }
+.bt-nom-voir:focus-visible { outline: 3px solid var(--aime-focus, #4b6bfb); outline-offset: 2px; border-radius: 8px; }
+.bt-petit .bt-echelle { display: none; }
+.bt-petit .bt-nom { font-size: .74rem; line-height: 1.15; }

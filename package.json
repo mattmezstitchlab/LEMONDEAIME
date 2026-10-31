@@ -6,7 +6,7 @@
   "description": "LE MONDE AIME — le site officiel (lemondeaime.com) : AIME, Le Monde AIME, Point Zéro, BurO, la Charte AIME.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build && npm run build:studio",
+    "build": "tsc --noEmit && vite build && cp dist/index.html dist/404.html && npm run build:studio",
     "preview": "vite preview",
     "test": "node --test tests/server/*.test.mjs",
     "verify": "npm run test && npm run build",

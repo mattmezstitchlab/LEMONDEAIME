@@ -305,7 +305,7 @@ export default function PromptStudio({ onClose, onImport, initialPrompt = "", em
                 <p className="p-6 text-center text-[12px] text-black/50">L'image générée apparaîtra ici.</p>
               )}
             </div>
-            <div className="grid min-h-[180px] place-items-center overflow-hidden rounded-[14px] bg-[#f7f2e8] p-2">
+            <div className="grid min-h-[180px] place-items-center overflow-hidden rounded-[14px] bg-[#f3f3f1] p-2">
               {pattern && preview ? (
                 <img src={preview} alt="Motif converti" className="max-h-[280px] w-full object-contain" />
               ) : (
@@ -365,7 +365,7 @@ function renderPreview(p: Pattern) {
   c.width = p.w * scale;
   c.height = p.h * scale;
   const ctx = c.getContext("2d")!;
-  ctx.fillStyle = "#f7f2e8";
+  ctx.fillStyle = "#f3f3f1";
   ctx.fillRect(0, 0, c.width, c.height);
   for (let i = 0; i < p.cross.length; i++) {
     const v = p.cross[i];

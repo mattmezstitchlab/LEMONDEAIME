@@ -1,0 +1,225 @@
+/* Le Point, contrôleur universel : le bouton, l'anneau des modes, le panneau Confort. Charte du studio : sombre, nacre, sobre. */
+.lp { position: relative; flex: none; display: flex; }
+/* le bouton du Point porte son propre style : il ne dépend d'aucune feuille d'un studio (portable vers d'autres projets AIME) */
+.lp-point { position: relative; flex: none; width: 50px; height: 46px; padding: 0; border: 0; border-radius: 11px; background: #0b0b0c; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.lp-point:hover { background: #000; }
+.lp-point:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.lp-onde { position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; border: 2px solid rgba(201,184,255,.9); pointer-events: none; animation: lp-onde .7s ease-out forwards; }
+@keyframes lp-onde { from { transform: scale(.6); opacity: 1; } to { transform: scale(2.2); opacity: 0; } }
+
+.lp-anneau { position: fixed; z-index: 90; border-radius: 50%; background: rgba(11,11,12,.94); box-shadow: 0 0 0 1px #3a3a38, 0 30px 70px rgba(11,11,12,.45); animation: lp-ouvre .18s ease-out; }
+@keyframes lp-ouvre { from { transform: scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
+.lp-trace { position: absolute; inset: 0; pointer-events: none; }
+.lp-trace circle { stroke: rgba(255,255,255,.16); stroke-width: 1; stroke-dasharray: 2 4; }
+.lp-trace line { stroke: rgba(255,255,255,.5); stroke-width: 1.5; }
+.lp-centre { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; background: radial-gradient(circle at 32% 30%, #ffffff 0%, #d9e8ff 22%, #c9b8ff 48%, #ffd6ec 72%, #b9f0e4 100%); box-shadow: 0 0 24px rgba(201,184,255,.35); }
+.lp-secteur { position: absolute; transform: translate(-50%, -50%); min-width: 72px; min-height: 44px; padding: 0 12px; border-radius: 22px; border: 1px solid rgba(255,255,255,.35); background: #1b1b1a; color: #fff; font: 600 13px/1 inherit; font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+.lp-secteur:hover { background: #2a2a28; }
+.lp-secteur:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+/* le groupe se lit par la forme du bord, jamais par la couleur seule */
+.lp-acces { border: 2px solid #c9b8ff; }
+.lp-metier { background: #2a2a28; border-style: solid; border-width: 1px 1px 3px; }
+.lp-creation { border-style: dashed; }
+.lp-marque { width: 7px; height: 7px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px #0b0b0c; }
+
+.lp-annonce { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.lp-panneau { position: fixed; z-index: 90; left: 50%; bottom: 92px; transform: translateX(-50%); width: min(460px, calc(100vw - 24px)); max-height: calc(100vh - 200px); overflow: auto; box-sizing: border-box;
+  padding: 16px 16px 18px; border-radius: 20px; background: #0b0b0c; color: #fff; border: 1px solid #3a3a38; box-shadow: 0 24px 60px rgba(11,11,12,.35); font-size: calc(15px * var(--pz-user-font-scale, 1)); line-height: var(--pz-user-line-height, 1.5); letter-spacing: var(--pz-user-letter-spacing, 0); }
+.lp-panneau-tete { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.lp-panneau h2 { margin: 0; font-size: 1.2em; font-weight: 700; }
+.lp-fermer { min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.35); background: transparent; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+.lp-note { margin: 6px 0 4px; color: rgba(255,255,255,.72); font-size: .9em; }
+.lp-groupe { margin: 14px 0 0; padding: 12px; border: 1px solid #3a3a38; border-radius: 14px; }
+.lp-groupe legend { padding: 0 6px; font-weight: 700; font-size: .85em; letter-spacing: .04em; text-transform: uppercase; color: rgba(255,255,255,.8); }
+.lp-profils { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.lp-profils button { min-height: 44px; padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,.3); background: #1b1b1a; color: #fff; font: inherit; font-weight: 600; text-align: left; cursor: pointer; }
+.lp-profils button:hover { background: #2a2a28; }
+.lp-aide { display: block; margin-top: 3px; font-weight: 400; font-size: .85em; color: rgba(255,255,255,.7); }
+.lp-curseur { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; margin: 6px 0 10px; font-weight: 600; }
+.lp-curseur output { font-variant-numeric: tabular-nums; color: #fff; }
+.lp-curseur input { grid-column: 1 / -1; width: 100%; min-height: 32px; accent-color: #c9b8ff; }
+.lp-choix { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.lp-choix label, .lp-case { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; padding: 8px 0; cursor: pointer; }
+.lp-choix input, .lp-case input { width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: #c9b8ff; }
+.lp-panneau :focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.lp-erreur { margin: 12px 0 0; padding: 10px; border-radius: 10px; border: 2px solid #f5b754; }
+.lp-evitement { position: fixed; left: 8px; top: -60px; z-index: 80; padding: 10px 14px; border-radius: 10px; background: #0b0b0c; color: #fff; border: 2px solid #c9b8ff; font-weight: 700; }
+.lp-evitement:focus { top: 8px; }
+
+@media (max-width: 720px) { .lp-profils { grid-template-columns: 1fr; } .lp-panneau { bottom: 84px; max-height: calc(100vh - 170px); } }
+@media (prefers-reduced-motion: reduce) { .lp-onde, .lp-anneau { animation: none; } .lp-onde { display: none; } }
+html[data-pz-motion="reduce"] .lp-onde { display: none; }
+html[data-pz-motion="reduce"] .lp-anneau { animation: none; }
+
+/* Le Point dans le compositeur 5D : le même, posé en bas à gauche du compositeur */
+.cr-point { position: fixed; left: 16px; bottom: 16px; z-index: 3; padding: 4px; border-radius: 14px; background: #0b0b0c; box-shadow: 0 10px 30px rgba(11,11,12,.25); }
+.cr-point .lp-panneau { bottom: 84px; }
+.cr { padding-bottom: 96px !important; }
+.cr-centre:not(.cr-espace) { cursor: default; }
+/* le menu de marque AIME, en haut : plus une orbe, un menu */
+.pzs-orbe { color: #0b0b0c; }
+
+/* Téléphone : l'arc compact. Un quart de cercle collé au Point ; le contenu dessous reste visible autour. */
+.lp-arc { position: fixed; z-index: 90; pointer-events: none; animation: lp-ouvre .16s ease-out; }
+.lp-arc-bande { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+.lp-arc-bande path { fill: none; stroke: rgba(11,11,12,.94); stroke-width: 62; stroke-linecap: round; pointer-events: stroke; }
+.lp-secteur.lp-pastille { min-width: 48px; width: 48px; height: 48px; min-height: 48px; padding: 0; border-radius: 50%; pointer-events: auto; background: #1b1b1a; }
+.lp-pastille svg { width: 20px; height: 20px; }
+.lp-pastille .lp-marque { position: absolute; top: 3px; right: 3px; }
+.lp-initiale { font-size: 16px; font-weight: 700; }
+.lp-arc-mot { position: absolute; transform: translate(-50%, -50%); padding: 6px 10px; border-radius: 10px; background: #0b0b0c; color: #fff; font-size: 14px; font-weight: 700; white-space: nowrap; box-shadow: 0 0 0 1px #3a3a38; pointer-events: none; }
+
+/* Au choix : la liste en mots, depuis le bas. Le haut de l'écran reste visible. */
+.lp-liste { position: fixed; z-index: 90; left: 8px; right: 8px; bottom: 8px; max-height: 46vh; overflow: auto; padding: 8px; border-radius: 18px; background: #0b0b0c; box-shadow: 0 0 0 1px #3a3a38, 0 -20px 60px rgba(11,11,12,.3); animation: lp-ouvre .16s ease-out; }
+.lp-liste-titre { margin: 4px 8px 6px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.7); }
+.lp-secteur.lp-ligne { position: static; transform: none; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 52px; padding: 8px 12px; margin: 0 0 6px; border-radius: 12px; text-align: left; white-space: normal; line-height: 1.25; }
+.lp-liste-nom { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; }
+.lp-liste-icone svg { width: 18px; height: 18px; }
+.lp-liste-aide { font-weight: 400; font-size: 13px; color: rgba(255,255,255,.72); }
+html[data-pz-motion="reduce"] .lp-arc, html[data-pz-motion="reduce"] .lp-liste { animation: none; }
+@media (prefers-reduced-motion: reduce) { .lp-arc, .lp-liste { animation: none; } }
+@media (max-width: 720px) { .lp-panneau { max-height: 62vh; } }
+
+/* Téléphone : le panneau compact. Deux colonnes de modes, pictogramme et mot, juste au-dessus du Point ; le dock reste visible. */
+.lp-compact { position: fixed; z-index: 90; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 8px; border-radius: 16px; background: #0b0b0c; box-shadow: 0 0 0 1px #3a3a38, 0 -14px 40px rgba(11,11,12,.28); max-height: 50vh; overflow: auto; animation: lp-ouvre .14s ease-out; }
+.lp-secteur.lp-case-mode { position: static; transform: none; justify-content: flex-start; width: 100%; min-width: 0; min-height: 48px; padding: 0 12px; border-radius: 12px; font-size: 15px; gap: 10px; }
+.lp-compact-icone { display: inline-flex; } .lp-compact-icone svg { width: 20px; height: 20px; }
+.lp-case-mode .lp-marque { margin-left: auto; order: 3; }
+html[data-pz-motion="reduce"] .lp-compact { animation: none; }
+@media (prefers-reduced-motion: reduce) { .lp-compact { animation: none; } }
+@media (max-width: 300px) { .lp-compact { grid-template-columns: 1fr; } }
+
+/* Le Point d'un bloc : posé sur le bord du bloc sélectionné, il suit le bloc quand on le déplace ou qu'on zoome */
+.lp-bloc { position: fixed; z-index: 38; padding: 3px; border-radius: 14px; background: #0b0b0c; box-shadow: 0 0 0 2px rgba(201,184,255,.85), 0 10px 26px rgba(11,11,12,.28); }
+.lp-bloc .lp-point { width: 44px; height: 44px; }
+
+/* essai bloc, téléphone : Confort et la Loupe s'ouvrent au-dessus du Point du bloc */
+@media (max-width: 720px) {
+  .lp-panneau { bottom: var(--pz-bas-libre, 84px); max-height: calc(100vh - var(--pz-bas-libre, 84px) - 90px); }
+  .pzs-loupe-dock { bottom: var(--pz-bas-libre, calc(max(16px, env(safe-area-inset-bottom)) + 64px)) !important; }
+}
+
+/* ===== Navigation progressive ===== */
+.lp-plus { margin-left: 2px; opacity: .7; font-weight: 700; }
+.lp-nav { border-style: dashed; color: #e8e2ff; }
+/* une couleur : la pastille porte la teinte ; le mot est dit, et montré au centre (ou à côté sur téléphone) */
+.lp-pastille-couleur { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--lp-teinte, #888); box-shadow: inset 0 0 0 2px rgba(255,255,255,.85), 0 0 0 1px rgba(0,0,0,.4); flex: none; }
+.lp-secteur.lp-pastille-anneau { min-width: 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; border-radius: 50%; }
+.lp-secteur.lp-pastille-anneau .lp-pastille-couleur { width: 30px; height: 30px; }
+.lp-secteur.lp-pastille-anneau .lp-marque { position: absolute; top: -2px; right: -2px; }
+/* l'anneau intérieur : la famille d'où viennent les nuances (raccourci au pointeur ; au clavier, « Retour ») */
+.lp-interieur { position: absolute; transform: translate(-50%, -50%); width: 26px; height: 26px; border-radius: 50%; border: 2px solid rgba(255,255,255,.35); cursor: pointer; padding: 0; }
+.lp-interieur-on { border: 3px solid #fff; width: 30px; height: 30px; }
+/* le centre : où l'on est, et ce qu'on montre ; un clic fait revenir d'un niveau */
+.lp-centre-mot { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 120px; min-height: 64px; padding: 6px; border-radius: 50%; border: 0; background: #000; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-align: center; cursor: pointer; font: inherit; }
+.lp-centre-mot small { font-size: 10px; color: rgba(255,255,255,.62); line-height: 1.2; }
+.lp-centre-mot b { font-size: 14px; line-height: 1.15; }
+.lp-centre-petit { width: 84px; min-height: 52px; } .lp-centre-petit small { display: none; } .lp-centre-petit b { font-size: 11.5px; }
+/* téléphone : le fil du chemin, les couleurs en pastilles sur quatre colonnes */
+.lp-compact-fil { grid-column: 1 / -1; margin: 0 4px 2px; font-size: 12px; font-weight: 700; letter-spacing: .03em; color: rgba(255,255,255,.75); }
+.lp-compact.lp-compact-pastilles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.lp-case-mode .lp-pastille-couleur { width: 24px; height: 24px; }
+.lp-case-mode .lp-plus { margin-left: auto; }
+
+/* Retour, Point Zéro, Suivantes dans un anneau de pastilles : des ronds à signe, comme les nuances */
+.lp-nav-glyphe { font-size: 18px; line-height: 1; }
+.lp-centre-mot i { display: block; font-style: normal; font-size: 10px; opacity: .75; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lp-nav-glyphe svg { width: 18px; height: 18px; }
+
+/* ===== Le dock radial, comme la référence validée : un disque sombre, une sphère nacrée au centre, des ronds à pictogramme et leur mot dessous ===== */
+.lp-secteur.lp-outil { min-width: 76px; max-width: 96px; min-height: 0; padding: 2px 4px 4px; border: 0; border-radius: 14px; background: transparent; flex-direction: column; gap: 5px; white-space: normal; }
+.lp-secteur.lp-outil:hover { background: transparent; }
+.lp-rond { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #2a2a28; border: 1px solid rgba(255,255,255,.22); color: #fff; flex: none; }
+.lp-outil:hover .lp-rond, .lp-outil:focus-visible .lp-rond { background: #3a3a38; }
+.lp-signe { display: inline-grid; place-items: center; font-size: 15px; font-weight: 700; line-height: 1; }
+.lp-signe svg, .lp-rond svg { width: 20px; height: 20px; }
+.lp-mot { font-size: 12px; font-weight: 600; line-height: 1.15; text-align: center; text-shadow: 0 1px 2px #000; }
+.lp-outil .lp-marque { position: absolute; top: -1px; right: -1px; }
+/* le groupe se lit par le bord du rond, jamais par la couleur seule */
+.lp-outil.lp-acces { border: 0; } .lp-outil.lp-acces .lp-rond { border: 2px solid #c9b8ff; }
+.lp-outil.lp-creation .lp-rond { border-style: dashed; }
+.lp-outil.lp-metier .lp-rond { border-width: 1px 1px 3px; }
+.lp-outil.lp-nav { border: 0; } .lp-outil.lp-nav .lp-rond { border-style: dashed; background: transparent; }
+.lp-outil:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+/* une valeur : un rond à texte, comme une couleur */
+.lp-valeur { display: inline-grid; place-items: center; min-width: 30px; height: 30px; padding: 0 4px; border-radius: 15px; background: #f4f2ee; color: #0b0b0c; font-size: 11.5px; font-weight: 800; font-variant-numeric: tabular-nums; flex: none; }
+.lp-secteur.lp-pastille-anneau .lp-valeur { min-width: 34px; height: 34px; border-radius: 50%; }
+.lp-case-mode .lp-valeur { height: 26px; }
+/* sous un niveau, au centre : où l'on est, la sphère, le choix en cours ; un clic remonte */
+.lp-centre-niveau { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 128px; height: 128px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #fff; cursor: pointer; font: inherit; }
+.lp-centre-niveau .lp-centre { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
+.lp-centre-niveau small { position: absolute; left: 0; right: 0; top: 22px; font-size: 10px; color: rgba(255,255,255,.62); line-height: 1.2; }
+.lp-centre-niveau b { position: absolute; left: 0; right: 0; bottom: 24px; font-size: 13px; line-height: 1.15; }
+
+/* ===== La sphère nacrée : lumineuse, une profondeur subtile (jamais un ovale noir au centre) ===== */
+.lp-centre { background:
+    radial-gradient(circle at 34% 28%, rgba(255,255,255,.98) 0 9%, rgba(255,255,255,0) 26%),
+    radial-gradient(circle at 70% 78%, rgba(185,240,228,.9) 0, rgba(185,240,228,0) 46%),
+    radial-gradient(circle at 24% 72%, rgba(255,214,236,.95) 0, rgba(255,214,236,0) 48%),
+    radial-gradient(circle at 50% 50%, #e4ecff 0, #c9b8ff 58%, #9f8fe0 100%);
+  box-shadow: inset -6px -8px 14px rgba(70,52,140,.35), inset 4px 5px 10px rgba(255,255,255,.55), 0 0 26px rgba(201,184,255,.38), 0 0 2px rgba(255,255,255,.6); }
+.lp-centre-niveau.lp-centre-seul { width: 72px; height: 72px; }
+.lp-centre-niveau.lp-centre-seul .lp-centre { width: 52px; height: 52px; margin: -26px 0 0 -26px; }
+.lp-centre-niveau.lp-centre-seul.lp-centre-petit .lp-centre { width: 36px; height: 36px; margin: -18px 0 0 -18px; }
+/* le cartouche, discret, à cheval sous le disque */
+.lp-cartouche { position: absolute; left: 50%; top: calc(100% - 10px); transform: translateX(-50%); margin: 0; display: flex; align-items: baseline; gap: 8px; max-width: calc(100% + 40px); padding: 7px 14px; border-radius: 999px;
+  background: rgba(250,249,246,.96); color: #0b0b0c; box-shadow: 0 0 0 1px rgba(11,11,12,.12), 0 8px 20px rgba(11,11,12,.18); white-space: nowrap; pointer-events: none; }
+.lp-cartouche small { font-size: 10.5px; color: #5f5e5a; overflow: hidden; text-overflow: ellipsis; }
+.lp-cartouche b { font-size: 14px; font-weight: 800; }
+.lp-cartouche i { font-style: normal; font-size: 12px; color: #3a3a38; overflow: hidden; text-overflow: ellipsis; }
+/* la scène : le disque posé dans une page, toujours ouvert */
+.lp-scene-hote { display: block; }
+.lp-anneau.lp-scene { position: relative; z-index: auto; animation: none; }
+.lp-scene-hote .lp-liste { position: relative; left: auto; right: auto; bottom: auto; max-height: none; }
+
+/* le raccourci du centre (mode Tambour seulement) : la sphère reste la même, un signe sombre posé dessus, jamais de texte */
+.lp-centre-action { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
+.lp-centre-action .lp-centre { transition: transform .18s ease; }
+.lp-centre-action:hover .lp-centre { transform: scale(1.06); }
+.lp-centre-signe { position: absolute; inset: 0; display: grid; place-items: center; color: #1b1b1a; pointer-events: none; }
+.lp-centre-signe svg { width: 22px; height: 22px; }
+.lp-centre-actif .lp-centre { box-shadow: 0 0 0 3px rgba(255,255,255,.9), 0 0 28px rgba(201,184,255,.55); }
+html[data-pz-motion="reduce"] .lp-centre-action .lp-centre { transition: none; }
+
+/* l'anneau autour d'un tambour (essai du Cadre-Tambour) : pas de disque plein, le centre laisse passer les gestes vers l'ouvrage */
+.lp-anneau.lp-tambour { background: none; box-shadow: none; pointer-events: none; }
+.lp-anneau.lp-tambour .lp-secteur, .lp-anneau.lp-tambour .lp-interieur { pointer-events: auto; }
+.lp-anneau.lp-tambour .lp-trace { display: none; }
+.lp-anneau.lp-tambour .lp-centre-action { pointer-events: auto; }
+
+/* ——— Les points lumineux (lib/point/indicateurs) : un état par commande, sa forme autant que sa couleur ———
+   Repos : neutre. Guide : violet nacré, halo léger. Information : bleu doux. Décision attendue : corail cerclé.
+   En cours : anneau qui tourne lentement. Réussite : vert doux. Erreur : losange. Hérité d'un sous-menu : anneau creux.
+   Une montée courte à l'apparition, puis une lumière fixe ; aucune pulsation permanente ; rien en mouvement réduit. */
+.lp, .pzt, .pzs-ouvrir-tambour { --lp-i-repos: rgba(255,255,255,.42); --lp-i-guide: #cdbdff; --lp-i-info: #8ab4ff; --lp-i-action: #ff8f73; --lp-i-encours: #f4f4f2; --lp-i-reussite: #86dc9d; --lp-i-erreur: #ff8f80; }
+.lp-indic { position: absolute; left: 50%; bottom: 1px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--lp-i-repos); pointer-events: none; }
+.lp-indic[data-etat]:not([data-etat="repos"]) { width: 7px; height: 7px; margin-left: -3.5px; bottom: 0; animation: lp-indic-monte .7s cubic-bezier(.2,.8,.2,1) both; }
+.lp-indic[data-etat="guide"] { background: var(--lp-i-guide); box-shadow: 0 0 0 2px rgba(205,189,255,.18), 0 0 10px 2px rgba(205,189,255,.55); }
+.lp-indic[data-etat="info"] { background: var(--lp-i-info); box-shadow: 0 0 8px rgba(138,180,255,.45); }
+.lp-indic[data-etat="action"] { background: var(--lp-i-action); box-shadow: 0 0 0 2px #0b0b0c, 0 0 0 3.5px var(--lp-i-action), 0 0 10px rgba(255,143,115,.5); }
+.lp-indic[data-etat="encours"] { background: conic-gradient(var(--lp-i-encours) 0 70%, transparent 70%); -webkit-mask: radial-gradient(circle, transparent 1.6px, #000 2px); mask: radial-gradient(circle, transparent 1.6px, #000 2px); width: 9px; height: 9px; margin-left: -4.5px; animation: lp-indic-tourne 1.6s linear infinite; }
+.lp-indic[data-etat="reussite"] { background: var(--lp-i-reussite); box-shadow: 0 0 8px rgba(134,220,157,.5); }
+.lp-indic[data-etat="erreur"] { border-radius: 1.5px; transform: rotate(45deg); background: var(--lp-i-erreur); box-shadow: 0 0 8px rgba(255,143,128,.55); }
+.lp-indic[data-herite]:not([data-etat="encours"]) { background: transparent; box-shadow: inset 0 0 0 1.5px var(--lp-i, currentColor); }
+.lp-indic[data-herite][data-etat="guide"] { --lp-i: var(--lp-i-guide); } .lp-indic[data-herite][data-etat="info"] { --lp-i: var(--lp-i-info); }
+.lp-indic[data-herite][data-etat="action"] { --lp-i: var(--lp-i-action); } .lp-indic[data-herite][data-etat="reussite"] { --lp-i: var(--lp-i-reussite); }
+.lp-indic[data-herite][data-etat="erreur"] { --lp-i: var(--lp-i-erreur); }
+@keyframes lp-indic-monte { 0% { opacity: 0; transform: scale(.4); } 45% { opacity: 1; transform: scale(1.45); filter: brightness(1.35); } 100% { opacity: 1; } }
+.lp-indic[data-etat="erreur"] { animation-name: lp-indic-monte-losange; }
+@keyframes lp-indic-monte-losange { 0% { opacity: 0; transform: rotate(45deg) scale(.4); } 45% { opacity: 1; transform: rotate(45deg) scale(1.45); } 100% { opacity: 1; transform: rotate(45deg); } }
+@keyframes lp-indic-tourne { to { transform: rotate(360deg); } }
+/* hors de la couronne d'un tambour : le point en haut à droite du rond (anneau, panneau, liste) */
+.lp-secteur:not(.lp-outil) .lp-indic, .lp-ligne .lp-indic { left: auto; right: 6px; top: 6px; bottom: auto; margin: 0; }
+html[data-pz-motion="reduce"] .lp-indic { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { .lp-indic { animation: none !important; } }
+
+/* .0NE — la taille des commandes choisie par la personne (Première rencontre, Réglages) : des cibles plus grandes, partout */
+html[data-one-cibles="grandes"] .lp-rond { width: 52px; height: 52px; }
+html[data-one-cibles="tres-grandes"] .lp-rond { width: 62px; height: 62px; }
+html[data-one-cibles="grandes"] :is(.lp-rond, .lp-signe) svg { width: 23px; height: 23px; }
+html[data-one-cibles="tres-grandes"] :is(.lp-rond, .lp-signe) svg { width: 27px; height: 27px; }
+html[data-one-cibles="grandes"] .lp-secteur { min-height: 52px; }
+html[data-one-cibles="tres-grandes"] .lp-secteur { min-height: 62px; }
+html[data-one-cibles="grandes"] .lp-point { width: 58px; height: 54px; }
+html[data-one-cibles="tres-grandes"] .lp-point { width: 66px; height: 62px; }

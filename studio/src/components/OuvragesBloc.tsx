@@ -13,12 +13,18 @@ function Vignette({ r }: { r: ProjectRecord }) {
 
 /** Le rond du profil, dans la grille : vos ouvrages en dossiers, à ouvrir d'un clic ou à glisser sur la grille,
  *  et une case où déposer une image, un PDF ou un projet (.json, .oxs) depuis l'ordinateur. */
-export default function OuvragesBloc({ courant, ouvrir, importer }: { courant?: string; ouvrir: (id: string) => void; importer: (f: File) => void }) {
+export default function OuvragesBloc({ courant, ouvrir, importer, dossier: dossierImpose, onDossier, onListe }: { courant?: string; ouvrir: (id: string) => void; importer: (f: File) => void;
+  /** facultatif : le dossier choisi est tenu par l'hôte (le Bureau du disque le retient d'une visite à l'autre) */
+  dossier?: string | null; onDossier?: (d: string | null) => void;
+  /** facultatif : la liste réelle, pour que l'hôte range ses commandes (les dossiers dans la couronne) */
+  onListe?: (l: ProjectRecord[]) => void }) {
   const [liste, setListe] = useState<ProjectRecord[] | null>(null);
-  const [dossier, setDossier] = useState<string | null>(null);
+  const [dossierLocal, setDossierLocal] = useState<string | null>(null);
+  const dossier = dossierImpose !== undefined ? dossierImpose : dossierLocal;
+  const setDossier = (d: string | null) => { if (onDossier) onDossier(d); else setDossierLocal(d); };
   const [survol, setSurvol] = useState(false);
   const input = useRef<HTMLInputElement>(null);
-  useEffect(() => { let vivant = true; listProjects().then(l => { if (vivant) setListe([...l].sort((a, b) => b.updated - a.updated)); }).catch(() => { if (vivant) setListe([]); }); return () => { vivant = false; }; }, []);
+  useEffect(() => { let vivant = true; listProjects().then(l => { if (vivant) { const t = [...l].sort((a, b) => b.updated - a.updated); setListe(t); onListe?.(t); } }).catch(() => { if (vivant) setListe([]); }); return () => { vivant = false; }; }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const dossiers = useMemo(() => [...new Set((liste ?? []).map(r => r.folder).filter(Boolean))].sort((a, b) => a.localeCompare(b, "fr")), [liste]);
   const vus = (liste ?? []).filter(r => dossier === null || r.folder === dossier).slice(0, 24);
   const deposer = (e: DragEvent) => {
@@ -51,7 +57,7 @@ export default function OuvragesBloc({ courant, ouvrir, importer }: { courant?: 
         </button>
       </li>)}
     </ul>
-    {liste && !liste.length && <p className="pzs-note">Aucun ouvrage enregistré sur cet appareil pour l’instant : déposez une image, un PDF ou un projet pour commencer.</p>}
-    {liste && liste.length > 0 && <p className="pzs-note">Touchez un ouvrage pour l’ouvrir, ou glissez-le sur la grille. Depuis l’ordinateur, déposez un fichier ici ou directement sur la grille.</p>}
+    {liste && !liste.length && <p className="pzs-note">Aucun ouvrage pour l’instant : déposez une image, un PDF ou un projet.</p>}
+    {/* l'explication est derrière le « ? » de Mes ouvrages : la liste reste lisible */}
   </>;
 }

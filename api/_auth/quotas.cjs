@@ -86,7 +86,10 @@ const QUOTAS = {
   'live:passe': { max: 20, fenetre: 60 },           /* … et 20 laissez-passer */
   'attente:ip': { max: 5, fenetre: 3600 },          /* liste d'attente de la bêta : 5 inscriptions par adresse IP et par heure */
   'attente:adresse': { max: 3, fenetre: 86400 },    /* … 3 e-mails de confirmation par adresse et par jour */
-  'attente:envois': { max: 300, fenetre: 3600 }     /* … et 300 e-mails par heure pour tout le site */
+  'attente:envois': { max: 300, fenetre: 3600 },    /* … et 300 e-mails par heure pour tout le site */
+  'galerie:exposer': { max: 10, fenetre: 86400 },   /* la Galerie des Vivants : 10 œuvres exposées par personne et par jour */
+  'galerie:voter': { max: 200, fenetre: 86400 },    /* … 200 cœurs par personne et par jour */
+  'galerie:signaler:ip': { max: 10, fenetre: 3600 } /* … 10 signalements par adresse IP et par heure */
 };
 function quota(nom, valeur, opts) { const q = QUOTAS[nom]; if (!q) return Promise.reject(new Error('quota inconnu : ' + nom)); return compter(nom, valeur, q, opts); }
 

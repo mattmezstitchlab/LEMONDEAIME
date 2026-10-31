@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { FileImage, LoaderCircle, X } from "lucide-react";
-import { asyncRasterToCells, loadImage } from "../lib/convert";
-import { createPattern, ensurePalette, type Pattern } from "../lib/pattern";
+import { loadImage } from "../lib/convert";
+import { createPattern, type Pattern } from "../lib/pattern";
+import { convertirPhoto, formatPhoto, photoDe, recadrerSurSujet } from "../lib/cadrePhoto";
+import { REGLAGES_AUTO } from "../lib/cadre";
 
 /**
  * Simple entry point. Shares image import/quantisation with ImportStudio,
@@ -27,20 +29,18 @@ export default function AutomaticImageImport({ file, onCancel, onReady }: {
         setStatus("Conversion en grille DMC, sans suppression de détails…");
         const iw=image.naturalWidth||image.width,ih=image.naturalHeight||image.height;
         if(!iw||!ih)throw new Error("Dimensions d'image impossibles à lire.");
-        // Keep original proportions, conservative 120-stitch max side.
-        const maxSide=120, ratio=Math.min(1,maxSide/Math.max(iw,ih));
-        const w=Math.max(8,Math.min(200,Math.round(iw*ratio))),
-              h=Math.max(8,Math.min(200,Math.round(ih*ratio)));
-        const result=await asyncRasterToCells(image,w,h,{
-          maxColors:36,dropWhite:true,confetti:false,pixelArt:false,
-        });
+        // Le Cadre : 120 points sur le côté le plus long, la photo gardée pour les prochains formats et réglages.
+        const [w,h]=formatPhoto(iw,ih,120);
+        const src=await photoDe(image);
+        const nom=file.name.replace(/\.[^.]+$/,"");
+        let p=await convertirPhoto(createPattern(nom,w,h),src,REGLAGES_AUTO,w,h);
+        // Le fond laissé en toile nue : le cadre se resserre sur le sujet.
+        const sujet=await recadrerSurSujet(src,p);
+        if(sujet){const im=await loadImage(sujet);const [w2,h2]=formatPhoto(im.naturalWidth||im.width,im.naturalHeight||im.height,120);p=await convertirPhoto(createPattern(nom,w2,h2),sujet,REGLAGES_AUTO,w2,h2);}
         if(!active)return;
-        if(!result.cross.some(v=>v>=0))throw new Error("L'image ne contient aucun point coloré identifiable. Essayez le calage manuel.");
-        const p=createPattern(file.name.replace(/\.[^.]+$/,""),w,h);
-        p.cross=result.cross;
-        for(const idx of result.palette)ensurePalette(p,idx);
+        if(!p.cross.some(v=>v>=0))throw new Error("L'image ne contient aucun point coloré identifiable. Essayez le calage manuel.");
         p.provenance={kind:"image",source:file.name,author:"",personalOnly:true,license:"Fichier importé : vérifier vos droits avant redistribution."};
-        p.notes="Import automatique en couleurs DMC. Vérifiez les détails dans la grille ; la composition reste facultative.";
+        p.notes="Import automatique en couleurs DMC. Tirez les coins du cadre pour changer la taille : la photo est recomptée. Le + du cadre règle la lumière, le contraste et la palette.";
         await readyRef.current(p);
       }catch(e){if(active)setError(e instanceof Error?e.message:"Conversion impossible.");}
     };

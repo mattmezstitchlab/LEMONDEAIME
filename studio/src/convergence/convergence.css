@@ -1,0 +1,58 @@
+/* La convergence : la page Explorer, la navigation permanente, la garde. Le blanc AIME, Apple-like. */
+.cv-orbe { display: inline-block; width: 18px; height: 18px; border-radius: 50%; flex: none; background: var(--aime-nacre, radial-gradient(circle at 32% 30%, #fff, #d9e8ff 22%, #c9b8ff 48%, #ffd6ec 72%, #b9f0e4)); box-shadow: 0 3px 10px rgba(117, 98, 206, .35); }
+.cv-orbe-grand { width: 44px; height: 44px; }
+
+.cv-explorer { min-height: 100vh; background: #fbfbfd; color: #1d1d1f; font-family: var(--aime-police, "Inter", system-ui, sans-serif); padding: 0 16px 96px; }
+.cv-tete { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+.cv-marque { display: inline-flex; align-items: center; gap: 8px; font-weight: 650; color: inherit; text-decoration: none; }
+.cv-version { font-size: .8rem; color: #6e6e73; }
+.cv-intro { max-width: 1120px; margin: 24px auto 8px; }
+.cv-sur { margin: 0 0 6px; font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: #6e6e73; }
+.cv-explorer h1 { margin: 0 0 10px; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 650; letter-spacing: -.02em; }
+.cv-intro > p { max-width: 60ch; margin: 0; color: #424245; line-height: 1.55; }
+.cv-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 0; }
+.cv-bouton { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #d2d2d7; background: #fff; color: #1d1d1f; font: inherit; font-size: .95rem; text-decoration: none; cursor: pointer; }
+.cv-plein { background: #1d1d1f; border-color: #1d1d1f; color: #fff; }
+.cv-bouton:focus-visible, .cv-carte:focus-visible, .cv-nav a:focus-visible, .cv-nav button:focus-visible { outline: 3px solid #7562ce; outline-offset: 2px; }
+.cv-legende { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px 18px; margin: 26px 0 0; padding: 14px 16px; border-radius: 16px; background: #f2f2f5; font-size: .84rem; }
+.cv-legende div { display: grid; gap: 4px; } .cv-legende dd { margin: 0; color: #515154; }
+.cv-groupe { max-width: 1120px; margin: 36px auto 0; }
+.cv-groupe h2 { margin: 0 0 12px; font-size: 1.2rem; font-weight: 650; }
+.cv-grille { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.cv-carte { display: grid; gap: 6px; align-content: start; height: 100%; padding: 16px; border-radius: 18px; background: #fff; border: 1px solid #e5e5ea; color: inherit; text-decoration: none; box-sizing: border-box; transition: border-color .2s, box-shadow .2s; }
+a.cv-carte:hover { border-color: #b8b8c2; box-shadow: 0 6px 20px rgba(0, 0, 0, .06); }
+.cv-inerte { background: #f7f7f9; }
+.cv-nom { font-size: 1.02rem; } .cv-phrase { color: #424245; font-size: .9rem; line-height: 1.45; } .cv-preuve { color: #6e6e73; font-size: .78rem; }
+.cv-statut { justify-self: start; display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border-radius: 999px; font-size: .72rem; font-weight: 650; letter-spacing: .02em; border: 1px solid currentColor; }
+.cv-statut::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.cv-statut[data-statut="public"] { color: #1e7a39; } .cv-statut[data-statut="teste"] { color: #2457ac; }
+.cv-statut[data-statut="prototype"] { color: #a05a00; } .cv-statut[data-statut="prototype"]::before { border-radius: 1px; transform: rotate(45deg); }
+.cv-statut[data-statut="externe"] { color: #55555c; } .cv-statut[data-statut="externe"]::before { background: none; border: 1.5px solid currentColor; }
+.cv-statut[data-statut="non-raccorde"] { color: #8e8e93; } .cv-statut[data-statut="non-raccorde"]::before { background: none; border: 1.5px dashed currentColor; }
+.cv-pied { max-width: 1120px; margin: 48px auto 0; color: #6e6e73; font-size: .85rem; }
+
+/* la navigation permanente : en bas à droite (le Point est à gauche par défaut) ; si la personne a mis le Point à droite, elle passe à gauche */
+html[data-one-point="droite"] .cv-nav { right: auto; left: max(12px, env(safe-area-inset-left)); }
+html[data-one-point="droite"] .cv-nav-panneau { right: auto; left: 0; }
+.cv-nav { position: fixed; right: max(12px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); z-index: 2147483000; font-family: var(--aime-police, "Inter", system-ui, sans-serif); }
+.cv-nav-bouton { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px 0 12px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .12); background: rgba(255, 255, 255, .9); color: #1d1d1f; font: inherit; font-size: .86rem; font-weight: 600; cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0, 0, 0, .12); }
+.cv-nav-panneau { position: absolute; right: 0; bottom: 54px; display: grid; min-width: 240px; padding: 6px; border-radius: 16px; background: rgba(255, 255, 255, .97); border: 1px solid rgba(0, 0, 0, .1); box-shadow: 0 12px 36px rgba(0, 0, 0, .18); }
+.cv-nav-panneau a, .cv-nav-panneau button { display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 0; background: none; color: #1d1d1f; font: inherit; font-size: .92rem; text-decoration: none; text-align: left; cursor: pointer; }
+.cv-nav-panneau a:hover, .cv-nav-panneau button:hover { background: #f2f2f5; }
+.cv-nav-panneau a[aria-current="page"] { font-weight: 650; }
+@media (max-width: 600px) { .cv-nav-texte { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } .cv-nav-bouton { padding: 0 13px; } }
+
+/* le retour au contexte du Disque, à côté de « Naviguer » */
+.cv-nav { display: flex; align-items: flex-end; gap: 8px; }
+.cv-retour { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px 0 12px; border-radius: 999px; border: 1px solid #111; background: #111; color: #fff; font-size: .86rem; font-weight: 600; text-decoration: none; box-shadow: 0 4px 16px rgba(0,0,0,.18); }
+.cv-retour:focus-visible { outline: 3px solid #7562ce; outline-offset: 2px; }
+@media (max-width: 600px) { .cv-retour { font-size: .8rem; padding: 0 12px 0 10px; } }
+/* la garde */
+.cv-erreur { min-height: 100vh; display: grid; place-content: center; justify-items: start; gap: 12px; padding: 24px; max-width: 560px; margin: 0 auto; background: #fbfbfd; color: #1d1d1f; font-family: var(--aime-police, "Inter", system-ui, sans-serif); }
+.cv-erreur h1 { margin: 6px 0 0; font-size: 1.8rem; } .cv-erreur p { margin: 0; color: #424245; line-height: 1.55; }
+.cv-erreur details { font-size: .8rem; color: #6e6e73; } .cv-erreur code { word-break: break-word; }
+/* une barre d'action pleine largeur en bas (atelier sur téléphone) : la navigation se pose au-dessus */
+html:has(.pz-action-bar) .cv-nav { bottom: calc(max(12px, env(safe-area-inset-bottom)) + 66px); }
+
+/* une fenêtre de travail ouverte (import PDF, export, réglages…) : le bouton Naviguer s’efface, il ne recouvre jamais ses boutons ; il revient à la fermeture */
+body:has([role="dialog"]:not([aria-hidden="true"])) .cv-nav, body:has([data-studio="import-pdf"]) .cv-nav { display: none; }

@@ -3,5 +3,11 @@ dist
 .vercel
 .env*
 
-# archives personnelles : jamais dans le dépôt public
+# LUMIERE : les extraits audio privés ne vont jamais dans le dépôt ni dans le paquet
+studio/public/lumiere-prive/
+*.wav
+
+# jamais dans le dépôt public : les extraits audio LUMIERE, les notes internes de .0NE, les archives personnelles
+studio/prive-audio/
+docs/one/
 *.zip

@@ -51,6 +51,9 @@ export default function Portfolio() {
           <p className="surtitre">Les projets de {FONDATEUR.nom}</p>
           <h1 id="titre-monde" className="signature">Le Monde AIME</h1>
           <p className="chapeau" style={{ maxWidth: '36ch' }}>Des sites et des studios conçus, dessinés et construits par AIME®. Chacun a sa page : ce qu’il fait, comment, et où le visiter.</p>
+          {import.meta.env.VITE_PROTOTYPES === '1'
+            ? <p className="pf-autres"><a href="/studio/one/lumiere">Voir le film LUMIERE</a> · <a href="/studio/one/univers">Entrer dans .0NE</a> · <a href="/studio/explorer">Tout explorer</a></p>
+            : <p className="pf-autres"><a href="/studio/">L’atelier de broderie</a> · <a href="/studio/one/univers">Entrer dans .0NE</a></p>}
           {admin && <p style={{ marginTop: 20 }}><Lien className="bouton" href="/admin">Administrer les projets</Lien></p>}
         </section>
 

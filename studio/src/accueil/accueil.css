@@ -1,0 +1,83 @@
+/* L'accueil de choix AIME : la direction « Voir l'invisible » — fond clair, nacre, grandes respirations. */
+.ac { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; background: var(--aime-fond); color: var(--aime-texte);
+  font-family: var(--aime-police); overflow-x: hidden; position: relative; }
+.ac[data-aime="jour"] { background: radial-gradient(60% 50% at 85% 20%, rgba(201,184,255,.22), transparent 70%), radial-gradient(50% 40% at 10% 90%, rgba(185,240,228,.18), transparent 70%), #f7f6f4; }
+.ac[data-aime="nuit"] { background: radial-gradient(60% 50% at 85% 20%, rgba(201,184,255,.12), transparent 70%), #0b0b0d; }
+.ac a { color: inherit; }
+.ac :focus-visible { outline: 3px solid var(--aime-focus); outline-offset: 3px; border-radius: 12px; }
+
+/* — la tête : la marque, la pilule de navigation, le thème (comme la landing AIME) — */
+.ac-tete { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; padding: 22px clamp(16px, 4vw, 48px); }
+.ac-marque { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.01em; text-decoration: none; font-size: 17px; justify-self: start; min-height: 44px; }
+.ac-marque-orbe { width: 26px; height: 26px; border-radius: 50%; background: var(--aime-nacre); box-shadow: 0 0 0 1px rgba(255,255,255,.6) inset, 0 2px 10px rgba(201,184,255,.45); }
+.ac-nav { display: flex; gap: 2px; padding: 5px; border-radius: 999px; background: var(--aime-verre); border: 1px solid var(--aime-verre-bord); backdrop-filter: blur(18px); }
+.ac-nav a { display: inline-flex; align-items: center; gap: 4px; padding: 0 16px; min-height: 40px; border-radius: 999px; font-size: 14px; text-decoration: none; color: var(--aime-texte-2); }
+.ac-nav a:hover { color: var(--aime-texte); background: var(--aime-secondaire); }
+.ac-nav svg { width: 14px; height: 14px; }
+.ac-theme { justify-self: end; display: flex; gap: 2px; padding: 4px; border-radius: 999px; background: var(--aime-verre); border: 1px solid var(--aime-verre-bord); }
+.ac-theme button { border: 0; background: none; color: var(--aime-texte-2); font: inherit; font-size: 13px; padding: 0 12px; min-height: 36px; border-radius: 999px; cursor: pointer; }
+.ac-theme button[aria-pressed="true"] { background: var(--aime-surface); color: var(--aime-texte); box-shadow: 0 1px 4px rgba(0,0,0,.08); font-weight: 600; }
+
+/* — la scène — */
+.ac-scene { flex: 1; width: min(1180px, 100%); margin: 0 auto; padding: clamp(24px, 6vh, 72px) clamp(16px, 4vw, 48px) 32px; }
+.ac-intro { max-width: 640px; }
+.ac-sur { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--aime-texte-3); margin: 0 0 14px; }
+.ac-titre { font-size: clamp(48px, 8vw, 104px); line-height: .95; font-weight: var(--aime-titre-graisse); letter-spacing: var(--aime-titre-chasse); margin: 0; }
+.ac-chapo { font-size: clamp(16px, 1.6vw, 19px); line-height: 1.5; color: var(--aime-texte-2); margin: 22px 0 0; max-width: 520px; }
+
+.ac-portes { list-style: none; margin: clamp(32px, 6vh, 64px) 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2.5vw, 32px); }
+.ac-porte { display: flex; flex-direction: column; gap: 8px; height: 100%; text-decoration: none; border-radius: 28px; padding: clamp(20px, 3vw, 36px);
+  background: var(--aime-verre); border: 1px solid var(--aime-verre-bord); box-shadow: 0 20px 60px -30px rgba(40,30,80,.25);
+  transition: transform var(--aime-duree) var(--aime-courbe), box-shadow var(--aime-duree) var(--aime-courbe); }
+.ac-porte:hover { transform: translateY(-3px); box-shadow: 0 30px 70px -30px rgba(40,30,80,.35); }
+.ac-porte-texte { display: flex; flex-direction: column; gap: 6px; }
+.ac-porte-sur { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--aime-texte-3); }
+.ac-porte-nom { font-size: clamp(32px, 4vw, 48px); font-weight: var(--aime-titre-graisse); letter-spacing: var(--aime-titre-chasse); line-height: 1; }
+.ac-porte-phrase { color: var(--aime-texte-2); line-height: 1.5; max-width: 34ch; }
+.ac-porte-note { font-size: 12.5px; color: var(--aime-texte-3); }
+.ac-bouton { align-self: flex-start; margin-top: 12px; display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 20px; border-radius: 999px;
+  border: 1px solid var(--aime-bordure-forte); font-weight: 600; font-size: 15px; }
+.ac-bouton svg { width: 17px; height: 17px; }
+.ac-bouton-plein { background: var(--aime-primaire); color: var(--aime-primaire-texte); border-color: transparent; }
+
+/* — le Disque : nacre, anneaux, l'Orbe au centre, vu légèrement de biais — */
+.ac-disque-scene, .ac-cube-scene { position: relative; height: clamp(220px, 30vw, 320px); display: grid; place-items: center; perspective: 900px; }
+.ac-disque { position: relative; width: min(78%, 300px); aspect-ratio: 1; border-radius: 50%; transform: rotateX(52deg); transform-style: preserve-3d;
+  background: radial-gradient(circle at 40% 35%, rgba(255,255,255,.95), rgba(236,232,250,.85) 55%, rgba(214,206,240,.8));
+  box-shadow: 0 40px 50px -20px rgba(80,60,140,.35), inset 0 0 0 1px rgba(255,255,255,.8); animation: ac-flotte 6s ease-in-out infinite; }
+.ac-anneau { position: absolute; inset: var(--i); border-radius: 50%; border: 1px solid rgba(150,130,210,.35); }
+.ac-a1 { --i: 8%; } .ac-a2 { --i: 22%; } .ac-a3 { --i: 36%; border-color: rgba(150,130,210,.55); }
+.ac-orbe { position: absolute; left: 50%; top: 50%; width: clamp(52px, 6vw, 72px); aspect-ratio: 1; border-radius: 50%; background: var(--aime-nacre);
+  transform: translate(-50%, -78%); animation: ac-orbe 6s ease-in-out infinite; box-shadow: 0 0 30px 6px rgba(201,184,255,.55), 0 0 0 1px rgba(255,255,255,.7) inset; }
+@keyframes ac-orbe { 50% { transform: translate(-50%, -88%); } }
+@keyframes ac-flotte { 50% { transform: rotateX(52deg) translateZ(10px); } }
+
+/* — le Cube : une mosaïque légère (aperçu ; le vrai moteur 3D est dans ATLAS) — */
+.ac-cube { position: relative; width: clamp(120px, 14vw, 170px); aspect-ratio: 1; transform-style: preserve-3d; transform: rotateX(-24deg) rotateY(-38deg); animation: ac-tourne 18s ease-in-out infinite; }
+.ac-face { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; padding: 3px; background: rgba(255,255,255,.65); box-shadow: 0 0 0 1px rgba(30,40,90,.12); }
+.ac-face-avant { transform: translateZ(calc(clamp(120px, 14vw, 170px) / 2)); }
+.ac-face-droite { transform: rotateY(90deg) translateZ(calc(clamp(120px, 14vw, 170px) / 2)); filter: brightness(.93); }
+.ac-face-dessus { transform: rotateX(90deg) translateZ(calc(clamp(120px, 14vw, 170px) / 2)); filter: brightness(1.04); }
+.ac-tuile { border-radius: 2px; background: #f4efe4; }
+.ac-t0 { background: radial-gradient(circle, #2c3f7a 0 18%, transparent 20%), conic-gradient(from 45deg, #f4efe4 0 25%, #c9d3ea 0 50%, #f4efe4 0 75%, #c9d3ea 0); }
+.ac-t1 { background: radial-gradient(circle at 50% 50%, #f4efe4 0 30%, #3a4f8f 32% 40%, #f4efe4 42%); }
+.ac-t2 { background: linear-gradient(45deg, transparent 45%, #2c3f7a 46% 54%, transparent 55%), linear-gradient(-45deg, transparent 45%, #2c3f7a 46% 54%, transparent 55%), #efe6d6; }
+.ac-t3 { background: radial-gradient(circle, #b8455a 0 14%, transparent 16%), radial-gradient(circle, #f4efe4 0 46%, #6f84bf 48% 54%, #f4efe4 56%); }
+.ac-t4 { background: conic-gradient(#3a4f8f 0 25%, #f4efe4 0 50%, #3a4f8f 0 75%, #f4efe4 0); opacity: .85; }
+@keyframes ac-tourne { 50% { transform: rotateX(-20deg) rotateY(-52deg); } }
+
+/* — le pied — */
+.ac-pied { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; justify-content: center; padding: 18px 16px 28px; color: var(--aime-texte-3); font-size: 14px; }
+.ac-pied p { margin: 0; }
+.ac-pied a { font-weight: 600; color: var(--aime-texte); min-height: 44px; display: inline-flex; align-items: center; }
+
+/* — téléphone : tout s'empile, la pilule défile, rien ne déborde — */
+@media (max-width: 760px) {
+  .ac-tete { grid-template-columns: 1fr auto; }
+  .ac-nav { grid-column: 1 / -1; grid-row: 2; overflow-x: auto; justify-content: flex-start; scrollbar-width: none; }
+  .ac-nav a { padding: 0 12px; white-space: nowrap; }
+  .ac-portes { grid-template-columns: 1fr; }
+  .ac-disque-scene, .ac-cube-scene { height: 200px; }
+}
+@media (prefers-reduced-motion: reduce) { .ac-disque, .ac-cube, .ac-orbe { animation: none !important; } .ac-porte { transition: none; } }
+:root[data-pz-motion="reduce"] .ac-disque, :root[data-pz-motion="reduce"] .ac-cube { animation: none !important; }
