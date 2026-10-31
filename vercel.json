@@ -15,6 +15,10 @@
   },
   "rewrites": [
     {
+      "source": "/atlas/:chemin*",
+      "destination": "https://atlas.lemondeaime.com/:chemin*"
+    },
+    {
       "source": "/studio/:chemin*",
       "destination": "/studio/index.html"
     },
@@ -63,7 +67,7 @@
   "redirects": [
     {
       "source": "/atlas",
-      "destination": "https://atlas.lemondeaime.com/",
+      "destination": "/atlas/",
       "permanent": false
     },
     {
