@@ -255,6 +255,7 @@ export default function AimeWedding() {
           <p style={{ margin: '0 0 18px', fontSize: 16 }}>{noms ? <><b style={{ fontWeight: 600 }}>Notre union</b>{meta.date.trim() && <> · {meta.date.trim()}</>}</> : <>Une union d’exemple · <b style={{ fontWeight: 600 }}>{UNION_EXEMPLE}</b></>}</p>
           <h1 id="titre-wedding" className="signature" style={{ fontSize: taille, overflowWrap: 'anywhere' }}>{titre}</h1>
           <p style={{ margin: '22px auto 0', maxWidth: '40rem', fontSize: 'clamp(17px, 1.5vw, 21px)', lineHeight: 1.45, color: '#3A3A3F' }}>Le site officiel de l’union. Une page pour chaque personne qui la fait vivre : les mariés, les prestataires, les invités.</p>
+          <p style={{ margin: '26px 0 0' }}><Lien className="bouton noir" href="/buro?creer=mariage">Créer notre mariage</Lien></p>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px 22px', marginTop: 22, flexWrap: 'wrap' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
               <span aria-hidden="true" style={{ display: 'flex' }}>{EXEMPLES.slice(0, 5).map((e, k) => <img key={e.slug} src={e.photo} alt="" style={{ width: 38, height: 38, borderRadius: '50%', objectFit: 'cover', objectPosition: 'center 22%', border: '2px solid #F6F6F4', marginLeft: k ? -10 : 0 }} />)}</span>

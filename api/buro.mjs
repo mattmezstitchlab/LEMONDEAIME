@@ -22,7 +22,41 @@ async function corps(req) {
 export function nettoyerTitre(v) { return String(v || '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 120); }
 /* la description garde ses retours à la ligne ; les autres caractères de contrôle partent */
 export function nettoyerDescription(v) { return String(v || '').replace(/\r\n?/g, '\n').replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, ' ').trim().slice(0, 2000); }
+/* La fiche mariage (data.mariage) : noms des deux personnes, date, lieu. Rien d'autre : ni coordonnées bancaires, ni contacts.
+   « complet » (création) exige les deux noms ; une modification ne touche que les clés envoyées. Renvoie { mariage } ou { erreur }. */
+const NOM_MAX = 80, LIEU_MAX = 120;
+const nettoyerNom = v => String(v || '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, NOM_MAX);
+export function dateValide(v) {
+  if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+  const [a, m, j] = v.split('-').map(Number), d = new Date(Date.UTC(a, m - 1, j));
+  return a >= 2000 && a <= 2100 && d.getUTCFullYear() === a && d.getUTCMonth() === m - 1 && d.getUTCDate() === j;
+}
+export function nettoyerMariage(b, complet) {
+  const src = b && typeof b === 'object' && !Array.isArray(b) ? b : {}, m = {};
+  if (complet || src.noms !== undefined) {
+    const n = Array.isArray(src.noms) ? src.noms.map(nettoyerNom) : [];
+    if (n.length !== 2 || !n[0] || !n[1]) return { erreur: 'Indiquez les deux noms (ou prénoms) de l’union.' };
+    m.noms = n;
+  }
+  if (src.date !== undefined) {
+    if (src.date === '' || src.date === null) m.date = '';
+    else if (dateValide(src.date)) m.date = src.date;
+    else return { erreur: 'Cette date n’existe pas : indiquez-la au format jour/mois/année.' };
+  }
+  if (src.lieu !== undefined) {
+    const l = src.lieu && typeof src.lieu === 'object' ? src.lieu : {};
+    m.lieu = { nom: String(l.nom || '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, LIEU_MAX), ville: String(l.ville || '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, LIEU_MAX) };
+  }
+  return { mariage: m };
+}
+export const titreMariage = n => n.join(' & ').slice(0, 120);
 export function nettoyerProjet(b) {
+  if (b && b.genre === 'mariage') {
+    const f = nettoyerMariage(b.mariage, true);
+    if (f.erreur) return { erreur: f.erreur };
+    const m = Object.assign({ date: '', lieu: { nom: '', ville: '' } }, f.mariage);
+    return { titre: nettoyerTitre(b.titre) || titreMariage(m.noms), kind: 'evenement', data: { modele: 'mariage', mariage: m, briques: [], studio: 'AIME Wedding', intention: 'organiser', description: '', rev: 0, visibilite: 'prive', archive: false, source: 'buro' } };
+  }
   const titre = nettoyerTitre(b.titre);
   if (!titre) return null;
   const briques = (Array.isArray(b.briques) ? b.briques : []).filter((x, i, l) => IDS.includes(x) && l.indexOf(x) === i).slice(0, 20);
@@ -37,7 +71,7 @@ export default async function buro(req, res) {
   try {
     if (req.method === 'GET') {
       const r = await db.query(`select s.id::text as id, s.kind, s.title, s.data, s.updated_at, m.role from spaces s join space_members m on m.space_id = s.id where m.user_id = $1 order by s.updated_at desc limit 200`, [moi.id]);
-      return json(res, 200, { ok: true, projets: r.rows.map(x => ({ id: x.id, genre: x.kind, titre: x.title, role: x.role, maj: x.updated_at, briques: (x.data && x.data.briques) || [], studio: (x.data && x.data.studio) || '', ouvrage: (x.data && x.data.ouvrage) || null, visibilite: (x.data && x.data.visibilite) || 'prive', archive: !!(x.data && x.data.archive), description: (x.data && x.data.description) || '', rev: revDe(x.data), intention: (x.data && x.data.intention) || '' })) });
+      return json(res, 200, { ok: true, projets: r.rows.map(x => ({ id: x.id, genre: x.kind, titre: x.title, role: x.role, maj: x.updated_at, briques: (x.data && x.data.briques) || [], studio: (x.data && x.data.studio) || '', ouvrage: (x.data && x.data.ouvrage) || null, visibilite: (x.data && x.data.visibilite) || 'prive', archive: !!(x.data && x.data.archive), description: (x.data && x.data.description) || '', rev: revDe(x.data), intention: (x.data && x.data.intention) || '', modele: (x.data && x.data.modele) || null, mariage: x.kind === 'evenement' && x.data && x.data.modele === 'mariage' ? (x.data.mariage || null) : null })) });
     }
     if (req.method !== 'POST') return json(res, 405, { ok: false });
     const b = await corps(req);
@@ -48,23 +82,36 @@ export default async function buro(req, res) {
       let titre = null;
       if (b.titre !== undefined) { titre = nettoyerTitre(b.titre); if (!titre) return json(res, 400, { ok: false, raison: 'Donnez un nom au projet.' }); }
       if (b.description !== undefined) patch.description = nettoyerDescription(b.description);
-      if (titre === null && !Object.keys(patch).length) return json(res, 400, { ok: false, raison: 'Rien à modifier.' });
+      let fiche = null;
+      if (b.mariage !== undefined) {
+        const f = nettoyerMariage(b.mariage, false);
+        if (f.erreur) return json(res, 400, { ok: false, raison: f.erreur });
+        fiche = f.mariage;
+      }
+      if (titre === null && !Object.keys(patch).length && !(fiche && Object.keys(fiche).length)) return json(res, 400, { ok: false, raison: 'Rien à modifier.' });
       const rev = b.rev === undefined || b.rev === null ? null : Number(b.rev);
       if (rev !== null && !(Number.isInteger(rev) && rev >= 0 && rev < 1e9)) return json(res, 400, { ok: false, raison: 'Révision invalide.' });
-      /* la même requête vérifie l'appartenance (owner_id) et la révision, puis écrit : pas de course entre lire et écrire */
+      /* Un mariage se modifie à deux : le propriétaire, et un membre « editor » dont le rôle n'a pas expiré (space_members), pour la fiche
+         et le titre seulement. Archiver, partager et la description restent au propriétaire. Les autres reçoivent 404, comme avant. */
+      const reservees = Object.keys(patch).length > 0;
+      const EDITEUR = `exists (select 1 from space_members m where m.space_id = spaces.id and m.user_id = $2 and m.role = 'editor' and (m.jusqu_au is null or m.jusqu_au > now()))`;
+      const condition = reservees ? `owner_id = $2` : `(owner_id = $2 or (kind = 'evenement' and data->>'modele' = 'mariage' and ${EDITEUR}))`;
+      /* la même requête vérifie le droit et la révision, puis écrit : pas de course entre lire et écrire */
       const r = await db.query(
-        `update spaces set title = coalesce($4::text, title), data = data || $3::jsonb || jsonb_build_object('rev', ${REV} + 1), updated_at = now()
-          where id::text = $1 and owner_id = $2 and ($5::int is null or ${REV} = $5::int)
+        `update spaces set title = coalesce($4::text, title),
+                data = data || $3::jsonb || case when $6::jsonb is null then '{}'::jsonb else jsonb_build_object('mariage', coalesce(data->'mariage', '{}'::jsonb) || $6::jsonb) end || jsonb_build_object('rev', ${REV} + 1), updated_at = now()
+          where id::text = $1 and ${condition} and ($5::int is null or ${REV} = $5::int)
           returning id::text as id, title, updated_at, ${REV} as rev`,
-        [String(b.id || ''), moi.id, JSON.stringify(patch), titre, rev]);
+        [String(b.id || ''), moi.id, JSON.stringify(patch), titre, rev, fiche && Object.keys(fiche).length ? JSON.stringify(fiche) : null]);
       if (r.rowCount) return json(res, 200, { ok: true, id: r.rows[0].id, titre: r.rows[0].title, rev: r.rows[0].rev, maj: r.rows[0].updated_at });
-      const la = await db.query(`select ${REV} as rev from spaces where id::text = $1 and owner_id = $2`, [String(b.id || ''), moi.id]);
+      const la = await db.query(`select ${REV} as rev from spaces where id::text = $1 and ${condition}`, [String(b.id || ''), moi.id]);
       return la.rowCount
         ? json(res, 409, { ok: false, conflit: true, rev: la.rows[0].rev, raison: 'Ce projet a été modifié ailleurs depuis que vous l’avez ouvert. Rien n’a été écrasé : rechargez-le pour voir la dernière version.' })
         : json(res, 404, { ok: false, raison: 'Projet introuvable, ou vous n’en êtes pas propriétaire.' });
     }
     const p = nettoyerProjet(b);
     if (!p) return json(res, 400, { ok: false, raison: 'Donnez un nom au projet.' });
+    if (p.erreur) return json(res, 400, { ok: false, raison: p.erreur });
     /* « cle » : une clé tirée à l'ouverture du formulaire. Un double clic, une nouvelle tentative après une coupure ou un second envoi du même
        formulaire retombent sur le MÊME projet au lieu d'en créer un autre (l'index unique spaces_origine_unique existe déjà : aucune migration). */
     const cle = typeof b.cle === 'string' && /^[A-Za-z0-9_-]{8,64}$/.test(b.cle) ? 'bureau:' + b.cle : null;
@@ -78,7 +125,7 @@ export default async function buro(req, res) {
     const c = await db.connect();
     try {
       await c.query('begin');
-      const s = await c.query(`insert into spaces (kind, title, owner_id, data) values ('projet', $1, $2, $3::jsonb) on conflict (owner_id, (data ->> 'origine')) where (data ? 'origine') do nothing returning id::text as id`, [p.titre, moi.id, JSON.stringify(p.data)]);
+      const s = await c.query(`insert into spaces (kind, title, owner_id, data) values ($4, $1, $2, $3::jsonb) on conflict (owner_id, (data ->> 'origine')) where (data ? 'origine') do nothing returning id::text as id`, [p.titre, moi.id, JSON.stringify(p.data), p.kind || 'projet']);
       if (!s.rowCount) {   /* deux envois simultanés : l'autre a gagné, on renvoie son projet */
         await c.query('rollback');
         const l = await c.query(`select id::text as id from spaces where owner_id = $1 and data->>'origine' = $2`, [moi.id, cle]);   /* sur la même connexion : une seconde connexion ferait attendre le bassin (3) */
