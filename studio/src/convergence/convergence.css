@@ -35,12 +35,14 @@ a.cv-carte:hover { border-color: #b8b8c2; box-shadow: 0 6px 20px rgba(0, 0, 0, .
 html[data-one-point="droite"] .cv-nav { right: auto; left: max(12px, env(safe-area-inset-left)); }
 html[data-one-point="droite"] .cv-nav-panneau { right: auto; left: 0; }
 .cv-nav { position: fixed; right: max(12px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); z-index: 2147483000; font-family: var(--aime-police, "Inter", system-ui, sans-serif); }
-.cv-nav-bouton { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px 0 12px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .12); background: rgba(255, 255, 255, .9); color: #1d1d1f; font: inherit; font-size: .86rem; font-weight: 600; cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0, 0, 0, .12); }
+/* Le bouton est l'orbe seule : aucun fond, aucune bordure, aucune ombre, aucun flou (c'était le disque blanc autour de l'orbe). Le mot « Naviguer » reste pour les lecteurs d'écran et l'info-bulle.
+   La zone tactile reste de 46 × 44 px, invisible, et centrée là où l'orbe se trouvait : l'orbe garde sa taille (18 px), son dégradé et son halo violet (.cv-orbe). */
+.cv-nav-bouton { display: inline-flex; align-items: center; justify-content: center; min-width: 46px; min-height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; color: inherit; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .cv-nav-panneau { position: absolute; right: 0; bottom: 54px; display: grid; min-width: 240px; padding: 6px; border-radius: 16px; background: rgba(255, 255, 255, .97); border: 1px solid rgba(0, 0, 0, .1); box-shadow: 0 12px 36px rgba(0, 0, 0, .18); }
 .cv-nav-panneau a, .cv-nav-panneau button { display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 0; background: none; color: #1d1d1f; font: inherit; font-size: .92rem; text-decoration: none; text-align: left; cursor: pointer; }
 .cv-nav-panneau a:hover, .cv-nav-panneau button:hover { background: #f2f2f5; }
 .cv-nav-panneau a[aria-current="page"] { font-weight: 650; }
-@media (max-width: 600px) { .cv-nav-texte { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } .cv-nav-bouton { padding: 0 13px; } }
+.cv-nav-texte { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* le retour au contexte du Disque, à côté de « Naviguer » */
 .cv-nav { display: flex; align-items: flex-end; gap: 8px; }

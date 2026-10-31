@@ -47,7 +47,7 @@ export function NavigationConvergence({ base = S }: { base?: string } = {}) {
       {LIENS.map(l => <a key={l.chemin} href={l.chemin} aria-current={ici === l.chemin.replace(/\/+$/, "") ? "page" : undefined}>{l.nom}</a>)}
       {history.length > 1 && <button type="button" onClick={() => history.back()}>Revenir à la page précédente</button>}
     </div>}
-    <button ref={bouton} type="button" className="cv-nav-bouton" aria-expanded={ouvert} aria-controls="cv-nav-panneau" onClick={() => setOuvert(v => !v)}>
+    <button ref={bouton} type="button" className="cv-nav-bouton" title={ouvert ? "Fermer" : "Naviguer"} aria-expanded={ouvert} aria-controls="cv-nav-panneau" onClick={() => setOuvert(v => !v)}>
       <span className="cv-orbe" aria-hidden="true" /><span className="cv-nav-texte">{ouvert ? "Fermer" : "Naviguer"}</span>
     </button>
   </nav>;

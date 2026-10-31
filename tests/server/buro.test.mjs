@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import buro, { nettoyerProjet } from '../../api/buro.mjs';
+import buro, { nettoyerProjet, nettoyerTitre, nettoyerDescription } from '../../api/buro.mjs';
 import { adresseOrigine } from '../../api/comptes.mjs';
 const res = () => ({ statusCode: 200, headers: {}, body: '', setHeader(k, v) { this.headers[k] = v; }, end(b) { this.body = b; } });
 test('nettoyerProjet : titre requis, briques connues et sans doublon, au plus 20', () => {
@@ -65,4 +65,12 @@ test('ouvrages : fermé sans base (503), écriture d’un autre site refusée (4
     let r = res(); await ouvrages({ method: 'GET', url: '/api/ouvrages', headers: {} }, r); assert.equal(r.statusCode, 503);
     r = res(); await ouvrages({ method: 'POST', url: '/api/ouvrages', headers: { origin: 'https://ailleurs.example', host: 'lemondeaime.com', 'content-type': 'application/json' } }, r); assert.equal(r.statusCode, 403);
   } finally { if (old !== undefined) process.env.DATABASE_URL = old; }
+});
+test('nettoyerDescription / nettoyerTitre : retours à la ligne gardés, contrôles retirés, longueurs bornées ; la révision de départ est 0', () => {
+  assert.equal(nettoyerDescription('  Une\r\nDeux\u0007  '), 'Une\nDeux');
+  assert.equal(nettoyerDescription('x'.repeat(5000)).length, 2000);
+  assert.equal(nettoyerDescription(undefined), '');
+  assert.equal(nettoyerTitre('a'.repeat(300)).length, 120);
+  const p = nettoyerProjet({ titre: 'T', description: 'D' });
+  assert.equal(p.data.description, 'D'); assert.equal(p.data.rev, 0); assert.equal(p.data.source, 'point-zero');
 });
