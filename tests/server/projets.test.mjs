@@ -141,7 +141,8 @@ test('projets · API : sans la table, l’administration le dit (503) et n’éc
 test('projets : l’accueil est Le Monde AIME (les projets), aussi sur /projets ; AIME Wedding a sa propre adresse, l’administration est une page', () => {
   const a = lire('src/App.tsx');
   /* décision de Matt (31/10/2026) : lemondeaime.com s'ouvre sur Le Monde AIME ; ni le film ni Explorer ne sont publics */
-  assert.match(a, /'\/': \[Portfolio,/, 'l’accueil est la page des projets');
+  /* phase 01 (branche de dev, à valider par Matt) : « / » est la première page Accueil ; la décision du 31/10 (accueil = projets) est suspendue */
+  assert.match(a, /'\/': \[Accueil,/, 'l’accueil est la première page');
   assert.ok(!/window\.location\.replace\(STUDIO\)/.test(a), 'l’accueil ne renvoie plus au studio');
   const red = JSON.parse(lire('vercel.json')).redirects;
   assert.ok(!red.some(r => r.source === '/'), 'le serveur ne redirige pas l’accueil');
