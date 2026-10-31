@@ -37,7 +37,7 @@ export const DEFAUTS = [
 ];
 
 export const STATUTS = { 'en-ligne': 'En ligne', 'en-cours': 'En cours', 'bientot': 'Bientôt' };
-export const LIMITES = { titre: 80, accroche: 200, description: 6000, categorie: 40, role: 120, alt: 200, galerie: 12, projets: 60 };
+export const LIMITES = { titre: 80, accroche: 200, description: 6000, categorie: 40, role: 120, alt: 200, galerie: 12, projets: 60, liens: 3, libelle: 40 };
 
 const ligne = (v, n) => String(v ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);
 const texte = (v, n) => String(v ?? '').replace(/\r\n?/g, '\n').replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, n);
@@ -79,9 +79,18 @@ export function nettoyerProjet(b) {
     if (!imageOk(src)) return { erreur: 'Une image de la galerie ne vient ni du site ni d’un envoi.' };
     images.push({ src, alt: ligne(g.alt, LIMITES.alt) });
   }
+  /* d'autres liens, à côté de « Visiter le site » (ex. la Chronologie d'ATLAS) : trois au plus, chacun avec son libellé */
+  const autres = (Array.isArray(b.liens) ? b.liens : []).slice(0, LIMITES.liens + 1);
+  if (autres.length > LIMITES.liens) return { erreur: 'Un projet compte au plus ' + LIMITES.liens + ' autres liens.' };
+  const liens = [];
+  for (const l of autres) {
+    const href = String((l && l.href) || '').trim(), libelle = ligne(l && l.libelle, LIMITES.libelle);
+    if (!libelle || !lienOk(href)) return { erreur: 'Chaque autre lien a un libellé et une adresse (une page du site ou https).' };
+    liens.push({ libelle, href });
+  }
   const ordre = Number.isInteger(Number(b.ordre)) ? Math.max(0, Math.min(9999, Number(b.ordre))) : 0;
   return { projet: {
-    slug, titre, annee, statut, lien, couverture, galerie: images, ordre,
+    slug, titre, annee, statut, lien, liens, couverture, galerie: images, ordre,
     accroche: ligne(b.accroche, LIMITES.accroche), description: texte(b.description, LIMITES.description),
     categorie: ligne(b.categorie, LIMITES.categorie) || 'Projet', role: ligne(b.role, LIMITES.role), alt: ligne(b.alt, LIMITES.alt),
     publie: b.publie === true, une: b.une === true,

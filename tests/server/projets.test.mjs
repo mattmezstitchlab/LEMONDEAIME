@@ -152,3 +152,14 @@ test('projets : l’accueil est Le Monde AIME (les projets), aussi sur /projets 
   assert.match(a, /\/\^\\\/projets\\\/\(\[a-z0-9-\]\{1,60\}\)\$\//);
   assert.ok(!/'\/aime-wedding': '\/'/.test(a), 'l’ancienne redirection vers l’accueil est retirée');
 });
+
+test('projets : d’autres liens à côté de « Visiter le site » (la Chronologie d’ATLAS), libellés et adresses vérifiés', async () => {
+  const { nettoyerProjet: n } = await import('../../api/_projets.mjs');
+  const base = { titre: 'ATLAS', annee: 2026, statut: 'en-ligne', lien: 'https://atlas.lemondeaime.com' };
+  const ok = n({ ...base, liens: [{ libelle: 'La Chronologie', href: 'https://atlas.lemondeaime.com/chronologie' }] });
+  assert.deepEqual(ok.projet.liens, [{ libelle: 'La Chronologie', href: 'https://atlas.lemondeaime.com/chronologie' }]);
+  assert.deepEqual(n(base).projet.liens, [], 'sans autres liens : une liste vide');
+  assert.ok(n({ ...base, liens: [{ libelle: 'x', href: 'javascript:alert(1)' }] }).erreur, 'une adresse dangereuse est refusée');
+  assert.ok(n({ ...base, liens: [{ libelle: '', href: '/projets' }] }).erreur, 'un lien sans libellé est refusé');
+  assert.ok(n({ ...base, liens: Array(4).fill({ libelle: 'a', href: '/projets' }) }).erreur, 'trois au plus');
+});

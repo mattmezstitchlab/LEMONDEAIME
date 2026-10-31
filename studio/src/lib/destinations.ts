@@ -5,14 +5,14 @@
  *
  * ATLAS est une application indépendante (dépôt mattmezstitchlab/Atlas-de-pique-de-coeur), déployée à part :
  * on y va par un lien sortant, sans rien copier ici (ni chronologie, ni projets, ni éditeur, ni modules, ni mosaïque).
- * Adresse vérifiée le 30/10/2026 : production publique, page « Atlas de pique de cœur — À la recherche du temps créé ».
+ * Adresse : atlas.lemondeaime.com (31/10/2026), ATLAS étant un projet de Le Monde AIME ; son calendrier est lu par le Disque (lib/present/atlas.ts).
  */
 import { PROTOTYPES } from "./site";
 
 const S = import.meta.env.BASE_URL;   // /studio/
 
 /** L'adresse d'ATLAS. Une version de test peut la remplacer à la construction (VITE_ATLAS_URL), jamais à l'exécution. */
-export const ATLAS_URL: string = import.meta.env.VITE_ATLAS_URL || "https://atlas-de-pique-de-coeur.vercel.app/";
+export const ATLAS_URL: string = import.meta.env.VITE_ATLAS_URL || "https://atlas.lemondeaime.com/";
 
 export const DESTINATIONS = {
   film: S + "one/lumiere",

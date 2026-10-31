@@ -63,7 +63,7 @@
   "redirects": [
     {
       "source": "/atlas",
-      "destination": "https://atlas-de-pique-de-coeur.vercel.app/",
+      "destination": "https://atlas.lemondeaime.com/",
       "permanent": false
     },
     {

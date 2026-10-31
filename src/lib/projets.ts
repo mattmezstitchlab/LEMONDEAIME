@@ -8,6 +8,8 @@ export type Projet = {
   slug: string; titre: string; accroche: string; description: string; categorie: string; annee: number;
   statut: 'en-ligne' | 'en-cours' | 'bientot'; role: string; lien: string; couverture: string; alt: string;
   galerie: Image[]; ordre: number; publie: boolean; une: boolean; maj?: string;
+  /** d'autres liens, à côté de « Visiter le site » (facultatif) */
+  liens?: { libelle: string; href: string }[];
 };
 export const ORIGINE = DEFAUTS as Projet[];
 export const ETATS = STATUTS as Record<Projet['statut'], string>;
