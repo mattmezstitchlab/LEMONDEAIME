@@ -40,7 +40,7 @@ def se_connecter(pg, email):
 with sync_playwright() as p:
     b = p.chromium.launch()
     for nom, largeur in (('ordinateur', 1440), ('téléphone', 390)):
-        t = nom + ' · '; jeton = secrets.token_hex(3); email = 'alice-' + jeton + '@test.lemondeaime.invalid'; ip = '10.7.%d.1' % (1 if largeur > 700 else 2)
+        t = nom + ' · '; jeton = secrets.token_hex(3); email = 'alice-' + jeton + '@test.lemondeaime.invalid'; oct = int(jeton, 16) % 200 + 20; ip = '10.%d.%d.1' % (oct, 1 if largeur > 700 else 2)   # une adresse par exécution : la limite de 3 liens par minute est par adresse
         TITRE, DESC = 'Mon premier projet ' + jeton, 'Première ligne.\nSeconde ligne : un mariage en Provence.'
         ctx = contexte(b, largeur, ip); pg = page(ctx)
         # 1-2 · de l'accueil à la connexion, et retour sur /buro
@@ -104,16 +104,64 @@ with sync_playwright() as p:
         bb.get_by_role('button', name='Recharger la dernière version').click(); bb.wait_for_selector('text=Version onglet A')
         ok(bb.get_by_label('Titre', exact=True).input_value() == 'Version onglet A', t + 'conflit : « Recharger » affiche la dernière version')
         bb.close()
+        # 10 bis · Archiver et Partager : la même protection par révision (et pas de double action)
+        H = {'origin': B, 'content-type': 'application/json'}
+        a.reload(); a.wait_for_selector('text=Version onglet A'); a.get_by_role('button', name='Version onglet A').first.click()
+        c2 = page(ctx); c2.goto(B + '/buro'); c2.wait_for_selector('text=Version onglet A'); c2.get_by_role('button', name='Version onglet A').first.click()
+        c3 = page(ctx); c3.goto(B + '/buro'); c3.wait_for_selector('text=Version onglet A'); c3.get_by_role('button', name='Version onglet A').first.click()
+        a.get_by_role('button', name='Partager · Privé').click(); a.wait_for_selector('[role=status]:has-text("Restreint")')
+        ok(sql("select data->>'visibilite' from spaces where id = '%s'" % pid)[0][0] == 'restreint', t + 'Partager : la visibilité change en base')
+        rev_avant = sql("select data->>'rev' from spaces where id = '%s'" % pid)[0][0]
+        c2.get_by_role('button', name='Partager · Privé').click(); c2.wait_for_selector('text=modifié ailleurs')
+        ok(sql("select data->>'visibilite', data->>'rev' from spaces where id = '%s'" % pid)[0] == ['restreint', rev_avant], t + 'Partager depuis un onglet en retard : refusé (409), rien n’est écrasé')
+        c2.wait_for_selector('button:has-text("Partager · Restreint")'); ok(True, t + 'après le refus, l’onglet en retard affiche la dernière version')
+        c3.get_by_role('button', name='Archiver').click(); c3.wait_for_selector('text=modifié ailleurs')
+        ok(sql("select data->>'archive' from spaces where id = '%s'" % pid)[0][0] == 'false', t + 'Archiver depuis un onglet en retard : refusé (409), le projet n’est pas archivé')
+        c2.close(); c3.close()
+        r = ctx.request.post(B + '/api/buro', headers=H, data=json.dumps({'action': 'maj', 'id': pid, 'archive': True, 'rev': int(rev_avant) - 1})); ok(r.status == 409, t + 'Archiver avec une révision périmée, par appel direct : 409', r.status)
+        a.get_by_role('button', name='Archiver').click(); a.wait_for_selector('[role=status]:has-text("rangé aux archives")')
+        ok(sql("select data->>'archive' from spaces where id = '%s'" % pid)[0][0] == 'true', t + 'Archiver avec la bonne révision : le projet est rangé aux archives')
+        a.reload(); a.wait_for_selector('text=Votre espace AIME')
+        ok(a.locator('text=Version onglet A').count() == 0, t + 'archivé : il n’est plus dans Projets')
+        a.get_by_role('button', name='Archives').click(); a.get_by_role('button', name='Version onglet A').first.click()
+        a.get_by_role('button', name='Restaurer').click(); a.wait_for_selector('[role=status]:has-text("restauré")')
+        ok(sql("select data->>'archive' from spaces where id = '%s'" % pid)[0][0] == 'false', t + 'Restaurer : le projet revient')
+        # 10 ter · créations multiples : double clic, nouvelle tentative, cinq envois simultanés
+        a.get_by_role('button', name='Projets', exact=False).first.click()
+        a.get_by_role('button', name='Nouveau projet').click(); a.get_by_label('Titre du projet').fill('Double clic ' + jeton)
+        a.get_by_role('button', name='Enregistrer le projet').dblclick(); a.wait_for_selector('[role=status]:has-text("enregistré dans votre espace")')
+        a.wait_for_timeout(600)
+        ok(sql("select count(*) from spaces where title = 'Double clic %s'" % jeton)[0][0] == '1', t + 'double clic sur « Enregistrer le projet » : un seul projet créé')
+        cle = 'cle-' + jeton + '-simultanee'
+        reps = a.evaluate("""async (cle) => (await Promise.all([1,2,3,4,5].map(() => fetch('/api/buro', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ titre: 'Simultané', cle }) }).then(async r => [r.status, (await r.json()).id])))) """, cle)
+        ok(len(sql("select 1 from spaces where owner_id = '%s' and title = 'Simultané'" % uid)) == 1 and len({x[1] for x in reps}) == 1 and sorted(x[0] for x in reps).count(201) == 1, t + 'cinq envois simultanés avec la même clé : un seul projet, le même identifiant pour tous', reps)
+        r2 = ctx.request.post(B + '/api/buro', headers=H, data=json.dumps({'titre': 'Simultané', 'cle': cle})); j2 = r2.json()
+        ok(r2.status == 200 and j2.get('doublon') and j2['id'] == reps[0][1], t + 'nouvelle tentative après coupure (même clé) : renvoie le projet déjà créé')
+        r3 = ctx.request.post(B + '/api/buro', headers=H, data=json.dumps({'titre': 'Autre clé', 'cle': cle + '-b'})); ok(r3.status == 201 and r3.json()['id'] != reps[0][1], t + 'une autre clé crée bien un autre projet')
+        r4 = ctx.request.post(B + '/api/buro', headers=H, data=json.dumps({'titre': 'Sans clé'})); r5 = ctx.request.post(B + '/api/buro', headers=H, data=json.dumps({'titre': 'Sans clé'}))
+        ok(r4.status == 201 and r5.status == 201, t + 'sans clé (ancien client) : le comportement d’avant est inchangé')
+        # 10 quater · anciens projets : la révision vaut 0 (absente, nulle ou illisible), jamais une erreur
+        anc = {}
+        for nom_a, data in (('absente', '{"briques":[],"source":"point-zero"}'), ('nulle', '{"rev":null}'), ('illisible', '{"rev":"abc"}'), ('negative', '{"rev":-3}'), ('texte', '{"rev":"7"}')):
+            i = str(uuid.uuid4()); sql("insert into spaces (id, kind, title, owner_id, data) values ('%s', 'projet', 'Ancien %s', '%s', '%s')" % (i, nom_a, uid, data)); sql("insert into space_members (space_id, user_id, role) values ('%s', '%s', 'owner')" % (i, uid)); anc[nom_a] = i
+        lst = ctx.request.get(B + '/api/buro').json()['projets']; revs = {x['titre']: x['rev'] for x in lst if x['titre'].startswith('Ancien ')}
+        ok(revs.get('Ancien absente') == 0 and revs.get('Ancien nulle') == 0 and revs.get('Ancien illisible') == 0 and revs.get('Ancien negative') == 0, t + 'la liste donne la révision 0 aux projets anciens (absente, nulle, illisible, négative)', revs)
+        for nom_a in ('absente', 'nulle', 'illisible', 'negative'):
+            r = ctx.request.post(B + '/api/buro', headers=H, data=json.dumps({'action': 'maj', 'id': anc[nom_a], 'description': 'ok', 'rev': 0}))
+            ok(r.status == 200 and r.json()['rev'] == 1 and sql("select data->>'rev' from spaces where id = '%s'" % anc[nom_a])[0][0] == '1', t + 'projet ancien « ' + nom_a + ' » : modifiable avec la révision 0, qui passe à 1', r.status)
+            r = ctx.request.post(B + '/api/buro', headers=H, data=json.dumps({'action': 'maj', 'id': anc[nom_a], 'description': 'encore', 'rev': 0})); ok(r.status == 409, t + 'projet ancien « ' + nom_a + ' » : la révision 0 ne passe plus une seconde fois (409)', r.status)
+        r = ctx.request.post(B + '/api/buro', headers=H, data=json.dumps({'action': 'maj', 'id': anc['absente'], 'visibilite': 'lien'})); ok(r.status == 200, t + 'ancien client (sans révision) : Partager fonctionne toujours', r.status)
+        r = ctx.request.post(B + '/api/buro', headers=H, data=json.dumps({'action': 'maj', 'id': anc['texte'], 'archive': True, 'rev': 'x'})); ok(r.status == 400, t + 'révision invalide envoyée : 400, pas d’erreur serveur', r.status)
+        ok(sql("select data->'briques', data->>'source' from spaces where id = '%s'" % anc['absente'])[0][1] == 'point-zero', t + 'les anciennes données (source, briques) ne sont pas touchées')
         # 11 · permissions côté serveur
-        ctx2 = contexte(b, largeur, '10.7.5.%d' % (1 if largeur > 700 else 2)); pg2 = page(ctx2); email2 = 'bob-' + jeton + '@test.lemondeaime.invalid'
+        ctx2 = contexte(b, largeur, '10.%d.5.%d' % (oct, 1 if largeur > 700 else 2)); pg2 = page(ctx2); email2 = 'bob-' + jeton + '@test.lemondeaime.invalid'
         pg2.goto(B + '/buro'); pg2.wait_for_selector('main input[type=email]'); se_connecter(pg2, email2)
         ok(pg2.locator('text=Version onglet A').count() == 0 and pg2.locator('text=Notre union').count() == 0, t + 'un autre compte ne voit pas ces projets')
-        H = {'origin': B, 'content-type': 'application/json'}
         r = ctx2.request.post(B + '/api/buro', headers=H, data=json.dumps({'action': 'maj', 'id': pid, 'titre': 'Piraté'}))
         ok(r.status == 404 and sql("select title from spaces where id = '%s'" % pid)[0][0] == 'Version onglet A', t + 'un autre compte ne peut pas modifier le projet, même par appel direct (404, rien n’a changé)', r.status)
         r = ctx2.request.post(B + '/api/buro', headers=H, data=json.dumps({'action': 'maj', 'id': pid, 'archive': True}))
         ok(r.status == 404 and sql("select data->>'archive' from spaces where id = '%s'" % pid)[0][0] == 'false', t + 'ni l’archiver')
-        sans = p.request.new_context(extra_http_headers={'x-forwarded-for': '10.7.6.1'})
+        sans = p.request.new_context(extra_http_headers={'x-forwarded-for': '10.%d.6.1' % oct})
         r = sans.get(B + '/api/buro'); ok(r.status == 401, t + 'sans session : la liste est refusée (401)', r.status)
         r = sans.post(B + '/api/buro', headers=H, data=json.dumps({'titre': 'Anonyme'})); ok(r.status == 401 and not sql("select 1 from spaces where title = 'Anonyme'"), t + 'sans session : la création est refusée (401), rien n’est écrit', r.status)
         r = ctx.request.post(B + '/api/buro', headers={'origin': 'https://ailleurs.example', 'content-type': 'application/json'}, data=json.dumps({'action': 'maj', 'id': pid, 'titre': 'Forgé'}))

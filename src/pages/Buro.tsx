@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Tete, DockBas, Pied, Orbe } from '../charte/Charte';
 import { EntrerBloc } from '../charte/EntrerBloc';
 import { Lien, useRecherche } from '../lib/router';
@@ -16,13 +16,17 @@ type Lieu = 'projets' | 'partages' | 'archives' | 'profil';
 /* Nouveau projet : un titre, une description ; l'enregistrement est celui de /api/buro (la table spaces), rien de local. */
 function NouveauProjet({ fini, annuler }: { fini: (id: string, titre: string) => void; annuler: () => void }) {
   const [etat, setEtat] = useState<{ envoi?: boolean; raison?: string }>({});
+  /* une clé par formulaire ouvert, et une garde : un double clic ou une nouvelle tentative ne crée jamais deux projets */
+  const cle = useRef(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36));
+  const enCours = useRef(false);
   const envoyer = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = new FormData(e.currentTarget), titre = String(f.get('titre') || '').trim();
     if (!titre) { setEtat({ raison: 'Donnez un nom au projet.' }); return; }
-    setEtat({ envoi: true });
-    const r = await ecrireBuro({ titre, description: String(f.get('description') || '') });
-    if (r.ok && r.id) fini(r.id, titre); else setEtat({ raison: r.raison || 'Enregistrement impossible : réessayez.' });
+    if (enCours.current) return;
+    enCours.current = true; setEtat({ envoi: true });
+    const r = await ecrireBuro({ titre, description: String(f.get('description') || ''), cle: cle.current });
+    if (r.ok && r.id) fini(r.id, titre); else { enCours.current = false; setEtat({ raison: r.raison || 'Enregistrement impossible : réessayez.' }); }
   };
   return (
     <form onSubmit={envoyer} aria-label="Nouveau projet" style={{ marginTop: 20, display: 'grid', gap: 12, maxWidth: 640, padding: 20, borderRadius: 20, background: '#fff', border: '1px solid #E2E2DE' }}>
@@ -48,6 +52,7 @@ function Fiche({ p, apres, fermer }: { p: Projet; apres: (m: string) => void; fe
     e.preventDefault();
     const f = new FormData(e.currentTarget), titre = String(f.get('titre') || '').trim();
     if (!titre) { setEtat({ raison: 'Donnez un nom au projet.' }); return; }
+    if (etat.envoi) return;
     setEtat({ envoi: true });
     const r = await ecrireBuro({ action: 'maj', id: p.id, titre, description: String(f.get('description') || ''), rev: p.rev || 0 });
     if (r.ok) apres('« ' + titre + ' » enregistré.'); else setEtat({ raison: r.raison || 'Enregistrement impossible : réessayez.', conflit: !!r.conflit });
@@ -99,13 +104,21 @@ export default function Buro() {
   const dans = (p: Projet, l: Lieu) => l === 'archives' ? p.archive : l === 'partages' ? (p.role !== 'owner' && !p.archive) : (p.role === 'owner' && !p.archive);
   const liste = (projets || []).filter(p => dans(p, lieu));
   const sel = (projets || []).find(p => p.id === choisi) || null;
-  const maj = async (patch: object, texte: string) => { if (!sel) return; const r = await ecrireBuro({ action: 'maj', id: sel.id, ...patch }); setMsg(r.ok ? texte : (r.raison || 'Modification impossible.')); if (r.ok) charger(); };
+  const [occupe, setOccupe] = useState(false);
+  /* Partager et Archiver envoient la révision vue : si le projet a changé ailleurs, le serveur refuse (409) et on recharge la dernière version */
+  const maj = async (patch: object, texte: string) => {
+    if (!sel || occupe) return;
+    setOccupe(true);
+    const r = await ecrireBuro({ action: 'maj', id: sel.id, rev: sel.rev || 0, ...patch });
+    setMsg(r.ok ? texte : (r.raison || 'Modification impossible.'));
+    await charger(); setOccupe(false);
+  };
   const B = data.briques as Record<string, { name: string }>;
   const verbes = sel && sel.role === 'owner'
     ? <>
       {sel.ouvrage && <a className="outil" href={'/studio/atelier?ouvrage=' + encodeURIComponent(sel.ouvrage)} style={{ fontWeight: 600 }}>Ouvrir dans le Studio</a>}
-      <button className="outil" type="button" onClick={() => maj({ visibilite: ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4] }, '« ' + sel.titre + ' » : ' + VIS[ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4]] + '.')}>Partager · {VIS[sel.visibilite] || 'Privé'}</button>
-      <button className="outil" type="button" onClick={() => { maj({ archive: !sel.archive }, sel.archive ? '« ' + sel.titre + ' » restauré.' : '« ' + sel.titre + ' » rangé aux archives.'); setChoisi(null); }}>{sel.archive ? 'Restaurer' : 'Archiver'}</button>
+      <button className="outil" type="button" disabled={occupe} onClick={() => maj({ visibilite: ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4] }, '« ' + sel.titre + ' » : ' + VIS[ORDRE[(ORDRE.indexOf(sel.visibilite) + 1) % 4]] + '.')}>Partager · {VIS[sel.visibilite] || 'Privé'}</button>
+      <button className="outil" type="button" disabled={occupe} onClick={() => { maj({ archive: !sel.archive }, sel.archive ? '« ' + sel.titre + ' » restauré.' : '« ' + sel.titre + ' » rangé aux archives.'); setChoisi(null); }}>{sel.archive ? 'Restaurer' : 'Archiver'}</button>
     </>
     : <>{['Rejoindre', 'Échanger', 'Modèles'].map(v => <span key={v} className="outil" aria-disabled="true" style={{ color: '#55555A' }}>{v}<span className="bientot">Bientôt</span></span>)}</>;
   return (
