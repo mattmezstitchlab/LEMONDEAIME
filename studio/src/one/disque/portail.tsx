@@ -22,6 +22,7 @@ import { recommander, RIEN, type Projet, type Raison } from "../../lib/present/r
 import { ecrireChoix, epingler, ignorer, lireChoix } from "../../lib/present/choix";
 import { depuisOuvrage, FUTUR_LUMIERE, JOURNAL_LUMIERE, journalOuvrage, LUMIERE, type Element } from "../../lib/present/projets";
 import { PROTOTYPES } from "../../lib/site";
+import { chargerAtlas } from "../../lib/present/atlas";
 import { approximatifs, dans, lirePeriode, nomPeriode, sansDate, type Periode } from "../../lib/temps/echelles";
 import { choisirFichiers, demonstration, VueLecture } from "./lecture";
 import "./portail.css";
@@ -37,14 +38,17 @@ export function usePortail(etat: EtatContexte) {
   const [ouvrages, setOuvrages] = useState<ProjectRecord[] | null>(null);
   const [choix, setChoix] = useState(lireChoix);
   useEffect(() => { listProjects().then(setOuvrages, () => setOuvrages([])); }, []);
+  /* ATLAS : lu en direct dans atlas.lemondeaime.com (jamais copié) ; s'il ne répond pas, il n'apparaît pas */
+  const [atlas, setAtlas] = useState<Awaited<ReturnType<typeof chargerAtlas>>>(null);
+  useEffect(() => { let vivant = true; chargerAtlas().then(a => { if (vivant) setAtlas(a); }); return () => { vivant = false; }; }, []);
   useEffect(() => { const f = () => setChoix(lireChoix()); window.addEventListener(EVT, f); return () => window.removeEventListener(EVT, f); }, []);
   const maintenant = useMemo(() => Date.now(), [choix]); // eslint-disable-line react-hooks/exhaustive-deps
-  const projets: Projet[] = useMemo(() => [...(PROTOTYPES ? [LUMIERE] : []), ...(ouvrages ?? []).map(depuisOuvrage)], [ouvrages]);
+  const projets: Projet[] = useMemo(() => [...(PROTOTYPES ? [LUMIERE] : []), ...(atlas ? [atlas.projet] : []), ...(ouvrages ?? []).map(depuisOuvrage)], [ouvrages, atlas]);
   const propositions = useMemo(() => recommander(projets, choix, lireOne().favoris, maintenant), [projets, choix, maintenant]);
   const choisi = projets.find(p => p.id === etat.f?.p) ?? propositions[0]?.projet ?? null;
   const proposition = propositions.find(x => x.projet.id === choisi?.id) ?? null;
   const rec = (ouvrages ?? []).find(o => "o-" + o.id.toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 38) === choisi?.id);
-  const passe: Element[] = choisi?.id === "lumiere" ? JOURNAL_LUMIERE : rec ? [journalOuvrage(rec)] : [];
+  const passe: Element[] = choisi?.id === "lumiere" ? JOURNAL_LUMIERE : choisi?.id === "atlas" ? atlas?.elements ?? [] : rec ? [journalOuvrage(rec)] : [];
   const futur: Element[] = choisi?.id === "lumiere" ? FUTUR_LUMIERE : choisi?.avancement !== undefined && choisi.avancement < 100
     ? [{ id: "f-finir", projet: choisi.id, titre: `Finir l’ouvrage : il reste ${100 - Math.round(choisi.avancement)} % à broder`, precision: "aucune", source: "avancement réel", genre: "futur" }] : [];
   const changerChoix = useCallback((f: (c: typeof choix) => typeof choix) => { const c = f(lireChoix()); ecrireChoix(c); setChoix(c); window.dispatchEvent(new Event(EVT)); }, []);
@@ -55,9 +59,10 @@ export type Portail = ReturnType<typeof usePortail>;
 /** reprendre un projet là où il vit (le contexte du Disque est gardé pour le retour) */
 function reprendre(p: Projet, outils: OutilsContexte) {
   if (p.genre === "film") outils.deployer(LUMIERE.adresse);
+  else if (p.genre === "site" && "adresse" in p) window.open(String((p as { adresse: string }).adresse), "_blank", "noopener");
   else if (p.ref) outils.deployer("atelier?ouvrage=" + encodeURIComponent(p.ref));
 }
-const etatDe = (p: Projet) => p.id === "lumiere" ? LUMIERE.etat : p.avancement !== undefined ? `${Math.round(p.avancement)} % brodé` : "";
+const etatDe = (p: Projet) => p.id === "lumiere" ? LUMIERE.etat : "etat" in p ? String((p as { etat: string }).etat) : p.avancement !== undefined ? `${Math.round(p.avancement)} % brodé` : "";
 
 /* ——— le centre : le PRÉSENT ——— */
 function Present({ por, outils, etat }: { por: Portail; outils: OutilsContexte; etat: EtatContexte }) {
@@ -112,7 +117,7 @@ function ElementsPeriode({ por, periode }: { por: Portail; periode: Periode }) {
 /* ——— en grand : les projets ——— */
 function Projets({ por, choisir }: { por: Portail; choisir: (id: string) => void }) {
   return <article className="pt-grand"><p className="pt-sur">Aller · Projets</p><h2 className="pt-grand-titre">Vos projets</h2>
-    <p className="pt-grand-aide">{PROTOTYPES ? "LUMIERE, projet documenté, et les ouvrages de cet appareil." : "Les ouvrages de cet appareil."} Le rang suit les règles du Présent.</p>
+    <p className="pt-grand-aide">{PROTOTYPES ? "LUMIERE, projet documenté, ATLAS (lu en direct dans atlas.lemondeaime.com) et les ouvrages de cet appareil." : "ATLAS (lu en direct dans atlas.lemondeaime.com) et les ouvrages de cet appareil."} Le rang suit les règles du Présent.</p>
     <ul className="pt-liste pt-projets">{por.projets.map(p => { const r = por.propositions.find(x => x.projet.id === p.id);
       return <li key={p.id}><button type="button" onClick={() => choisir(p.id)}><b>{p.titre}</b><small>{etatDe(p)}{r ? ` · proposé n° ${r.rang}` : " · pas proposé aujourd’hui"}{p.demonstration ? " · démonstration" : ""}</small></button></li>; })}</ul>
   </article>;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Tete, VerbesProjets, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
-import { ETATS, lireProjet, useAdmin, useProjets, type Projet as P } from '../lib/projets';
+import { ETATS, externe, lireProjet, useAdmin, useProjets, type Projet as P } from '../lib/projets';
 import { CarteProjet, Visiter } from './Portfolio';
 
 /* /projets/<slug> : la page de présentation d'un projet, à la manière d'Awwwards. Le titre, l'accroche, la fiche (catégorie,
@@ -40,6 +40,9 @@ export default function Projet({ slug }: { slug: string }) {
             </dl>
             <div className="pf-boutons">
               <Visiter p={p} className="bouton noir" />
+              {(p.liens || []).map(l => externe(l.href)
+                ? <a key={l.href} className="bouton" href={l.href} target="_blank" rel="noopener">{l.libelle}<span className="sr-only"> ({p.titre}, nouvel onglet)</span></a>
+                : <Lien key={l.href} className="bouton" href={l.href}>{l.libelle}</Lien>)}
               <Lien className="bouton" href="/projets#projets">Tous les projets</Lien>
               {admin && <Lien className="bouton" href={'/admin?projet=' + p.slug}>Modifier</Lien>}
             </div>

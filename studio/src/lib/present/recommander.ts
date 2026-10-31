@@ -16,7 +16,7 @@ export interface Projet {
   id: string;
   titre: string;
   /** le genre, pour savoir où le reprendre */
-  genre: "ouvrage" | "film";
+  genre: "ouvrage" | "film" | "site";
   /** l'identifiant d'origine (l'ouvrage dans Mes ouvrages), pour le reprendre là où il vit */
   ref?: string;
   /** 0..100 quand l'avancement est mesuré ; absent sinon (jamais estimé) */
