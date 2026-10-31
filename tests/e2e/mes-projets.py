@@ -44,7 +44,7 @@ with sync_playwright() as p:
         TITRE, DESC = 'Mon premier projet ' + jeton, 'Première ligne.\nSeconde ligne : un mariage en Provence.'
         ctx = contexte(b, largeur, ip); pg = page(ctx)
         # 1-2 · de l'accueil à la connexion, et retour sur /buro
-        pg.goto(B + '/'); pg.wait_for_selector('h1'); pg.locator('a.ac-chemin[data-chemin=projets]').click(); pg.wait_for_url('**/buro')
+        pg.goto(B + '/'); pg.wait_for_selector('h1'); pg.get_by_role('link', name='Retrouver notre mariage').first.click(); pg.wait_for_url('**/buro')
         pg.wait_for_selector('main input[type=email]')
         ok('Entrez dans AIME' in pg.inner_text('main'), t + 'Mes projets sans session : le formulaire d’entrée s’affiche ici (pas de faux projets)')
         capture(pg, 'buro-connexion-' + str(largeur))
@@ -170,7 +170,7 @@ with sync_playwright() as p:
         r = ctx.request.post(B + '/api/buro', headers=H, data=json.dumps({'action': 'maj', 'id': pid, 'titre': 'Ok', 'rev': 0})); ok(r.status == 409, t + 'une révision périmée est refusée (409) côté serveur', r.status)
         # 12 · retour à l'accueil
         pg.get_by_role('link', name='AIME, accueil').first.click(); pg.wait_for_url(B + '/'); pg.wait_for_selector('h1')
-        ok('tout commence ici' in pg.inner_text('h1').lower(), t + 'depuis le BurO, retour à l’accueil')
+        ok('vous imaginez votre mariage' in pg.inner_text('h1').lower(), t + 'depuis le BurO, retour à l’accueil')
         ok(pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), t + 'aucun débordement horizontal à l’accueil')
         pg.goto(B + '/buro'); pg.wait_for_selector('text=Votre espace AIME')
         ok(pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), t + 'aucun débordement horizontal dans le BurO (liste, formulaire)')

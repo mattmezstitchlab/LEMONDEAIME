@@ -8,6 +8,17 @@ import { ETATS, categories, externe, useAdmin, useProjets, type Projet } from '.
 /* LE MONDE AIME (/) : le portfolio des projets d'AIME, à la manière d'Awwwards. Le projet à la une en grand, puis tous les projets
    en cartes (filtrables par catégorie), chacune ouvrant sa page de présentation ; enfin le fondateur. */
 
+/* Les autres univers d'AIME, avec l'état réel de chacun. Des liens vers des pages qui existent ; A+ n'ouvre pas encore. */
+const UNIVERS: { nom: string; sub: string; href: string | null; etat: string }[] = [
+  { nom: 'Point Zéro', sub: 'La Grille 44 : ce qu’on écrit allume les briques et leurs causalités.', href: '/point-zero', etat: 'Disponible' },
+  { nom: 'L’atelier de broderie', sub: 'Le Studio : composer et broder un point de croix.', href: '/studio/atelier', etat: 'Disponible' },
+  { nom: '.0NE', sub: 'La mosaïque universelle du Studio.', href: '/studio/one/univers', etat: 'Disponible' },
+  { nom: 'La journée en musique', sub: 'Les morceaux d’une journée de mariage.', href: '/musique', etat: 'Avec connexion' },
+  { nom: 'La boutique', sub: 'Des créations montrées en exemples ; la commande n’est pas encore ouverte.', href: '/boutique', etat: 'Exemples' },
+  { nom: 'Le réseau', sub: 'Prestataires, artistes et organisations du Monde AIME.', href: '/reseau', etat: 'Disponible · avec des fiches d’exemple' },
+  { nom: 'A+', sub: 'Une vitrine, des devis, des factures pour les professionnels.', href: null, etat: 'Bientôt' },
+];
+
 /* « Visiter le site » : une page du site s'ouvre ici ; une adresse https s'ouvre à côté */
 export function Visiter({ p, className = 'bouton' }: { p: Projet; className?: string }) {
   if (!p.lien) return null;
@@ -89,6 +100,18 @@ export default function Portfolio() {
             : <p className="texte">Aucun projet publié pour l’instant.</p>}
         </section>}
 
+
+        <section id="univers" aria-labelledby="titre-univers" className="section pf-univers">
+          <p className="surtitre">Projets &amp; Créations</p>
+          <h2 id="titre-univers" className="titre" style={{ maxWidth: '18ch' }}>Les autres univers d’AIME</h2>
+          <p className="chapeau" style={{ maxWidth: '46ch' }}>Chacun garde sa page et son moteur. Ces liens mènent aux univers qui existent aujourd’hui.</p>
+          <ul className="pf-univers-liste" aria-label="Autres univers d’AIME">
+            {UNIVERS.map(u => <li key={u.nom}>{u.href
+              ? <Lien href={u.href}><span style={{ margin: 0 }}><b>{u.nom}</b><span>{u.sub}</span></span><em>{u.etat}</em></Lien>
+              : <div className="pf-univers-bientot"><span style={{ margin: 0 }}><b>{u.nom}</b><span>{u.sub}</span></span><em>{u.etat}</em></div>}</li>)}
+          </ul>
+        </section>
+
         <section id="fondateur" aria-labelledby="titre-fondateur" className="section">
           <div className="pf-fondateur">
             <div style={{ maxWidth: 340 }}><CarteReseau c={{ href: '/reseau/' + FONDATEUR.slug, nom: FONDATEUR.nom, etiquette: FONDATEUR.famille, photo: FONDATEUR.photo, alt: FONDATEUR.alt }} /></div>
@@ -101,7 +124,7 @@ export default function Portfolio() {
           </div>
         </section>
       </main>
-      <DockBas lieux={[...(une ? [['une', 'À la une'] as [string, string]] : []), ['projets', 'Projets'], ['fondateur', 'Fondateur']]} />
+      <DockBas lieux={[...(une ? [['une', 'À la une'] as [string, string]] : []), ['projets', 'Projets'], ['univers', 'Univers'], ['fondateur', 'Fondateur']]} />
       <Pied />
     </>
   );

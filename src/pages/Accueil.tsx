@@ -6,8 +6,10 @@ import { useProjets } from '../lib/projets';
 import { CarteProjet } from './Portfolio';
 import { CHEMINS, DESTINATIONS, ETATS, proposer } from '../lib/intention.mjs';
 
-/* LA PREMIÈRE PAGE (/) : une seule entrée, quatre chemins. Rien n'est simulé : chaque chemin est un vrai lien vers une page existante,
-   la zone d'intention propose (elle n'exécute rien) et dit l'état de la destination : disponible, partielle, avec connexion, ou absente. */
+/* LA PREMIÈRE PAGE (/) : Porte 1 d'AIME Wedding. Le héros dit la promesse du mariage et porte deux vraies actions
+   (Créer notre mariage → /buro?creer=mariage, Retrouver notre mariage → /buro) ; une section dit ce qui existe aujourd'hui, et seulement cela.
+   La zone d'intention et les quatre chemins (moteur inchangé, lib/intention.mjs) sont repliés plus bas : ils ne concurrencent plus le mariage.
+   Rien n'est simulé : chaque lien mène à une page existante ; la zone d'intention propose (elle n'exécute rien). */
 type Chemin = keyof typeof CHEMINS;
 const ORDRE: Chemin[] = ['organiser', 'creer', 'projets', 'decouvrir'];
 
@@ -17,6 +19,7 @@ export default function Accueil() {
   const [texte, setTexte] = useState('');
   const [fichier, setFichier] = useState<{ name: string; type: string } | null>(null);
   const [depot, setDepot] = useState(false);
+  const [ouvert, setOuvert] = useState(false);
   const entree = useRef<HTMLInputElement>(null);
   const champ = useRef<HTMLInputElement>(null);
   const p = useMemo(() => proposer(texte, fichier), [texte, fichier]);
@@ -30,10 +33,10 @@ export default function Accueil() {
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
       <Tete courant="/" verbes={<>
-        <Verbe href={DESTINATIONS.organiser.href}>Organiser</Verbe>
-        <Verbe href={DESTINATIONS.creer.href}>Créer</Verbe>
-        <Verbe href={DESTINATIONS.projets.href}>Mes projets</Verbe>
-        <Verbe href={DESTINATIONS.decouvrir.href}>Découvrir</Verbe>
+        <Verbe href="/aime-wedding">Mariage</Verbe>
+        <Verbe href="/reseau?domaine=mariage">Prestataires</Verbe>
+        <Verbe href="/projets">Projets &amp; Créations</Verbe>
+        <Verbe href="/buro">Mon espace</Verbe>
       </>} />
       <main id="contenu">
         <div className="ac-cadre">
@@ -41,17 +44,43 @@ export default function Accueil() {
             <img src="/media/union.jpg" alt="Un couple de mariés danse la nuit dans le désert, près d’une voiture ancienne et d’un tourne-disque, sous un ciel d’étoiles." />
             <div className="ac-hero-contenu">
               <p className="surtitre">LE MONDE AIME®</p>
-              <h1 id="titre-entree" className="signature">Tout commence ici.</h1>
-              <p className="ac-hero-sous">Un projet, une idée, une rencontre, un souvenir.</p>
+              <h1 id="titre-entree" className="signature">{'Vous imaginez votre mariage.\nAIME lui donne forme.'}</h1>
+              <p className="ac-hero-sous">Tout votre mariage, au même endroit.</p>
+              <p className="ac-hero-actions">
+                <Lien className="bouton ac-cta" href="/buro?creer=mariage" data-action="creer">Créer notre mariage</Lien>
+                <Lien className="bouton ac-cta ac-cta-calme" href="/buro" data-action="retrouver">Retrouver notre mariage</Lien>
+              </p>
             </div>
           </section>
+          <nav className="ac-entrees" aria-label="Les quatre entrées de l’accueil">
+            <Lien href="/aime-wedding">Mariage</Lien>
+            <Lien href="/reseau?domaine=mariage">Prestataires</Lien>
+            <Lien href="/projets">Projets &amp; Créations</Lien>
+            <Lien href="/buro">Mon espace</Lien>
+          </nav>
         </div>
 
-        <section className="section blanche" id="intention" aria-labelledby="titre-intention" style={{ marginTop: 16, borderTop: 0, paddingInline: 'var(--marge)' }}>
+        <section className="section ac-aujourdhui" id="aujourdhui" aria-labelledby="titre-aujourdhui" style={{ paddingInline: 'var(--marge)' }}>
+          <div className="ac-entete">
+            <div>
+              <p className="surtitre">Ce que votre couple peut faire aujourd’hui</p>
+              <h2 id="titre-aujourdhui" className="titre" style={{ maxWidth: '18ch' }}>Trois choses, déjà possibles.</h2>
+            </div>
+          </div>
+          <ol className="ac-faire">
+            <li><b>Créer la fiche de votre mariage</b><span>Les deux noms, la date et le lieu, enregistrés dans votre espace AIME. La date et le lieu peuvent attendre.</span></li>
+            <li><b>La retrouver et la modifier</b><span>Sur tous vos appareils, en entrant dans votre espace. <Lien href="/buro">Retrouver notre mariage</Lien></span></li>
+            <li><b>Parcourir les prestataires</b><span>Musiciens, photographes, lieux et plus, dans le réseau AIME. Certaines fiches sont des exemples, signalées comme telles. <Lien href="/reseau?domaine=mariage">Voir les prestataires</Lien></span></li>
+          </ol>
+          <p className="ac-pas-encore"><b>Pas encore disponible :</b> inviter l’autre personne dans la fiche, le budget, les réponses des invités, les devis, la coordination du jour J. <Lien href="/aime-wedding">Voir à quoi ressemble la page d’une union</Lien></p>
+        </section>
+
+        <section className="section blanche ac-repli" id="intention" aria-label="Autre chose en tête" style={{ borderTop: 0, paddingInline: 'var(--marge)' }}>
+         <details className="ac-details" open={ouvert} onToggle={e => setOuvert((e.currentTarget as HTMLDetailsElement).open)}>
+          <summary><span id="titre-intention">Que souhaitez-vous faire aujourd’hui ?</span><em>Autre chose en tête : un projet, une idée, une adresse web, un fichier</em></summary>
           <div className="ac-question">
             <div>
               <p className="surtitre">Une seule entrée</p>
-              <h2 id="titre-intention" className="titre">Que souhaitez-vous faire aujourd’hui ?</h2>
               <p className="chapeau">Une phrase, une adresse web ou un fichier. La page propose le chemin le plus proche et dit s’il existe. Elle ne lance rien.</p>
             </div>
             <form className={'ac-zone' + (depot ? ' depot' : '')} autoComplete="off" onSubmit={e => e.preventDefault()}
@@ -92,17 +121,18 @@ export default function Accueil() {
               </li>
             ))}
           </ul>
+         </details>
         </section>
 
-        <section className="section" id="decouvrir" aria-labelledby="titre-decouvrir" style={{ paddingInline: 'var(--marge)' }}>
+        <section className="section" id="projets-creations" aria-labelledby="titre-decouvrir" style={{ paddingInline: 'var(--marge)' }}>
           <div className="ac-entete">
-            <h2 id="titre-decouvrir" className="grand-mot">Découvrir</h2>
-            <p>Des sites et des studios conçus, dessinés et construits par AIME®.</p>
+            <h2 id="titre-decouvrir" className="grand-mot">Projets &amp; Créations</h2>
+            <p>Des sites et des studios conçus, dessinés et construits par AIME®. Les autres univers d’AIME se trouvent sur la page des projets.</p>
           </div>
           <div className="pf-grille" style={{ listStyle: 'none' }}>
             {(projets || []).map(pr => <CarteProjet key={pr.slug} p={pr} />)}
           </div>
-          <p style={{ marginTop: 40 }}><Lien className="bouton" href="/projets">Tous les projets</Lien> <Lien className="bouton" href="/reseau">Le réseau</Lien></p>
+          <p style={{ marginTop: 40 }}><Lien className="bouton" href="/projets">Tous les projets et créations</Lien> <Lien className="bouton" href="/reseau">Le réseau</Lien></p>
         </section>
 
         <section className="ac-bande" aria-label="Une seule maison">
@@ -113,7 +143,7 @@ export default function Accueil() {
           </ul>
         </section>
       </main>
-      <DockBas lieux={[['entree', 'Entrée'], ['intention', 'Question'], ['chemins', 'Chemins'], ['decouvrir', 'Découvrir']]} />
+      <DockBas lieux={[['entree', 'Entrée'], ['aujourdhui', 'Aujourd’hui'], ['intention', 'Question'], ['projets-creations', 'Projets']]} />
       <Pied />
     </>
   );

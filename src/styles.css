@@ -514,3 +514,57 @@ html.calme .carte-flip > .dos { opacity: 0; } html.calme .carte-flip.retournee >
 .ac-ensemble { list-style: none; margin: 48px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 28px; }
 .ac-ensemble li { padding-top: 18px; border-top: 1px solid rgba(255,255,255,.3); font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
 @media (max-width: 900px) { .ac-question { grid-template-columns: minmax(0, 1fr); } }
+
+/* Porte 1 : la promesse du mariage dans le héros (même photo, même cadre, même voile), deux vraies actions, une section honnête, la zone d'intention repliée. */
+.ac-hero .signature { font-size: clamp(38px, 7.2vw, 128px); line-height: .92; max-width: 16ch; text-wrap: balance; }
+.ac-hero-sous { max-width: 34ch; }
+.ac-hero-actions { margin: clamp(22px, 3vw, 40px) 0 0; display: flex; flex-wrap: wrap; gap: 12px; }
+.ac-cta { min-height: 52px; height: auto; padding-block: 12px; border-color: #fff; background: #fff; color: var(--encre); transition: background .2s, color .2s, transform .2s; }
+.ac-cta:hover { background: var(--doux); color: var(--encre); }
+.ac-cta-calme { background: transparent; color: #fff; border-color: rgba(255,255,255,.85); }
+.ac-cta-calme:hover { background: rgba(255,255,255,.16); color: #fff; }
+.ac-cta:focus-visible { outline: 3px solid #fff; outline-offset: 3px; box-shadow: 0 0 0 6px var(--encre); }
+.ac-entrees { display: none; }
+@media (max-width: 700px) {
+  /* le dock du haut défile sur téléphone : les quatre entrées restent visibles, sous le héros, sans toucher au dock commun */
+  .ac-entrees { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .ac-entrees a { display: flex; align-items: center; justify-content: center; min-height: 52px; padding: 8px 12px; border-radius: 13px; border: 1px solid var(--encre); background: var(--carte); color: var(--encre); font-size: 16px; font-weight: 600; text-decoration: none; text-align: center; }
+  .ac-entrees a:hover { background: var(--doux); }
+}
+.ac-aujourdhui { padding-block: clamp(64px, 8vw, 120px); }
+.ac-faire { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 28px clamp(24px, 4vw, 56px); counter-reset: faire; }
+.ac-faire li { counter-increment: faire; padding-top: 18px; border-top: 2px solid var(--encre); display: grid; gap: 10px; align-content: start; }
+.ac-faire li::before { content: counter(faire, decimal-leading-zero); font-size: 13px; font-weight: 600; letter-spacing: .14em; color: var(--encre-3); }
+.ac-faire b { font-size: clamp(22px, 2.2vw, 30px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; }
+.ac-faire span { font-size: 17px; line-height: 1.5; color: var(--encre-2); }
+.ac-faire a, .ac-pas-encore a { color: var(--encre); font-weight: 600; text-underline-offset: 4px; display: flex; align-items: center; min-height: 44px; width: fit-content; }
+.ac-pas-encore { margin: clamp(32px, 4vw, 48px) 0 0; max-width: 62ch; font-size: 16px; line-height: 1.5; color: var(--encre-3); }
+.ac-repli { padding-block: 0; }
+.ac-details > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 6px 18px; flex-wrap: wrap; min-height: 56px; padding: 18px 0; border-top: 1px solid var(--trait-2); border-bottom: 1px solid var(--trait-2); }
+.ac-details > summary::-webkit-details-marker { display: none; }
+.ac-details > summary > span { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+.ac-details > summary > em { font-style: normal; font-size: 15px; color: var(--encre-3); }
+.ac-details > summary::after { content: '+'; margin-left: auto; font-size: 26px; line-height: 1; font-weight: 400; transition: transform .25s; }
+.ac-details[open] > summary::after { transform: rotate(45deg); }
+.ac-details > summary:focus-visible { outline: 3px solid var(--encre); outline-offset: 2px; }
+.ac-details[open] > .ac-question { margin-top: clamp(28px, 4vw, 56px); animation: ac-ouvre .35s ease both; }
+.ac-details[open] > .ac-chemins { margin-bottom: clamp(40px, 5vw, 72px); animation: ac-ouvre .35s ease both; }
+@keyframes ac-ouvre { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.ac-hero-contenu { animation: ac-entree .7s ease both; }
+@keyframes ac-entree { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+html.contraste .ac-cta-calme { background: rgba(0,0,0,.55); }
+html.calme .ac-hero-contenu, html.calme .ac-details[open] > .ac-question, html.calme .ac-details[open] > .ac-chemins { animation: none; }
+html.calme .ac-details > summary::after, html.calme .ac-cta { transition: none; }
+@media (max-width: 520px) { .ac-hero .signature { font-size: clamp(30px, 8.4vw, 40px); max-width: none; } .ac-hero-actions { flex-direction: column; align-items: stretch; } .ac-cta { justify-content: center; } }
+
+
+/* Porte 1 : « Autres univers d'AIME » sur /projets (liens vers des pages qui existent ; rien n'est déplacé) */
+.pf-univers { padding-block: clamp(56px, 7vw, 104px); }
+.pf-univers-liste { list-style: none; margin: clamp(28px, 4vw, 48px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 14px; }
+.pf-univers-liste a, .pf-univers-liste .pf-univers-bientot { height: 100%; min-height: 150px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; padding: 20px; border-radius: 20px; border: 1px solid var(--trait-2); background: var(--carte); color: var(--encre); text-decoration: none; transition: border-color .2s; }
+.pf-univers-liste a:hover { border-color: var(--encre); }
+.pf-univers-liste b { display: block; font-size: clamp(22px, 2.2vw, 28px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; }
+.pf-univers-liste span { display: block; margin-top: 6px; font-size: 16px; line-height: 1.45; color: var(--encre-2); }
+.pf-univers-liste em { font-style: normal; font-size: 13px; font-weight: 600; letter-spacing: .06em; color: var(--encre-3); }
+.pf-univers-bientot { background: var(--doux) !important; border-style: dashed !important; }
+html.calme .pf-univers-liste a { transition: none; }

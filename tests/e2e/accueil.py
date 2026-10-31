@@ -18,6 +18,10 @@ PROJETS = [
     {'slug': 'brode-way', 'titre': 'Brode Way', 'categorie': 'Broderie', 'annee': 2026, 'statut': 'en-ligne', 'ordre': 1, 'une': True, 'publie': True, 'accroche': 'L’atelier.', 'description': 'Un.', 'role': 'Tout', 'lien': '/studio/atelier', 'couverture': '/media/studio/dessiner.jpg', 'alt': 'Broderie'},
     {'slug': 'aime-wedding', 'titre': 'AIME Wedding', 'categorie': 'Mariage', 'annee': 2026, 'statut': 'en-cours', 'ordre': 2, 'une': False, 'publie': True, 'accroche': 'L’union.', 'description': 'Deux.', 'role': 'Tout', 'lien': '/aime-wedding', 'couverture': '/media/wedding/piscine.jpg', 'alt': 'Mariage'},
 ]
+def ouvert(pg):
+    """La zone d'intention est repliée par défaut (Porte 1) : on l'ouvre avant d'y toucher."""
+    if pg.locator('details.ac-details[open]').count() == 0: pg.locator('.ac-details > summary').click()
+    return pg
 def simuler(pg, qui):
     def api(route):
         u = urlparse(route.request.url)
@@ -46,7 +50,7 @@ with sync_playwright() as p:
     for nom, largeur in (('ordinateur', 1440), ('téléphone', 390)):
         pg = page(b, largeur); tag = nom + ' · '
         pg.goto(B + '/'); pg.wait_for_selector('h1')
-        ok(pg.inner_text('h1').strip().lower().startswith('tout commence ici'), tag + 'le titre « Tout commence ici. »')
+        ok(' '.join(pg.inner_text('h1').split()).lower().startswith('vous imaginez votre mariage. aime lui donne forme'), tag + 'le titre « Vous imaginez votre mariage. AIME lui donne forme. »', pg.inner_text('h1'))
         ok(pg.evaluate("getComputedStyle(document.querySelector('h1')).fontWeight") == '900', tag + 'signature en 900')
         police = pg.evaluate("getComputedStyle(document.body).fontFamily")
         ok('Inter Tight' in police, tag + 'police Inter Tight déclarée', police)
@@ -56,47 +60,64 @@ with sync_playwright() as p:
         # les quatre chemins sont de vrais liens
         hrefs = pg.eval_on_selector_all('a.ac-chemin', 'els => els.map(e => e.getAttribute("href"))')
         ok(hrefs == ['/aime-wedding', '/studio/atelier', '/buro', '/projets'], tag + 'quatre chemins = quatre liens réels', hrefs)
-        verbes = pg.eval_on_selector_all('.dock-haut a.outil', 'els => els.map(e => e.textContent.trim() + "|" + e.getAttribute("href"))')
-        for v in ('Organiser|/aime-wedding', 'Créer|/studio/atelier', 'Mes projets|/buro', 'Découvrir|/projets'):
-            ok(v in verbes, tag + 'verbe du dock « ' + v + ' »', verbes)
+        verbes = pg.eval_on_selector_all('.dock-haut .rangee a.outil', 'els => els.map(e => e.textContent.trim() + "|" + e.getAttribute("href"))')
+        ok(verbes == ['Mariage|/aime-wedding', 'Prestataires|/reseau?domaine=mariage', 'Projets & Créations|/projets', 'Mon espace|/buro'], tag + 'le dock du haut : quatre entrées, quatre destinations réelles', verbes)
+        # téléphone : les quatre entrées sont visibles sous le héros (le dock du haut défile) ; ordinateur : le dock suffit
+        sous = pg.eval_on_selector_all('.ac-entrees a', 'els => els.map(e => e.textContent.trim() + "|" + e.getAttribute("href") + "|" + (e.getBoundingClientRect().width > 0))')
+        if largeur < 700: ok(sous == ['Mariage|/aime-wedding|true', 'Prestataires|/reseau?domaine=mariage|true', 'Projets & Créations|/projets|true', 'Mon espace|/buro|true'], tag + 'les quatre entrées sont visibles sous le héros', sous)
+        else: ok(all(x.endswith('|false') for x in sous), tag + 'sur ordinateur, les entrées du dock suffisent (rangée de téléphone masquée)', sous)
+        # Porte 1 : le sous-titre, les deux actions du héros, la photographie conservée
+        ok(pg.locator('.ac-hero-sous').inner_text().strip() == 'Tout votre mariage, au même endroit.', tag + 'le sous-titre')
+        acts = pg.eval_on_selector_all('.ac-hero-actions a', 'els => els.map(e => e.textContent.trim() + "|" + e.getAttribute("href"))')
+        ok(acts == ['Créer notre mariage|/buro?creer=mariage', 'Retrouver notre mariage|/buro'], tag + 'deux actions : Créer → /buro?creer=mariage, Retrouver → /buro', acts)
+        ok(pg.locator('.ac-hero > img').get_attribute('src') == '/media/union.jpg' and pg.evaluate("getComputedStyle(document.querySelector('.ac-hero > img')).objectFit") == 'cover', tag + 'la photographie union.jpg et sa composition sont conservées')
+        ok(pg.evaluate("document.querySelector('.ac-hero .bouton').getBoundingClientRect().bottom < window.innerHeight"), tag + 'les deux actions sont visibles sans défiler')
+        # section honnête : rien de non disponible présenté comme disponible
+        faire = pg.locator('.ac-faire').inner_text().lower()
+        ok(all(m not in faire for m in ('budget', 'rsvp', 'devis', 'coordination', 'inviter')), tag + 'la liste « aujourd’hui » ne promet ni budget, ni RSVP, ni devis, ni coordination, ni invitation')
+        ok('pas encore disponible' in pg.locator('.ac-pas-encore').inner_text().lower(), tag + 'ce qui n’existe pas encore est dit comme tel')
+        ordre = pg.evaluate("[...document.querySelectorAll('main section')].map(s => s.id).filter(Boolean)")
+        ok(ordre == ['entree', 'aujourdhui', 'intention', 'projets-creations'], tag + 'ordre des sections', ordre)
+        ok(pg.locator('details.ac-details[open]').count() == 0, tag + 'la zone d’intention est repliée par défaut')
+        ok(pg.locator('.ac-details > summary').inner_text().startswith('Que souhaitez-vous faire aujourd’hui'), tag + 'la zone d’intention garde sa question, dans un résumé repliable')
         capture(pg, ('accueil-' + nom).replace('é', 'e'))
         # les quatre phrases
         for phrase, ch, href, etat in PHRASES:
-            pg.fill('#q', phrase); r = pg.inner_text('[data-testid=resultat]')
+            ouvert(pg).fill('#q', phrase); r = pg.inner_text('[data-testid=resultat]')
             ok(ch in r and etat in r and 'rien n’a été exécuté' in r.lower(), tag + 'phrase « ' + phrase + ' » → ' + ch + ' · ' + etat, r)
             if href: ok(pg.locator('[data-testid=resultat] a.noir').get_attribute('href') == href, tag + '  destination ' + href)
             else:
                 ok(pg.locator('[data-testid=resultat] a.noir').count() == 0 and pg.locator('[data-testid=resultat] a').first.get_attribute('href') == '/studio/atelier', tag + '  aucun faux bouton « Ouvrir », seule l’alternative réelle est proposée')
-        pg.fill('#q', 'bonjour'); ok('ne reconnais pas' in pg.inner_text('[data-testid=resultat]'), tag + 'phrase vague → aveu clair')
-        pg.fill('#q', '')
+        ouvert(pg).fill('#q', 'bonjour'); ok('ne reconnais pas' in pg.inner_text('[data-testid=resultat]'), tag + 'phrase vague → aveu clair')
+        ouvert(pg).fill('#q', '')
         # cibles tactiles (téléphone)
         if largeur < 700:
             petits = pg.evaluate("""() => [...document.querySelectorAll('a, button, input')].filter(e => { const r = e.getBoundingClientRect(); const s = getComputedStyle(e); return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && !e.closest('.sr-only') && !e.classList.contains('sr-only') && e.tabIndex >= 0 && (r.height < 44 || r.width < 44) && !(e.tagName === 'A' && e.parentElement && e.parentElement.closest('p, li') && e.closest('p') && false); }).map(e => e.tagName + ':' + (e.textContent || e.getAttribute('aria-label') || '').trim().slice(0, 30) + ' ' + Math.round(e.getBoundingClientRect().width) + 'x' + Math.round(e.getBoundingClientRect().height))""")
             ok(not petits, tag + 'cibles tactiles >= 44 px', petits)
         # PARCOURS : Accueil → Organiser → AIME Wedding → Retour accueil
         pg.goto(B + '/'); pg.wait_for_selector('h1')
-        pg.locator('a.ac-chemin[data-chemin=organiser]').click()
+        ouvert(pg).locator('a.ac-chemin[data-chemin=organiser]').click()
         pg.wait_for_url('**/aime-wedding'); pg.wait_for_selector('h1')
         ok(chemin_url(pg) == '/aime-wedding', tag + 'Organiser mène à /aime-wedding')
         ok('wedding' in pg.title().lower(), tag + 'la page AIME Wedding est bien chargée', pg.title())
         capture(pg, ('wedding-' + nom).replace('é', 'e'), False)
         pg.get_by_role('button', name='Revenir là où vous étiez').click(); pg.wait_for_url(B + '/'); pg.wait_for_selector('h1')
-        ok(chemin_url(pg) == '/' and 'tout commence ici' in pg.inner_text('h1').lower(), tag + 'la flèche retour ramène à l’accueil')
-        pg.locator('a.ac-chemin[data-chemin=organiser]').click(); pg.wait_for_url('**/aime-wedding')
+        ok(chemin_url(pg) == '/' and 'vous imaginez votre mariage' in pg.inner_text('h1').lower(), tag + 'la flèche retour ramène à l’accueil')
+        ouvert(pg).locator('a.ac-chemin[data-chemin=organiser]').click(); pg.wait_for_url('**/aime-wedding')
         pg.get_by_role('link', name='AIME, accueil').first.click(); pg.wait_for_url(B + '/')
-        ok(chemin_url(pg) == '/' and pg.locator('h1').inner_text().lower().startswith('tout commence'), tag + 'la marque AIME® ramène aussi à l’accueil')
+        ok(chemin_url(pg) == '/' and pg.locator('h1').inner_text().lower().startswith('vous imaginez'), tag + 'la marque AIME® ramène aussi à l’accueil')
         # via la phrase puis le bouton « Ouvrir »
-        pg.fill('#q', 'Je prépare mon mariage.'); pg.locator('[data-testid=resultat] a.noir').click(); pg.wait_for_url('**/aime-wedding')
+        ouvert(pg).fill('#q', 'Je prépare mon mariage.'); pg.locator('[data-testid=resultat] a.noir').click(); pg.wait_for_url('**/aime-wedding')
         ok(True, tag + 'la phrase mène à AIME Wedding par le bouton « Ouvrir »')
         # Mes projets : sans session → l’espace demande d’entrer ; avec session → l’espace s’ouvre
-        pg.goto(B + '/'); pg.locator('a.ac-chemin[data-chemin=projets]').click(); pg.wait_for_url('**/buro')
+        pg.goto(B + '/'); ouvert(pg).locator('a.ac-chemin[data-chemin=projets]').click(); pg.wait_for_url('**/buro')
         pg.wait_for_selector('main, h1', timeout=6000)
         ok('Entrer' in pg.inner_text('body') and 'Entrez' in pg.inner_text('body'), tag + 'Mes projets sans session : l’espace demande d’entrer (pas de faux projets)')
         # Découvrir → portfolio
-        pg.goto(B + '/'); pg.locator('a.ac-chemin[data-chemin=decouvrir]').click(); pg.wait_for_url('**/projets')
+        pg.goto(B + '/'); ouvert(pg).locator('a.ac-chemin[data-chemin=decouvrir]').click(); pg.wait_for_url('**/projets')
         pg.wait_for_selector('text=Brode Way'); ok(pg.locator('text=Brode Way').count() > 0, tag + 'Découvrir mène au portfolio réel')
         # Créer → le lien va au StudiO (autre application)
-        pg.goto(B + '/'); h = pg.locator('a.ac-chemin[data-chemin=creer]')
+        pg.goto(B + '/'); h = ouvert(pg).locator('a.ac-chemin[data-chemin=creer]')
         with pg.expect_navigation(): h.click()
         ok(chemin_url(pg).startswith('/studio/atelier'), tag + 'Créer mène à /studio/atelier (chargement complet, autre application)', pg.url)
         pg.context.close()

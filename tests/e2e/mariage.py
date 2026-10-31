@@ -44,9 +44,11 @@ with sync_playwright() as p:
         A_, B_ = 'Camille ' + jeton, 'Gabriel ' + jeton   # données explicitement fictives
         ctx = contexte(b, largeur, ip); pg = page(ctx)
         # 1 · Accueil → Organiser → AIME Wedding → Créer notre mariage
-        pg.goto(B + '/'); pg.wait_for_selector('h1'); pg.locator('a.ac-chemin[data-chemin=organiser]').click(); pg.wait_for_url('**/aime-wedding')
-        ok(pg.get_by_role('link', name='Créer notre mariage').count() == 1, t + 'Organiser mène à AIME Wedding, qui porte « Créer notre mariage »')
-        pg.get_by_role('link', name='Créer notre mariage').click(); pg.wait_for_url('**/buro**')
+        pg.goto(B + '/'); pg.wait_for_selector('h1')
+        ok(pg.get_by_role('link', name='Créer notre mariage').count() == 1, t + 'l’accueil porte « Créer notre mariage » dans le héros')
+        pg.goto(B + '/aime-wedding'); pg.wait_for_selector('h1')
+        ok(pg.get_by_role('link', name='Créer notre mariage').get_attribute('href') == '/buro?creer=mariage', t + 'AIME Wedding garde aussi « Créer notre mariage » vers le même parcours')
+        pg.goto(B + '/'); pg.wait_for_selector('h1'); pg.get_by_role('link', name='Créer notre mariage').click(); pg.wait_for_url('**/buro**')
         pg.wait_for_selector('main input[type=email]')
         ok(sql('select count(*) from spaces')[0][0] == '0', t + 'sans session, rien n’est créé')
         se_connecter(pg, email)
