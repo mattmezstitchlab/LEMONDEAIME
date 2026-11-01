@@ -5,3 +5,5 @@
   le bouton, la tige, puis le ciel en anneaux dont la couleur suit le moment du morceau ; l'éclosion à l'impact (03:18.255),
   l'arc-en-ciel (03:20.25 → 03:26.25), la Perle (04:02.75). Valeur d'un point : fil 0…44 ; 45 = toile nue ; 128 + fil = demi-croix.
 - Lus par `/studio/fleur-du-ciel` (`src/clip/`, configuration `FLEUR`).
+
+- `la-fleur-du-ciel-brodee.mp4` : le clip vidéo (4 min 13, 1080 × 1080, avec la musique), publié avec l’accord de Matt (1/11/2026, « je valide tu peux publier »).
