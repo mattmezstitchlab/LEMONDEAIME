@@ -42,6 +42,8 @@ export interface Fait {
   manque?: string;
   /** qui peut voir cette information ; « public » par défaut */
   visibilite?: Visibilite;
+  /** vrai si le domaine juge cette information essentielle : c'est elle que montre le centre du Disque (deux au plus) */
+  principal?: boolean;
 }
 
 export type Apercu =

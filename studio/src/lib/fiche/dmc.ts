@@ -58,12 +58,12 @@ export function domaineDmc(src: SourcesDmc = sourcesDeLAtelier): Domaine {
         { cle: "reference", libelle: "Référence", valeur: `DMC ${code}`, statut: "lu", source: "table" },
         { cle: "nom", libelle: "Nom (anglais, comme dans la table)", valeur: f.name, statut: "lu", source: "table" },
         { cle: "couleur", libelle: "Couleur d'écran", valeur: `${f.hex.toUpperCase()} · rouge ${f.rgb[0]}, vert ${f.rgb[1]}, bleu ${f.rgb[2]}`, statut: "lu", source: "table" },
-        { cle: "famille", libelle: "Famille de couleur", valeur: `${fam.nom} · ${nbFam} fils`, statut: "calcule", source: "famille" },
+        { cle: "famille", libelle: "Famille de couleur", valeur: `${fam.nom} · ${nbFam} fils`, statut: "calcule", source: "famille", principal: true },
         { cle: "clarte", libelle: "Clarté (L* de CIELAB)", valeur: `${nombre(f.lab[0], 0)} sur 100`, statut: "calcule", source: "ecart" },
         stock
-          ? { cle: "stock", libelle: "Votre stock", visibilite: "prive", statut: "declare", source: "profil",
+          ? { cle: "stock", libelle: "Votre stock", visibilite: "prive", principal: true, statut: "declare", source: "profil",
               valeur: `${echeveaux(stock.skeins)}${stock.remainingMeters ? ` + ${nombre(stock.remainingMeters)} m restants` : ""}` }
-          : { cle: "stock", libelle: "Votre stock", visibilite: "prive", statut: "manquant", source: "profil", valeur: null,
+          : { cle: "stock", libelle: "Votre stock", visibilite: "prive", principal: true, statut: "manquant", source: "profil", valeur: null,
               manque: ennuiProfil || "Vous n'avez pas encore enregistré ce fil dans votre stock (ce n'est pas la même chose qu'un stock à zéro)." },
         profil
           ? { cle: "preferee", libelle: "Fil préféré", visibilite: "prive", statut: "declare", source: "profil", valeur: profil.preferredCodes.some(c => c.toLowerCase() === code.toLowerCase()) ? "Oui" : "Non" }
