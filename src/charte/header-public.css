@@ -39,3 +39,5 @@ html.aime-public-studio .csh-skip:focus { top: calc(var(--aime-header-height) + 
 
 .aime-header-evitement { position: absolute; left: 12px; top: -200px; z-index: 2; padding: 12px; background: #fff; color: #0b0b0c; }
 .aime-header-evitement:focus { top: 8px; }
+
+html.aime-public-studio .clip-deplier { top: calc(var(--aime-header-height) + 16px); }

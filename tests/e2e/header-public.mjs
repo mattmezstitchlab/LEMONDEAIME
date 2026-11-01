@@ -45,6 +45,38 @@ const entries = [
 ];
 try {
   const errors = [];
+  // Suivi #46 : bouton du clip replié, pointeur/tactile et clavier, sans lancer la musique.
+  for (const width of [1280, 390, 320]) for (const route of ['/studio/uptown', '/studio/fleur-du-ciel']) {
+    const p = await page(width); p.on('pageerror', e => errors.push(e.message));
+    await goto(p, route);
+    await p.getByRole('slider', {name:'Avancer dans le clip'}).waitFor();
+    const button = p.getByRole('button', { name: 'Le Disque', exact: true });
+    if (!await button.count()) {
+      // UPTOWN peut démarrer déployé : son action contextuelle existante replie la couronne.
+      await p.getByRole('menuitem', { name: /^Replier :/ }).waitFor();
+      await p.getByRole('menuitem', { name: /^Replier :/ }).click();
+    }
+    await button.waitFor();
+    const b = await button.boundingBox(), h = await p.locator('[data-header-public]').boundingBox();
+    ok(b.y >= h.y + h.height && b.y + b.height <= 844 && b.x >= 0 && b.x + b.width <= width, `${width} ${route} : bouton hors du header et dans l’écran`);
+    ok(b.height >= 44, 'cible tactile >=44 px');
+    ok(await button.evaluate(e => { const r=e.getBoundingClientRect(); const hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return hit===e||e.contains(hit); }), 'bouton non masqué au point de contact');
+    if (width < 700) await button.tap(); else await button.click();
+    await p.getByRole('menuitem').first().waitFor();
+    ok(await p.getByRole('menuitem').count() > 3, `${width} ${route} : ouverture par ${width<700?'toucher':'souris'}`);
+    await p.getByRole('menuitem', { name: /^Replier :/ }).click();
+    await button.waitFor();
+    // Atteindre le bouton par Tab, sans focus() ou clic forcé.
+    await p.locator('.aime-header-logo').focus();
+    let reached=false;
+    for(let n=0;n<20;n++) { await p.keyboard.press('Tab'); if(await button.evaluate(e=>document.activeElement===e)){reached=true;break;} }
+    ok(reached, `${width} ${route} : atteignable au clavier par Tab`);
+    await p.keyboard.press('Enter'); await p.getByRole('menuitem').first().waitFor();
+    ok(await p.getByRole('menuitem').count()>3, 'activation Entrée déploie le Disque');
+    ok(await p.getByRole('button', {name:/Lancer le clip avec le son/}).count()===1, 'lecture non déclenchée par le déploiement');
+    await p.context().close();
+  }
+
   for (const width of [1280, 390, 320]) {
     const p = await page(width); p.on('pageerror', e => errors.push(e.message));
     for (const [name, route] of entries) {
@@ -101,6 +133,14 @@ try {
     if (['/studio/uptown', '/studio/fleur-du-ciel'].includes(route)) {
       await p.getByRole('button', {name:/Lancer le clip avec le son/}).waitFor();
       ok(await p.getByRole('slider', {name:'Avancer dans le clip'}).count() === 1, 'commandes du clip conservées');
+      const deplier = p.getByRole('button', {name:'Le Disque',exact:true});
+      if (await deplier.count()) {
+        const b = await deplier.boundingBox(), h = await p.locator('[data-header-public]').boundingBox();
+        ok(b.y >= h.height, 'commande Le Disque hors du header');
+        await deplier.click();
+        await p.getByRole('menuitem').first().waitFor();
+        ok(await p.getByRole('menuitem').count() > 3, 'clip replié : le Disque se déploie réellement');
+      }
     }
     for (const selector of ['.pzs-top', '.clip-lancer', '.clip-temps']) {
       const el = p.locator(selector).first();
