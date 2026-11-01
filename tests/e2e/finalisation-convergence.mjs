@@ -101,7 +101,7 @@ try {
   for (const route of ['/', '/aime-wedding', '/point-zero', '/buro', '/projets', '/reseau', '/system', '/systaime']) {
     const p = await page(); const r = await goto(p, route); await p.locator('main').waitFor();
     ok(r.status() === 200, `route ${route} : shell 200 et main rendu (API simulées)`);
-    for (const label of ['Accueil', 'Broderie', 'Atelier']) ok(await p.locator('.aime-header-public').getByRole('link', { name: label, exact: true }).count() > 0, `${route} : chemin ${label}`);
+    for (const label of ['Accueil', 'Broderie', 'Atelier', 'Vidéo']) ok(await p.locator('.aime-header-public').getByRole('link', { name: label, exact: true }).count() > 0, `${route} : chemin ${label}`);
     await p.context().close();
   }
   for (const width of [390, 360]) {

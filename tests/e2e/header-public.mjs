@@ -40,7 +40,7 @@ async function page(width = 1280) {
 }
 const goto = (p, route) => p.goto(base + route, { waitUntil: 'domcontentloaded' });
 const entries = [
-  ['Accueil', '/'], ['Broderie', '/studio/'], ['Atelier', '/studio/atelier'],
+  ['Accueil', '/'], ['Broderie', '/studio/'], ['Atelier', '/studio/atelier'], ['Vidéo', '/studio/fleur-du-ciel'],
 ];
 try {
   const errors = [];

@@ -8,10 +8,10 @@ const js = ts.transpileModule(lire('src/charte/navigationPublique.ts'), { compil
 const { ENTREES_PUBLIQUES, rubriqueActive } = await import('data:text/javascript;base64,' + Buffer.from(js).toString('base64'));
 
 test('header public : entrées broderie exactes, source unique et rubriques actives', () => {
-  assert.deepEqual(ENTREES_PUBLIQUES.map(e => e.nom), ['Accueil', 'Broderie', 'Atelier']);
-  assert.deepEqual(ENTREES_PUBLIQUES.map(e => e.href), ['/', '/studio/', '/studio/atelier']);
+  assert.deepEqual(ENTREES_PUBLIQUES.map(e => e.nom), ['Accueil', 'Broderie', 'Atelier', 'Vidéo']);
+  assert.deepEqual(ENTREES_PUBLIQUES.map(e => e.href), ['/', '/studio/', '/studio/atelier', '/studio/fleur-du-ciel']);
   for (const e of ENTREES_PUBLIQUES) assert.equal(rubriqueActive(e.href), e.href);
-  for (const p of ['/studio', '/studio/uptown', '/studio/fleur-du-ciel', '/projets/brode-way', '/point-zero']) assert.equal(rubriqueActive(p), '/studio/');
+  for (const p of ['/studio', '/studio/uptown', '/projets/brode-way', '/point-zero']) assert.equal(rubriqueActive(p), '/studio/');
   assert.equal(rubriqueActive('/a-propos/'), null);
   assert.equal(rubriqueActive('/studio/atelier'), '/studio/atelier');
   assert.equal(rubriqueActive('/aime-wedding'), null);
