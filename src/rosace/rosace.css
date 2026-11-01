@@ -48,6 +48,10 @@
 .ros-disque .pzt .lp-tambour .lp-secteur:focus-visible { outline: 2px solid #58453a; }
 .ros-disque .pzt .lp-tambour .lp-mot { color: #4d4840; text-shadow: none; font-weight: 550; }
 .ros-disque .pzt .lp-tambour .lp-secteur { color: #312d28; }
+/* Les numéros et les commandes de pagination gardent le même contraste que les modes du Disque. */
+.ros-disque .pzt .lp-tambour .lp-secteur.lp-pastille-anneau { color: #312d28; background: #f8f5ed; border: 1px solid #cfc3b3; box-shadow: none; }
+.ros-disque .pzt .lp-tambour .lp-secteur.lp-pastille-anneau:hover, .ros-disque .pzt .lp-tambour .lp-secteur.lp-pastille-anneau:focus-visible { background: #e8ded0; }
+.ros-disque .pzt .lp-tambour .lp-pastille-anneau .lp-valeur { background: transparent; color: inherit; }
 .ros-disque .lp-indic[data-etat="repos"] { background: #b9aa98; }
 .ros-disque .lp-marque { background: #a8614c; box-shadow: 0 0 0 2px #f8f5ed; }
 .ros-disque .one-disque-cartouche { height: 25px; margin-top: 6px; font-size: calc(11px * var(--pz-user-font-scale, 1)); color: #766c5e; }
@@ -98,20 +102,25 @@
 .ros-heading-row { display: flex; align-items: end; justify-content: space-between; gap: 40px; margin: 86px 0 50px; }
 .ros-heading-row .ros-eyebrow, .ros-cinq-texte .ros-eyebrow, .ros-fils-texte .ros-eyebrow, .ros-points-texte .ros-eyebrow, .ros-cadre .ros-eyebrow, .ros-patron .ros-eyebrow { margin-bottom: 19px; color: #ac7661; }
 .ros-heading-row > p { max-width: 300px; font-size: calc(14px * var(--pz-user-font-scale, 1)); line-height: 1.7; color: #746a5e; }
-.ros-galerie-grille { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+/* Les 64 recettes : huit colonnes quand la place le permet, sans réduire les cibles tactiles sur mobile. */
+.ros-galerie-guide { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; margin: 0 0 22px; color: #6c6256; font-size: calc(12px * var(--pz-user-font-scale, 1)); line-height: 1.5; }
+.ros-galerie-guide a { color: #45382f; text-underline-offset: 3px; }
+.ros-galerie-grille { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 18px 12px; padding: 0; margin: 0; list-style: none; }
 .ros-galerie-item { min-width: 0; }
-.ros-galerie-figure { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1 / 1.06; padding: 10%; border: 0; background: #eee5dc; overflow: hidden; }
+.ros-galerie-figure { position: relative; display: grid; place-items: center; width: 100%; min-height: 44px; aspect-ratio: 1; padding: 11%; border: 0; background: #eee5dc; overflow: hidden; }
 .ros-galerie-figure-1 { background: #e8e3e8; }
 .ros-galerie-figure-2 { background: #e4e9e1; }
+.ros-galerie-figure-3 { background: #ede8dd; }
+.ros-galerie-figure[aria-pressed="true"] { box-shadow: inset 0 0 0 2px #765344; }
+.ros-galerie-figure[aria-pressed="true"]::after { content: '✓'; position: absolute; right: 7px; bottom: 6px; color: #59453b; font-size: 13px; font-weight: 700; }
 .ros-galerie-cercle { display: block; width: 100%; aspect-ratio: 1; border: 1px solid rgba(110,89,75,.17); border-radius: 50%; background: rgba(248,245,237,.62); padding: 7%; transition: transform .7s ease; }
 .ros-galerie-figure:hover .ros-galerie-cercle { transform: rotate(9deg) scale(1.025); }
-.ros-galerie-index, .ros-galerie-plus { position: absolute; top: 20px; color: #786e63; font-size: calc(10px * var(--pz-user-font-scale, 1)); letter-spacing: .1em; }
-.ros-galerie-index { left: 20px; }
-.ros-galerie-plus { right: 20px; font-size: calc(18px * var(--pz-user-font-scale, 1)); }
-.ros-galerie-legende { display: flex; justify-content: space-between; gap: 15px; padding: 18px 0; border-bottom: 1px solid #dad2c5; }
-.ros-galerie-legende h3 { font: 600 26px/1 'Cormorant Garamond Variable', Georgia, serif; }
-.ros-galerie-legende p, .ros-galerie-legende > span { font-size: calc(11px * var(--pz-user-font-scale, 1)); color: #81766a; margin-top: 7px; }
-.ros-galerie-legende > span { white-space: nowrap; }
+.ros-galerie-index, .ros-galerie-plus { position: absolute; top: 7px; color: #5e554c; font-size: calc(9px * var(--pz-user-font-scale, 1)); letter-spacing: .04em; }
+.ros-galerie-index { left: 7px; }
+.ros-galerie-plus { right: 7px; font-size: calc(15px * var(--pz-user-font-scale, 1)); line-height: 1; }
+.ros-galerie-legende { min-width: 0; padding: 9px 0 10px; border-bottom: 1px solid #dad2c5; }
+.ros-galerie-legende h3 { overflow-wrap: anywhere; font: 600 calc(18px * var(--pz-user-font-scale, 1))/1.05 'Cormorant Garamond Variable', Georgia, serif; }
+.ros-galerie-legende > span { display: block; margin-top: 5px; color: #81766a; font-size: calc(9px * var(--pz-user-font-scale, 1)); overflow-wrap: anywhere; }
 
 .ros-cinq { background: #eae5db; }
 .ros-cinq-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); gap: clamp(55px, 8vw, 130px); align-items: center; max-width: 1450px; margin: 85px auto 15px; }
@@ -211,6 +220,7 @@
 }
 @media (max-width: 1000px) {
   .ros-lectures { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ros-galerie-grille { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .ros-lectures li { min-height: 130px; }
   .ros-mesures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -236,9 +246,8 @@
   .ros-lectures li { margin-right: 12px; padding-right: 8px; }
   .ros-heading-row { display: block; margin: 65px 0 28px; }
   .ros-heading-row > p { margin-top: 20px; }
-  .ros-galerie-grille { grid-template-columns: 1fr; gap: 28px; }
-  .ros-galerie-figure { aspect-ratio: 1.15; padding: 11%; }
-  .ros-galerie-cercle { width: min(100%, 350px); }
+  .ros-galerie-grille { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
+  .ros-galerie-figure { aspect-ratio: 1; padding: 11%; }
   .ros-cinq-grid, .ros-fils-grid, .ros-points-grid, .ros-patron-grid { grid-template-columns: 1fr; gap: 42px; margin: 60px auto 0; }
   .ros-cinq-image { order: 2; }
   .ros-cinq-texte { order: 1; }
@@ -261,7 +270,7 @@
   .ros-kicker { font-size: calc(9px * var(--pz-user-font-scale, 1)); }
   .ros-masthead { padding-top: 20px; }
   .ros-masthead h1 { font-size: min(66px, 20.5vw); }
-  /* Au plus petit format, les sept mots restent visibles : la géométrie du Point reste inchangée. */
+  /* Au plus petit format, les mots restent visibles : la géométrie du Point reste inchangée. */
   html:not([data-pz-text-scale="custom"]) .ros-disque .pzt-etiq-cartouche .lp-tambour .lp-mot { position: static; clip: auto; width: 100%; height: auto; overflow: visible; display: block; font-size: calc(9px * var(--pz-user-font-scale, 1)); line-height: 1.1; white-space: nowrap; }
   .ros-disque .pzt .lp-tambour .lp-secteur.lp-outil { gap: 1px; }
   .ros-hero-commandes { gap: 0 1px; }

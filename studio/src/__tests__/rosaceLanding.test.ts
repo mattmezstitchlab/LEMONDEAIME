@@ -68,3 +68,40 @@ describe('ROSACE : une seule recette, plusieurs lectures', () => {
     expect(pattern.recette?.code).toBe(code);
   });
 });
+
+describe('collection ROSACE : 64 recettes réelles, indépendantes de l’échiquier SYST’AIME', () => {
+  it('compose 64 recettes 5D déterministes, distinctes et toutes de forme rosace', async () => {
+    const { COLLECTION_ROSACES } = await import('../../../src/rosace/collection');
+    const { genererRosace } = await import('../../../src/rosace/modele');
+    expect(COLLECTION_ROSACES).toHaveLength(64);
+    expect(new Set(COLLECTION_ROSACES.map(r => r.code)).size).toBe(64);
+    expect(COLLECTION_ROSACES.map(r => r.numero)).toEqual(Array.from({ length: 64 }, (_, i) => i + 1));
+    expect(COLLECTION_ROSACES.slice(1, 4).map(r => r.nom)).toEqual(['Carreau rose', 'Givre', 'Kaléidoscope']);
+    const empreintes = COLLECTION_ROSACES.map(r => {
+      expect(lireCode(r.code)).toEqual(r.recette);
+      expect(r.recette.signature.structure).toBe(0);
+      const { pattern, controle } = genererRosace(r.recette);
+      expect([pattern.w, pattern.h]).toEqual([61, 61]);
+      expect(controle.croix).toBeGreaterThan(0);
+      expect(pattern.recette?.code).toBe(r.code);
+      expect(pattern.recette?.empreinte).toBe(empreinteCroix(pattern));
+      expect(pattern.palette.every(i => !!FLOSS[i]?.code)).toBe(true);
+      return pattern.recette!.empreinte;
+    });
+    expect(new Set(empreintes).size).toBe(64);
+    expect(genererRosace(COLLECTION_ROSACES[63].recette).pattern.recette?.empreinte).toBe(empreintes[63]);
+  });
+
+  it('parcourt toute la collection, boucle et rejoint ses extrémités depuis une recette libre', async () => {
+    const { COLLECTION_ROSACES: c, prochaineRosace } = await import('../../../src/rosace/collection');
+    expect(prochaineRosace(c[0].code, -1)).toBe(c[63]);
+    expect(prochaineRosace(c[63].code, 1)).toBe(c[0]);
+    expect(prochaineRosace('hors-collection', 1)).toBe(c[0]);
+    expect(prochaineRosace('hors-collection', -1)).toBe(c[63]);
+    let courant = c[0];
+    const visites = new Set<string>();
+    for (let i = 0; i < 64; i++) { visites.add(courant.code); courant = prochaineRosace(courant.code, 1); }
+    expect(visites.size).toBe(64);
+    expect(courant).toBe(c[0]);
+  });
+});

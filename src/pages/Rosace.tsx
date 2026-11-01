@@ -1,20 +1,26 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Tete, Pied } from '../charte/Charte';
-import { Lien } from '../lib/router';
+import { Lien, useRecherche } from '../lib/router';
 import DisqueOne from '../../studio/src/components/one/DisqueOne';
 import type { ModePoint } from '../../studio/src/lib/point/modes';
-import { DIMENSIONS, lireCode, type Choix, type Recette, type Signature } from '../../studio/src/lib/motif5d/code';
-import { RECETTES } from '../../studio/src/lib/motif5d/recettes';
+import { DIMENSIONS, type Choix, type Recette, type Signature } from '../../studio/src/lib/motif5d/code';
 import { FLOSS } from '../../studio/src/lib/dmc';
 import { cm, duree } from '../../studio/src/lib/cadre';
 import { patternToSvg } from '../../studio/src/lib/svg';
 import { mouvementReduit } from '../../studio/src/components/edition/defilement';
 import ToileRosace from '../rosace/ToileRosace';
+import GalerieRosaces from '../rosace/GalerieRosaces';
+import { COLLECTION_ROSACES, prochaineRosace, type RosaceCollection } from '../rosace/collection';
+import { useConfortPartage } from '../rosace/useConfortPartage';
 import { calculerRosace, changerDimension, lienAtelier, RECETTE_INITIALE, varier } from '../rosace/modele';
 import '../rosace/rosace.css';
 
 const I = ({ children }: { children: ReactNode }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>;
 const ICONES: Record<string, ReactNode> = {
+  rosaces: <I><circle cx="12" cy="12" r="8.5" /><circle cx="8.5" cy="8.5" r="1.4" /><circle cx="15.5" cy="8.5" r="1.4" /><circle cx="8.5" cy="15.5" r="1.4" /><circle cx="15.5" cy="15.5" r="1.4" /></I>,
+  precedente: <I><path d="M19 12H5M11 6l-6 6 6 6" /></I>,
+  suivante: <I><path d="M5 12h14M13 6l6 6-6 6" /></I>,
+  collection: <I><rect x="4" y="4" width="6" height="6" rx="1" /><rect x="14" y="4" width="6" height="6" rx="1" /><rect x="4" y="14" width="6" height="6" rx="1" /><rect x="14" y="14" width="6" height="6" rx="1" /></I>,
   formes: <I><circle cx="12" cy="12" r="8.5" /><path d="M12 3.5c4 4 4 13 0 17M3.5 12c4-4 13-4 17 0" /><circle cx="12" cy="12" r="2" /></I>,
   cinq: <I><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.5" /></I>,
   fils: <I><path d="M12 3a9 9 0 1 0 0 18c1.8 0 2.8-.8 2-2.1-.8-1.2.2-2.5 1.6-2.5H17a4 4 0 0 0 4-4C21 7 17 3 12 3Z" /><circle cx="7.5" cy="10" r=".8" /><circle cx="10" cy="6.8" r=".8" /><circle cx="14.5" cy="7" r=".8" /><circle cx="17" cy="10.5" r=".8" /></I>,
@@ -40,25 +46,16 @@ const allerSection = (id: string) => {
   cible?.querySelector<HTMLElement>('h2, h1')?.focus({ preventScroll: true });
 };
 
-function Galerie({ choisir }: { choisir: (r: Recette) => void }) {
-  const exemples = useMemo(() => ['Carreau rose', 'Givre', 'Kaléidoscope'].map(nom => {
-    const entree = RECETTES.find(r => r.nom === nom)!;
-    const recette = lireCode(entree.code)!;
-    return { ...entree, recette, ...calculerRosace(recette) };
-  }), []);
-  return <div className="ros-galerie-grille">
-    {exemples.map((r, i) => <article className="ros-galerie-item" key={r.code}>
-      <button type="button" className={'ros-galerie-figure ros-galerie-figure-' + i} onClick={() => choisir(r.recette)} data-code={r.code} aria-label={`Explorer ${r.nom}, recette ${r.code}`}>
-        <span className="ros-galerie-index">0{i + 1} / 03</span>
-        <span className="ros-galerie-cercle"><ToileRosace pattern={r.pattern} etiquette={`Rosace ${r.nom} calculée par le moteur 5D`} marge={.88} /></span>
-        <span className="ros-galerie-plus" aria-hidden="true">↗</span>
-      </button>
-      <div className="ros-galerie-legende"><div><h3>{r.nom}</h3><p>{r.pattern.w} × {r.pattern.h} points · {r.controle.fils} fils DMC</p></div><span>{r.code.split('.')[0]}</span></div>
-    </article>)}
-  </div>;
-}
-
 export default function Rosace() {
+  // Dans AIME SYSTEM, la page garde tout son contenu mais partage la navigation globale de l'hôte.
+  const recherche = useRecherche();
+  const dansSystem = new URLSearchParams(recherche).get('apercu') === 'system' && (() => {
+    try { return window.parent !== window && window.parent.location.origin === window.location.origin && window.parent.location.pathname.replace(/\/+$/, '') === '/system'; }
+    catch { return false; }
+  })();
+  useConfortPartage(dansSystem);
+  // Depuis l'aperçu, l'atelier s'ouvre dans la page hôte, pas dans un cadre étriqué.
+  const cibleHote = dansSystem ? '_parent' : undefined;
   const [recette, setRecette] = useState<Recette>(RECETTE_INITIALE);
   const [fil, setFil] = useState<number | null>(null);
   const [dimension, setDimension] = useState(0);
@@ -86,10 +83,12 @@ export default function Rosace() {
     cancelAnimationFrame(animation.current); setProgression(1); setFil(null);
     setRecette(r => varier(r)); setAnnonce('Une nouvelle variation de la même signature est calculée.');
   }, []);
-  const choisirRecette = (r: Recette) => {
-    cancelAnimationFrame(animation.current); setProgression(1); setFil(null); setRotation(0); setRecette(r);
-    setAnnonce('Cette recette est chargée dans le Disque et les autres lectures.'); allerSection('instrument');
+  const selectionnerRosace = (entree: RosaceCollection, depuisGalerie = false) => {
+    cancelAnimationFrame(animation.current); setProgression(1); setFil(null); setRotation(0); setRecette(entree.recette);
+    setAnnonce(`${entree.nom}, rosace ${entree.numero} sur 64 : la recette est chargée dans le Disque et les autres lectures.`);
+    if (depuisGalerie) allerSection('instrument');
   };
+  const parcourir = (direction: -1 | 1) => selectionnerRosace(prochaineRosace(code, direction));
   const naissance = () => {
     cancelAnimationFrame(animation.current);
     if (mouvementReduit() || document.documentElement.classList.contains('calme')) {
@@ -112,6 +111,15 @@ export default function Rosace() {
       enfants: () => d.reponses.map(([nom, aide], i): ModePoint => ({ id: `${cle}-${i}`, nom, aide, groupe: 'metier', actif: recette.signature[cle] === i, resteOuvert: true, ouvrir: () => choisirDimension(cle, i as Choix) })) };
   };
   const modes: ModePoint[] = [
+    { id: 'rosaces', nom: 'Rosaces', icone: ICONES.rosaces, aide: 'parcourir ou choisir une des 64 rosaces dans le Disque', groupe: 'metier', ouvrir: () => {},
+      enfants: () => [
+        { id: 'rosace-precedente', nom: 'Précédente', icone: ICONES.precedente, aide: 'afficher la rosace précédente de la collection', groupe: 'metier', resteOuvert: true, annonceEnPropre: true, ouvrir: () => parcourir(-1) },
+        { id: 'rosace-suivante', nom: 'Suivante', icone: ICONES.suivante, aide: 'afficher la rosace suivante de la collection', groupe: 'metier', resteOuvert: true, annonceEnPropre: true, ouvrir: () => parcourir(1) },
+        { id: 'rosace-choisir', nom: 'Les 64', icone: ICONES.collection, aide: 'choisir une rosace numérotée, par pages', groupe: 'metier', ouvrir: () => {},
+          enfants: () => COLLECTION_ROSACES.map((r): ModePoint => ({ id: 'rosace-' + r.numero, nom: r.nom, valeur: String(r.numero).padStart(2, '0'),
+            aide: `rosace ${r.numero} sur 64, recette ${r.code}`, groupe: 'metier', actif: r.code === code, resteOuvert: true, annonceEnPropre: true, ouvrir: () => selectionnerRosace(r) })) },
+        { id: 'rosace-grille', nom: 'La grille', icone: ICONES.points, aide: 'voir les 64 rosaces plus bas sur la page', groupe: 'metier', ouvrir: () => allerSection('formes') },
+      ] },
     { id: 'formes', nom: 'Formes', icone: ICONES.formes, aide: 'choisir la forme ou calculer une variation', groupe: 'metier', ouvrir: () => {},
       enfants: () => [...familleDimension('structure').enfants!(), { id: 'variation', nom: 'Variation', aide: 'calculer une autre variation de la même signature', groupe: 'creation', resteOuvert: true, ouvrir: autre }] },
     { id: '5d', nom: '5D', icone: ICONES.cinq, aide: 'tracé, densité, échelle et palette ; la forme est dans Formes', groupe: 'metier', ouvrir: () => {},
@@ -127,10 +135,10 @@ export default function Rosace() {
   const d = DIMENSIONS[dimension];
   return <>
     <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-    <Tete courant="/projets/brode-way" />
+    {!dansSystem && <Tete courant="/projets/brode-way" />}
     <main id="contenu" className="ros-page">
       <section className="ros-hero" id="instrument" aria-labelledby="ros-titre">
-        <div className="ros-topline"><Lien href="/projets/brode-way">← Broderie · LE MONDE AIME</Lien><span>UN INSTRUMENT À BRODER</span><a href={atelier}>L’atelier ↗</a></div>
+        <div className="ros-topline">{dansSystem ? <a href="/projets/brode-way" target="_parent">← Broderie · LE MONDE AIME</a> : <Lien href="/projets/brode-way">← Broderie · LE MONDE AIME</Lien>}<span>UN INSTRUMENT À BRODER</span><a href={atelier} target={cibleHote}>L’atelier ↗</a></div>
         <div className="ros-masthead">
           <p className="ros-kicker"><span className="ros-diamond" /> LE MONDE AIME PRÉSENTE <span className="ros-diamond" /></p>
           <h1 id="ros-titre" tabIndex={-1}>ROSACE<span aria-hidden="true">.</span></h1>
@@ -149,8 +157,8 @@ export default function Rosace() {
           <button type="button" onClick={() => { setRotation(a => (a + 22.5) % 360); setAnnonce('La vue tourne ; la grille et la recette restent inchangées.'); }}><span aria-hidden="true">↻</span> Tourner la vue</button>
           <button type="button" onClick={naissance}><span aria-hidden="true">◌</span> Voir naître</button>
         </div>
-        <p className="ros-indication">Choisissez un mode sur le cercle. La rotation concerne seulement l’aperçu.</p>
-        <div className="ros-hero-actions"><a className="ros-bouton ros-bouton-noir" href={atelier}>Créer ma rosace <span aria-hidden="true">↗</span></a><a className="ros-lien" href="#disques">Explorer les Disques <span aria-hidden="true">↓</span></a></div>
+        <p className="ros-indication">Dans le cercle, « Rosaces » parcourt la collection. La rotation concerne seulement l’aperçu.</p>
+        <div className="ros-hero-actions"><a className="ros-bouton ros-bouton-noir" href={atelier} target={cibleHote}>Créer ma rosace <span aria-hidden="true">↗</span></a><a className="ros-lien" href="#disques">Explorer les Disques <span aria-hidden="true">↓</span></a></div>
         <p className="ros-entree-note">La recette s’ouvre en aperçu dans l’atelier. Aucun ouvrage n’est créé avant votre choix.</p>
         <span className="sr-only" role="status" aria-live="polite">{annonce}</span>
       </section>
@@ -159,13 +167,14 @@ export default function Rosace() {
         <div className="ros-section-label"><span>01 / LE CERCLE</span><span>UNE FORME, PLUSIEURS LECTURES</span></div>
         <div className="ros-manifeste-texte"><div className="ros-petit-soleil" aria-hidden="true">✳</div><h2 id="ros-disques-titre" tabIndex={-1}>Un seul cercle.<br /><em>Des mondes à explorer.</em></h2><p>Une forme, des fils, une grille. Le Disque change de regard, jamais de matière : toutes ses lectures partent de la même rosace.</p></div>
         <ol className="ros-lectures">{LECTURES.map(([num, nom, texte]) => <li key={num}><span>{num}</span><h3>{nom}</h3><p>{texte}</p></li>)}</ol>
-        <p className="ros-lectures-note">Dans cette page : formes et 5D se composent, les fils se sélectionnent en lecture, les points et le Cadre se découvrent. Loupe, suivi et modification libre des fils restent dans l’atelier.</p>
+        <p className="ros-lectures-note">Dans cette page : le mode Rosaces parcourt 64 compositions ; formes et 5D se composent, les fils se sélectionnent en lecture, les points et le Cadre se découvrent. Loupe, suivi et modification libre des fils restent dans l’atelier.</p>
       </section>
 
       <section className="ros-section ros-galerie" id="formes" aria-labelledby="ros-galerie-titre">
         <div className="ros-section-label"><span>02 / LES FORMES</span><span>COMPOSITIONS CALCULÉES</span></div>
-        <div className="ros-heading-row"><div><p className="ros-eyebrow">LE CERCLE COMME POINT DE DÉPART</p><h2 id="ros-galerie-titre" tabIndex={-1}>À chaque geste,<br /><em>une autre rosace.</em></h2></div><p>Trois recettes du moteur 5D. Choisissez-en une : elle prend place dans le Disque et dans toutes les lectures de la page.</p></div>
-        <Galerie choisir={choisirRecette} />
+        <div className="ros-heading-row"><div><p className="ros-eyebrow">LE CERCLE COMME POINT DE DÉPART</p><h2 id="ros-galerie-titre" tabIndex={-1}>64 rosaces,<br /><em>autant de possibles.</em></h2></div><p>Trois recettes nommées du Studio et 61 compositions de cette page, toutes calculées par le moteur 5D. Choisissez-en une : elle prend place dans le Disque et toutes les lectures.</p></div>
+        <div className="ros-galerie-guide"><p>Parcourez avec les flèches ou la touche Tabulation. Chaque vignette ouvre sa recette dans le Disque.</p><a href="#cinq-dimensions" onClick={e => { e.preventDefault(); allerSection('cinq-dimensions'); }}>Passer la galerie ↓</a></div>
+        <GalerieRosaces choisir={r => selectionnerRosace(r, true)} codeActif={code} />
       </section>
 
       <section className="ros-section ros-cinq" id="cinq-dimensions" aria-labelledby="ros-cinq-titre">
@@ -188,7 +197,7 @@ export default function Rosace() {
 
       <section className="ros-section ros-fils" id="fils" aria-labelledby="ros-fils-titre">
         <div className="ros-section-label"><span>04 / LES FILS</span><span>NUANCIER DMC</span></div>
-        <div className="ros-fils-grid"><div className="ros-fils-texte"><p className="ros-eyebrow">LA COULEUR A UN NOM</p><h2 id="ros-fils-titre" tabIndex={-1}>Des fils qui<br /><em>se répondent.</em></h2><p>Chaque couleur de cette rosace correspond à une référence DMC. Touchez un fil pour le mettre en lumière dans les aperçus.</p><a className="ros-lien" href={atelier}>Continuer avec cette recette <span aria-hidden="true">↗</span></a><p className="ros-fineprint">La sélection est une lecture, pas un remplacement. Après « Broder ce motif », le nuancier est accessible dans l’atelier. Les couleurs à l’écran sont approximatives : vérifiez sur un nuancier physique.</p></div>
+        <div className="ros-fils-grid"><div className="ros-fils-texte"><p className="ros-eyebrow">LA COULEUR A UN NOM</p><h2 id="ros-fils-titre" tabIndex={-1}>Des fils qui<br /><em>se répondent.</em></h2><p>Chaque couleur de cette rosace correspond à une référence DMC. Touchez un fil pour le mettre en lumière dans les aperçus.</p><a className="ros-lien" href={atelier} target={cibleHote}>Continuer avec cette recette <span aria-hidden="true">↗</span></a><p className="ros-fineprint">La sélection est une lecture, pas un remplacement. Après « Broder ce motif », le nuancier est accessible dans l’atelier. Les couleurs à l’écran sont approximatives : vérifiez sur un nuancier physique.</p></div>
           <div className="ros-fil-instrument"><div className="ros-fil-roue" role="group" aria-label="Fils DMC de la recette actuelle">
             <svg viewBox="0 0 300 300" aria-hidden="true"><circle cx="150" cy="150" r="105" fill="none" stroke="#d7cebe" strokeWidth=".7" />{pattern.palette.map((idx, i) => <circle key={idx} cx="150" cy="150" r="105" fill="none" stroke={FLOSS[idx].hex} strokeWidth="8" pathLength="100" strokeDasharray={`${Math.max(0, 100 / pattern.palette.length - 1.3)} 100`} strokeDashoffset={-100 * i / pattern.palette.length} transform="rotate(-90 150 150)" />)}</svg>
             {pattern.palette.map((idx, i) => { const angle = (i / pattern.palette.length * 360 - 90) * Math.PI / 180; return <button key={idx} type="button" className="ros-fil-bouton" data-dmc={FLOSS[idx].code} aria-label={`DMC ${FLOSS[idx].code} : ${FLOSS[idx].name}`} aria-pressed={filActif === idx} onClick={() => choixFil(idx)} style={{ left: `${50 + 35 * Math.cos(angle)}%`, top: `${50 + 35 * Math.sin(angle)}%`, background: FLOSS[idx].hex }} />; })}
@@ -213,14 +222,14 @@ export default function Rosace() {
 
       <section className="ros-section ros-patron" id="lecture" aria-labelledby="ros-patron-titre">
         <div className="ros-section-label"><span>07 / LA LECTURE</span><span>LE PATRON</span></div>
-        <div className="ros-patron-grid"><div className="ros-patron-texte"><p className="ros-eyebrow">LE CERCLE DEVIENT PATRON</p><h2 id="ros-patron-titre" tabIndex={-1}>Prête à suivre<br /><em>le fil ?</em></h2><p>La grille et ses symboles deviennent un langage à lire, point après point. Voici un aperçu du patron de votre recette actuelle.</p><a className="ros-bouton ros-bouton-noir" href={atelier}>Continuer dans l’atelier <span aria-hidden="true">↗</span></a><p className="ros-fineprint">Aperçu ici. La loupe, le zoom, le suivi et les fonctions de patron se trouvent dans l’atelier après « Broder ce motif ».</p></div>
+        <div className="ros-patron-grid"><div className="ros-patron-texte"><p className="ros-eyebrow">LE CERCLE DEVIENT PATRON</p><h2 id="ros-patron-titre" tabIndex={-1}>Prête à suivre<br /><em>le fil ?</em></h2><p>La grille et ses symboles deviennent un langage à lire, point après point. Voici un aperçu du patron de votre recette actuelle.</p><a className="ros-bouton ros-bouton-noir" href={atelier} target={cibleHote}>Continuer dans l’atelier <span aria-hidden="true">↗</span></a><p className="ros-fineprint">Aperçu ici. La loupe, le zoom, le suivi et les fonctions de patron se trouvent dans l’atelier après « Broder ce motif ».</p></div>
           <figure className="ros-feuille"><div className="ros-feuille-tete"><span>ROSACE / POINT ZÉRO</span><span>01</span></div><img src={imagePatron} alt={`Aperçu du patron avec grille, symboles et légende pour la recette ${code}`} /><figcaption>APERÇU DU PATRON · {code}</figcaption></figure>
         </div>
       </section>
 
-      <section className="ros-final" aria-labelledby="ros-final-titre"><div className="ros-final-orbite" aria-hidden="true"><span>✳</span></div><p className="ros-eyebrow">MAINTENANT, À VOUS</p><h2 id="ros-final-titre">Le plus beau reste<br /><em>à broder.</em></h2><p>Emportez cette recette dans le même atelier, ou commencez une composition depuis le début.</p><div className="ros-final-actions"><a className="ros-bouton ros-bouton-clair" href={atelier}>Ouvrir ma rosace <span aria-hidden="true">↗</span></a><a className="ros-lien ros-lien-clair" href="/studio/atelier?ouvrir=composer">Composer depuis le début ↗</a></div><div className="ros-final-bas"><Lien href="/projets/brode-way">À propos de Brode Way ↗</Lien><a href="/studio/fleur-du-ciel">Découvrir La Fleur du Ciel ↗</a></div></section>
+      <section className="ros-final" aria-labelledby="ros-final-titre"><div className="ros-final-orbite" aria-hidden="true"><span>✳</span></div><p className="ros-eyebrow">MAINTENANT, À VOUS</p><h2 id="ros-final-titre">Le plus beau reste<br /><em>à broder.</em></h2><p>Emportez cette recette dans le même atelier, ou commencez une composition depuis le début.</p><div className="ros-final-actions"><a className="ros-bouton ros-bouton-clair" href={atelier} target={cibleHote}>Ouvrir ma rosace <span aria-hidden="true">↗</span></a><a className="ros-lien ros-lien-clair" href="/studio/atelier?ouvrir=composer" target={cibleHote}>Composer depuis le début ↗</a></div><div className="ros-final-bas">{dansSystem ? <a href="/projets/brode-way" target="_parent">À propos de Brode Way ↗</a> : <Lien href="/projets/brode-way">À propos de Brode Way ↗</Lien>}<a href="/studio/fleur-du-ciel" target={cibleHote}>Découvrir La Fleur du Ciel ↗</a></div></section>
       <p className="ros-credits">Données couleur : <a href="https://github.com/makebead/craft-color-codes" target="_blank" rel="noopener noreferrer">craft-color-codes par MakeBead</a>, CC BY 4.0. Créations 5D : usage personnel.</p>
     </main>
-    <Pied />
+    {!dansSystem && <Pied />}
   </>;
 }

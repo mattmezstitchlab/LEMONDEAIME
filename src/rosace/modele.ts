@@ -14,9 +14,14 @@ export const RECETTE_INITIALE: Recette = {
   version: VERSION,
 };
 
-export function calculerRosace(recette: Recette) {
+/** Calcul léger pour une vignette ; les mesures ne sont calculées que pour l'ouvrage courant. */
+export function genererRosace(recette: Recette) {
   const [w, h] = formatParDefaut(recette.signature);
-  const { pattern, controle } = generer({ ...recette, w, h });
+  return generer({ ...recette, w, h });
+}
+
+export function calculerRosace(recette: Recette) {
+  const { pattern, controle } = genererRosace(recette);
   return { pattern, controle, code: codeDe(recette), cadre: mesures(pattern), statistiques: computeStats(pattern) };
 }
 
