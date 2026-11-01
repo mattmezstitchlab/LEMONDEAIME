@@ -54,7 +54,7 @@ test('rien ne se joue ni ne se charge avant un geste ; le mp4 n’est qu’un li
 
 test('la navigation reste canonique et UPTOWN est conservé', () => {
   const acc = texte('src/pages/Accueil.tsx');
-  assert.ok(acc.includes('<Tete courant="/" verbes={<VerbesAccueil />} />'), 'le dock du haut canonique');
+  assert.ok(acc.includes('<Tete courant="/" />') && !acc.includes('verbes='), 'le dock du haut canonique (les verbes sont portés par le dock, une seule fois)');
   assert.ok(acc.includes('<OuvertureFleur />') && acc.includes('id="uptown"') && acc.includes('/studio/uptown'));
   assert.ok(!/<nav/.test(texte('src/ouverture/OuvertureFleur.tsx')), 'pas de nouvelle barre de navigation');
   assert.ok(/"\/studio\/fleur-du-ciel"|\/studio\/fleur-du-ciel/.test(texte('src/ouverture/OuvertureFleur.tsx')), 'le clip complet reste accessible');

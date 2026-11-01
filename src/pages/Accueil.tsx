@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
 import { Tete, DockBas, Pied, Orbe } from '../charte/Charte';
-import VerbesAccueil from '../charte/VerbesAccueil';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { useProjets } from '../lib/projets';
@@ -31,7 +30,7 @@ export default function Accueil() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/" verbes={<VerbesAccueil />} />
+      <Tete courant="/" />
       <main id="contenu">
         <OuvertureFleur />
         <div className="ac-cadre">

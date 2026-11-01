@@ -1,6 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { Tete, DockBas, Pied } from '../charte/Charte';
-import VerbesAccueil from '../charte/VerbesAccueil';
 import { Lien } from '../lib/router';
 import { useTheme, CHOIX_THEMES } from '../../studio/src/design/theme';
 import '../../studio/src/design/aime.css';
@@ -101,7 +100,7 @@ export default function System() {
 
   return <>
     <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-    <Tete courant="/system" verbes={<VerbesAccueil />} />
+    <Tete courant="/system" />
     <div data-aime={theme} className="sys">
       <main id="contenu" className="sys-in">
         <header className="sys-hero">

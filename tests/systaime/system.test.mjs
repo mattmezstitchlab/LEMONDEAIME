@@ -88,8 +88,12 @@ test('la landing raconte UPTOWN et mène au clip sans dupliquer le lecteur', () 
 
 test('une seule famille de navigation : /, /system et /systaime partagent les mêmes verbes, sans second dock', () => {
   for (const f of ['src/pages/Accueil.tsx', 'src/pages/System.tsx', 'src/pages/Systaime.tsx']) {
-    const t = lire(f); assert.match(t, /VerbesAccueil/, f); assert.match(t, /<Tete /, f);
+    /* convergence : la liste des verbes n'est plus passée page par page (prop `verbes`), elle est portée une seule fois par le dock */
+    const t = lire(f); assert.match(t, /<Tete /, f); assert.doesNotMatch(t, /verbes=/, f + ' : aucune liste de verbes propre à la page');
   }
+  const charte = lire('src/charte/Charte.tsx');
+  assert.match(charte, /import \{ DESTINATIONS \} from '\.\.\/lib\/intention\.mjs'/, 'les verbes viennent de la donnée canonique DESTINATIONS');
+  assert.match(charte, /export const ENTREES/, 'une seule liste, pour l\'ordinateur et pour le téléphone');
   assert.doesNotMatch(lire('src/pages/System.tsx'), /position:\s*fixed|className="dock/);
 });
 

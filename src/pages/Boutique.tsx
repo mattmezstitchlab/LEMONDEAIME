@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Tete, DockBas, VerbesSite, Pied } from '../charte/Charte';
+import {Tete, DockBas, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { CREATIONS, FACONS, UNIVERS, ecrireSelection, lireSelection, type Creation, type Facon, type Univers } from '../lib/boutique';
 
@@ -41,7 +41,7 @@ export default function Boutique() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/boutique" verbes={<VerbesSite actif="boutique" />} />
+      <Tete courant="/boutique" />
       <main id="contenu">
         <section id="catalogue" aria-labelledby="titre-boutique" style={{ padding: '40px var(--marge) 120px' }}>
           <h1 id="titre-boutique" className="grand-mot" style={{ textAlign: 'center', fontSize: 'clamp(56px, 12vw, 200px)' }}>Boutique</h1>

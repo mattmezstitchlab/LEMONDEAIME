@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Tete, DockBas, VerbesSite, Pied } from '../charte/Charte';
+import {Tete, DockBas, Pied } from '../charte/Charte';
 import { EntrerBloc } from '../charte/EntrerBloc';
 import { ChoisirMorceau, ListeMorceaux, enPiste } from '../charte/Morceaux';
 import { MOMENTS, mesMusiques, type Moment, type Musique as M } from '../lib/musique';
@@ -17,7 +17,7 @@ export default function Musique() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/musique" verbes={<VerbesSite />} />
+      <Tete courant="/musique" />
       <main id="contenu" style={{ padding: '40px var(--marge) 140px' }}>
         <h1 className="grand-mot" style={{ textAlign: 'center', fontSize: 'clamp(52px, 11vw, 190px)' }}>Musique</h1>
         <p style={{ margin: '18px auto 0', maxWidth: '36rem', textAlign: 'center', fontSize: 'clamp(18px, 1.7vw, 24px)', lineHeight: 1.35 }}>La journée en musique : chaque moment du Jour J, dans l’ordre, avec ses morceaux. La playlist est la timeline.</p>
