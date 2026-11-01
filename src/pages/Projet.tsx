@@ -3,12 +3,14 @@ import { Tete, VerbesProjets, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { ETATS, externe, lireProjet, useAdmin, useProjets, type Projet as P } from '../lib/projets';
 import { CarteProjet, Visiter } from './Portfolio';
+import { ENTREES_BRODERIE, estBroderie, ouvrageARepris } from '../lib/entreesBroderie.mjs';
 
 /* /projets/<slug> : la page de présentation d'un projet, à la manière d'Awwwards. Le titre, l'accroche, la fiche (catégorie,
    année, état, rôle) et « Visiter le site » ; la grande image, le texte, la galerie ; puis le projet suivant. */
 export default function Projet({ slug }: { slug: string }) {
   const [p, setP] = useState<P | null | undefined>(undefined);
   const tous = useProjets();
+  const [reprise] = useState(() => { try { return ouvrageARepris(window.localStorage); } catch { return null; } });
   const admin = useAdmin();
   useEffect(() => { let vivant = true; setP(undefined); lireProjet(slug).then(x => { if (vivant) setP(x); }); return () => { vivant = false; }; }, [slug, admin]);
   useEffect(() => { document.title = p ? p.titre + ' — LE MONDE AIME' : p === null ? 'LE MONDE AIME — Projet introuvable' : 'LE MONDE AIME'; }, [p]);
@@ -47,6 +49,18 @@ export default function Projet({ slug }: { slug: string }) {
               {admin && <Lien className="bouton" href={'/admin?projet=' + p.slug}>Modifier</Lien>}
             </div>
           </section>
+          {estBroderie(p) && <section aria-labelledby="titre-entrees" className="section" style={{ paddingInline: 'var(--marge)' }}>
+            <h2 id="titre-entrees" className="surtitre">Entrer dans l’atelier</h2>
+            <ul className="ac-chemins" aria-label="Entrées directes dans l’atelier de broderie">
+              {ENTREES_BRODERIE.map(e => {
+                const vide = e.id === 'reprendre' && !reprise;
+                const sub = e.id === 'reprendre' ? (reprise ? 'Reprendre « ' + reprise.nom + ' », tel que vous l’avez laissé sur cet appareil.' : 'Aucun ouvrage sur cet appareil pour l’instant. Créez un motif ou importez un patron : il s’ouvrira ici ensuite.') : e.sub;
+                return vide
+                  ? <li key={e.id}><span className="ac-chemin" data-entree={e.id} data-vide="true" aria-disabled="true" style={{ opacity: .72 }}><span style={{ margin: 0 }}><b>{e.nom}</b><span>{sub}</span></span><em>Aucun ouvrage</em></span></li>
+                  : <li key={e.id}><a className="ac-chemin" href={e.href} data-entree={e.id}><span style={{ margin: 0 }}><b>{e.nom}</b><span>{sub}</span></span><em>Atelier Brode Way<span className="sr-only"> (s’ouvre dans le Studio)</span></em></a></li>;
+              })}
+            </ul>
+          </section>}
           {p.couverture && <figure className="pf-couverture"><img src={p.couverture} alt={p.alt} /></figure>}
           {p.description && <section aria-label="Le projet" className="section blanche">
             <div className="pf-description">{p.description.split(/\n{2,}/).map((t, n) => <p key={n} className="texte">{t}</p>)}</div>

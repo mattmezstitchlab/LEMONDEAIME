@@ -28,7 +28,9 @@ const SIGNES: Record<string, ReactNode> = {
   [EFFACER]: svg(<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />),
 };
 
-export default function LePoint({ modes, part = 0, teinte = "#FFFFFF", etiquette, guide = "cercle", annonceExterne, refBouton, ancrage = "dessus", memoire, scene = false, centre, tambour }: {
+export default function LePoint({ cheminInitial, modes, part = 0, teinte = "#FFFFFF", etiquette, guide = "cercle", annonceExterne, refBouton, ancrage = "dessus", memoire, scene = false, centre, tambour }: {
+  /** ouvrir le Point sur ce chemin de familles (identifiants) : l'entrée directe de l'atelier ; un identifiant inconnu laisse le premier cercle */
+  cheminInitial?: string[];
   modes: ModePoint[];
   /**
    * Facultatif (mode Tambour seulement, accord de Matt du 29/10) : au premier cercle, la sphère centrale devient un raccourci vers cette action
@@ -78,7 +80,7 @@ export default function LePoint({ modes, part = 0, teinte = "#FFFFFF", etiquette
   const [onde, setOnde] = useState(0);
   const [annonce, setAnnonce] = useState("");
   /* le chemin dans les familles : des identifiants, résolus à chaque rendu dans les modes frais (l'état change sous nos pieds) */
-  const [chemin, setChemin] = useState<string[]>([]);
+  const [chemin, setChemin] = useState<string[]>(cheminInitial ?? []);
   const [page, setPage] = useState(0);
   const bouton = useRef<HTMLButtonElement>(null);
   const racine = useRef<HTMLDivElement>(null);
