@@ -91,37 +91,27 @@ describe("Point Zéro spécialisé", () => {
     act(()=>invite.click());expect(onShare).toHaveBeenCalled();
     expect(view.textContent).toContain('Bientôt');
   });
-  it("présente les usages du vrai Disque sans captures d’écran", () => {
+  it("explique par l’image : le fond floral de la une, brodé sous la loupe, puis huit chapitres illustrés et tout le studio", () => {
     const { view, onOpen } = mount();
     expect(view.querySelector("#editions")).toBeNull();
-    expect(view.querySelectorAll('#chapitres img[src*="ecran-"]')).toHaveLength(0);
-    expect(view.querySelectorAll('#usages-disque .lp-scene-hote')).toHaveLength(1);
-    const index = view.querySelector('[aria-label="Tous les usages du Disque"]')!;
-    expect(index.querySelectorAll('button')).toHaveLength(8);
-    act(() => index.querySelector<HTMLButtonElement>('#ch-docks')!.click());
-    expect(view.querySelector('[aria-label="Usage choisi"]')?.textContent).toContain('Une couronne');
-    act(() => [...view.querySelectorAll<HTMLButtonElement>('button')].find(b=>b.textContent==='Créer dans l’atelier')!.click());
-    expect(onOpen).toHaveBeenLastCalledWith('create');
-    act(() => index.querySelector<HTMLButtonElement>('#ch-nuancier')!.click());
-    expect(view.querySelectorAll('.usages-fils li').length).toBeGreaterThan(0);
-    const tout = view.querySelector('#tout')!;
-    expect(tout.querySelectorAll('dt')).toHaveLength(12);
-    for (const t of ['demi-point','point arrière','puzzle PDF','Miyuki Delica','parking des fils','PDF paginé','contraste élevé']) expect(tout.textContent).toContain(t);
-  });
-  it("les usages import, visite et ouvrages réutilisent les callbacks existants", () => {
-    const onOuvrages=vi.fn(), onVisite=vi.fn();
-    const {view,onImport}=mount({onOuvrages,onVisite});
-    const input=view.querySelector<HTMLInputElement>('input[aria-label="Importer depuis le Disque de présentation"]')!;
-    const file=new File(['x'],'motif.png',{type:'image/png'});
-    Object.defineProperty(input,'files',{value:[file]});
-    act(()=>input.dispatchEvent(new Event('change',{bubbles:true})));
-    expect(onImport).toHaveBeenCalledExactlyOnceWith(file);expect(input.value).toBe('');
-    act(()=>view.querySelector<HTMLButtonElement>('#ch-point')!.click());
-    const panel=view.querySelector('.usages-detail')!;
-    act(()=>[...panel.querySelectorAll<HTMLButtonElement>('button')].find(b=>b.textContent==='Faire la visite avec Le Point')!.click());
-    expect(onVisite).toHaveBeenCalledTimes(1);
-    act(()=>[...panel.querySelectorAll<HTMLButtonElement>('button')].find(b=>b.textContent==='Mes ouvrages de broderie')!.click());
-    expect(onOuvrages).toHaveBeenCalledTimes(1);
+    expect(view.querySelector(".ru .ed-brode-vue")?.getAttribute("aria-label")).toMatch(/palampore.*points de croix/);
+    expect(view.querySelector(".ru figcaption")?.textContent).toMatch(/domaine public/);
+    const chapitres = view.querySelectorAll("#chapitres .ch");
+    expect(chapitres).toHaveLength(8);
+    for (const c of chapitres) {
+      expect(c.querySelector("h2")?.textContent, c.id).toBeTruthy();
+      const imgs = c.querySelectorAll<HTMLImageElement>(".ch-ecran img");
+      expect(imgs.length, c.id).toBeGreaterThanOrEqual(1);
+      for (const im of imgs) { expect(im.alt.length, c.id).toBeGreaterThan(10); expect(im.getAttribute("src")).toMatch(/images\/landing\/ecran-.+\.webp$/); }
+    }
+    expect(view.querySelector("#ch-lectures")!.querySelectorAll(".ch-ecran img")).toHaveLength(3);
+    const index = view.querySelector('nav[aria-label="Chapitres"]')!;
+    expect([...index.querySelectorAll("a")].map(a => a.getAttribute("href"))).toEqual([...chapitres].map(c => "#" + c.id));
+    const tout = view.querySelector("#tout")!;
+    expect(tout.querySelectorAll("dt")).toHaveLength(12);
+    for (const t of ["demi-point", "point arrière", "puzzle PDF", "Miyuki Delica", "parking des fils", "PDF paginé", "contraste élevé"]) expect(tout.textContent).toContain(t);
+    act(() => [...view.querySelectorAll<HTMLButtonElement>(".ru button")].find(b => b.textContent === "Créer mon patron")!.click());
+    expect(onOpen).toHaveBeenLastCalledWith("create");
   });
   it("sans visite branchée, « Faire la visite » ouvre l’atelier", () => {
     const { view, onOpen } = mount();
