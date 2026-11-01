@@ -54,3 +54,8 @@ html.aime-public-studio .clip-deplier { top: calc(var(--aime-header-height) + 16
 html.aime-public-studio .clip-integre .clip-deplier { top:70px; }
 html.aime-public-studio .clip:not(.clip-integre) .clip-guide-indication { top:calc(var(--aime-header-height) + 16px); }
 html.aime-public-studio .pzt:has(.pzt-point) ~ .pzs-bottom { display:none; }
+.aime-menu-studio { padding:16px; color:#0b0b0c; }
+.aime-menu-studio nav { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:10px; }
+.aime-menu-studio nav a { display:flex; min-height:48px; align-items:center; padding:12px; border:1px solid #cfcfcb; border-radius:12px; color:#0b0b0c; text-decoration:none; }
+.aime-menu-studio dl { margin:28px 0; }.aime-menu-studio dl div { padding-block:12px; border-bottom:1px solid #ddd; }.aime-menu-studio dt { font-weight:700; }.aime-menu-studio dd { margin:4px 0 0; line-height:1.5; }
+@media(max-width:480px) { .aime-header-studio {padding-inline:6px;} .aime-header-ligne {gap:4px;} }

@@ -49,8 +49,8 @@ try {
   ok(await p.locator('[data-header-public]').count()===1,width+': un seul header');
   ok(await p.locator('footer').count()===1,width+': un seul footer');
   ok(await p.locator('.csh-integre .ch').count()===8,width+': huit sections broderie sur accueil');
-  ok(await p.evaluate(()=>!!(document.querySelector('.ouv')||document.querySelector('.ouv-scene')||document.querySelector('[aria-label="La Fleur du Ciel."]'))),'ouverture vidéo conservée');
-  ok(await p.getByRole('region',{name:'La Fleur du Ciel.',exact:true}).evaluate(e=>!!(e.compareDocumentPosition(document.querySelector('.csh-integre'))&Node.DOCUMENT_POSITION_FOLLOWING)),'présentation après la vidéo dans le document');
+  ok(await p.locator('.ouv,.ouv-scene,#demonstrations,.csh-actions-contextuelles,#tout,#csh-import,#commencer').count()===0,'vidéo et derniers blocs retirés de l’accueil');
+  ok(await p.locator('[data-entree-dmc]').count()===3,'grandes entrées en sections DMC');
   const sections=p.locator('.csh-integre .ch');const codes=[];
   for(const section of await sections.all()) {
    await section.scrollIntoViewIfNeeded();
@@ -61,8 +61,16 @@ try {
   ok(new Set(codes).size===8,'huit références DMC distinctes');
   ok(!requests.some(u=>/ecran-.*webp|peinture-roses.webp/.test(u)),'aucune capture ou fond floral de section chargé');
   ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),width+': sans débordement');
-  const link=p.getByRole('link',{name:'Importer mon fichier dans l’atelier',exact:true});
-  await link.click();await p.waitForURL(/\/studio\/atelier/);await p.getByRole('application',{name:/Grille de broderie/}).waitFor();ok(true,'import passe au véritable atelier');
+  await p.getByRole('button',{name:'Studio',exact:true}).click();
+  const dialog=p.getByRole('dialog',{name:'Menu du Studio'});await dialog.waitFor();
+  ok(await dialog.locator('dt').count()===12,'catalogue complet dans le header');
+  for(const name of ['Importer','Mes ouvrages','Continuer à broder','Créer un patron','Faire la visite avec Le Point','UPTOWN','La Fleur du Ciel']) ok(await dialog.getByRole('link',{name,exact:true}).count()===1,'accès conservé : '+name);
+  await p.keyboard.press('Escape'); await dialog.waitFor({state:'detached'});
+  await p.waitForFunction(()=>document.activeElement?.textContent==='Studio');
+  ok(await p.getByRole('button',{name:'Studio',exact:true}).evaluate(e=>document.activeElement===e),'Échap restaure le focus Studio');
+  await p.getByRole('button',{name:'Studio',exact:true}).click();
+  await dialog.getByRole('link',{name:'Importer',exact:true}).click();
+  await p.waitForURL(/\/studio\/atelier/);await p.getByRole('application',{name:/Grille de broderie/}).waitFor();ok(true,'import passe au véritable atelier');
   await p.context().close();
  }
  ok(errors.length===0,'pas d’erreur JS : '+errors.join('; '));console.log(`PASS ${checks} assertions accueil DMC`);

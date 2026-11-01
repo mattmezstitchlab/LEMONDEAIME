@@ -8,6 +8,7 @@ import { CHAPITRES_EDITION, EditionEnLigne } from "./edition/Edition";
 
 /** L'édition (la nouvelle narration sous le héros) : en essai privé derrière ?edition, la page actuelle reste la même sans ce paramètre. */
 /* le site Point Zéro (broderie seule) : l’édition en chapitres est sa landing, sans paramètre */
+import { TOUT } from "./catalogueStudio";
 import { SITE_BRODERIE } from "../lib/site";
 const estEdition = () => { if (SITE_BRODERIE) return true; try { return new URLSearchParams(window.location.search).has("edition"); } catch { return false; } };
 
@@ -48,20 +49,6 @@ export const CHAPITRES: Chapitre[] = [
 ];
 
 /* Tout le studio, en une liste : le nom, puis une ligne. */
-const TOUT: [string, string][] = [
-  ["Tous les points", "Croix, demi-point, quart, trois quarts, petite croix, point arrière, point lancé, nœud, perle."],
-  ["Les outils", "Main, gomme, remplir, pipette, sélection, lasso, déplacer, ligne, rectangle, ellipse, symétrie."],
-  ["Composer", "Motifs à glisser, calques, sujets déplaçables, lettres en croix, redimensionner, nettoyer."],
-  ["Importer", "Photo convertie en fils DMC, puzzle PDF recomposé, projets JSON et OXS, glisser-déposer."],
-  ["Les fils", "489 références DMC, recherche en français, fils mélangés, perles Miyuki Delica, remplacer au plus proche."],
-  ["Le stock", "Votre stock de fils, les fils manquants, la liste de courses, les quantités estimées."],
-  ["Broder", "Marquer case, bloc ou ligne ; parking des fils, notes, cases à défaire, journal des séances."],
-  ["Se repérer", "Le cercle de progression, la timeline fil par fil, la loupe, symboles, tout voir."],
-  ["Partager", "Inviter à regarder en direct, visibilité, PDF paginé, SVG, PNG, JSON."],
-  ["Garder", SITE_BRODERIE ? "Sauvegarde automatique sur cet appareil, Mes ouvrages, le fichier du projet à télécharger, hors ligne." : "Sauvegarde automatique, Mes ouvrages dans le dock, compte AIME synchronisé, hors ligne."],
-  ["Confort", "Débutante, confirmée, experte ; contraste élevé, texte plus grand, stylet, clavier, lecteur d’écran."],
-  ["Le Point", "La visite guidée de bout en bout, au clavier, qui imite le geste de chaque point."],
-];
 
 type SectionId = "chapitres" | "ch-point" | "tout" | "commencer";
 
@@ -116,6 +103,16 @@ export default function CrossStitchHome({ integre = false, projectName, onOpen, 
   const visite = () => (onVisite ? onVisite() : onOpen("create"));
   const [edition] = useState(() => !integre && estEdition());
   useParallaxe();
+  const visiteDemandee = useRef(false);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (integre || visiteDemandee.current || !params.has('visite')) return;
+    visiteDemandee.current = true;
+    params.delete('visite');
+    const q=params.toString();
+    window.history.replaceState(window.history.state, '', window.location.pathname+(q?'?'+q:'')+window.location.hash);
+    visite();
+  }, [integre, visite]);
 
   // Repère : la section visible est mise en évidence dans le dock du bas.
   useEffect(() => {
@@ -160,11 +157,11 @@ export default function CrossStitchHome({ integre = false, projectName, onOpen, 
     {!integre && <a className="csh-skip" href="#csh-main">Aller au contenu</a>}
     {!integre && <TraineePoints />}
 
-    <section className="csh-actions-contextuelles" aria-label="Actions de la présentation Broderie">
+    {!integre && <section className="csh-actions-contextuelles" aria-label="Actions de la présentation Broderie">
       <button type="button" onClick={enter}>Mes ouvrages de broderie</button>
       <button type="button" onClick={() => onOpen("stitch")}>Ouvrir l’atelier</button>
       <button type="button" onClick={visite}>Faire la visite avec Le Point</button>
-    </section>
+    </section>}
 
     {/* l'index des chapitres, à gauche, comme une table des matières qui suit la lecture */}
     {!edition && <nav className={"ix" + (chapitre ? " ix-on" : "")} aria-label="Chapitres">
@@ -188,6 +185,7 @@ export default function CrossStitchHome({ integre = false, projectName, onOpen, 
         {CHAPITRES.map((c, n) => <ChapitreVue key={c.id} c={c} n={n} onVoir={setChapitre} />)}
       </div>}
 
+      {!integre && <>
       <section className="pzh-section tout" id="tout" aria-labelledby="tout-titre">
         <div className="tout-tete">
           <p className="pzh-kicker">Tout ce que fait le studio</p>
@@ -252,6 +250,7 @@ export default function CrossStitchHome({ integre = false, projectName, onOpen, 
           <p>Le stockage du navigateur n’est pas une sauvegarde permanente : son effacement supprime les projets locaux. Dans le studio, téléchargez régulièrement votre projet JSON depuis Exporter. Les couleurs à l’écran sont indicatives et les quantités de fil estimées.</p>
         </aside>
       </section>
+      </>}
     </Contenu>
 
     {!integre && <footer className="pzh-foot">

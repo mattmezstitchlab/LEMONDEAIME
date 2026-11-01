@@ -6,7 +6,7 @@ const lire = p => readFileSync(new URL('../../' + p, import.meta.url), 'utf8');
 
 test('consolidation : compte canonique depuis le header, bibliothèque de patron séparée', () => {
   const header = lire('src/charte/HeaderPublic.tsx'), panel = lire('src/charte/PanneauPersonnel.tsx');
-  assert.match(header, /<PanneauPersonnel/); assert.match(header, /aria-label="Mon espace personnel"/);
+  assert.match(header, /<PanneauPersonnel/); assert.match(header, /aria-label=\{personnel === 'studio' \? 'Menu du Studio' : 'Mon espace personnel'\}/);
   assert.match(header, /root.inert=true/); assert.match(header, /root.inert=inertAvant/);
   for (const name of ['Projets', 'Partagés avec moi', 'Archives', 'Profil']) assert.ok(lire('src/charte/dossiersPersonnels.ts').includes(name));
   assert.match(panel, /<EntrerBloc/); assert.match(panel, /seDeconnecter\(\{ effacerOuvrages:/);

@@ -4,26 +4,28 @@ const PanneauPersonnel = lazy(() => import('./PanneauPersonnel'));
 import { useEffect, useId, useRef, useState } from 'react';
 import { ENTREES_PUBLIQUES, rubriqueActive } from './navigationPublique';
 import './header-public.css';
+import './panneau-personnel.css';
+import { TOUT } from '../../studio/src/components/catalogueStudio';
 
 // Extraction de la navigation de Tete : un seul rendu public pour les deux bundles.
 export default function HeaderPublic({ chemin = window.location.pathname }: { chemin?: string }) {
   const [ouvert, setOuvert] = useState(false);
-  const [personnel, setPersonnel] = useState(false);
+  const [personnel, setPersonnel] = useState<'compte' | 'studio' | null>(null);
   const compte = useRef<HTMLButtonElement>(null), panneau = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!personnel) return;
     const avant = document.body.style.overflow; document.body.style.overflow = 'hidden';
     const root = document.getElementById('root'); const inertAvant = root?.inert ?? false; if(root)root.inert=true;
-    const escape = (e: KeyboardEvent) => {if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();setPersonnel(false);requestAnimationFrame(()=>compte.current?.focus());}};
+    const escape = (e: KeyboardEvent) => {if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();setPersonnel(null);requestAnimationFrame(()=>compte.current?.focus());}};
     window.addEventListener('keydown',escape,true);
     requestAnimationFrame(() => panneau.current?.focus());
     return () => { document.body.style.overflow = avant; if(root)root.inert=inertAvant; window.removeEventListener('keydown',escape,true); };
   }, [personnel]);
-  const fermerPersonnel = () => { setPersonnel(false); requestAnimationFrame(() => compte.current?.focus()); };
+  const fermerPersonnel = () => { setPersonnel(null); requestAnimationFrame(() => compte.current?.focus()); };
   const id = useId();
   const bouton = useRef<HTMLButtonElement>(null), nav = useRef<HTMLElement>(null);
   const actif = rubriqueActive(chemin);
-  useEffect(() => { setOuvert(false); setPersonnel(false); }, [chemin]);
+  useEffect(() => { setOuvert(false); setPersonnel(null); }, [chemin]);
   useEffect(() => {
     if (!ouvert) return;
     nav.current?.querySelector<HTMLAnchorElement>('a')?.focus();
@@ -50,11 +52,21 @@ export default function HeaderPublic({ chemin = window.location.pathname }: { ch
       }}>
         <ul>{ENTREES_PUBLIQUES.map(e => <li key={e.href}><a href={e.href} aria-current={actif === e.href ? 'page' : undefined} onClick={() => setOuvert(false)}>{e.nom}</a></li>)}</ul>
       </nav>
-      <button ref={compte} type="button" className="aime-header-compte" aria-expanded={personnel} aria-controls="aime-personnel" onClick={() => {setOuvert(false); setPersonnel(true);}}>Mon espace</button>
+      <button type="button" className="aime-header-studio aime-header-compte" aria-expanded={personnel === 'studio'} aria-controls="aime-personnel" onClick={e => {compte.current=e.currentTarget;setOuvert(false);setPersonnel('studio');}}>Studio</button>
+      <button type="button" className="aime-header-compte" aria-expanded={personnel === 'compte'} aria-controls="aime-personnel" onClick={e => {compte.current=e.currentTarget;setOuvert(false); setPersonnel('compte');}}>Mon espace</button>
     </div>
-    {personnel && createPortal(<div className="aime-personnel-voile" onClick={e => {if(e.target===e.currentTarget)fermerPersonnel();}}><div ref={panneau} id="aime-personnel" className="aime-personnel" role="dialog" aria-modal="true" aria-label="Mon espace personnel" tabIndex={-1} onClickCapture={e => { if ((e.target as Element).closest('a[href]')) setPersonnel(false); }} onKeyDown={e => {
+    {personnel && createPortal(<div className="aime-personnel-voile" onClick={e => {if(e.target===e.currentTarget)fermerPersonnel();}}><div ref={panneau} id="aime-personnel" className="aime-personnel" role="dialog" aria-modal="true" aria-label={personnel === 'studio' ? 'Menu du Studio' : 'Mon espace personnel'} tabIndex={-1} onClickCapture={e => { if ((e.target as Element).closest('a[href]')) setPersonnel(null); }} onKeyDown={e => {
       if(e.key==='Escape'){e.preventDefault();e.stopPropagation();fermerPersonnel();}
       if(e.key==='Tab') { const els=[...e.currentTarget.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),input:not([disabled]),select')].filter(el=>el.getClientRects().length); const first=els[0],last=els[els.length-1]; if(e.shiftKey&&(document.activeElement===first||document.activeElement===e.currentTarget)){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();} }
-    }}><button className="aime-personnel-fermer" onClick={fermerPersonnel} type="button">Fermer mon espace</button><h2>Mon espace</h2><Suspense fallback={<p role="status">Ouverture de votre espace…</p>}><PanneauPersonnel /></Suspense></div></div>, document.body)}
+    }}><button className="aime-personnel-fermer" onClick={fermerPersonnel} type="button">{personnel === 'studio' ? 'Fermer le Studio' : 'Fermer mon espace'}</button><h2>{personnel === 'studio' ? 'Tout le Studio' : 'Mon espace'}</h2>{personnel === 'studio' ? <div className="aime-menu-studio"><nav aria-label="Entrées du Studio">{[
+['/studio/atelier','Ouvrir l’atelier'],
+['/studio/atelier?ouvrir=importer','Importer'],
+['/studio/atelier?ouvrir=composer','Créer un patron'],
+['/studio/atelier?ouvrir=reprendre','Continuer à broder'],
+['/studio/atelier?ouvrir=ouvrages','Mes ouvrages'],
+['/studio/?visite=1','Faire la visite avec Le Point'],
+['/studio/uptown','UPTOWN'],
+['/studio/fleur-du-ciel','La Fleur du Ciel'],
+].map(([href,nom])=><a key={href} href={href}>{nom}</a>)}</nav><dl>{TOUT.map(([nom,detail])=><div key={nom}><dt>{nom}</dt><dd>{detail}</dd></div>)}</dl><p>Le stockage du navigateur n’est pas une sauvegarde permanente : téléchargez régulièrement votre projet JSON depuis Exporter dans l’atelier. Les couleurs écran et les quantités de fil sont indicatives.</p></div> : <Suspense fallback={<p role="status">Ouverture de votre espace…</p>}><PanneauPersonnel /></Suspense>}</div></div>, document.body)}
   </header>;
 }

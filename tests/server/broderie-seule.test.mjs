@@ -5,8 +5,9 @@ const lire = p => readFileSync(new URL('../../' + p, import.meta.url), 'utf8');
 test('broderie : accueil dédié, deux films et outils, sans chemins vers les autres univers', () => {
   const accueil = lire('src/pages/AccueilBroderie.tsx');
   assert.match(lire('src/App.tsx'), /'\/': \[AccueilBroderie,/);
-  for (const href of ['/studio/', '/studio/atelier', '/studio/uptown', '/studio/fleur-du-ciel', '/buro']) assert.ok(accueil.includes(`href="${href}"`));
-  assert.match(accueil, /<OuvertureFleur/);
+  for (const href of ['/studio/atelier', '/studio/atelier?ouvrir=importer', '/studio/atelier?ouvrir=ouvrages']) assert.ok(accueil.includes(href));
+  assert.doesNotMatch(accueil, /<OuvertureFleur/);
+  assert.match(lire('src/charte/HeaderPublic.tsx'), /La Fleur du Ciel/);
   assert.doesNotMatch(accueil, /href="\/(?:aime-wedding|projets|reseau|musique|boutique|a-plus)/);
   for (const file of ['Accueil', 'AimeWedding', 'Portfolio', 'Reseau', 'Musique', 'Boutique']) assert.ok(existsSync(new URL('../../src/pages/' + file + '.tsx', import.meta.url)), file+' conservé');
 });

@@ -112,16 +112,22 @@ describe("Point Zéro spécialisé", () => {
     act(() => [...view.querySelectorAll<HTMLButtonElement>(".ru button")].find(b => b.textContent === "Créer mon patron")!.click());
     expect(onOpen).toHaveBeenLastCalledWith("create");
   });
-  it("s’intègre sans deuxième main, titre principal, footer ni champs d’import sans moteur", () => {
+  it("l’intégration ne reproduit ni vidéo, main, catalogue, import, reprise ou boutons d’entrée", () => {
     host=document.createElement('div');document.body.append(host);root=createRoot(host);
     const onOpen=vi.fn();
     act(()=>root!.render(<CrossStitchHome integre projectName="Vos ouvrages" onOpen={onOpen} onImport={vi.fn()} />));
-    expect(host.querySelector('main,h1,footer,.ru')).toBeNull();
+    expect(host.querySelector('main,h1,footer,.ru,.csh-actions-contextuelles,#tout,#csh-import,#commencer')).toBeNull();
     expect(host.querySelectorAll('.ch[data-dmc]')).toHaveLength(8);
     expect(host.querySelectorAll('input[type="file"]')).toHaveLength(0);
-    expect(host.querySelector('a[href="/studio/atelier?ouvrir=importer"]')).not.toBeNull();
-    act(()=>host!.querySelector<HTMLButtonElement>('.csh-actions-contextuelles button')!.click());
-    expect(onOpen).toHaveBeenCalledWith('library');
+    expect(onOpen).not.toHaveBeenCalled();
+  });
+  it("le lien visite du header appelle le guide existant une seule fois",()=>{
+    window.history.replaceState({},'', '/studio/?visite=1');
+    const onVisite=vi.fn();
+    mount({onVisite});
+    expect(onVisite).toHaveBeenCalledTimes(1);
+    expect(window.location.search).not.toContain('visite');
+    window.history.replaceState({},'','/');
   });
   it("sans visite branchée, « Faire la visite » ouvre l’atelier", () => {
     const { view, onOpen } = mount();
