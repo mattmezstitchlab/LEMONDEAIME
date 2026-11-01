@@ -12,6 +12,8 @@ const lireManifeste = () => JSON.parse(readFileSync(new URL('../docs/systaime/ma
 /* Le cœur, testable : moi() (la personne de la session, ou null), admins (la liste AIME_ADMIN), manifeste() (la lecture du fichier). */
 export async function traiter(req, res, { moi, admins, manifeste = lireManifeste }) {
   if (req.method !== 'GET') { res.setHeader('Allow', 'GET'); return json(res, 405, { ok: false, raison: 'Lecture seule.' }); }
+  /* ?sante=1 : seulement « le fichier est-il embarqué avec la fonction ? » (un booléen, aucun contenu) — pour vérifier un déploiement sans compte */
+  if (/[?&]sante=1(&|$)/.test(req.url || '')) { try { manifeste(); return json(res, 200, { ok: true, embarque: true }); } catch { return json(res, 200, { ok: true, embarque: false }); } }
   const m = await moi();
   if (!m) return json(res, 401, { ok: false, raison: 'Entrez dans AIME pour lire le détail interne.' });
   if (!estAdmin(m.email, admins)) return json(res, 403, { ok: false, raison: 'Réservé à l’administration du site.' });

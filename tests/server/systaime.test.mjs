@@ -177,6 +177,12 @@ test('systaime api : l’administration reçoit le manifeste interne, jamais mis
   assert.equal(r.code, 200); assert.equal(r.corps.manifeste.rules.length, 64);
   assert.equal(r.h['cache-control'], 'no-store'); assert.equal(r.h['x-robots-tag'], 'noindex');
 });
+test('systaime api : ?sante=1 dit seulement si le fichier est embarqué, sans aucun contenu, sans session', async () => {
+  const res = reponse(); await traiter({ method: 'GET', url: '/api/systaime?sante=1' }, res, { moi: async () => null, admins: '', manifeste: charger });
+  assert.equal(res.statusCode, 200); assert.deepEqual(JSON.parse(res.corps), { ok: true, embarque: true });
+  const r2 = reponse(); await traiter({ method: 'GET', url: '/api/systaime?sante=1' }, r2, { moi: async () => null, admins: '', manifeste: () => { throw new Error('x'); } });
+  assert.deepEqual(JSON.parse(r2.corps), { ok: true, embarque: false });
+});
 test('systaime api : lecture seule (POST, PUT, DELETE → 405)', async () => {
   for (const m of ['POST', 'PUT', 'DELETE', 'PATCH']) assert.equal((await appel(m, { email: 'matt@exemple.fr' })).code, 405, m);
 });
