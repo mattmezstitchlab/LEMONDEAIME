@@ -99,8 +99,10 @@ html.pz-dock-accroche:not(.pz-tambour-ouvert) .toast-in { top: auto !important; 
 .pzt-cartouche[data-etat="action"], .pzt-cartouche[data-etat="erreur"] { box-shadow: 0 8px 20px rgba(0,0,0,.25), inset 0 0 0 1px rgba(255,143,115,.45); }
 .pzt-cartouche b + span { display: block; }
 /* Navigation intégrale .0 (essai) : la rangée du dock du haut s'efface ; ses panneaux (Mes ouvrages, Chercher…) restent, ouverts depuis le disque */
-html.pz-nav0 .pzs-ligne { display: none; }
-html.pz-nav0 .pzs-top:not(:has(#pzs-bloc)) { display: none; }
+/* Le retour au site reste visible : la rangée ne garde que la flèche « Revenir sur Le Monde AIME » et AIME®, en haut à gauche ; tout le reste est dans le Disque. */
+html.pz-nav0 .pzs-head { align-items: flex-start; }
+html.pz-nav0 .pzs-ligne > :not(.pzs-marque):not(.pzs-icon:first-child) { display: none; }
+html.pz-nav0 .pzs-top:not(:has(#pzs-bloc)) { width: auto; padding: 4px; border-radius: 16px; }
 
 /* Tambour ouvert (navigation classique) : les outils du dock du haut (Dessiner, Broder, Fils, Partager) sont déjà dans la couronne (Points, Broder, Fils, Exporter › Partager en direct).
    On ne les répète pas : le dock garde l'orientation (retour au site, menu AIME, annuler/rétablir, chercher, Mes ouvrages). « Rétracter » les rend. */
