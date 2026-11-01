@@ -19,6 +19,7 @@ import type { ModePoint } from "../lib/point/modes";
 import type { ContexteBroderie } from "./blocs/broderie";
 import { anneauSvg, geometrieDisque, type Disque } from "../lib/tambour/disque";
 import { prochainPoint } from "../lib/tambour/suivi";
+import { cheminVers } from "../lib/ouvrir";
 import type { Pattern } from "../lib/pattern";
 import type { VueCadre } from "./Canvas";
 import "./blocs/broderie";
@@ -26,8 +27,10 @@ import "./TambourAtelier.css";
 
 export const CADRE_TAMBOUR_CLE = "pointzero:essai:cadre-tambour";
 export const PRESENTATION_CLE = "pointzero:disque:presentation";
-export const lireCadreTambour = () => { try { return localStorage.getItem(CADRE_TAMBOUR_CLE) === "1"; } catch { return false; } };
-export const ecrireCadreTambour = (v: boolean) => { try { if (v) localStorage.setItem(CADRE_TAMBOUR_CLE, "1"); else localStorage.removeItem(CADRE_TAMBOUR_CLE); } catch { /* rien */ } };
+/** Le Tambour est le mode normal de l'atelier (décision de Matt, 1/11/2026). « 1 » : choisi ; « 0 » : refusé par la personne (réglage Studio) ; absent : le mode normal. */
+export const TAMBOUR_PAR_DEFAUT = true;
+export const lireCadreTambour = () => { try { const v = localStorage.getItem(CADRE_TAMBOUR_CLE); return v === "1" || (v === null && TAMBOUR_PAR_DEFAUT); } catch { return TAMBOUR_PAR_DEFAUT; } };
+export const ecrireCadreTambour = (v: boolean) => { try { localStorage.setItem(CADRE_TAMBOUR_CLE, v ? "1" : "0"); } catch { /* rien */ } };
 
 /** les commandes gardées au premier anneau quand la place manque (le reste passe dans « Plus ») ; Confort est toujours là */
 export const PRIORITE = ["points", "broder", "fils", "affichage", "loupe", "retracter"];
@@ -49,7 +52,7 @@ function rectCadre(): Rect | null {
 /** le suivi de la couleur active, dans le cercle : son avancée (l'arc sur le bois, dit aussi en toutes lettres) et le prochain point */
 export interface SuiviCercle { code: string; hex: string; cells: number; done: number; /** le vrai motif, la couleur active, et le dernier point coché (null : on part du centre de la toile) */ motif: Pattern; couleur: number; depuis: number | null; /** montrer le prochain point dans la toile (le Guide est actif, on brode) */ montrer: boolean }
 
-export default function TambourAtelier({ contexte, retracter, part, etiquette, ouvrage, indicateurs, racine, suivi, centreContenu }: { contexte: ContexteBroderie; retracter: () => void; part?: number; etiquette?: string; ouvrage?: string; indicateurs?: Indicateurs; /** une autre racine (Navigation intégrale .0) ; sinon les commandes du bloc broderie */ racine?: ModePoint[]; suivi?: SuiviCercle;
+export default function TambourAtelier({ contexte, retracter, part, etiquette, ouvrage, indicateurs, racine, suivi, centreContenu, noeudDepart }: { /** l'entrée directe (« ?ouvrir= ») : la commande de la couronne sur laquelle s'ouvrir */ noeudDepart?: string; contexte: ContexteBroderie; retracter: () => void; part?: number; etiquette?: string; ouvrage?: string; indicateurs?: Indicateurs; /** une autre racine (Navigation intégrale .0) ; sinon les commandes du bloc broderie */ racine?: ModePoint[]; suivi?: SuiviCercle;
   /** un autre contenu réel au centre (le Bureau : les ouvrages) ; il peut se déployer en plein écran */
   centreContenu?: { titre: string; element: ReactNode; plein: boolean; quitterPlein: () => void; defile?: MutableRefObject<number> } }) {
   if (centreContenu) suivi = undefined;   /* le suivi parle de l'ouvrage : il se tait quand le centre montre autre chose */
@@ -130,6 +133,7 @@ export default function TambourAtelier({ contexte, retracter, part, etiquette, o
   // eslint-disable-next-line react-hooks/exhaustive-deps
   ], g.capacite), indic, id => indicateurs?.consulter(id)), [contexte, g.capacite, fermer, indic, racine]);
 
+  const [chemin0] = useState(() => noeudDepart ? cheminVers(modes, noeudDepart) : undefined);
   const c = g.Ro + 2, fin = phase === "ouvert";
   /* le cartouche dit ce qui se passe : la commande visée d'abord (geste de la personne), sinon l'information la plus importante */
   /* (les informations de routine, priorité négative — la sauvegarde ordinaire — gardent leur point mais ne prennent pas le cartouche) */
@@ -161,7 +165,7 @@ export default function TambourAtelier({ contexte, retracter, part, etiquette, o
       </svg>
       <span className="pzt-vis" aria-hidden="true" />
       <div className="pzt-point">
-        <Point scene tambour={{ rayon: g.rho, cote: 2 * c, parPage: g.capacite - 3 }} contexte="tambour-atelier" memoire="bloc-broderie" part={part} etiquette={etiquette} modes={modes}
+        <Point scene cheminInitial={chemin0} tambour={{ rayon: g.rho, cote: 2 * c, parPage: g.capacite - 3 }} contexte="tambour-atelier" memoire="bloc-broderie" part={part} etiquette={etiquette} modes={modes}
           centre={{ nom: "Sur ma toile", aide: "filmer votre vraie toile et y poser ce patron", icone: <Camera aria-hidden="true" />, ouvrir: surMaToile }} />
       </div>
       {/* le cartouche : le nom et l'aide de la commande visée (une nuance DMC : son numéro et son nom, jamais la couleur seule) */}
