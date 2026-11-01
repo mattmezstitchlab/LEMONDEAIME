@@ -7,12 +7,14 @@ const lire = p => readFileSync(new URL('../../' + p, import.meta.url), 'utf8');
 const js = ts.transpileModule(lire('src/charte/navigationPublique.ts'), { compilerOptions: { module: ts.ModuleKind.ESNext } }).outputText;
 const { ENTREES_PUBLIQUES, rubriqueActive } = await import('data:text/javascript;base64,' + Buffer.from(js).toString('base64'));
 
-test('header public : six entrées exactes, source unique et rubriques actives', () => {
-  assert.deepEqual(ENTREES_PUBLIQUES.map(e => e.nom), ['Accueil', 'Broderie', 'Mariage', 'Projets à venir', 'À propos', 'Contact']);
-  assert.deepEqual(ENTREES_PUBLIQUES.map(e => e.href), ['/', '/studio/', '/aime-wedding', '/projets-a-venir', '/a-propos', '/contact']);
+test('header public : entrées broderie exactes, source unique et rubriques actives', () => {
+  assert.deepEqual(ENTREES_PUBLIQUES.map(e => e.nom), ['Accueil', 'Broderie', 'Atelier']);
+  assert.deepEqual(ENTREES_PUBLIQUES.map(e => e.href), ['/', '/studio/', '/studio/atelier']);
   for (const e of ENTREES_PUBLIQUES) assert.equal(rubriqueActive(e.href), e.href);
-  for (const p of ['/studio', '/studio/atelier', '/studio/uptown', '/studio/fleur-du-ciel', '/projets/brode-way', '/point-zero']) assert.equal(rubriqueActive(p), '/studio/');
-  assert.equal(rubriqueActive('/a-propos/'), '/a-propos');
+  for (const p of ['/studio', '/studio/uptown', '/studio/fleur-du-ciel', '/projets/brode-way', '/point-zero']) assert.equal(rubriqueActive(p), '/studio/');
+  assert.equal(rubriqueActive('/a-propos/'), null);
+  assert.equal(rubriqueActive('/studio/atelier'), '/studio/atelier');
+  assert.equal(rubriqueActive('/aime-wedding'), null);
   assert.equal(rubriqueActive('/buro'), null, 'un espace de compte n’est pas une septième rubrique');
   assert.equal(rubriqueActive('/studio-inconnu'), null, 'pas de faux préfixe Studio');
 });

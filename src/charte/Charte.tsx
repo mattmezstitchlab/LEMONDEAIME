@@ -115,7 +115,7 @@ export function Pied() {
       <nav aria-label="Plan du site">
         {col('Le studio', [['Le studio', '/studio/'], ['L’atelier', '/studio/atelier']])}
         {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil']])}
-        {col('La maison', [['À propos d’AIME', '/a-propos'], ['Les projets d’AIME', '/projets'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', '/contact'], ['Mentions légales', null]])}
+        {col('Démonstrations de broderie', [['La Fleur du Ciel', '/studio/fleur-du-ciel'], ['UPTOWN', '/studio/uptown']])}
       </nav>
       <div className="bas"><p style={{ margin: 0 }}>AIME® est la marque mère. LE MONDE AIME est une association.</p><p style={{ margin: 0 }}>© 2026 AIME®</p></div>
     </footer>
