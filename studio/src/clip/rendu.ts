@@ -17,7 +17,7 @@ in vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }`;
 
 const FS = `#version 300 es
 precision highp float; precision highp int; precision highp usampler2D;
-uniform usampler2D uIdx; uniform sampler2D uPal; uniform sampler2D uSym;
+uniform usampler2D uIdx; uniform sampler2D uPal; uniform sampler2D uSym; uniform sampler2D uMarque; uniform float uPulse;
 uniform vec2 uTaille;            // la toile, en pixels (du canevas)
 uniform vec3 uVue;               // centre de la vue (en cases) et cases par pixel
 uniform vec4 uLoupe;             // x, y (pixels), rayon (pixels), grossissement (0 : pas de loupe)
@@ -133,6 +133,11 @@ vec3 caseRendu(vec2 g, float macro){
     if (abs(lum(nb) - lum(col)) > .28) r = brin(r, uv, vec2(-.02, 1.), vec2(1.02, 1.), .16, noir, h21(c + 22.) * 6.28, true, 1.);
   }
   if (m == 2 && uGrille > .5 && (mod(c.x, 10.) < .5 && uv.x < .07 || mod(c.y, 10.) < .5 && uv.y < .07)) r = vec3(.275, .275, .306);
+  // les points marqués (les confettis : un point seul de sa couleur) battent, cerclés d'or
+  if (uPulse > 0. && texelFetch(uMarque, ivec2(c), 0).r > .5){
+    float d = length(uv - .5); r = mix(r, r * 1.25 + .12, uPulse);
+    if (abs(d - .44) < .07) r = mix(r, vec3(1., .82, .2), uPulse);
+  }
   return r * (1. + .10 * uEclat) + .024 * uEclat;
 }
 
@@ -181,7 +186,7 @@ export interface EtatRendu {
 }
 
 export class RenduClip {
-  gl: WebGL2RenderingContext; prog: WebGLProgram; tIdx: WebGLTexture; tPal: WebGLTexture; tSym: WebGLTexture;
+  gl: WebGL2RenderingContext; prog: WebGLProgram; tIdx: WebGLTexture; tPal: WebGLTexture; tSym: WebGLTexture; tMarque: WebGLTexture;
   u: Record<string, WebGLUniformLocation | null> = {};
   constructor(public canvas: HTMLCanvasElement) {
     const gl = canvas.getContext("webgl2", { antialias: false, preserveDrawingBuffer: false });
@@ -193,13 +198,14 @@ export class RenduClip {
     this.prog = p; gl.useProgram(p);
     const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     const loc = gl.getAttribLocation(p, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    for (const n of ["uIdx", "uPal", "uSym", "uTaille", "uVue", "uLoupe", "uTambour", "uT", "uBattue", "uBrode", "uBrodeT0", "uEclat", "uEnvers", "uArriere", "uGrille", "uParties", "uNParties", "uNFils"]) this.u[n] = gl.getUniformLocation(p, n);
+    for (const n of ["uIdx", "uPal", "uSym", "uTaille", "uVue", "uLoupe", "uTambour", "uT", "uBattue", "uBrode", "uBrodeT0", "uEclat", "uEnvers", "uArriere", "uGrille", "uParties", "uNParties", "uNFils", "uMarque", "uPulse"]) this.u[n] = gl.getUniformLocation(p, n);
     const tex = (unit: number) => { const t = gl.createTexture()!; gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); return t; };
     this.tIdx = tex(0); gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1); gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8UI, G, G, 0, gl.RED_INTEGER, gl.UNSIGNED_BYTE, new Uint8Array(G * G));
     this.tPal = tex(1); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, NB_FILS, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(NB_FILS * 4));
     this.tSym = tex(2); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlasSymboles());
-    gl.uniform1i(this.u.uIdx, 0); gl.uniform1i(this.u.uPal, 1); gl.uniform1i(this.u.uSym, 2);
+    this.tMarque = tex(3); gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8, G, G, 0, gl.RED, gl.UNSIGNED_BYTE, new Uint8Array(G * G));
+    gl.uniform1i(this.u.uIdx, 0); gl.uniform1i(this.u.uPal, 1); gl.uniform1i(this.u.uSym, 2); gl.uniform1i(this.u.uMarque, 3);
   }
   /** les fils : leur couleur, et leur état (1 montré, .4 estompé, 0 caché) */
   palette(fils: { rgb: number[]; etat: number }[]) {
@@ -207,6 +213,11 @@ export class RenduClip {
     fils.forEach((f, i) => { d.set([f.rgb[0], f.rgb[1], f.rgb[2], Math.round(f.etat * 255)], i * 4); });
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, this.tPal); gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, NB_FILS, 1, gl.RGBA, gl.UNSIGNED_BYTE, d);
     gl.uniform1i(this.u.uNFils, fils.length);
+  }
+  /** les points à montrer (1 octet par point : 255 marqué), et l'intensité du battement (0 : rien) */
+  marque(m: Uint8Array | null, pulse = 0) {
+    const gl = this.gl; if (m) { gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, this.tMarque); gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, G, G, gl.RED, gl.UNSIGNED_BYTE, m); }
+    gl.uniform1f(this.u.uPulse, pulse);
   }
   image(idx: Uint8Array) {
     const gl = this.gl; gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.tIdx);
