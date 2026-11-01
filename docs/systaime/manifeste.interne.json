@@ -1,0 +1,3673 @@
+{
+ "schema": "systaime-manifest",
+ "version": "0.3.0",
+ "status": "v1-non-approuve",
+ "generated": "2026-11-01",
+ "source_commit": {
+  "repo": "LEMONDEAIME",
+  "sha": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+  "branche": "main"
+ },
+ "empreintes_prises_sur": "arbre de travail de la branche feat/systaime-v1 (les fichiers du lot lui-mêmes ne sont pas référencés)",
+ "vocabulaire_statuts": [
+  "operationnel",
+  "partiel",
+  "simule",
+  "hypothese",
+  "non-verifie"
+ ],
+ "themes": [
+  "visuel",
+  "interaction",
+  "donnees",
+  "relations",
+  "restitution",
+  "memoire"
+ ],
+ "layers": [
+  "principes",
+  "tokens",
+  "composants",
+  "contrats",
+  "tests",
+  "versions"
+ ],
+ "approuve_manifeste": false,
+ "responsabilite": {
+  "fonctionnel": {
+   "nom": "Matthieu Lecointre",
+   "portee": "six-themes",
+   "statut": "provisoire-propose",
+   "approuve": false,
+   "approuve_le": null,
+   "note": "Responsabilité fonctionnelle proposée (décision D-3), sous réserve de son approbation finale du manifeste. Sans lien avec les rôles techniques ni les droits d’accès."
+  },
+  "acces": {
+   "roles_techniques": null,
+   "note": "Les droits d’accès réels sont la liste AIME_ADMIN côté serveur ; ils ne sont pas inscrits ici."
+  }
+ },
+ "policies": {
+  "no_unverified_claims": true,
+  "one_canonical_engine_per_function": true,
+  "reference_is_not_permission": true,
+  "no_automatic_write": true,
+  "evidence_required_for_operational_status": true
+ },
+ "rules": [
+  {
+   "id": "visuel.principes",
+   "kind": "croisement",
+   "theme": "visuel",
+   "layer": "principes",
+   "name": "visuel × principes",
+   "role": "Direction visuelle du socle (Nuit/Jour, deux couches interface/éditorial)",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/design/aime.css",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/design/aime.css",
+      "blob": "ff73275976afc0746ab0eb1e1c128f8880d9ad8f"
+     },
+     {
+      "path": "studio/docs/AIME-CANONICAL-DESIGN.md",
+      "blob": "24f2c95546bd089e5d4d0f254d59a1e3445e78f9"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Principes écrits en commentaire d'en-tête de aime.css ; aucune décision signée dans le dépôt."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Visuel × Principes",
+    "resume": null
+   }
+  },
+  {
+   "id": "visuel.tokens",
+   "kind": "croisement",
+   "theme": "visuel",
+   "layer": "tokens",
+   "name": "visuel × tokens",
+   "role": "Jetons visuels du studio (--aime-*, 76 variables)",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/design/aime.css",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/design/aime.css",
+      "blob": "ff73275976afc0746ab0eb1e1c128f8880d9ad8f"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/aimeTokens.test.ts",
+      "blob": "ee2f76d1c72c39d2571886276cb7f4aafdde721b"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/aimeTokens.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Seul jeu de tokens réellement consommé et testé côté studio ; le site racine utilise src/styles.css (--encre, --fond) et le studio garde index.css (--color-*) et pointzero.css (--pz-*)."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [
+    "visuel.contrats"
+   ],
+   "sensible": false,
+   "public": {
+    "nom": "Visuel × Tokens",
+    "resume": null
+   }
+  },
+  {
+   "id": "visuel.composants",
+   "kind": "croisement",
+   "theme": "visuel",
+   "layer": "composants",
+   "name": "visuel × composants",
+   "role": "Composants de charte (site) et composants du socle (studio)",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "src/charte/Charte.tsx",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "src/charte/Charte.tsx",
+      "blob": "271970f6d917d59455ad1658efc61ab4018b6af1"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "7 fichiers src/charte + aime-composants.css (12 variables). studio/src/design/components.css existe mais aucun code ne l'importe. Aucun test exécuté ici."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Visuel × Composants",
+    "resume": null
+   }
+  },
+  {
+   "id": "visuel.contrats",
+   "kind": "croisement",
+   "theme": "visuel",
+   "layer": "contrats",
+   "name": "visuel × contrats",
+   "role": "Jeton de référence tokens.json 1.0.0 (provenance du dépôt Lab, commit 3634a31)",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/design/tokens.json",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/design/tokens.json",
+      "blob": "85d3df6f8fd4e493a3e8f141308f614b03af0fb5"
+     },
+     {
+      "path": "studio/docs/AIME-CANONICAL-DESIGN.md",
+      "blob": "24f2c95546bd089e5d4d0f254d59a1e3445e78f9"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Le fichier existe mais aucun code ne l'importe, designSystem.ts décrit par la doc est absent, et ses valeurs (DM Sans, Manrope, #161616, pétrole #164c70) contredisent aime.css (Inter Tight). Aucun test."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [
+    "visuel.tokens"
+   ],
+   "sensible": false,
+   "public": {
+    "nom": "Visuel × Contrats",
+    "resume": null
+   }
+  },
+  {
+   "id": "visuel.tests",
+   "kind": "croisement",
+   "theme": "visuel",
+   "layer": "tests",
+   "name": "visuel × tests",
+   "role": "Tests de contraste et de cohérence des deux thèmes",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/__tests__/aimeTokens.test.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/__tests__/aimeTokens.test.ts",
+      "blob": "ee2f76d1c72c39d2571886276cb7f4aafdde721b"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/aimeTokens.test.ts",
+      "blob": "ee2f76d1c72c39d2571886276cb7f4aafdde721b"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/aimeTokens.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Vérifie 4,5:1 sur textes, boutons, succès, erreur ; 3:1 sur focus et bordures ; mêmes tokens en Nuit et Jour. Ne couvre pas src/styles.css."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Visuel × Tests",
+    "resume": null
+   }
+  },
+  {
+   "id": "visuel.versions",
+   "kind": "croisement",
+   "theme": "visuel",
+   "layer": "versions",
+   "name": "visuel × versions",
+   "role": "Version du socle visuel",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "non-verifie",
+    "justification": "aime.css ne porte pas de numéro de version."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Visuel × Versions",
+    "resume": null
+   }
+  },
+  {
+   "id": "interaction.principes",
+   "kind": "croisement",
+   "theme": "interaction",
+   "layer": "principes",
+   "name": "interaction × principes",
+   "role": "Contrat du Point et du Disque universel",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/point/CONTRAT.md",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/point/CONTRAT.md",
+      "blob": "73245f8a0f60ef9fac41f1c5eaa5629fe1698688"
+     },
+     {
+      "path": "studio/src/lib/point/DISQUE-UNIVERSEL.md",
+      "blob": "8cefc4986642b36395a0f0439fc822487d8caa8a"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Deux documents ; pas de propriétaire."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Interaction × Principes",
+    "resume": null
+   }
+  },
+  {
+   "id": "interaction.tokens",
+   "kind": "croisement",
+   "theme": "interaction",
+   "layer": "tokens",
+   "name": "interaction × tokens",
+   "role": "Préférences d'accessibilité appliquées (pz-*)",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/accessibilityCore.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/accessibilityCore.ts",
+      "blob": "31748f64669d8fed8c777b21929504c175ce8111"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/accessibilityCore.test.ts",
+      "blob": "7ebe84deddce606eaf92f1863a2eda066ad481b2"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/accessibilityCore.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Interaction × Tokens",
+    "resume": null
+   }
+  },
+  {
+   "id": "interaction.composants",
+   "kind": "croisement",
+   "theme": "interaction",
+   "layer": "composants",
+   "name": "interaction × composants",
+   "role": "Disque, Point, registre de types de blocs",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/point/registre.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/point/registre.ts",
+      "blob": "be91e0b1fafe5a11be61c7cc38200e04885d4b78"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Existe ; tests point*.test.tsx non exécutés ici."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Interaction × Composants",
+    "resume": null
+   }
+  },
+  {
+   "id": "interaction.contrats",
+   "kind": "croisement",
+   "theme": "interaction",
+   "layer": "contrats",
+   "name": "interaction × contrats",
+   "role": "Contrat des commandes du Disque Terminal (42 actions, risque, portée)",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/terminal/contrat.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/terminal/contrat.ts",
+      "blob": "63ad5d3925073f97f16e33d946869ad35a1ecc94"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/terminal.test.ts",
+      "blob": "515f923dce4cc9b5e45ea8c13e93e81851809fab"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/terminal.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "operationnel",
+    "justification": "Limité aux commandes locales. Envoyer et récupérer sont refusés (portée « pont »). L'ouverture demande readwrite trop tôt (fs.ts)."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Interaction × Contrats",
+    "resume": null
+   }
+  },
+  {
+   "id": "interaction.tests",
+   "kind": "croisement",
+   "theme": "interaction",
+   "layer": "tests",
+   "name": "interaction × tests",
+   "role": "Tests d'interaction",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/__tests__/terminal.test.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/__tests__/terminal.test.ts",
+      "blob": "515f923dce4cc9b5e45ea8c13e93e81851809fab"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/terminal.test.ts",
+      "blob": "515f923dce4cc9b5e45ea8c13e93e81851809fab"
+     },
+     {
+      "path": "studio/src/__tests__/indicateurs.test.ts",
+      "blob": "929192e7e24ca1a63953c94abf6a726ee22adc0b"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/terminal.test.ts ; cd studio && npx vitest run src/__tests__/indicateurs.test.ts",
+    "detail": "2 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "44 scénarios navigateur (tests/e2e) non rejoués ici."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Interaction × Tests",
+    "resume": null
+   }
+  },
+  {
+   "id": "interaction.versions",
+   "kind": "croisement",
+   "theme": "interaction",
+   "layer": "versions",
+   "name": "interaction × versions",
+   "role": "Version du contrat d'interaction",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "non-verifie",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Interaction × Versions",
+    "resume": null
+   }
+  },
+  {
+   "id": "donnees.principes",
+   "kind": "croisement",
+   "theme": "donnees",
+   "layer": "principes",
+   "name": "donnees × principes",
+   "role": "Le document est la seule source de vérité",
+   "canonique": {
+    "repo": "AIMEFINAL",
+    "path": "CLAUDE.md",
+    "commit": null
+   },
+   "existence": {
+    "etat": "hors-depot",
+    "fichiers": [],
+    "note": "La source est dans le dépôt AIMEFINAL : non vérifiable depuis ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Règle écrite dans un autre dépôt ; commit non relevé. Absente du dépôt LEMONDEAIME."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Données × Principes",
+    "resume": null
+   }
+  },
+  {
+   "id": "donnees.tokens",
+   "kind": "croisement",
+   "theme": "donnees",
+   "layer": "tokens",
+   "name": "donnees × tokens",
+   "role": "Format du motif (Pattern v3) et sérialisation",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/pattern.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/pattern.ts",
+      "blob": "728f0820950fa74d2f08f218d72c1a99ae69e7ed"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/format.test.ts",
+      "blob": "b4637fb020d098b1fc7226e56fdc1e7e4d1d891b"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/format.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "operationnel",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Données × Tokens",
+    "resume": null
+   }
+  },
+  {
+   "id": "donnees.composants",
+   "kind": "croisement",
+   "theme": "donnees",
+   "layer": "composants",
+   "name": "donnees × composants",
+   "role": "Stockage des projets (api/buro.mjs, tables spaces et space_members)",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "api/buro.mjs",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "api/buro.mjs",
+      "blob": "5954e75a7e298a20e3d63503362cf9547a1177cc"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "tests/server/buro.test.mjs",
+      "blob": "1525ff99db57704c20aefc1db2ac0f693bb274af"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "npm test",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "operationnel",
+    "justification": "Défaut connu : l'expiration d'accès n'est pas appliquée à la lecture (GET) sur cette version ; correctif existant sur une branche non fusionnée."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Données × Composants",
+    "resume": null
+   }
+  },
+  {
+   "id": "donnees.contrats",
+   "kind": "croisement",
+   "theme": "donnees",
+   "layer": "contrats",
+   "name": "donnees × contrats",
+   "role": "Référence atlas-reference v1 et manifeste atlas-document v1",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/atlas/reference.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/atlas/reference.ts",
+      "blob": "f5b666340878377feec4ed21716896ef70d42956"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/atlas.reference.test.ts",
+      "blob": "8095d0877d3da9ab9b47058c7bc8e1d7848ab71d"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/atlas.reference.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "atlas-document vit dans le dépôt Atlas-de-pique-de-coeur (non vérifié ici)."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Données × Contrats",
+    "resume": null
+   }
+  },
+  {
+   "id": "donnees.tests",
+   "kind": "croisement",
+   "theme": "donnees",
+   "layer": "tests",
+   "name": "donnees × tests",
+   "role": "Tests serveur",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "tests/server/buro.test.mjs",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "tests/server/buro.test.mjs",
+      "blob": "1525ff99db57704c20aefc1db2ac0f693bb274af"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "tests/server/buro.test.mjs",
+      "blob": "1525ff99db57704c20aefc1db2ac0f693bb274af"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "npm test",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "operationnel",
+    "justification": "Tests de base (tests/base) et navigateur (tests/e2e) exigent une base PostgreSQL de test : non rejoués."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Données × Tests",
+    "resume": null
+   }
+  },
+  {
+   "id": "donnees.versions",
+   "kind": "croisement",
+   "theme": "donnees",
+   "layer": "versions",
+   "name": "donnees × versions",
+   "role": "Migrations de base",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "db/migrations/",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "db/migrations/",
+      "blob": "11d09dd86ead0fd646a6cf7b1677a2c122ab4550"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "10 fichiers ; migration de format v3 testée côté studio. Retour arrière non vérifié."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Données × Versions",
+    "resume": null
+   }
+  },
+  {
+   "id": "relations.principes",
+   "kind": "croisement",
+   "theme": "relations",
+   "layer": "principes",
+   "name": "relations × principes",
+   "role": "RIPPLE : prédire les conséquences avant d'agir",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "simule",
+    "justification": "Hors produit : aucune occurrence dans le code. — RIPPLE V0 démontré sur une copie jetable d'ATLAS (19 contrôles) ; absent du dépôt LEMONDEAIME (2026-11-01)"
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Relations × Principes",
+    "resume": null
+   }
+  },
+  {
+   "id": "relations.tokens",
+   "kind": "croisement",
+   "theme": "relations",
+   "layer": "tokens",
+   "name": "relations × tokens",
+   "role": "Vocabulaire des relations (états, dépendances)",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "non-verifie",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Relations × Tokens",
+    "resume": null
+   }
+  },
+  {
+   "id": "relations.composants",
+   "kind": "croisement",
+   "theme": "relations",
+   "layer": "composants",
+   "name": "relations × composants",
+   "role": "Orbe relationnelle du Disque Terminal (contexte autorisé, vérification par relecture)",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/terminal/relation.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/terminal/relation.ts",
+      "blob": "19e7c3581bccf4ea1e0a83ef587713a99479cb39"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/orbe.relation.test.ts",
+      "blob": "095bf4369c0392f36000a0fa67784f607d8479db"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/orbe.relation.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "operationnel",
+    "justification": "Vérifie 19 commandes ; les autres rendent « non vérifié »."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Relations × Composants",
+    "resume": null
+   }
+  },
+  {
+   "id": "relations.contrats",
+   "kind": "croisement",
+   "theme": "relations",
+   "layer": "contrats",
+   "name": "relations × contrats",
+   "role": "Permissions d'accès aux projets",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "api/buro.mjs",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "api/buro.mjs",
+      "blob": "5954e75a7e298a20e3d63503362cf9547a1177cc"
+     },
+     {
+      "path": "docs/securite/preuves.json",
+      "blob": "66b98b3db64a9c6bf705ff126872894b297df2a1"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Correctifs (expiration en lecture, révision obligatoire) prêts mais non fusionnés ; test de rôle par niveau non fusionné."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Relations × Contrats",
+    "resume": null
+   }
+  },
+  {
+   "id": "relations.tests",
+   "kind": "croisement",
+   "theme": "relations",
+   "layer": "tests",
+   "name": "relations × tests",
+   "role": "Tests de relations et de permissions",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "tests/server/securite.test.mjs",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "tests/server/securite.test.mjs",
+      "blob": "bf703cbd0a126d10b91781ba9d3b4c1d04d93770"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "tests/server/securite.test.mjs",
+      "blob": "bf703cbd0a126d10b91781ba9d3b4c1d04d93770"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "npm test",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Une partie des matrices visées échoue volontairement tant que le correctif n'est pas appliqué (branche)."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Relations × Tests",
+    "resume": null
+   }
+  },
+  {
+   "id": "relations.versions",
+   "kind": "croisement",
+   "theme": "relations",
+   "layer": "versions",
+   "name": "relations × versions",
+   "role": "Version du contrat de dépendances",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "non-verifie",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Relations × Versions",
+    "resume": null
+   }
+  },
+  {
+   "id": "restitution.principes",
+   "kind": "croisement",
+   "theme": "restitution",
+   "layer": "principes",
+   "name": "restitution × principes",
+   "role": "Livraison, stockage, sécurité des exports",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/docs/AIME-DELIVERY-STORAGE.md",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/docs/AIME-DELIVERY-STORAGE.md",
+      "blob": "5cccdc38c743fed9b9ff7e4e4b91a1773263f668"
+     },
+     {
+      "path": "studio/docs/AIME-DELIVERY-SECURITY.md",
+      "blob": "3499d65f6cc2bf249b9eb62cec266a53ad26260c"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Restitution × Principes",
+    "resume": null
+   }
+  },
+  {
+   "id": "restitution.tokens",
+   "kind": "croisement",
+   "theme": "restitution",
+   "layer": "tokens",
+   "name": "restitution × tokens",
+   "role": "Nuancier DMC et approximations d'écran",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/dmc.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/dmc.ts",
+      "blob": "a34e95b7850a72c090d5e1655e4c705510ed7add"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/palettes.test.ts",
+      "blob": "efa1c0675050905a2f6af1091456b4ad177eb3b9"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/palettes.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Test non rejoué ici : statut non élevé."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Restitution × Tokens",
+    "resume": null
+   }
+  },
+  {
+   "id": "restitution.composants",
+   "kind": "croisement",
+   "theme": "restitution",
+   "layer": "composants",
+   "name": "restitution × composants",
+   "role": "Génération PDF du motif",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/pdf.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/pdf.ts",
+      "blob": "f86f064190d8c8df1c1645faf0b93f48a6f8ef48"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/pdf.test.ts",
+      "blob": "78867dda4aa80f166820f9aaa813768d6bd509db"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/pdf.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "operationnel",
+    "justification": "Redessine tout ; pas reproductible octet pour octet (/ID, dates)."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Restitution × Composants",
+    "resume": null
+   }
+  },
+  {
+   "id": "restitution.contrats",
+   "kind": "croisement",
+   "theme": "restitution",
+   "layer": "contrats",
+   "name": "restitution × contrats",
+   "role": "Contrats d'export (JSON v3, OXS, SVG, PDF)",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/io.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/io.ts",
+      "blob": "5d8049e3e27c33e9fd779c3b2648509aa54f4fcb"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/format.test.ts",
+      "blob": "b4637fb020d098b1fc7226e56fdc1e7e4d1d891b"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/format.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Pas de manifeste d'export unique."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Restitution × Contrats",
+    "resume": null
+   }
+  },
+  {
+   "id": "restitution.tests",
+   "kind": "croisement",
+   "theme": "restitution",
+   "layer": "tests",
+   "name": "restitution × tests",
+   "role": "Tests de PDF",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/__tests__/pdf.test.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/__tests__/pdf.test.ts",
+      "blob": "78867dda4aa80f166820f9aaa813768d6bd509db"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/pdf.test.ts",
+      "blob": "78867dda4aa80f166820f9aaa813768d6bd509db"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/pdf.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "operationnel",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Restitution × Tests",
+    "resume": null
+   }
+  },
+  {
+   "id": "restitution.versions",
+   "kind": "croisement",
+   "theme": "restitution",
+   "layer": "versions",
+   "name": "restitution × versions",
+   "role": "Versionnage des exports",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "non-verifie",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Restitution × Versions",
+    "resume": null
+   }
+  },
+  {
+   "id": "memoire.principes",
+   "kind": "croisement",
+   "theme": "memoire",
+   "layer": "principes",
+   "name": "memoire × principes",
+   "role": "Stockage et reprise",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/docs/AIME-DELIVERY-STORAGE.md",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/docs/AIME-DELIVERY-STORAGE.md",
+      "blob": "5cccdc38c743fed9b9ff7e4e4b91a1773263f668"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Mémoire × Principes",
+    "resume": null
+   }
+  },
+  {
+   "id": "memoire.tokens",
+   "kind": "croisement",
+   "theme": "memoire",
+   "layer": "tokens",
+   "name": "memoire × tokens",
+   "role": "Vocabulaire de versions et de provenance",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "non-verifie",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Mémoire × Tokens",
+    "resume": null
+   }
+  },
+  {
+   "id": "memoire.composants",
+   "kind": "croisement",
+   "theme": "memoire",
+   "layer": "composants",
+   "name": "memoire × composants",
+   "role": "Journal annuler/rétablir du Disque Terminal et bibliothèque à 8 versions",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/terminal/moteur.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/terminal/moteur.ts",
+      "blob": "d66e42bf22fdd20e66c8c4f6678c7695d96e838d"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/libraryTransaction.test.ts",
+      "blob": "686aac16faccc3deebb914111266eb55530c3c2f"
+     },
+     {
+      "path": "studio/src/__tests__/terminal.test.ts",
+      "blob": "515f923dce4cc9b5e45ea8c13e93e81851809fab"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/libraryTransaction.test.ts ; cd studio && npx vitest run src/__tests__/terminal.test.ts",
+    "detail": "2 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Le journal vit en mémoire de page : il ne survit pas à un rechargement."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Mémoire × Composants",
+    "resume": null
+   }
+  },
+  {
+   "id": "memoire.contrats",
+   "kind": "croisement",
+   "theme": "memoire",
+   "layer": "contrats",
+   "name": "memoire × contrats",
+   "role": "Manifeste atlas-document (sha256 par fichier)",
+   "canonique": {
+    "repo": "Atlas-de-pique-de-coeur",
+    "path": "js/importer.js",
+    "commit": null
+   },
+   "existence": {
+    "etat": "hors-depot",
+    "fichiers": [],
+    "note": "La source est dans le dépôt Atlas-de-pique-de-coeur : non vérifiable depuis ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Autre dépôt ; commit non relevé."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Mémoire × Contrats",
+    "resume": null
+   }
+  },
+  {
+   "id": "memoire.tests",
+   "kind": "croisement",
+   "theme": "memoire",
+   "layer": "tests",
+   "name": "memoire × tests",
+   "role": "Tests de mémoire",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/__tests__/memoire.test.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/__tests__/memoire.test.ts",
+      "blob": "86b16cd7f33e8e611592b23eafc0a4509972f337"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/memoire.test.ts",
+      "blob": "86b16cd7f33e8e611592b23eafc0a4509972f337"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/memoire.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Concerne la mémoire du Point (habitudes), pas l'historique des œuvres."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Mémoire × Tests",
+    "resume": null
+   }
+  },
+  {
+   "id": "memoire.versions",
+   "kind": "croisement",
+   "theme": "memoire",
+   "layer": "versions",
+   "name": "memoire × versions",
+   "role": "Historique Git et migrations",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "db/migrations/",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "db/migrations/",
+      "blob": "11d09dd86ead0fd646a6cf7b1677a2c122ab4550"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Production = tête de main : d8ac95c (Vercel et GitHub relus) (2026-11-01)"
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Mémoire × Versions",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.confidentialite",
+   "kind": "garde-fou",
+   "name": "Confidentialité",
+   "role": "Données privées jamais exposées",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "docs/securite/RAPPORT.md",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "docs/securite/RAPPORT.md",
+      "blob": "830b314b75754f9320c77c68bb77133891b88495"
+     },
+     {
+      "path": "docs/securite/preuves.json",
+      "blob": "66b98b3db64a9c6bf705ff126872894b297df2a1"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Confidentialité",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.autorisations",
+   "kind": "garde-fou",
+   "name": "Autorisations",
+   "role": "Rôles et expiration",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "api/buro.mjs",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "api/buro.mjs",
+      "blob": "5954e75a7e298a20e3d63503362cf9547a1177cc"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "tests/server/securite.test.mjs",
+      "blob": "bf703cbd0a126d10b91781ba9d3b4c1d04d93770"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "npm test",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Expiration non appliquée à la lecture sur cette version."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Autorisations",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.controle-humain",
+   "kind": "garde-fou",
+   "name": "Contrôle humain",
+   "role": "Confirmation avant action destructive",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/terminal/contrat.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/terminal/contrat.ts",
+      "blob": "63ad5d3925073f97f16e33d946869ad35a1ecc94"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/terminal.test.ts",
+      "blob": "515f923dce4cc9b5e45ea8c13e93e81851809fab"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/terminal.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Contrôle humain",
+    "resume": "Confirmation avant action destructive"
+   }
+  },
+  {
+   "id": "g.tracabilite",
+   "kind": "garde-fou",
+   "name": "Traçabilité",
+   "role": "Journal des actions",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/terminal/moteur.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/terminal/moteur.ts",
+      "blob": "d66e42bf22fdd20e66c8c4f6678c7695d96e838d"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "En mémoire de page seulement."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Traçabilité",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.accessibilite",
+   "kind": "garde-fou",
+   "name": "Accessibilité",
+   "role": "Préférences et interactions accessibles",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/accessibilityCore.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/accessibilityCore.ts",
+      "blob": "31748f64669d8fed8c777b21929504c175ce8111"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/accessibilityCore.test.ts",
+      "blob": "7ebe84deddce606eaf92f1863a2eda066ad481b2"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/accessibilityCore.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Accessibilité",
+    "resume": "Préférences et interactions accessibles"
+   }
+  },
+  {
+   "id": "g.mouvement-reduit",
+   "kind": "garde-fou",
+   "name": "Mouvement réduit",
+   "role": "Respect de la préférence",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/terminal/relation.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/terminal/relation.ts",
+      "blob": "19e7c3581bccf4ea1e0a83ef587713a99479cb39"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Mouvement réduit",
+    "resume": "Respect de la préférence"
+   }
+  },
+  {
+   "id": "g.contraste",
+   "kind": "garde-fou",
+   "name": "Contraste",
+   "role": "4,5:1 textes, 3:1 focus",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/__tests__/aimeTokens.test.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/__tests__/aimeTokens.test.ts",
+      "blob": "ee2f76d1c72c39d2571886276cb7f4aafdde721b"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/aimeTokens.test.ts",
+      "blob": "ee2f76d1c72c39d2571886276cb7f4aafdde721b"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/aimeTokens.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "operationnel",
+    "justification": "Studio seulement."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Contraste",
+    "resume": "4,5:1 textes, 3:1 focus"
+   }
+  },
+  {
+   "id": "g.clavier",
+   "kind": "garde-fou",
+   "name": "Clavier",
+   "role": "Navigation complète au clavier",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "non-verifie",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Clavier",
+    "resume": "Navigation complète au clavier"
+   }
+  },
+  {
+   "id": "g.lecture-d-ecran",
+   "kind": "garde-fou",
+   "name": "Lecture d’écran",
+   "role": "Annonces et noms accessibles",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "non-verifie",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Lecture d’écran",
+    "resume": "Annonces et noms accessibles"
+   }
+  },
+  {
+   "id": "g.ethique",
+   "kind": "garde-fou",
+   "name": "Éthique",
+   "role": "Charte éthique",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "non-verifie",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Éthique",
+    "resume": "Charte éthique"
+   }
+  },
+  {
+   "id": "g.droits-auteur",
+   "kind": "garde-fou",
+   "name": "Droits auteur",
+   "role": "Déclaration d'auteur et d'usage",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/pattern.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/pattern.ts",
+      "blob": "728f0820950fa74d2f08f218d72c1a99ae69e7ed"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Déclaratif ; la recette 5D imprime « ne se revend pas »."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Droits auteur",
+    "resume": "Déclaration d'auteur et d'usage"
+   }
+  },
+  {
+   "id": "g.licences",
+   "kind": "garde-fou",
+   "name": "Licences",
+   "role": "CC BY 4.0 MakeBead et non-affiliation DMC",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/LICENSE",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/LICENSE",
+      "blob": "44085602054e4ba1719deea3c036ac96091fba21"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "La non-affiliation DMC et Miyuki figure dans studio/LICENSE (corrige une réserve antérieure)."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Licences",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.provenance",
+   "kind": "garde-fou",
+   "name": "Provenance",
+   "role": "Provenance déclarée du motif",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/pattern.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/pattern.ts",
+      "blob": "728f0820950fa74d2f08f218d72c1a99ae69e7ed"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Provenance",
+    "resume": "Provenance déclarée du motif"
+   }
+  },
+  {
+   "id": "g.integrite",
+   "kind": "garde-fou",
+   "name": "Intégrité",
+   "role": "Empreintes SHA-256 des fichiers",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/terminal/moteur.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/terminal/moteur.ts",
+      "blob": "d66e42bf22fdd20e66c8c4f6678c7695d96e838d"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Doublons par SHA-256 ; pas d'intégrité de registre."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Intégrité",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.source-canonique",
+   "kind": "garde-fou",
+   "name": "Source canonique",
+   "role": "Index des sources de vérité",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "non-verifie",
+    "justification": "C'est l'objet du manifeste proposé."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Source canonique",
+    "resume": "Index des sources de vérité"
+   }
+  },
+  {
+   "id": "g.non-duplication",
+   "kind": "garde-fou",
+   "name": "Non-duplication",
+   "role": "Un moteur canonique par fonction",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "non-verifie",
+    "justification": "Doublons recensés dans l'audit : quatre systèmes de tokens."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Non-duplication",
+    "resume": "Un moteur canonique par fonction"
+   }
+  },
+  {
+   "id": "g.validation",
+   "kind": "garde-fou",
+   "name": "Validation",
+   "role": "Contrôle de types",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "tsconfig.json",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "tsconfig.json",
+      "blob": "5226ba1b3969320a26061e0ec50c9c0bc0f085f1"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "npx tsc --noEmit",
+    "detail": "0 erreur"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Validation",
+    "resume": "Contrôle de types"
+   }
+  },
+  {
+   "id": "g.tests-executes",
+   "kind": "garde-fou",
+   "name": "Tests exécutés",
+   "role": "Dernières exécutions connues",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "docs/securite/preuves.json",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "docs/securite/preuves.json",
+      "blob": "66b98b3db64a9c6bf705ff126872894b297df2a1"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "npm test ; cd studio && npx vitest run (11 fichiers)",
+    "detail": "tests serveur et 110 tests du studio rejoués"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Tests navigateur et base non rejoués."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Tests exécutés",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.etat-de-preuve",
+   "kind": "garde-fou",
+   "name": "État de preuve",
+   "role": "Registre de preuves daté avec commit",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "docs/securite/preuves.json",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "docs/securite/preuves.json",
+      "blob": "66b98b3db64a9c6bf705ff126872894b297df2a1"
+     },
+     {
+      "path": "docs/portfolio/preuves.json",
+      "blob": "1e44f4e6fb9a0f69a9d69b48784a47506073bf8d"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Format existant ; couvre peu de tests."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "État de preuve",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.revisions",
+   "kind": "garde-fou",
+   "name": "Révisions",
+   "role": "Révision optimiste des projets",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "api/buro.mjs",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "api/buro.mjs",
+      "blob": "5954e75a7e298a20e3d63503362cf9547a1177cc"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Révision facultative sur cette version ; l'obligation existe sur une branche non fusionnée."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Révisions",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.sauvegarde",
+   "kind": "garde-fou",
+   "name": "Sauvegarde",
+   "role": "Sauvegarde des données",
+   "canonique": null,
+   "existence": {
+    "etat": "absent",
+    "fichiers": [],
+    "note": "Aucune source identifiée dans ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "non-verifie",
+    "justification": ""
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Sauvegarde",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.restauration",
+   "kind": "garde-fou",
+   "name": "Restauration",
+   "role": "Retour à un état antérieur",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/library.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/library.ts",
+      "blob": "f348139053f8561b0d382927af76f658b34f2b66"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Déploiements Vercel marqués candidats au retour arrière (2026-11-01)"
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Restauration",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.dependances",
+   "kind": "garde-fou",
+   "name": "Dépendances",
+   "role": "Dépendances de code",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "package-lock.json",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "package-lock.json",
+      "blob": "fb008f7985e8fe3d77c19b162331859ee56b9aea"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Aucune carte des créations qui dépendent d'un composant."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Dépendances",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.import-securise",
+   "kind": "garde-fou",
+   "name": "Import sécurisé",
+   "role": "Lecture sans exécution",
+   "canonique": {
+    "repo": "Atlas-de-pique-de-coeur",
+    "path": "js/importer.js",
+    "commit": null
+   },
+   "existence": {
+    "etat": "hors-depot",
+    "fichiers": [],
+    "note": "La source est dans le dépôt Atlas-de-pique-de-coeur : non vérifiable depuis ce dépôt."
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Le code importé est lu comme du texte, jamais exécuté (commentaire de l'importateur)."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Import sécurisé",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.export-fiable",
+   "kind": "garde-fou",
+   "name": "Export fiable",
+   "role": "Export rejouable",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "studio/src/lib/pdf.ts",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "studio/src/lib/pdf.ts",
+      "blob": "f86f064190d8c8df1c1645faf0b93f48a6f8ef48"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "tests déclarés comme preuve (le fichier existe ; ce n’est pas une couverture de lignes)",
+    "etat": "tests-lies",
+    "tests": [
+     {
+      "path": "studio/src/__tests__/pdf.test.ts",
+      "blob": "78867dda4aa80f166820f9aaa813768d6bd509db"
+     }
+    ]
+   },
+   "derniere_execution": {
+    "etat": "reussie",
+    "date": "2026-11-01",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15",
+    "commande": "cd studio && npx vitest run src/__tests__/pdf.test.ts",
+    "detail": "1 fichier(s) de test rejoués aujourd’hui"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Pas reproductible octet pour octet."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": false,
+   "public": {
+    "nom": "Export fiable",
+    "resume": "Export rejouable"
+   }
+  },
+  {
+   "id": "g.origine-stockage",
+   "kind": "garde-fou",
+   "name": "Origine stockage",
+   "role": "Où vit chaque donnée",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "README.md",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "README.md",
+      "blob": "b72f688268244bd9ec1877df6a04bba0a49ddc21"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "README décrit Neon et Better Auth ; clés localStorage non listées."
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Origine stockage",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.deploiement",
+   "kind": "garde-fou",
+   "name": "Déploiement",
+   "role": "Quel commit est en ligne",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "vercel.json",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "vercel.json",
+      "blob": "7f9f0de3425b1d32786e5d0731e6396361a13aff"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Vercel production d8ac95c = tête de main (comparaison GitHub identique) (2026-11-01)"
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Déploiement",
+    "resume": null
+   }
+  },
+  {
+   "id": "g.retour-arriere",
+   "kind": "garde-fou",
+   "name": "Retour arrière",
+   "role": "Revenir à une version",
+   "canonique": {
+    "repo": "LEMONDEAIME",
+    "path": "vercel.json",
+    "commit": "d8ac95cf9dadade0fd056b339c1cd590d4226f15"
+   },
+   "existence": {
+    "etat": "present",
+    "fichiers": [
+     {
+      "path": "vercel.json",
+      "blob": "7f9f0de3425b1d32786e5d0731e6396361a13aff"
+     }
+    ]
+   },
+   "couverture": {
+    "mesure": "aucun test déclaré",
+    "etat": "aucun-test-relie",
+    "tests": []
+   },
+   "derniere_execution": {
+    "etat": "non-rejouee",
+    "detail": "aucun test relié"
+   },
+   "validation_fonctionnelle": {
+    "etat": "non-validee",
+    "par": null,
+    "date": null,
+    "commit": null,
+    "portee": null
+   },
+   "appreciation_audit": {
+    "statut": "partiel",
+    "justification": "Déploiements récents marqués isRollbackCandidate (2026-11-01)"
+   },
+   "proprietaire": "responsabilite.fonctionnel",
+   "contradicts": [],
+   "sensible": true,
+   "public": {
+    "nom": "Retour arrière",
+    "resume": null
+   }
+  }
+ ],
+ "composants": [
+  {
+   "id": "charte",
+   "nom": "Charte (en-tête, pied, docks)",
+   "inventaire": "utilise",
+   "fichiers": [
+    "src/charte/Charte.tsx"
+   ],
+   "verification": {
+    "type": "importeurs",
+    "motif": "charte/Charte",
+    "min": 3
+   },
+   "justification": "Importée par plusieurs pages du site."
+  },
+  {
+   "id": "fiche-reseau",
+   "nom": "Fiche d’une personne du réseau",
+   "inventaire": "utilise",
+   "fichiers": [
+    "src/pages/FicheReseau.tsx",
+    "src/charte/CartePersonne.tsx"
+   ],
+   "verification": {
+    "type": "contient",
+    "chemin": "src/App.tsx",
+    "motif": "FicheReseau"
+   },
+   "justification": "Route /reseau/:clé déclarée dans src/App.tsx. « Fiche » reste ambigu : choix à confirmer par Matt."
+  },
+  {
+   "id": "disque",
+   "nom": "Disque des univers (.0NE)",
+   "inventaire": "utilise",
+   "fichiers": [
+    "studio/src/one/DisqueUnivers.tsx",
+    "studio/src/components/one/DisqueOne.tsx",
+    "studio/src/lib/tambour/disque.ts"
+   ],
+   "verification": {
+    "type": "contient",
+    "chemin": "studio/src/main.tsx",
+    "motif": "const oneUnivers"
+   },
+   "justification": "Route /one/univers ; absente de la liste des routes privées."
+  },
+  {
+   "id": "disque-terminal",
+   "nom": "Disque Terminal",
+   "inventaire": "utilise",
+   "fichiers": [
+    "studio/src/one/Terminal.tsx"
+   ],
+   "verification": {
+    "type": "contient",
+    "chemin": "studio/src/main.tsx",
+    "motif": "const oneTerminal"
+   },
+   "justification": "Route /one/terminal ; absente de la liste des routes privées."
+  },
+  {
+   "id": "export-pdf",
+   "nom": "Export PDF du patron",
+   "inventaire": "utilise",
+   "fichiers": [
+    "studio/src/lib/pdf.ts"
+   ],
+   "verification": {
+    "type": "importeurs",
+    "motif": "lib/pdf",
+    "min": 1
+   },
+   "justification": "Importé par l’écran d’export du studio."
+  },
+  {
+   "id": "pattern",
+   "nom": "Pattern (format du patron, v3)",
+   "inventaire": "utilise",
+   "fichiers": [
+    "studio/src/lib/pattern.ts"
+   ],
+   "verification": {
+    "type": "importeurs",
+    "motif": "lib/pattern",
+    "min": 3
+   },
+   "justification": "Importé par l’export, la bibliothèque, la galerie et l’atelier."
+  },
+  {
+   "id": "galerie-des-vivants",
+   "nom": "Galerie des Vivants",
+   "inventaire": "existant-inaccessible",
+   "fichiers": [
+    "studio/src/galerie/Exposer.tsx"
+   ],
+   "verification": {
+    "type": "contient",
+    "chemin": "studio/src/main.tsx",
+    "motif": "accueil || explorer || essaiCarte || essaiAime || galerie"
+   },
+   "justification": "Le code la déclare privée : sans VITE_PROTOTYPES=1, son adresse ramène à .0NE. La valeur de cette variable en production n’a pas été relue ici."
+  },
+  {
+   "id": "film-lumiere",
+   "nom": "Film LUMIÈRE",
+   "inventaire": "existant-inaccessible",
+   "fichiers": [
+    "studio/src/film/lumiere/Film.tsx"
+   ],
+   "verification": {
+    "type": "contient",
+    "chemin": "studio/src/main.tsx",
+    "motif": "filmLumiere || vivreLumiere || planchesLumiere"
+   },
+   "justification": "Déclaré privé dans la même liste ; même réserve sur la variable de production."
+  },
+  {
+   "id": "tokens-json",
+   "nom": "Jetons historiques du studio (tokens.json)",
+   "inventaire": "prototype-non-raccorde",
+   "fichiers": [
+    "studio/src/design/tokens.json"
+   ],
+   "verification": {
+    "type": "importeurs",
+    "motif": "tokens.json",
+    "max": 0
+   },
+   "justification": "Aucun fichier source ne le charge. Classé « héritage non raccordé » (décision D-2) ; trois documents le disent pourtant canonique."
+  },
+  {
+   "id": "jeux-de-tokens",
+   "nom": "Quatre jeux de tokens côte à côte",
+   "inventaire": "doublon-potentiel",
+   "fichiers": [
+    "studio/src/design/aime.css",
+    "src/styles.css",
+    "studio/src/index.css",
+    "studio/src/design/pointzero.css"
+   ],
+   "verification": {
+    "type": "contient",
+    "chemin": "studio/src/design/aime.css",
+    "motif": "[data-aime]"
+   },
+   "justification": "aime.css (--aime-*), styles.css du site (--encre, --fond), index.css du studio (--color-*), pointzero.css (--pz-*). Décision D-1 : aime.css est le socle de SYST’AIME sans remplacer ceux du site public."
+  },
+  {
+   "id": "jumeau-mes-sources",
+   "nom": "« Mes sources » (jumeau numérique)",
+   "inventaire": "a-construire",
+   "fichiers": [],
+   "verification": {
+    "type": "importeurs",
+    "motif": "Mes sources",
+    "max": 0
+   },
+   "justification": "Étudié (audit du jumeau numérique), pas construit : le code ne contient pas cette fonction."
+  }
+ ],
+ "concepts_metier": [
+  {
+   "id": "dmc-nuancier-et-credits",
+   "nom": "Crédits et avertissements du nuancier DMC/Miyuki"
+  },
+  {
+   "id": "pattern-format-v3",
+   "nom": "Format Pattern v3 et œuvres déjà enregistrées"
+  },
+  {
+   "id": "accessibilite-confort",
+   "nom": "Accessibilité promise (profils de confort)"
+  },
+  {
+   "id": "droits-personnes",
+   "nom": "Droits et permissions sur les personnes"
+  },
+  {
+   "id": "relation-et-journal",
+   "nom": "Relecture réelle et journal de la relation"
+  }
+ ],
+ "dependances": [
+  {
+   "de": "src/charte/Charte.tsx",
+   "a": "src/lib/confort.ts",
+   "type": "import_technique",
+   "fichier_de": "src/charte/Charte.tsx",
+   "module_a": "lib/confort",
+   "fichier_a": "src/lib/confort.ts",
+   "blob_a": "db4c3d1fa73a3fe62b294da8c7dd2b48cd194897",
+   "note": "préférences de confort"
+  },
+  {
+   "de": "src/charte/Charte.tsx",
+   "a": "src/lib/session.ts",
+   "type": "import_technique",
+   "fichier_de": "src/charte/Charte.tsx",
+   "module_a": "lib/session",
+   "fichier_a": "src/lib/session.ts",
+   "blob_a": "2b735845b5d05e804b55cfbb765c95ce623bbfac",
+   "note": "session de la personne"
+  },
+  {
+   "de": "src/charte/Charte.tsx",
+   "a": "src/lib/buro.ts",
+   "type": "import_technique",
+   "fichier_de": "src/charte/Charte.tsx",
+   "module_a": "lib/buro",
+   "fichier_a": "src/lib/buro.ts",
+   "blob_a": "b1e06afac8865d8d3cdce1f4b1a586e1f8e12ef4",
+   "note": "lecture des projets"
+  },
+  {
+   "de": "src/pages/FicheReseau.tsx",
+   "a": "src/charte/Charte.tsx",
+   "type": "import_technique",
+   "fichier_de": "src/pages/FicheReseau.tsx",
+   "module_a": "charte/Charte",
+   "fichier_a": "src/charte/Charte.tsx",
+   "blob_a": "271970f6d917d59455ad1658efc61ab4018b6af1",
+   "note": "la fiche est rendue avec la Charte"
+  },
+  {
+   "de": "src/pages/FicheReseau.tsx",
+   "a": "src/charte/CartePersonne.tsx",
+   "type": "import_technique",
+   "fichier_de": "src/pages/FicheReseau.tsx",
+   "module_a": "charte/CartePersonne",
+   "fichier_a": "src/charte/CartePersonne.tsx",
+   "blob_a": "fffaa531f7bccd00edabc723b0c5f2d0cb9b9e48",
+   "note": ""
+  },
+  {
+   "de": "src/charte/CartePersonne.tsx",
+   "a": "src/charte/Charte.tsx",
+   "type": "import_technique",
+   "fichier_de": "src/charte/CartePersonne.tsx",
+   "module_a": "Charte",
+   "fichier_a": "src/charte/Charte.tsx",
+   "blob_a": "271970f6d917d59455ad1658efc61ab4018b6af1",
+   "note": ""
+  },
+  {
+   "de": "studio/src/one/DisqueUnivers.tsx",
+   "a": "studio/src/components/one/DisqueOne.tsx",
+   "type": "import_technique",
+   "fichier_de": "studio/src/one/DisqueUnivers.tsx",
+   "module_a": "components/one/DisqueOne",
+   "fichier_a": "studio/src/components/one/DisqueOne.tsx",
+   "blob_a": "3332c822d416382ff3e8a934724eef8350973372",
+   "note": "le disque des univers"
+  },
+  {
+   "de": "studio/src/components/one/DisqueOne.tsx",
+   "a": "studio/src/lib/tambour/disque.ts",
+   "type": "import_technique",
+   "fichier_de": "studio/src/components/one/DisqueOne.tsx",
+   "module_a": "lib/tambour/disque",
+   "fichier_a": "studio/src/lib/tambour/disque.ts",
+   "blob_a": "73f72aaafb4b3fb30c19657fce450a83aaa2534a",
+   "note": ""
+  },
+  {
+   "de": "studio/src/one/Terminal.tsx",
+   "a": "studio/src/components/one/DisqueOne.tsx",
+   "type": "import_technique",
+   "fichier_de": "studio/src/one/Terminal.tsx",
+   "module_a": "components/one/DisqueOne",
+   "fichier_a": "studio/src/components/one/DisqueOne.tsx",
+   "blob_a": "3332c822d416382ff3e8a934724eef8350973372",
+   "note": "le Disque Terminal réutilise le disque"
+  },
+  {
+   "de": "studio/src/lib/io.ts",
+   "a": "studio/src/lib/pattern.ts",
+   "type": "import_technique",
+   "fichier_de": "studio/src/lib/io.ts",
+   "module_a": "pattern",
+   "fichier_a": "studio/src/lib/pattern.ts",
+   "blob_a": "728f0820950fa74d2f08f218d72c1a99ae69e7ed",
+   "note": "sérialisation du Pattern"
+  },
+  {
+   "de": "studio/src/lib/svg.ts",
+   "a": "studio/src/lib/pattern.ts",
+   "type": "import_technique",
+   "fichier_de": "studio/src/lib/svg.ts",
+   "module_a": "pattern",
+   "fichier_a": "studio/src/lib/pattern.ts",
+   "blob_a": "728f0820950fa74d2f08f218d72c1a99ae69e7ed",
+   "note": "export SVG"
+  },
+  {
+   "de": "studio/src/lib/library.ts",
+   "a": "studio/src/lib/pattern.ts",
+   "type": "import_technique",
+   "fichier_de": "studio/src/lib/library.ts",
+   "module_a": "pattern",
+   "fichier_a": "studio/src/lib/pattern.ts",
+   "blob_a": "728f0820950fa74d2f08f218d72c1a99ae69e7ed",
+   "note": "bibliothèque de versions"
+  },
+  {
+   "de": "studio/src/lib/pdf.ts",
+   "a": "studio/src/lib/io.ts",
+   "type": "import_technique",
+   "fichier_de": "studio/src/lib/pdf.ts",
+   "module_a": "io",
+   "fichier_a": "studio/src/lib/io.ts",
+   "blob_a": "5d8049e3e27c33e9fd779c3b2648509aa54f4fcb",
+   "note": "seulement slugify (utilitaire)"
+  },
+  {
+   "de": "studio/src/lib/pdf.ts",
+   "a": "studio/src/lib/dmc.ts",
+   "type": "import_technique",
+   "fichier_de": "studio/src/lib/pdf.ts",
+   "module_a": "dmc",
+   "fichier_a": "studio/src/lib/dmc.ts",
+   "blob_a": "a34e95b7850a72c090d5e1655e4c705510ed7add",
+   "note": "nuancier DMC"
+  },
+  {
+   "de": "studio/src/lib/pattern.ts",
+   "a": "studio/src/lib/dmc.ts",
+   "type": "import_technique",
+   "fichier_de": "studio/src/lib/pattern.ts",
+   "module_a": "dmc",
+   "fichier_a": "studio/src/lib/dmc.ts",
+   "blob_a": "a34e95b7850a72c090d5e1655e4c705510ed7add",
+   "note": ""
+  },
+  {
+   "de": "studio/src/lib/pdf.ts",
+   "a": "studio/src/lib/pattern.ts",
+   "type": "import_technique",
+   "fichier_de": "studio/src/lib/pdf.ts",
+   "module_a": "pattern",
+   "fichier_a": "studio/src/lib/pattern.ts",
+   "blob_a": "728f0820950fa74d2f08f218d72c1a99ae69e7ed",
+   "note": "import direct : compositePattern, computeStats, fabricInfo… (même composition que le canvas, d'après le commentaire l.24)"
+  },
+  {
+   "de": "studio/src/lib/library.ts",
+   "a": "studio/src/lib/pattern.ts",
+   "type": "partage_de_donnees",
+   "verification": {
+    "fichier": "studio/src/lib/library.ts",
+    "motif": "fromObject"
+   },
+   "force": "forte",
+   "note": "La bibliothèque (IndexedDB) enregistre le format Pattern v3 : le changer touche les œuvres déjà enregistrées."
+  },
+  {
+   "de": "src/charte/Charte.tsx",
+   "a": "src/pages/FicheReseau.tsx",
+   "type": "partage_de_donnees",
+   "verification": {
+    "fichier": "src/lib/session.ts",
+    "motif": "/api/auth/get-session"
+   },
+   "force": "faible",
+   "note": "Même session lue par la Charte et la fiche ; la preuve passe par un module partagé (lib/session) : plus faible qu’une donnée écrite puis relue."
+  },
+  {
+   "de": "src/charte/Charte.tsx",
+   "a": "api/buro.mjs",
+   "type": "partage_de_donnees",
+   "verification": {
+    "fichier": "src/lib/buro.ts",
+    "motif": "/api/buro"
+   },
+   "force": "forte",
+   "note": "La Charte lit les projets via /api/buro."
+  },
+  {
+   "de": "studio/src/one/Terminal.tsx",
+   "a": "studio/src/one/DisqueUnivers.tsx",
+   "type": "partage_de_donnees",
+   "verification": {
+    "fichier": "studio/src/one/Terminal.tsx",
+    "motif": "lib/one/preferences"
+   },
+   "force": "faible",
+   "note": "Mêmes préférences locales (lib/one/preferences), importées par les deux."
+  },
+  {
+   "de": "export-pdf",
+   "a": "dmc-nuancier-et-credits",
+   "type": "dependance_metier",
+   "statut": "proposee-non-validee",
+   "justification": "Le PDF doit porter le crédit CC BY MakeBead et l’avertissement « approximation » ; cette obligation n’est imposée par aucun import."
+  },
+  {
+   "de": "export-pdf",
+   "a": "pattern-format-v3",
+   "type": "dependance_metier",
+   "statut": "proposee-non-validee",
+   "justification": "Un changement du format Pattern exige de rejouer l’export (PDF, SVG) et de revérifier les œuvres enregistrées."
+  },
+  {
+   "de": "charte",
+   "a": "accessibilite-confort",
+   "type": "dependance_metier",
+   "statut": "proposee-non-validee",
+   "justification": "La Charte est la face publique de nombreux fichiers : toute modification touche l’accessibilité promise."
+  },
+  {
+   "de": "fiche-reseau",
+   "a": "droits-personnes",
+   "type": "dependance_metier",
+   "statut": "proposee-non-validee",
+   "justification": "La fiche affiche des personnes : sa conformité dépend des permissions de l’API et de la durée d’accès."
+  },
+  {
+   "de": "disque-terminal",
+   "a": "relation-et-journal",
+   "type": "dependance_metier",
+   "statut": "proposee-non-validee",
+   "justification": "Le Disque Terminal ne doit afficher « fait » que si la relecture réelle le confirme."
+  }
+ ],
+ "fraicheur_enregistree": {
+  "etat": "a_jour_au_commit_valide",
+  "verifie_le": "2026-11-01",
+  "par": "tests/systaime/valider.mjs"
+ }
+}

@@ -11,6 +11,9 @@
     },
     "api/maintenance.mjs": {
       "maxDuration": 60
+    },
+    "api/systaime.mjs": {
+      "includeFiles": "docs/systaime/manifeste.interne.json"
     }
   },
   "rewrites": [
@@ -35,7 +38,7 @@
       "destination": "/index.html"
     },
     {
-      "source": "/:page(projets|aime-wedding|admin|a-propos|point-zero|buro|reseau|entrer|a-plus|boutique|musique|charte|monde)",
+      "source": "/:page(projets|aime-wedding|admin|a-propos|point-zero|buro|reseau|entrer|a-plus|boutique|musique|charte|monde|systaime)",
       "destination": "/index.html"
     }
   ],
