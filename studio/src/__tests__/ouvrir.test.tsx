@@ -16,7 +16,7 @@ const TOUS = ["points", "broder", "fils", "affichage", "loupe", "importer", "exp
 
 describe("?ouvrir= : lire, retirer, choisir la commande", () => {
   it("quatre valeurs, et rien d'autre : une valeur inconnue ou absente n'ouvre rien", () => {
-    expect([...OUVRIR]).toEqual(["ouvrages", "composer", "importer", "fils"]);
+    expect([...OUVRIR]).toEqual(["ouvrages", "reprendre", "composer", "importer", "fils"]);
     for (const v of OUVRIR) expect(lireOuvrir("?ouvrir=" + v)).toBe(v);
     expect(lireOuvrir("")).toBeNull(); expect(lireOuvrir("?ouvrir=supprimer")).toBeNull(); expect(lireOuvrir("?ouvrir=")).toBeNull(); expect(lireOuvrir("?ouvrir=FILS")).toBeNull();
   });
@@ -33,7 +33,7 @@ describe("?ouvrir= : lire, retirer, choisir la commande", () => {
     expect(entryStudio("", "", "/")).toBe("stitch-home");
   });
   it("seules les entrées qui touchent la couronne ouvrent le Disque ; « Mes ouvrages » ouvre la bibliothèque, sans Disque", () => {
-    expect(disquePour(null)).toBeUndefined(); expect(disquePour("ouvrages")).toBeUndefined();
+    expect(disquePour(null)).toBeUndefined(); expect(disquePour("ouvrages")).toBeUndefined(); expect(disquePour("reprendre")).toEqual({});
     expect(disquePour("composer")).toEqual({}); expect(disquePour("fils")).toEqual({ noeud: "fils" }); expect(disquePour("importer")).toEqual({ noeud: "importer" });
   });
   it("le chemin vers une commande : au premier anneau, ou dans « Plus » quand la place manque ; inconnue : le premier cercle", () => {
