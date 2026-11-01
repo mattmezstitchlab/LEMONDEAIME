@@ -1,3 +1,4 @@
+import { DOSSIERS_PERSONNELS } from '../charte/dossiersPersonnels';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {Tete, DockBas, Pied, Orbe } from '../charte/Charte';
 import { EntrerBloc } from '../charte/EntrerBloc';
@@ -290,7 +291,7 @@ export default function Buro() {
         </>}
       </main>
       <DockBas label="Lieux de votre espace">{session ? <>
-        {([['projets', 'Projets'], ['partages', 'Partagés avec moi'], ['archives', 'Archives'], ['profil', 'Profil']] as [Lieu, string][]).map(([k, l]) =>
+        {DOSSIERS_PERSONNELS.map(({id: k, nom: l}) =>
           <button key={k} type="button" className="lieu" aria-current={lieu === k ? 'true' : 'false'} onClick={() => { setLieu(k); setChoisi(null); setMsg(''); }}>{l}{k !== 'profil' && <span style={{ marginLeft: 8, fontSize: 13, opacity: .8 }}>{(projets || []).filter(p => dans(p, k)).length}</span>}</button>)}
       </> : undefined}</DockBas>
       <Pied />

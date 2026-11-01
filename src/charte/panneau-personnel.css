@@ -1,0 +1,31 @@
+.aime-personnel-voile { position: fixed; inset: 0; z-index: 160; background: #0b0b0c66; display: flex; justify-content: flex-end; }
+.aime-personnel { --encre:#0b0b0c; --encre-2:#3a3a3f; --encre-3:#55555a; --carte:#fff; --trait:#e2e2de; --doux:#f1f1ee; --dock:#1b1b1a; --dock-trait:#3a3a38; --nacre:radial-gradient(circle at 32% 30%,#fff,#d9e8ff,#c9b8ff,#ffd6ec,#b9f0e4); box-sizing:border-box; background:#fff; color:#0b0b0c; width:min(760px,100%); height:100dvh; overflow:auto; padding:20px; font:500 17px/1.5 'AIME Public',system-ui,sans-serif; }
+.aime-personnel * { box-sizing:border-box; }
+.aime-personnel a { color:#0b0b0c; }
+.aime-personnel h2 { margin:0 0 20px; font-size:30px; }
+.aime-personnel button,.aime-personnel input { font:inherit; }
+.aime-personnel button { cursor:pointer; min-height:44px; }
+.aime-personnel-fermer { float:right; padding:8px 12px; border:1px solid #cfcfcb; border-radius:12px; background:#fff; color:#0b0b0c; }
+.aime-personnel .tete { position:static; padding:0; display:block; pointer-events:auto; }
+.aime-personnel .tete-voile { display:none; }
+.aime-personnel .dock-haut { width:100%; max-width:none; border:0; box-shadow:none; padding:0; }
+.aime-personnel .dock-ligne { display:flex; gap:8px; flex-wrap:wrap; }
+.aime-personnel .outil,.aime-personnel .carre-orbe { min-width:44px; min-height:48px; display:inline-flex; align-items:center; justify-content:center; padding:8px 12px; border:1px solid #cfcfcb; background:#fff; color:#0b0b0c; border-radius:12px; }
+.aime-personnel .orbe { display:block; border-radius:50%; background:var(--nacre); }
+.aime-personnel .bloc-note { color:#3a3a3f; font-size:16px; }
+.aime-personnel .bloc-dossiers { display:flex; overflow:auto; gap:10px; padding:8px 0; list-style:none; }
+.aime-personnel .bloc-dossiers a { display:flex; flex-direction:column; gap:6px; width:165px; min-height:150px; padding:16px; border:1px solid #cfcfcb; border-radius:16px; text-decoration:none; }
+.aime-personnel .bloc-dossiers span { font-size:14px; color:#55555a; }
+.aime-personnel .bloc-menu { display:flex; flex-wrap:wrap; gap:16px; list-style:none; padding:0; }
+.aime-personnel .mini-dock { display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; padding:10px; border-radius:14px; background:#1b1b1a; color:#fff; }
+.aime-personnel .mini-dock a,.aime-personnel .mini-dock button,.aime-personnel .mini-dock label { color:#fff; background:transparent; border:1px solid #666; padding:8px 12px; border-radius:10px; text-decoration:none; }
+.aime-personnel .mini-dock button[aria-pressed=true] { border:2px solid #fff; }
+.aime-personnel .avatar { display:block; width:24px; height:24px; }
+.aime-personnel .avatar img { max-width:100%; }
+.aime-personnel .entrer-bloc { display:grid; gap:12px; }
+.aime-personnel .champ { width:100%; min-height:48px; border:1px solid #999; padding:10px; background:#fff; color:#0b0b0c; border-radius:10px; }
+.aime-personnel .bouton,.aime-personnel .entrer-alt { min-height:48px; padding:10px 16px; border:1px solid #999; border-radius:10px; background:#fff; color:#0b0b0c; }
+.aime-personnel .entrer-ligne,.aime-personnel .entrer-autres { display:flex; flex-wrap:wrap; gap:10px; }
+.aime-personnel :focus-visible { outline:3px solid #0b0b0c; outline-offset:3px; }
+.aime-personnel .mini-dock :focus-visible { outline-color:#fff; }
+.aime-personnel .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }

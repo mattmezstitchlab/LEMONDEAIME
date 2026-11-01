@@ -75,31 +75,21 @@ describe("Point Zéro spécialisé", () => {
     act(() => input.dispatchEvent(new Event("change", { bubbles: true })));
     expect(onImport).toHaveBeenCalledTimes(1);
   });
-  it("suit la charte AIME : dock du haut, « + Entrer » vers Mes ouvrages, dock du bas des sections", () => {
+  it("garde les actions métier en contexte sans dock de navigation concurrent", () => {
     const onOuvrages = vi.fn(), onShare = vi.fn(), onVisite = vi.fn();
     const { view, onOpen } = mount({ onOuvrages, onShare, onVisite });
-    expect(view.querySelector('nav[aria-label="Navigation point de croix"]')).toBeTruthy();
-    const enter = view.querySelector<HTMLButtonElement>('button[aria-label="Entrer dans Point Zéro"]')!;
-    act(() => enter.click());
-    expect(onOuvrages).toHaveBeenCalledTimes(1);
-    expect(onOpen).not.toHaveBeenCalled();
-    const bottom = view.querySelector('nav[aria-label="Sections de la page"]')!;
-    expect([...bottom.querySelectorAll("a")].map(a => a.textContent)).toEqual(["Le studio", "Le Point", "Tout le studio", "Commencer"]);
-    expect([...bottom.querySelectorAll("a")].map(a => a.getAttribute("href"))).toEqual(["#chapitres", "#ch-point", "#tout", "#commencer"]);
-    for (const id of ["chapitres", "ch-point", "tout", "commencer"]) expect(view.querySelector("#" + id)).toBeTruthy();
-    act(() => bottom.querySelector<HTMLButtonElement>('button[aria-label^="Le Point"]')!.click());
-    expect(onVisite).toHaveBeenCalledTimes(1);
-    const brand = view.querySelector<HTMLButtonElement>('button[aria-label="Menu Point Zéro"]')!;
-    act(() => brand.click());
-    expect(brand.getAttribute("aria-expanded")).toBe("true");
-    expect([...view.querySelectorAll("#pzh-menu button")].map(b => b.textContent)).not.toContain("Boutique de patrons");
-    act(() => [...view.querySelectorAll<HTMLButtonElement>("#pzh-menu button")].find(b => b.textContent === "Faire la visite avec Le Point")!.click());
-    expect(onVisite).toHaveBeenCalledTimes(2);
-    expect(view.querySelector("#pzh-menu")).toBeNull();
-    const invite = [...view.querySelectorAll<HTMLButtonElement>("button")].find(b => b.textContent?.includes("Inviter à regarder"))!;
-    act(() => invite.click());
-    expect(onShare).toHaveBeenCalled();
-    expect(view.textContent).toContain("Bientôt");
+    const actions = view.querySelector('[aria-label="Actions de la présentation Broderie"]')!;
+    expect(actions).toBeTruthy();
+    expect(view.querySelector('.pzh-bottom')).toBeNull();
+    const buttons = [...actions.querySelectorAll<HTMLButtonElement>('button')];
+    act(() => buttons.find(b => b.textContent === 'Mes ouvrages de broderie')!.click());
+    expect(onOuvrages).toHaveBeenCalledTimes(1); expect(onOpen).not.toHaveBeenCalled();
+    act(() => buttons.find(b => b.textContent === 'Ouvrir l’atelier')!.click()); expect(onOpen).toHaveBeenLastCalledWith('stitch');
+    act(() => buttons.find(b => b.textContent === 'Faire la visite avec Le Point')!.click()); expect(onVisite).toHaveBeenCalledTimes(1);
+    for (const id of ['chapitres','ch-point','tout','commencer']) expect(view.querySelector('#'+id)).toBeTruthy();
+    const invite=[...view.querySelectorAll<HTMLButtonElement>('button')].find(b=>b.textContent?.includes('Inviter à regarder'))!;
+    act(()=>invite.click());expect(onShare).toHaveBeenCalled();
+    expect(view.textContent).toContain('Bientôt');
   });
   it("explique par l’image : le fond floral de la une, brodé sous la loupe, puis huit chapitres illustrés et tout le studio", () => {
     const { view, onOpen } = mount();
@@ -130,7 +120,7 @@ describe("Point Zéro spécialisé", () => {
   });
   it("sans branchement, « + Entrer » ouvre mes ouvrages", () => {
     const { view, onOpen } = mount();
-    act(() => view.querySelector<HTMLButtonElement>('button[aria-label="Entrer dans Point Zéro"]')!.click());
+    act(() => view.querySelector<HTMLButtonElement>('.csh-actions-contextuelles button')!.click());
     expect(onOpen).toHaveBeenCalledWith("library");
   });
 });

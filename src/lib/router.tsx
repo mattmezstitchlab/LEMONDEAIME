@@ -39,7 +39,7 @@ export function useRecherche() {
   return q;
 }
 export function Lien({ href = '/', onClick, ...p }: AnchorHTMLAttributes<HTMLAnchorElement>) {
-  const interne = href.startsWith('/') && !href.startsWith('//') && !href.startsWith('/api/') && !/^\/studio(\/|$)/.test(href);   /* le StudiO est une application à part entière : on y entre par un vrai chargement de page */
+  const interne = !/^\/studio(\/|$)/.test(window.location.pathname) && href.startsWith('/') && !href.startsWith('//') && !href.startsWith('/api/') && !/^\/studio(\/|$)/.test(href);   /* le StudiO est une application à part entière : on y entre par un vrai chargement de page */
   const clic = (e: MouseEvent<HTMLAnchorElement>) => {
     onClick?.(e);
     if (e.defaultPrevented || !interne || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0 || p.target === '_blank') return;

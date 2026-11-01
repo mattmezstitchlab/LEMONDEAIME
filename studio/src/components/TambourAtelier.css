@@ -141,3 +141,8 @@ html:has(.pzt-centre-plein) .pzs-crumbs { visibility: hidden; }
 .pzt-centre-tete button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 0; background: #141414; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
 .pzt-centre-tete button:focus-visible { outline: 3px solid #7c5cff; outline-offset: 2px; }
 html[data-aime-studio="nuit"] .pzt-centre { background: #161618; color: #f4f4f2; }
+
+.pzs-ouvrages-contexte { pointer-events:auto; min-height:44px; padding:8px 12px; border:1px solid #cfcfcb; border-radius:10px; background:#fff; color:#0b0b0c; font:inherit; cursor:pointer; }
+
+.pzs-top.pzs-contexte-disque:not(:has(#pzs-bloc)) { display:none; }
+.pzs-bottom[hidden] { display:none !important; }
