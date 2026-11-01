@@ -62,6 +62,8 @@ export function nettoyerProjet(b) {
   const briques = (Array.isArray(b.briques) ? b.briques : []).filter((x, i, l) => IDS.includes(x) && l.indexOf(x) === i).slice(0, 20);
   return { titre, data: { briques, studio: String(b.studio || '').slice(0, 60), intention: String(b.intention || '').slice(0, 1000), description: nettoyerDescription(b.description), rev: 0, visibilite: 'prive', archive: false, source: 'point-zero' } };
 }
+/* Un accès (space_members) ne vaut que tant qu'il n'a pas expiré : la même condition sert à toutes les lectures et écritures, quel que soit le rôle. */
+const ACCES_VALIDE = `(m.jusqu_au is null or m.jusqu_au > now())`;
 export default async function buro(req, res) {
   const refus = R.ecriture(req); if (refus) return json(res, ...refus);
   if (!auth()) return json(res, 503, { ok: false, raison: 'Les comptes ne sont pas encore ouverts sur cet environnement.' });
@@ -70,7 +72,7 @@ export default async function buro(req, res) {
   const db = _pool();
   try {
     if (req.method === 'GET') {
-      const r = await db.query(`select s.id::text as id, s.kind, s.title, s.data, s.updated_at, m.role from spaces s join space_members m on m.space_id = s.id where m.user_id = $1 order by s.updated_at desc limit 200`, [moi.id]);
+      const r = await db.query(`select s.id::text as id, s.kind, s.title, s.data, s.updated_at, m.role from spaces s join space_members m on m.space_id = s.id where m.user_id = $1 and ${ACCES_VALIDE} order by s.updated_at desc limit 200`, [moi.id]);
       return json(res, 200, { ok: true, projets: r.rows.map(x => ({ id: x.id, genre: x.kind, titre: x.title, role: x.role, maj: x.updated_at, briques: (x.data && x.data.briques) || [], studio: (x.data && x.data.studio) || '', ouvrage: (x.data && x.data.ouvrage) || null, visibilite: (x.data && x.data.visibilite) || 'prive', archive: !!(x.data && x.data.archive), description: (x.data && x.data.description) || '', rev: revDe(x.data), intention: (x.data && x.data.intention) || '', modele: (x.data && x.data.modele) || null, mariage: x.kind === 'evenement' && x.data && x.data.modele === 'mariage' ? (x.data.mariage || null) : null })) });
     }
     if (req.method !== 'POST') return json(res, 405, { ok: false });
@@ -89,12 +91,14 @@ export default async function buro(req, res) {
         fiche = f.mariage;
       }
       if (titre === null && !Object.keys(patch).length && !(fiche && Object.keys(fiche).length)) return json(res, 400, { ok: false, raison: 'Rien à modifier.' });
-      const rev = b.rev === undefined || b.rev === null ? null : Number(b.rev);
-      if (rev !== null && !(Number.isInteger(rev) && rev >= 0 && rev < 1e9)) return json(res, 400, { ok: false, raison: 'Révision invalide.' });
+      /* La révision vue est obligatoire et doit être un entier JSON (jamais un texte, un booléen, un tableau, un objet, un nombre négatif ou décimal). */
+      if (b.rev === undefined || b.rev === null || b.rev === '') return json(res, 400, { ok: false, raison: 'Révision manquante : rechargez le projet avant de l’enregistrer.' });
+      if (typeof b.rev !== 'number' || !Number.isInteger(b.rev) || b.rev < 0 || b.rev >= 1e9) return json(res, 400, { ok: false, raison: 'Révision invalide.' });
+      const rev = b.rev;
       /* Un mariage se modifie à deux : le propriétaire, et un membre « editor » dont le rôle n'a pas expiré (space_members), pour la fiche
          et le titre seulement. Archiver, partager et la description restent au propriétaire. Les autres reçoivent 404, comme avant. */
       const reservees = Object.keys(patch).length > 0;
-      const EDITEUR = `exists (select 1 from space_members m where m.space_id = spaces.id and m.user_id = $2 and m.role = 'editor' and (m.jusqu_au is null or m.jusqu_au > now()))`;
+      const EDITEUR = `exists (select 1 from space_members m where m.space_id = spaces.id and m.user_id = $2 and m.role = 'editor' and ${ACCES_VALIDE})`;
       const condition = reservees ? `owner_id = $2` : `(owner_id = $2 or (kind = 'evenement' and data->>'modele' = 'mariage' and ${EDITEUR}))`;
       /* la même requête vérifie le droit et la révision, puis écrit : pas de course entre lire et écrire */
       const r = await db.query(

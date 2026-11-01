@@ -1,8 +1,9 @@
 /* Le site complet, en local, sur une base de TEST : les fichiers construits (dist/) et les VRAIS gestionnaires du serveur
-   (/api/auth, /lien, /api/buro, /api/fournisseurs, /api/projets), branchés sur BASE_TEST_URL. Seul l'envoi d'e-mail est remplacé :
+   (/api/auth, /lien, /api/buro, /api/reseau, /api/fournisseurs, /api/projets), branchés sur BASE_TEST_URL. Seul l'envoi d'e-mail est remplacé :
    le lien de connexion est gardé en mémoire et se lit sur /__test/lien?email=… (route qui n'existe que dans ce serveur de test).
    Usage : npm run build ; BASE_TEST_URL=postgres://…?sslmode=disable PORT=8774 node tests/base/serveur-local.mjs
-   Garde-fou : refuse toute base sans la table aime_base_de_test. */
+   Garde-fous : refuse toute base sans la table aime_base_de_test, toute base non locale (sauf BASE_TEST_HOTE_DISTANT=1), et retire des clés de service réelles de l'environnement.
+   L'envoi d'e-mail est remplacé par une mémoire locale ; la limitation de débit de la connexion est en mémoire du processus et les quotas écrivent dans la base de test. */
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
@@ -11,6 +12,11 @@ import pg from 'pg';
 
 const URL_BASE = process.env.BASE_TEST_URL, PORT = Number(process.env.PORT || 8774);
 if (!URL_BASE) { console.error('BASE_TEST_URL manquant : ce serveur ne tourne que sur une base de test.'); process.exit(2); }
+/* Garde-fous d'isolement, avant toute connexion : la base doit être sur cette machine (sauf BASE_TEST_HOTE_DISTANT=1, pour une branche Neon de test
+   nommée comme telle), jamais un hôte de production reconnaissable, et aucune clé de service réelle ne reste dans l'environnement du processus. */
+let hote = ''; try { hote = new URL(URL_BASE).hostname; } catch { console.error('BASE_TEST_URL illisible.'); process.exit(2); }
+if (!['localhost', '127.0.0.1', '::1', '[::1]'].includes(hote) && process.env.BASE_TEST_HOTE_DISTANT !== '1') { console.error('Refus : la base de test doit être locale (hôte « ' + hote + ' »). BASE_TEST_HOTE_DISTANT=1 pour une branche de test distante.'); process.exit(4); }
+for (const k of ['RESEND_API_KEY', 'ANTHROPIC_API_KEY', 'BLOB_READ_WRITE_TOKEN', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'POSTGRES_URL', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL_UNPOOLED', 'QUOTAS_SECRET', 'AUTH_EMAIL_FROM', 'AUTH_FROM', 'CONTACT_FROM']) delete process.env[k];
 const sonde = new pg.Client({ connectionString: URL_BASE }); await sonde.connect();
 if (!(await sonde.query("select to_regclass('public.aime_base_de_test') as t")).rows[0].t) { console.error('Refus : cette base n’est pas marquée comme base de test.'); process.exit(3); }
 await sonde.end();
@@ -18,6 +24,7 @@ Object.assign(process.env, { DATABASE_URL: URL_BASE, BETTER_AUTH_SECRET: randomB
 const A = await import('../../api/_auth/auth.mjs');
 const comptes = (await import('../../api/comptes.mjs')).default, buro = (await import('../../api/buro.mjs')).default;
 const fournisseurs = (await import('../../api/fournisseurs.mjs')).default, projets = (await import('../../api/projets.mjs')).default;
+const reseau = (await import('../../api/reseau.mjs')).default;
 const liens = new Map();
 A._envoyeur(async m => { const l = /https?:\/\/\S+\/lien\/\S+/.exec(m.text || ''); if (l) liens.set(String(m.to).toLowerCase(), l[0]); });
 
@@ -36,6 +43,7 @@ http.createServer(async (req, res) => {
     if (u.pathname.startsWith('/lien/')) { req.url = '/api/comptes?__lien=' + encodeURIComponent(u.pathname.slice(6)).replace(/%2F/g, '/'); return await comptes(req, res); }
     if (u.pathname.startsWith('/api/auth/')) return await comptes(req, res);
     if (u.pathname === '/api/buro') return await buro(req, res);
+    if (u.pathname === '/api/reseau') return await reseau(req, res);
     if (u.pathname === '/api/fournisseurs') return await fournisseurs(req, res);
     if (u.pathname === '/api/projets') { res.status = c => { res.statusCode = c; return res; }; res.json = o => { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(o)); }; req.query = Object.fromEntries(u.searchParams); return await projets(req, res); }
     if (u.pathname.startsWith('/api/')) { res.statusCode = 404; res.setHeader('Content-Type', 'application/json'); return res.end('{"ok":false}'); }

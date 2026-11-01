@@ -107,7 +107,7 @@ with sync_playwright() as p:
         pg2.goto(B + '/buro'); pg2.wait_for_selector('main input[type=email]'); se_connecter(pg2, email2)
         uid2 = sql('select id from "user" where email = \'%s\'' % email2)[0][0]
         ok(pg2.locator('text=' + A_).count() == 0, t + 'un autre compte ne voit pas le mariage')
-        r = ctx2.request.post(B + '/api/buro', headers=H, data=json.dumps({'action': 'maj', 'id': mid, 'mariage': {'date': '2030-01-01'}})); ok(r.status == 404 and sql("select data->'mariage'->>'date' from spaces where id = '%s'" % mid)[0][0] == '2027-09-04', t + 'un autre compte ne peut pas modifier la fiche, même par appel direct (404)', r.status)
+        r = ctx2.request.post(B + '/api/buro', headers=H, data=json.dumps({'action': 'maj', 'id': mid, 'mariage': {'date': '2030-01-01'}, 'rev': 0})); ok(r.status == 404 and sql("select data->'mariage'->>'date' from spaces where id = '%s'" % mid)[0][0] == '2027-09-04', t + 'un autre compte ne peut pas modifier la fiche, même par appel direct (404)', r.status)
         def role(rl, jusqu='null'):
             sql("delete from space_members where space_id = '%s' and user_id = '%s'" % (mid, uid2)); sql("insert into space_members (space_id, user_id, role, jusqu_au) values ('%s', '%s', '%s', %s)" % (mid, uid2, rl, jusqu))
         def tenter(corps):
