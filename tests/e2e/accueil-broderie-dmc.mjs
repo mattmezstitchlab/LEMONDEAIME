@@ -48,6 +48,7 @@ try {
   ok(await p.locator('h1').count()===1,width+': un titre principal');
   ok(await p.locator('[data-header-public]').count()===1,width+': un seul header');
   ok(await p.locator('footer').count()===1,width+': un seul footer');
+  for(const name of ['Studio','Mon espace']) {const b=await p.getByRole('button',{name,exact:true}).boundingBox();ok(b.x>=0&&b.x+b.width<=width&&b.height>=44,width+': '+name+' entièrement dans le header');}
   ok(await p.locator('.csh-integre .ch').count()===8,width+': huit sections broderie sur accueil');
   ok(await p.locator('.ouv,.ouv-scene,#demonstrations,.csh-actions-contextuelles,#tout,#csh-import,#commencer').count()===0,'vidéo et derniers blocs retirés de l’accueil');
   ok(await p.locator('[data-entree-dmc]').count()===3,'grandes entrées en sections DMC');
