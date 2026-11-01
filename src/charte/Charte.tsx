@@ -122,11 +122,12 @@ function Avatar({ p }: { p: Personne | null | undefined }) {
   return <span className="avatar" aria-hidden="true">{p ? ini : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="9" r="3.6" /><path d="M5 19.5c1.4-3.2 4-4.7 7-4.7s5.6 1.5 7 4.7" /></svg>}</span>;
 }
 /* Le dock du haut de tout le site : les rubriques du Monde AIME (des mots, pas de pictos). */
-export function VerbesSite({ actif }: { actif?: 'unions' | 'prestataires' | 'studio' | 'boutique' }) {
+export function VerbesSite({ actif }: { actif?: 'unions' | 'prestataires' | 'studio' | 'rosace' | 'boutique' }) {
   return <>
     <Verbe href="/#unions" actif={actif === 'unions'}>Unions</Verbe>
     <Verbe href="/reseau?domaine=mariage" actif={actif === 'prestataires'}>Prestataires</Verbe>
     <Verbe href="/studio/" actif={actif === 'studio'}>Studio</Verbe>
+    <Verbe href="/rosace" actif={actif === 'rosace'}>Rosace</Verbe>
     <Verbe href="/boutique" actif={actif === 'boutique'}>Boutique</Verbe>
   </>;
 }
