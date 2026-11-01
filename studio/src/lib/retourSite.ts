@@ -4,7 +4,7 @@ export function retourSite(): void {
   try {
     if (document.referrer) {
       const ref = new URL(document.referrer);
-      if (ref.origin === window.location.origin && !ref.pathname.startsWith("/studio")) { window.history.back(); return; }
+      if (ref.origin === window.location.origin && !ref.pathname.startsWith("/studio")) { window.location.href = ref.href; return; }
     }
   } catch { /* adresse illisible : on retombe sur l'accueil */ }
   window.location.href = "/";

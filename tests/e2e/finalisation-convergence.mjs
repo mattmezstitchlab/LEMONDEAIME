@@ -107,6 +107,18 @@ try {
     await p.getByRole('button', { name: 'Revenir sur Le Monde AIME', exact: true }).click();
     await p.waitForURL(base + '/projets'); ok(true, 'site -> Studio -> retour au site'); await p.context().close();
   }
+  // Régression Arena : l'atelier utilise pushState ; history.back() ramènerait au Studio.
+  for (const reload of [false, true]) {
+    const p = await page(390); await goto(p, '/projets');
+    await p.goto(base + '/studio/', { waitUntil: 'domcontentloaded', referer: base + '/projets' });
+    await p.getByRole('button', { name: 'Créer mon patron', exact: true }).click();
+    await p.waitForURL(base + '/studio/atelier');
+    if (reload) await p.reload({ waitUntil: 'domcontentloaded' });
+    await p.getByRole('button', { name: 'Revenir sur Le Monde AIME', exact: true }).click();
+    await p.waitForURL(base + '/projets');
+    ok(true, `Site -> Studio -> Atelier -> site, rechargement=${reload}`);
+    await p.context().close();
+  }
   for (const [label, destination] of [['Organiser', '/aime-wedding'], ['Créer', '/studio/atelier'], ['Mes projets', '/buro'], ['Découvrir', '/projets']]) {
     const p = await page(); await goto(p, '/');
     await p.locator('.dock-haut').getByRole('link', {name: label, exact: true}).click();
