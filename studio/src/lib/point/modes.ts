@@ -113,13 +113,18 @@ export function hotePortail(depuis: Element | null): Element {
 export type Presentation = "anneau" | "panneau" | "arc" | "liste";
 export type ChoixPresentation = "auto" | "arc" | "liste";
 export const PRESENTATION_CLE = "pointzero:point:presentation";
+export const PRESENTATION_EVT = "pz:point:presentation";
 export const LARGEUR_TELEPHONE = 720;
 
 export function lirePresentation(): ChoixPresentation {
   try { const v = localStorage.getItem(PRESENTATION_CLE); return v === "arc" || v === "liste" ? v : "auto"; } catch { return "auto"; }
 }
 export function ecrirePresentation(v: ChoixPresentation): boolean {
-  try { if (v === "auto") localStorage.removeItem(PRESENTATION_CLE); else localStorage.setItem(PRESENTATION_CLE, v); return true; } catch { return false; }
+  let enregistre = true;
+  try { if (v === "auto") localStorage.removeItem(PRESENTATION_CLE); else localStorage.setItem(PRESENTATION_CLE, v); } catch { enregistre = false; }
+  /* Une scène est toujours ouverte : elle doit aussi suivre ce choix sans rechargement. */
+  if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent(PRESENTATION_EVT, { detail: v }));
+  return enregistre;
 }
 /** Automatique : l'anneau quand l'écran est large, le panneau compact sur téléphone (ou en zoom fort, qui rétrécit la largeur utile). */
 export function presentationPour(choix: ChoixPresentation, largeur: number): Presentation {

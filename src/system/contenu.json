@@ -44,6 +44,14 @@
       "statut": "reel",
       "texte": "Un fil DMC ou un élément SYST'AIME : une seule fiche, deux métiers."
     },
+    "rosace": {
+      "titre": "ROSACE, une page vivante dans le système.",
+      "statut": "demonstration",
+      "texte": "Retrouvez ici la page ROSACE complète : le vrai Disque, ses lectures et une collection de 64 recettes de broderie. Ces rosaces sont distinctes des 64 cases de l'échiquier SYST'AIME.",
+      "ancre": "Découvrir ROSACE",
+      "ouvrir": "Ouvrir ROSACE en grand",
+      "cadre": "Aperçu interactif de la page complète. Faites défiler à l'intérieur du cadre, ou ouvrez la page en grand."
+    },
     "capacites": {
       "titre": "Six capacités, chacune avec son état réel.",
       "texte": "Ce qui existe est dit réel ; le reste est dit tel qu'il est."

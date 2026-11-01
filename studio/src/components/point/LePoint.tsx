@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent as PE, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { anneau, dispositionArc, FAVORIS, hotePortail, lirePresentation, niveau, nomAccessible, ORIGINE, paginer, placePanneau, positionDe, presentationPour, RETOUR, secteurVise, SUITE, tourner, type ModePoint, type Presentation } from "../../lib/point/modes";
+import { anneau, dispositionArc, FAVORIS, hotePortail, lirePresentation, niveau, nomAccessible, ORIGINE, paginer, placePanneau, positionDe, presentationPour, PRESENTATION_CLE, PRESENTATION_EVT, RETOUR, secteurVise, SUITE, tourner, type ChoixPresentation, type ModePoint, type Presentation } from "../../lib/point/modes";
 import { favoris, lireUsage, noterUsage, oublierUsage } from "../../lib/point/memoire";
 import "./LePoint.css";
 
@@ -113,8 +113,18 @@ export default function LePoint({ cheminInitial, modes, part = 0, teinte = "#FFF
   const [arc, setArc] = useState<ReturnType<typeof dispositionArc> | null>(null);
   const [panneau, setPanneau] = useState({ left: 8, right: 8, bottom: 80 });
   useEffect(() => { if (annonceExterne) setAnnonce(annonceExterne); }, [annonceExterne]);
-  useEffect(() => { if (ouvert && interagi.current) items.current[Math.min(focus, n - 1)]?.focus(); }, [ouvert, focus, n, chemin, page, pres]);
-  useEffect(() => { if (scene) setPres(lirePresentation() === "liste" ? "liste" : "anneau"); }, [scene]);
+  useEffect(() => {
+    if (ouvert && interagi.current && !(document.activeElement as Element | null)?.closest(".lp-panneau")) items.current[Math.min(focus, n - 1)]?.focus();
+  }, [ouvert, focus, n, chemin, page, pres]);
+  useEffect(() => {
+    if (!scene) return;
+    const appliquer = (choix: ChoixPresentation) => setPres(choix === "liste" ? "liste" : "anneau");
+    appliquer(lirePresentation());
+    const suivre = (e: Event) => appliquer((e as CustomEvent<ChoixPresentation>).detail);
+    const autreOnglet = (e: StorageEvent) => { if (e.key === PRESENTATION_CLE || e.key === null) appliquer(lirePresentation()); };
+    window.addEventListener(PRESENTATION_EVT, suivre); window.addEventListener("storage", autreOnglet);
+    return () => { window.removeEventListener(PRESENTATION_EVT, suivre); window.removeEventListener("storage", autreOnglet); };
+  }, [scene]);
   /* un clic ailleurs referme l'anneau, sans prendre le focus */
   useEffect(() => {
     if (!ouvert || scene) return;

@@ -1,6 +1,8 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { Tete, DockBas, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
+import { ROSACE } from '../lib/entreesBroderie.mjs';
+import { useConfortPartage } from '../rosace/useConfortPartage';
 import { useTheme, CHOIX_THEMES } from '../../studio/src/design/theme';
 import '../../studio/src/design/aime.css';
 import '../system/system.css';
@@ -69,6 +71,7 @@ function Echiquier({ courante, onChoisir }: { courante: string; onChoisir: (a: s
 }
 
 export default function System() {
+  useConfortPartage(true);
   const { choix, theme, choisir } = useTheme();
   const [courante, setCourante] = useState(lireChoix);
   /* la fiche du Disque ne suit que les choix faits dans le Disque : choisir une case plus bas ne change pas la hauteur d'une zone située au-dessus (décalage de 58 px sur téléphone) */
@@ -114,6 +117,7 @@ export default function System() {
           <div className="sys-actions">
             <a className="sys-bouton primaire" href="#disque" onClick={() => setDisqueVu(true)}>{C.hero.actions[0][0]}</a>
             <Lien className="sys-bouton" href={C.hero.actions[1][1]}>{C.hero.actions[1][0]}</Lien>
+            <a className="sys-bouton" href="#rosace">{S.rosace.ancre}</a>
           </div>
           <div className="sys-barre">
             <div role="radiogroup" aria-label="Thème d’affichage" className="sys-seg">
@@ -130,6 +134,16 @@ export default function System() {
           <div ref={disqueRef} className="sys-reserve">
             {disqueVu ? <Suspense fallback={<Attente nom="le Disque" />}><DisqueDemo courante={courDisque} onChoisir={choisirDisque} /></Suspense> : <Attente nom="le Disque" />}
           </div>
+        </Section>
+
+        <Section id="rosace" large titre={S.rosace.titre} statut={S.rosace.statut} texte={S.rosace.texte}>
+          <div className="sys-rosace-actions">
+            <p className="sys-note" id="sys-rosace-guide">{S.rosace.cadre}</p>
+            <Lien className="sys-bouton" href={ROSACE}>{S.rosace.ouvrir}</Lien>
+          </div>
+          {/* La page canonique, isolée dans son propre document : pas de copie du moteur,
+              ni de conflit d'ancres, de styles ou de Points avec le Disque SYST'AIME. */}
+          <iframe className="sys-rosace-cadre" src={ROSACE + '&apercu=system'} title="Page ROSACE complète et interactive" aria-describedby="sys-rosace-guide" loading="lazy" />
         </Section>
 
         <Section id="capacites" titre={S.capacites.titre} texte={S.capacites.texte}>
@@ -193,6 +207,6 @@ export default function System() {
       </main>
     </div>
     <Pied />
-    <DockBas lieux={[['disque', 'Disque'], ['capacites', 'Capacités'], ['echiquier', 'Échiquier'], ['demos', 'Démos']]} />
+    <DockBas lieux={[['disque', 'Disque'], ['rosace', 'ROSACE'], ['capacites', 'Capacités'], ['echiquier', 'Échiquier'], ['demos', 'Démos']]} />
   </>;
 }

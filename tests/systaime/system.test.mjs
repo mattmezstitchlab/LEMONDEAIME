@@ -104,3 +104,14 @@ test('choisir une case ne déplace pas la page : aucun défilement dans le code 
   assert.doesNotMatch(sel, /scrollIntoView|scrollTo|location\.hash|\.focus\(/);
   assert.doesNotMatch(lire('src/system/DisqueDemo.tsx'), /scrollIntoView/);
 });
+
+test('ROSACE complète dans le système : même page, collection distincte de l’échiquier', () => {
+  const s = C.sections.rosace;
+  assert.equal(s.statut, 'demonstration');
+  assert.match(s.texte, /64 recettes de broderie/);
+  assert.match(s.texte, /distinctes des 64 cases/);
+  const page = lire('src/pages/System.tsx');
+  assert.match(page, /import \{ ROSACE \} from '\.\.\/lib\/entreesBroderie\.mjs'/);
+  assert.match(page, /<iframe[^>]+src=\{ROSACE \+ '&apercu=system'\}[^>]+title="Page ROSACE complète et interactive"/);
+  assert.match(page, /<Lien[^>]+href=\{ROSACE\}>\{S\.rosace\.ouvrir\}/);
+});

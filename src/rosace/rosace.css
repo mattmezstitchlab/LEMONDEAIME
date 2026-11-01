@@ -1,0 +1,297 @@
+/* Cormorant Garamond, sous-ensembles latins variable normal et italique, SIL OFL 1.1. Voir polices/LICENCE-OFL.txt. */
+@font-face { font-family: 'Cormorant Garamond Variable'; font-style: normal; font-weight: 300 700; font-display: swap; src: url('./polices/cormorant-garamond-latin-wght-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Cormorant Garamond Variable'; font-style: italic; font-weight: 300 700; font-display: swap; src: url('./polices/cormorant-garamond-latin-wght-italic.woff2') format('woff2'); }
+/* Inter Tight est la police de la charte ; cet exemplaire local est celui déjà utilisé par le Studio (SIL OFL 1.1). */
+@font-face { font-family: 'Inter Tight ROSACE'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('./polices/inter-tight-latin-wght-normal.woff2') format('woff2'); }
+/* ROSACE : une couche éditoriale sur les composants et les données du Studio. */
+.ros-page { overflow: clip; background: #f8f5ed; color: #26241f; font-family: 'Inter Tight ROSACE', 'Inter Tight', system-ui, sans-serif; }
+.ros-page a { color: inherit; }
+.ros-page p, .ros-page h1, .ros-page h2, .ros-page h3, .ros-page figure { margin: 0; }
+.ros-page button { color: inherit; }
+.ros-page :focus-visible { outline: 2px solid #735445; outline-offset: 4px; }
+.ros-page h2 { font-family: 'Cormorant Garamond Variable', Georgia, serif; font-weight: 500; letter-spacing: -.045em; line-height: .94; font-size: clamp(48px, 5.6vw, 84px); }
+.ros-page h2 em { font-weight: 400; }
+.ros-hero { padding: 0 clamp(20px, 4.6vw, 72px) 60px; text-align: center; }
+.ros-topline { height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #d8d0c1; font-size: calc(10px * var(--pz-user-font-scale, 1)); font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
+.ros-topline a { text-decoration: none; }
+.ros-topline a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.ros-topline > span { color: #8b8274; }
+.ros-masthead { position: relative; z-index: 1; padding-top: 20px; }
+.ros-kicker, .ros-eyebrow { font-size: calc(10px * var(--pz-user-font-scale, 1)); line-height: 1.5; font-weight: 700; letter-spacing: .19em; text-transform: uppercase; }
+.ros-kicker { color: #847769; display: flex; justify-content: center; align-items: center; gap: 11px; }
+.ros-diamond { width: 4px; height: 4px; background: #b88769; transform: rotate(45deg); }
+.ros-masthead h1 { font: 500 clamp(72px, 9vw, 130px)/.78 'Cormorant Garamond Variable', Georgia, serif; letter-spacing: -.065em; margin: 14px 0 9px; }
+.ros-masthead h1 span { color: #ac725e; }
+.ros-signature { font: italic 400 clamp(21px, 2.1vw, 30px)/1.2 'Cormorant Garamond Variable', Georgia, serif; color: #70665b; }
+.ros-scene { display: grid; grid-template-columns: minmax(135px, 1fr) minmax(0, 620px) minmax(135px, 1fr); align-items: center; max-width: 1480px; margin: -14px auto 0; }
+.ros-scene-note { text-align: left; padding: 0 clamp(4px, 2vw, 25px); }
+.ros-scene-note span { font-size: calc(9px * var(--pz-user-font-scale, 1)); font-weight: 700; letter-spacing: .16em; color: #887b6c; }
+.ros-scene-note p { margin: 16px 0 8px; font: 500 clamp(18px, 1.8vw, 27px)/1.04 'Cormorant Garamond Variable', Georgia, serif; }
+.ros-scene-note small { font: 400 12px/1.4 'Inter Tight ROSACE', 'Inter Tight', system-ui, sans-serif; color: #756d62; letter-spacing: 0; }
+.ros-scene-note i { display: block; color: #b9856c; font-size: calc(21px * var(--pz-user-font-scale, 1)); font-style: normal; margin-top: 25px; }
+.ros-scene-note-droite { justify-self: end; min-width: 150px; }
+.ros-scene-note code { display: block; margin-top: 14px; font-size: calc(10px * var(--pz-user-font-scale, 1)); color: #756d62; white-space: nowrap; }
+.ros-mini-fils { display: flex; margin-top: 18px; }
+.ros-mini-fils i { width: 15px; height: 15px; margin: 0 -3px 0 0; border: 1.5px solid #f8f5ed; border-radius: 50%; }
+.ros-disque { min-width: 0; width: 100%; }
+.ros-centre-motif { width: 100%; height: 100%; max-width: none !important; transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+.ros-toile { display: block; width: 100%; height: 100%; }
+/* Même DisqueOne et même géométrie que l'atelier, dessinés en traits légers. */
+.ros-disque .pzt.pzt-pose .pzt-couronne-zone { fill: transparent; filter: none; }
+.ros-disque .pzt-rebord { stroke: #d4cabc; stroke-width: .75; }
+.ros-disque .pzt-rebord-int { stroke: #d4cabc; stroke-width: .75; }
+.ros-disque .pzt-sillon { stroke: #d4cabc; stroke-width: .7; stroke-dasharray: 1 5; }
+.ros-disque .one-centre { background: #f4eee2; box-shadow: inset 0 0 0 1px #ddd1be; }
+.ros-disque .pzt .lp-tambour .lp-rond { background: #f8f5ed; color: #38352f; border: 1px solid #cfc3b3; box-shadow: none; }
+.ros-disque .pzt .lp-tambour .lp-outil.lp-acces .lp-rond { border: 1px solid #c1ad9a; box-shadow: none; }
+.ros-disque .pzt .lp-tambour .lp-outil:hover .lp-rond, .ros-disque .pzt .lp-tambour .lp-outil:focus-visible .lp-rond { background: #e8ded0; color: #24221e; box-shadow: 0 0 0 2px #f8f5ed, 0 0 0 3px #a77f68; }
+.ros-disque .pzt .lp-tambour .lp-secteur:focus-visible { outline: 2px solid #58453a; }
+.ros-disque .pzt .lp-tambour .lp-mot { color: #4d4840; text-shadow: none; font-weight: 550; }
+.ros-disque .pzt .lp-tambour .lp-secteur { color: #312d28; }
+/* Les numéros et les commandes de pagination gardent le même contraste que les modes du Disque. */
+.ros-disque .pzt .lp-tambour .lp-secteur.lp-pastille-anneau { color: #312d28; background: #f8f5ed; border: 1px solid #cfc3b3; box-shadow: none; }
+.ros-disque .pzt .lp-tambour .lp-secteur.lp-pastille-anneau:hover, .ros-disque .pzt .lp-tambour .lp-secteur.lp-pastille-anneau:focus-visible { background: #e8ded0; }
+.ros-disque .pzt .lp-tambour .lp-pastille-anneau .lp-valeur { background: transparent; color: inherit; }
+.ros-disque .lp-indic[data-etat="repos"] { background: #b9aa98; }
+.ros-disque .lp-marque { background: #a8614c; box-shadow: 0 0 0 2px #f8f5ed; }
+.ros-disque .one-disque-cartouche { height: 25px; margin-top: 6px; font-size: calc(11px * var(--pz-user-font-scale, 1)); color: #766c5e; }
+/* La présentation « liste » de Confort est le même Point, replacé dans le flux de la page. */
+.ros-disque .one-disque:has(.lp-liste) { height: auto !important; }
+.ros-disque .pzt:has(.lp-liste) { position: relative; inset: auto; display: flex; flex-direction: column; align-items: center; }
+.ros-disque .pzt:has(.lp-liste) > .pzt-anneau { display: none; }
+.ros-disque .pzt:has(.lp-liste) .one-centre { position: relative; top: auto !important; left: auto !important; width: min(230px, 70%) !important; height: auto !important; aspect-ratio: 1; }
+.ros-disque .pzt:has(.lp-liste) .pzt-point { position: relative; top: auto; left: auto; transform: none; width: 100%; margin-top: 22px; }
+.ros-disque .pzt:has(.lp-liste) .lp-scene-hote, .ros-disque .lp-liste { width: 100%; pointer-events: auto; }
+.ros-disque .lp-scene-hote .lp-liste { padding: 0; overflow: visible; border-radius: 0; background: none; box-shadow: none; }
+.ros-disque .lp-liste-titre { color: #796d60; text-align: left; }
+.ros-disque .lp-liste .lp-secteur.lp-ligne { color: #292622; background: #fcf9f2; border: 1px solid #d6cabc; box-shadow: none; }
+.ros-disque .lp-liste .lp-secteur.lp-ligne:hover { background: #eee7da; }
+.ros-disque .lp-liste .lp-liste-nom { font-size: calc(15px * var(--pz-user-font-scale, 1)); }
+.ros-disque .lp-liste .lp-liste-aide { color: #655c53; font-size: calc(13px * var(--pz-user-font-scale, 1)); }
+.ros-disque:has(.lp-liste) .one-disque-cartouche { display: none; }
+.ros-hero-commandes { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 24px; margin: -1px auto 0; }
+.ros-hero-commandes button, .ros-reset-fil { min-height: 40px; border: 0; background: transparent; font-size: calc(12px * var(--pz-user-font-scale, 1)); font-weight: 600; }
+.ros-hero-commandes button span { color: #a86d58; font-size: calc(17px * var(--pz-user-font-scale, 1)); margin-right: 4px; }
+.ros-hero-commandes button:hover, .ros-reset-fil:hover:not(:disabled) { text-decoration: underline; text-underline-offset: 4px; }
+.ros-indication, .ros-entree-note { color: #82786b; font-size: calc(11px * var(--pz-user-font-scale, 1)); line-height: 1.5; }
+.ros-hero-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 16px 34px; margin-top: 19px; }
+.ros-bouton { white-space: nowrap; min-height: 54px; padding: 0 23px; display: inline-flex; align-items: center; justify-content: center; gap: 32px; border: 1px solid #25231e; text-decoration: none; font-size: calc(13px * var(--pz-user-font-scale, 1)); font-weight: 650; transition: background .2s, color .2s, border-color .2s; }
+.ros-bouton span { font-size: calc(17px * var(--pz-user-font-scale, 1)); font-weight: 400; }
+.ros-bouton-noir { background: #282620; color: #fff !important; }
+.ros-bouton-noir:hover { background: #6c5345; border-color: #6c5345; color: #fff; }
+.ros-lien { display: inline-flex; align-items: center; gap: 24px; min-height: 48px; text-decoration: none; border-bottom: 1px solid #918577; font-size: calc(13px * var(--pz-user-font-scale, 1)); font-weight: 650; }
+.ros-lien span { font-size: calc(17px * var(--pz-user-font-scale, 1)); font-weight: 400; }
+.ros-lien:hover { border-color: #26241f; }
+.ros-entree-note { margin-top: 12px !important; }
+
+.ros-section { padding: clamp(64px, 7vw, 112px) clamp(24px, 6vw, 96px); }
+.ros-section-label { display: flex; justify-content: space-between; gap: 15px; padding-top: 16px; border-top: 1px solid currentColor; color: #8a7e70; font-size: calc(9px * var(--pz-user-font-scale, 1)); font-weight: 700; letter-spacing: .16em; }
+.ros-section-label span:last-child { text-align: right; }
+.ros-manifeste { background: #eae4d8; }
+.ros-manifeste-texte { text-align: center; max-width: 750px; margin: clamp(65px, 7vw, 112px) auto 75px; }
+.ros-petit-soleil { margin: 0 auto 22px; color: #ad7761; font-size: calc(28px * var(--pz-user-font-scale, 1)); }
+.ros-manifeste-texte p { max-width: 460px; margin: 27px auto 0; font-size: calc(15px * var(--pz-user-font-scale, 1)); line-height: 1.75; color: #6e6559; }
+.ros-lectures { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); list-style: none; padding: 0; margin: 0; border-bottom: 1px solid #cec5b6; }
+.ros-lectures li { padding: 21px 20px 25px 0; margin-right: 20px; border-top: 1px solid #cec5b6; }
+.ros-lectures li > span { font-size: calc(10px * var(--pz-user-font-scale, 1)); color: #a47a62; }
+.ros-lectures h3 { font: 600 27px/1 'Cormorant Garamond Variable', Georgia, serif; margin-top: 21px; }
+.ros-lectures p { margin-top: 11px; color: #70685d; font-size: calc(12px * var(--pz-user-font-scale, 1)); line-height: 1.55; }
+.ros-lectures-note { max-width: 750px; margin: 20px 0 0 !important; color: #71685c; font-size: calc(11px * var(--pz-user-font-scale, 1)); line-height: 1.6; }
+
+.ros-galerie { background: #f8f5ed; }
+.ros-heading-row { display: flex; align-items: end; justify-content: space-between; gap: 40px; margin: 86px 0 50px; }
+.ros-heading-row .ros-eyebrow, .ros-cinq-texte .ros-eyebrow, .ros-fils-texte .ros-eyebrow, .ros-points-texte .ros-eyebrow, .ros-cadre .ros-eyebrow, .ros-patron .ros-eyebrow { margin-bottom: 19px; color: #ac7661; }
+.ros-heading-row > p { max-width: 300px; font-size: calc(14px * var(--pz-user-font-scale, 1)); line-height: 1.7; color: #746a5e; }
+/* Les 64 recettes : huit colonnes quand la place le permet, sans réduire les cibles tactiles sur mobile. */
+.ros-galerie-guide { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; margin: 0 0 22px; color: #6c6256; font-size: calc(12px * var(--pz-user-font-scale, 1)); line-height: 1.5; }
+.ros-galerie-guide a { color: #45382f; text-underline-offset: 3px; }
+.ros-galerie-grille { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 18px 12px; padding: 0; margin: 0; list-style: none; }
+.ros-galerie-item { min-width: 0; }
+.ros-galerie-figure { position: relative; display: grid; place-items: center; width: 100%; min-height: 44px; aspect-ratio: 1; padding: 11%; border: 0; background: #eee5dc; overflow: hidden; }
+.ros-galerie-figure-1 { background: #e8e3e8; }
+.ros-galerie-figure-2 { background: #e4e9e1; }
+.ros-galerie-figure-3 { background: #ede8dd; }
+.ros-galerie-figure[aria-pressed="true"] { box-shadow: inset 0 0 0 2px #765344; }
+.ros-galerie-figure[aria-pressed="true"]::after { content: '✓'; position: absolute; right: 7px; bottom: 6px; color: #59453b; font-size: 13px; font-weight: 700; }
+.ros-galerie-cercle { display: block; width: 100%; aspect-ratio: 1; border: 1px solid rgba(110,89,75,.17); border-radius: 50%; background: rgba(248,245,237,.62); padding: 7%; transition: transform .7s ease; }
+.ros-galerie-figure:hover .ros-galerie-cercle { transform: rotate(9deg) scale(1.025); }
+.ros-galerie-index, .ros-galerie-plus { position: absolute; top: 7px; color: #5e554c; font-size: calc(9px * var(--pz-user-font-scale, 1)); letter-spacing: .04em; }
+.ros-galerie-index { left: 7px; }
+.ros-galerie-plus { right: 7px; font-size: calc(15px * var(--pz-user-font-scale, 1)); line-height: 1; }
+.ros-galerie-legende { min-width: 0; padding: 9px 0 10px; border-bottom: 1px solid #dad2c5; }
+.ros-galerie-legende h3 { overflow-wrap: anywhere; font: 600 calc(18px * var(--pz-user-font-scale, 1))/1.05 'Cormorant Garamond Variable', Georgia, serif; }
+.ros-galerie-legende > span { display: block; margin-top: 5px; color: #81766a; font-size: calc(9px * var(--pz-user-font-scale, 1)); overflow-wrap: anywhere; }
+
+.ros-cinq { background: #eae5db; }
+.ros-cinq-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); gap: clamp(55px, 8vw, 130px); align-items: center; max-width: 1450px; margin: 85px auto 15px; }
+.ros-cinq-image { min-width: 0; }
+.ros-cinq-cercle { display: grid; place-items: center; width: min(100%, 610px); aspect-ratio: 1; padding: 10%; border: 1px solid #cbbfae; border-radius: 50%; background: #f7f2e9; }
+.ros-cinq-cercle .ros-toile { aspect-ratio: 1; }
+.ros-cinq-caption { display: flex; justify-content: space-between; max-width: 610px; margin-top: 18px; color: #877a6b; font-size: calc(10px * var(--pz-user-font-scale, 1)); letter-spacing: .08em; }
+.ros-cinq-caption code { font-size: calc(11px * var(--pz-user-font-scale, 1)); }
+.ros-cinq-texte > p:not(.ros-eyebrow):not(.ros-fineprint):not(.ros-ajustement) { max-width: 440px; margin: 25px 0 30px; color: #6d6559; font-size: calc(14px * var(--pz-user-font-scale, 1)); line-height: 1.7; }
+.ros-dimensions { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid #cbc1b3; border-bottom: 1px solid #cbc1b3; }
+.ros-dimensions button { min-width: 0; min-height: 70px; padding: 13px 5px 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; font-size: calc(12px * var(--pz-user-font-scale, 1)); font-weight: 600; text-align: left; }
+.ros-dimensions button span { display: block; margin-bottom: 8px; color: #a58e7a; font-size: calc(9px * var(--pz-user-font-scale, 1)); }
+.ros-dimensions button[aria-pressed="true"] { border-bottom-color: #a26953; }
+.ros-choix-tete { display: flex; gap: 16px; align-items: baseline; margin-top: 25px; }
+.ros-choix-tete span { color: #a47a62; font-size: calc(10px * var(--pz-user-font-scale, 1)); letter-spacing: .1em; }
+.ros-choix-tete h3 { font: 600 25px/1 'Cormorant Garamond Variable', Georgia, serif; }
+.ros-choix { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 25px; margin-top: 13px; }
+.ros-choix button { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 47px; padding: 6px 0; border: 0; border-bottom: 1px solid #d2c9bc; background: transparent; font-size: calc(13px * var(--pz-user-font-scale, 1)); text-align: left; }
+.ros-choix button span { color: #b6846c; }
+.ros-choix button[aria-pressed="true"] { font-weight: 750; }
+.ros-fineprint, .ros-ajustement { color: #776e61; font-size: calc(11px * var(--pz-user-font-scale, 1)); line-height: 1.65; }
+.ros-cinq .ros-fineprint, .ros-cinq .ros-ajustement { margin-top: 15px; }
+.ros-ajustement { color: #8a5546; }
+
+.ros-fils { background: #f8f5ed; }
+.ros-fils-grid, .ros-points-grid, .ros-patron-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(50px, 8vw, 135px); align-items: center; max-width: 1370px; margin: 80px auto 15px; }
+.ros-fils-texte > p:not(.ros-eyebrow):not(.ros-fineprint), .ros-points-texte > p:not(.ros-eyebrow):not(.ros-fineprint), .ros-patron-texte > p:not(.ros-eyebrow):not(.ros-fineprint) { max-width: 410px; margin: 24px 0; color: #6e655b; font-size: calc(15px * var(--pz-user-font-scale, 1)); line-height: 1.75; }
+.ros-fils-texte .ros-fineprint, .ros-patron-texte .ros-fineprint { max-width: 370px; margin-top: 24px; }
+.ros-fil-instrument { width: min(100%, 530px); justify-self: center; text-align: center; }
+.ros-fil-roue { position: relative; width: 100%; aspect-ratio: 1; }
+.ros-fil-roue::before, .ros-fil-roue::after { content: ''; position: absolute; border: 1px solid #ddd3c4; border-radius: 50%; pointer-events: none; }
+.ros-fil-roue::before { inset: 6%; }
+.ros-fil-roue::after { inset: 21%; }
+.ros-fil-roue svg { width: 100%; height: 100%; }
+.ros-fil-bouton { position: absolute; transform: translate(-50%, -50%); width: clamp(44px, 5vw, 61px); aspect-ratio: 1; border-radius: 50%; border: 5px solid #f8f5ed; box-shadow: 0 0 0 1px #c7baaa; transition: transform .2s, box-shadow .2s; }
+.ros-fil-bouton:hover, .ros-fil-bouton[aria-pressed="true"] { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 0 1px #4a4037, 0 0 0 5px #f8f5ed, 0 0 0 6px #c2aa94; }
+.ros-fil-centre { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 42%; pointer-events: none; }
+.ros-fil-centre span { display: block; color: #a28370; font-size: calc(9px * var(--pz-user-font-scale, 1)); font-weight: 700; letter-spacing: .14em; }
+.ros-fil-centre strong { display: block; margin: 10px 0 4px; font: 600 clamp(28px, 4vw, 51px)/1 'Cormorant Garamond Variable', Georgia, serif; }
+.ros-fil-centre p { color: #786d60; font-size: calc(11px * var(--pz-user-font-scale, 1)); line-height: 1.45; }
+.ros-reset-fil { margin-top: 8px; color: #554b40; }
+.ros-reset-fil:disabled { opacity: .45; cursor: default; }
+
+.ros-points { background: #dcded2; }
+.ros-points-grid { grid-template-columns: .85fr 1fr; }
+.ros-vues { display: inline-flex; gap: 0; margin: 7px 0 18px; border-bottom: 1px solid #a9aa9c; }
+.ros-vues button { min-height: 46px; padding: 0 24px 0 0; border: 0; background: transparent; color: #77786d; font-size: calc(13px * var(--pz-user-font-scale, 1)); }
+.ros-vues button[aria-pressed="true"] { color: #2b3028; font-weight: 750; }
+.ros-grille-figure { min-width: 0; max-width: 570px; padding: 6%; background: #f8f5ed; box-shadow: 0 20px 60px rgba(77,72,55,.08); }
+.ros-grille-figure .ros-toile { aspect-ratio: 1; }
+.ros-grille-figure figcaption { display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; padding-top: 14px; border-top: 1px solid #ded7ca; color: #8c8174; font-size: calc(9px * var(--pz-user-font-scale, 1)); letter-spacing: .13em; }
+.ros-cadre { background: #f2ece1; }
+.ros-cadre-entete { display: flex; justify-content: space-between; align-items: end; gap: 30px; margin: 85px 0 55px; }
+.ros-cadre-entete > p { max-width: 360px; color: #746a5e; font-size: calc(14px * var(--pz-user-font-scale, 1)); line-height: 1.7; }
+.ros-mesures { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; border-top: 1px solid #cdc1b2; border-bottom: 1px solid #cdc1b2; }
+.ros-mesures div { padding: 24px 24px 28px 0; }
+.ros-mesures dt { color: #968576; font-size: calc(9px * var(--pz-user-font-scale, 1)); font-weight: 700; letter-spacing: .12em; }
+.ros-mesures dd { margin: 19px 0 7px; font: 600 clamp(27px, 3.2vw, 48px)/1 'Cormorant Garamond Variable', Georgia, serif; }
+.ros-mesures dd span { color: #ad9180; }
+.ros-mesures small { color: #7c7163; font-size: calc(11px * var(--pz-user-font-scale, 1)); }
+.ros-cadre-note { margin-top: 19px !important; color: #7a6f63; font-size: calc(11px * var(--pz-user-font-scale, 1)); line-height: 1.6; }
+
+.ros-patron { background: #f8f5ed; }
+.ros-patron-grid { grid-template-columns: .8fr 1fr; }
+.ros-feuille { justify-self: center; width: min(100%, 490px); padding: 8% 8% 6%; background: #fffefa; box-shadow: 0 24px 65px rgba(58,47,38,.12); transform: rotate(2deg); }
+.ros-feuille-tete { display: flex; justify-content: space-between; padding-bottom: 13px; border-bottom: 1px solid #dedbd5; color: #91867b; font-size: calc(9px * var(--pz-user-font-scale, 1)); font-weight: 700; letter-spacing: .13em; }
+.ros-feuille img { width: 100%; margin: 20px 0; }
+.ros-feuille figcaption { padding-top: 12px; border-top: 1px solid #dedbd5; color: #91867b; font-size: calc(9px * var(--pz-user-font-scale, 1)); letter-spacing: .09em; }
+.ros-final { position: relative; overflow: hidden; padding: 100px 24px 0; background: #292c26; color: #f8f5ed; text-align: center; }
+.ros-final-orbite { display: grid; place-items: center; width: 80px; height: 80px; margin: 0 auto 25px; border: 1px solid #787d6a; border-radius: 50%; color: #c19d83; font-size: calc(30px * var(--pz-user-font-scale, 1)); }
+.ros-final .ros-eyebrow { color: #b9a18f; }
+.ros-final h2 { margin-top: 23px; font-size: clamp(58px, 7vw, 104px); }
+.ros-final > p:not(.ros-eyebrow) { max-width: 410px; margin: 25px auto 0; color: #c0c1b6; font-size: calc(14px * var(--pz-user-font-scale, 1)); line-height: 1.7; }
+.ros-final-actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 30px; margin-top: 32px; }
+.ros-bouton-clair { background: #f8f5ed; border-color: #f8f5ed; color: #282923 !important; }
+.ros-bouton-clair:hover { background: #dbc9b5; border-color: #dbc9b5; }
+.ros-lien-clair { border-color: #777a6c; color: #f8f5ed !important; }
+.ros-final-bas { display: flex; justify-content: space-between; gap: 20px; max-width: 1300px; margin: 95px auto 0; padding: 22px 0; border-top: 1px solid #595c50; }
+.ros-final-bas a { color: #c8c7bd; text-decoration: none; font-size: calc(11px * var(--pz-user-font-scale, 1)); }
+.ros-final-bas a:hover { text-decoration: underline; }
+.ros-credits { padding: 15px 24px; background: #f8f5ed; color: #746b60; text-align: center; font-size: calc(10px * var(--pz-user-font-scale, 1)); line-height: 1.5; }
+
+@media (min-width: 1101px) and (max-height: 1050px) {
+  /* Sur un écran bas, les actions restent dans le premier écran sans recouvrir le Disque. */
+  .ros-hero { position: relative; }
+  .ros-scene-note { transform: translateY(-110px); }
+  .ros-hero-commandes { position: absolute; top: 555px; left: clamp(30px, 6.4vw, 95px); display: grid; justify-items: start; gap: 0; }
+  .ros-hero-commandes button { text-align: left; }
+  .ros-indication { position: absolute; top: 690px; left: clamp(30px, 6.4vw, 95px); max-width: 195px; text-align: left; }
+  .ros-hero-actions { position: absolute; top: 555px; right: clamp(30px, 6.4vw, 95px); width: 230px; margin: 0; flex-direction: column; align-items: stretch; gap: 8px; }
+  .ros-hero-actions .ros-lien { justify-content: space-between; }
+  .ros-entree-note { position: absolute; top: 680px; right: clamp(30px, 6.4vw, 95px); width: 230px; text-align: left; }
+}
+@media (max-width: 1100px) {
+  .ros-scene { display: block; max-width: 620px; margin-inline: auto; }
+  .ros-scene-note { display: none; }
+}
+@media (max-width: 1000px) {
+  .ros-lectures { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ros-galerie-grille { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ros-lectures li { min-height: 130px; }
+  .ros-mesures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .ros-hero { padding: 0 16px 55px; }
+  .ros-topline { height: 44px; font-size: calc(9px * var(--pz-user-font-scale, 1)); letter-spacing: .06em; }
+  .ros-topline > span { display: none; }
+  .ros-masthead { padding-top: 28px; }
+  .ros-masthead h1 { font-size: clamp(68px, 19vw, 112px); margin-top: 18px; }
+  .ros-signature { font-size: calc(23px * var(--pz-user-font-scale, 1)); }
+  .ros-scene { display: block; margin: 3px auto 0; max-width: 480px; }
+  .ros-scene-note { display: none; }
+  .ros-disque .one-disque-cartouche { margin-top: 3px; font-size: calc(10px * var(--pz-user-font-scale, 1)); }
+  .ros-hero-commandes { gap: 0 6px; }
+  .ros-hero-commandes button { font-size: calc(10.5px * var(--pz-user-font-scale, 1)); padding-inline: 2px; }
+  .ros-hero-actions { margin-top: 15px; }
+  .ros-section { padding: 65px 24px; }
+  .ros-section-label { font-size: calc(8px * var(--pz-user-font-scale, 1)); line-height: 1.4; }
+  .ros-page h2 { font-size: clamp(48px, 11vw, 70px); }
+  .ros-manifeste-texte { margin: 62px auto 55px; }
+  .ros-manifeste-texte p { font-size: calc(14px * var(--pz-user-font-scale, 1)); }
+  .ros-lectures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ros-lectures li { margin-right: 12px; padding-right: 8px; }
+  .ros-heading-row { display: block; margin: 65px 0 28px; }
+  .ros-heading-row > p { margin-top: 20px; }
+  .ros-galerie-grille { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
+  .ros-galerie-figure { aspect-ratio: 1; padding: 11%; }
+  .ros-cinq-grid, .ros-fils-grid, .ros-points-grid, .ros-patron-grid { grid-template-columns: 1fr; gap: 42px; margin: 60px auto 0; }
+  .ros-cinq-image { order: 2; }
+  .ros-cinq-texte { order: 1; }
+  .ros-dimensions button { font-size: calc(11px * var(--pz-user-font-scale, 1)); }
+  .ros-fil-instrument { width: min(100%, 420px); }
+  .ros-fil-bouton { width: 46px; }
+  .ros-points-grid { gap: 38px; }
+  .ros-grille-figure { max-width: none; }
+  .ros-cadre-entete { display: block; margin: 65px 0 35px; }
+  .ros-cadre-entete > p { margin-top: 20px; }
+  .ros-mesures div { padding: 24px 12px 24px 0; }
+  .ros-mesures dd { font-size: calc(34px * var(--pz-user-font-scale, 1)); }
+  .ros-patron-grid { gap: 48px; }
+  .ros-feuille { width: min(90%, 410px); }
+  .ros-final { padding-top: 80px; }
+  .ros-final h2 { font-size: clamp(59px, 13vw, 90px); }
+  .ros-final-bas { margin-top: 70px; text-align: left; }
+}
+@media (max-width: 360px) {
+  .ros-kicker { font-size: calc(9px * var(--pz-user-font-scale, 1)); }
+  .ros-masthead { padding-top: 20px; }
+  .ros-masthead h1 { font-size: min(66px, 20.5vw); }
+  /* Au plus petit format, les mots restent visibles : la géométrie du Point reste inchangée. */
+  html:not([data-pz-text-scale="custom"]) .ros-disque .pzt-etiq-cartouche .lp-tambour .lp-mot { position: static; clip: auto; width: 100%; height: auto; overflow: visible; display: block; font-size: calc(9px * var(--pz-user-font-scale, 1)); line-height: 1.1; white-space: nowrap; }
+  .ros-disque .pzt .lp-tambour .lp-secteur.lp-outil { gap: 1px; }
+  .ros-hero-commandes { gap: 0 1px; }
+  .ros-hero-commandes button { font-size: calc(9.5px * var(--pz-user-font-scale, 1)); padding-inline: 1px; }
+  .ros-hero-actions { gap: 8px 18px; }
+  .ros-bouton { padding: 0 17px; gap: 18px; }
+  .ros-dimensions button { font-size: calc(10px * var(--pz-user-font-scale, 1)); }
+  .ros-final-bas { flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ros-centre-motif, .ros-galerie-cercle, .ros-fil-bouton { transition: none; }
+  .ros-galerie-figure:hover .ros-galerie-cercle { transform: none; }
+}
+html[data-pz-motion="reduce"] .ros-centre-motif, html[data-pz-motion="reduce"] .ros-galerie-cercle, html[data-pz-motion="reduce"] .ros-fil-bouton { transition: none; }
+html[data-pz-motion="reduce"] .ros-galerie-figure:hover .ros-galerie-cercle, html.calme .ros-galerie-figure:hover .ros-galerie-cercle { transform: none; }
+
+/* Le Point partage ses préférences de lecture avec la page, sans fixer les actions sur un texte agrandi. */
+html[data-pz-text-scale="custom"] .ros-page p { line-height: var(--pz-user-line-height, 1.5); letter-spacing: var(--pz-user-letter-spacing, 0); }
+@media (min-width: 1101px) and (max-height: 1050px) {
+  html[data-pz-text-scale="custom"] .ros-scene-note { transform: none; }
+  html[data-pz-text-scale="custom"] .ros-hero-commandes { position: static; display: flex; justify-content: center; }
+  html[data-pz-text-scale="custom"] .ros-indication, html[data-pz-text-scale="custom"] .ros-entree-note { position: static; width: auto; max-width: none; text-align: center; }
+  html[data-pz-text-scale="custom"] .ros-hero-actions { position: static; width: auto; flex-direction: row; align-items: center; margin-top: 19px; }
+}

@@ -68,6 +68,10 @@
 .df, .df .one-disque, .df .one-disque-hote { background: none; box-shadow: none; overflow: visible; }
 .df-dit { position: relative; z-index: 1; }
 
+/* La page ROSACE est le même document vivant, dans un cadre isolé du Point SYST'AIME. */
+.sys-rosace-actions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px 24px; }
+.sys-rosace-cadre { display: block; width: 100%; height: min(82vh, 900px); min-height: 520px; border: 1px solid var(--aime-bordure); border-radius: var(--aime-r-grand); background: var(--aime-surface); }
+
 /* les capacités */
 .sys-cartes, .sys-cubes, .sys-compte, .sys-etats, .sys-liens, .sys-legende { list-style: none; margin: 0; padding: 0; }
 .sys-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; }

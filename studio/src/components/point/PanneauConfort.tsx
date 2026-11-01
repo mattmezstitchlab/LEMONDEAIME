@@ -65,13 +65,13 @@ export default function PanneauConfort({ onFermer, onAnnonce }: { onFermer: () =
     <fieldset className="lp-groupe">
       <legend>Texte</legend>
       <label className="lp-curseur">Taille du texte <output>{pc(p.fontScale)}</output>
-        <input type="range" min={100} max={175} step={5} value={Math.round(p.fontScale * 100)} aria-valuetext={pc(p.fontScale)}
+        <input type="range" aria-label="Taille du texte" min={100} max={175} step={5} value={Math.round(p.fontScale * 100)} aria-valuetext={pc(p.fontScale)}
           onChange={e => set({ fontScale: Number(e.target.value) / 100 })} /></label>
       <label className="lp-curseur">Interligne <output>{p.lineHeight.toLocaleString("fr-FR")}</output>
-        <input type="range" min={12} max={21} step={1} value={Math.round(p.lineHeight * 10)} aria-valuetext={p.lineHeight.toLocaleString("fr-FR")}
+        <input type="range" aria-label="Interligne" min={12} max={21} step={1} value={Math.round(p.lineHeight * 10)} aria-valuetext={p.lineHeight.toLocaleString("fr-FR")}
           onChange={e => set({ lineHeight: Number(e.target.value) / 10 })} /></label>
       <label className="lp-curseur">Espacement des lettres <output>{p.spacing ? "+" + pc(p.spacing) : "normal"}</output>
-        <input type="range" min={0} max={15} step={1} value={Math.round(p.spacing * 100)} aria-valuetext={p.spacing ? "plus " + pc(p.spacing) : "normal"}
+        <input type="range" aria-label="Espacement des lettres" min={0} max={15} step={1} value={Math.round(p.spacing * 100)} aria-valuetext={p.spacing ? "plus " + pc(p.spacing) : "normal"}
           onChange={e => set({ spacing: Number(e.target.value) / 100 })} /></label>
     </fieldset>
 
