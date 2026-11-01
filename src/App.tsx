@@ -8,6 +8,8 @@ import Entrer from './pages/Entrer';
 import Reseau from './pages/Reseau';
 import FicheReseau from './pages/FicheReseau';
 import Boutique from './pages/Boutique';
+import Rosace from './pages/Rosace';
+import RosaceFiche from './pages/RosaceFiche';
 import { APlus, Introuvable } from './pages/Simples';
 import { aller } from './lib/router';
 
@@ -20,6 +22,7 @@ const PAGES: Record<string, [() => React.JSX.Element, string]> = {
   '/entrer': [Entrer, 'LE MONDE AIME — Entrer'],
   '/a-plus': [APlus, 'LE MONDE AIME — A+'],
   '/boutique': [Boutique, 'LE MONDE AIME — Boutique'],
+  '/rosace': [Rosace, 'LE MONDE AIME — ROSACE — La bibliothèque'],
 };
 /* anciennes adresses : elles mènent toutes à l'accueil LE MONDE AIME (rien ne casse pour qui les a gardées) */
 const ANCIENNES: Record<string, string> = { '/charte': '/', '/monde': '/', '/aime-wedding': '/' };
@@ -27,8 +30,12 @@ export default function App() {
   const chemin = useChemin().replace(/\/+$/, '') || '/';
   useEffect(() => { if (ANCIENNES[chemin]) aller(ANCIENNES[chemin]); }, [chemin]);
   const fiche = /^\/reseau\/([a-z0-9-]{1,60})$/.exec(chemin);
-  const [Page, titre] = PAGES[ANCIENNES[chemin] || chemin] || [Introuvable, 'LE MONDE AIME — Page introuvable'];
+  const rosace = /^\/rosace\/([a-z0-9-]{1,80})$/.exec(chemin);
+  const [Page, titre] =
+    PAGES[ANCIENNES[chemin] || chemin] ||
+    (rosace ? [RosaceFiche, `LE MONDE AIME — ROSACE — ${rosace[1]}`] : [Introuvable, 'LE MONDE AIME — Page introuvable']);
   useEffect(() => { if (!fiche) document.title = titre; }, [titre, fiche]);
   if (fiche) return <FicheReseau key={fiche[1]} cle={fiche[1]} />;
+  if (rosace) return <RosaceFiche key={rosace[1]} />;
   return <Page />;
 }
