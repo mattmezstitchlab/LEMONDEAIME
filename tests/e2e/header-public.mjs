@@ -56,6 +56,8 @@ try {
         await p.getByRole('button', {name: 'Menu principal', exact: true}).click();
         ok(await p.evaluate(() => document.activeElement?.textContent === 'Accueil'), 'focus initial sur Accueil');
       }
+      await p.evaluate(() => document.fonts.ready);
+      ok(await p.locator('[data-header-public]').evaluate(e => getComputedStyle(e).fontFamily.includes('AIME Public') && document.fonts.check('17px "AIME Public"')), `${width} ${route} : police locale partagée chargée`);
       const rect = await p.locator('[data-header-public]').boundingBox();
       ok(Math.abs(rect.y) < 1 && Math.abs(rect.width - width) < 1, `${width} ${route} : même position et largeur du header`);
       for (const link of await nav.locator('a').all()) {
@@ -87,6 +89,8 @@ try {
     const p = await page(390); p.on('pageerror', e => errors.push(e.message));
     await goto(p, route); await p.locator('[data-header-public]').waitFor();
     ok(await p.locator('[data-header-public] nav').count() === 1, `${route} : navigation canonique unique`);
+    await p.evaluate(() => document.fonts.ready);
+    ok(await p.locator('[data-header-public]').evaluate(e => getComputedStyle(e).fontFamily.includes('AIME Public') && document.fonts.check('17px "AIME Public"')), `${route} : même police publique`);
     const tools = p.locator('.dock-bas, .pzs-bottom, .cv-nav');
     ok(await tools.getByRole('link', {name:'Projets à venir',exact:true}).count() === 0, `${route} : pas de copie du header en dock inférieur`);
     if (route === '/studio/atelier') {
