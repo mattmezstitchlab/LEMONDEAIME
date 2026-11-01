@@ -1,11 +1,11 @@
 import { useMemo, useRef, useState } from 'react';
 import { Tete, DockBas, Pied, Orbe } from '../charte/Charte';
-import VerbesAccueil from '../charte/VerbesAccueil';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { useProjets } from '../lib/projets';
 import { CarteProjet } from './Portfolio';
 import { CHEMINS, DESTINATIONS, ETATS, proposer } from '../lib/intention.mjs';
+import OuvertureFleur from '../ouverture/OuvertureFleur';
 
 /* LA PREMIÈRE PAGE (/) : une seule entrée, quatre chemins. Rien n'est simulé : chaque chemin est un vrai lien vers une page existante,
    la zone d'intention propose (elle n'exécute rien) et dit l'état de la destination : disponible, partielle, avec connexion, ou absente. */
@@ -30,8 +30,9 @@ export default function Accueil() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/" verbes={<VerbesAccueil />} />
+      <Tete courant="/" />
       <main id="contenu">
+        <OuvertureFleur />
         <div className="ac-cadre">
           <section className="ac-hero" id="entree" aria-labelledby="titre-entree">
             <img src="/media/union.jpg" alt="Un couple de mariés danse la nuit dans le désert, près d’une voiture ancienne et d’un tourne-disque, sous un ciel d’étoiles." />
@@ -118,7 +119,7 @@ export default function Accueil() {
           </ul>
         </section>
       </main>
-      <DockBas lieux={[['entree', 'Entrée'], ['intention', 'Question'], ['chemins', 'Chemins'], ['decouvrir', 'Découvrir'], ['uptown', 'UPTOWN']]} />
+      <DockBas lieux={[['ouverture', 'Fleur du Ciel'], ['entree', 'Entrée'], ['intention', 'Question'], ['chemins', 'Chemins'], ['decouvrir', 'Découvrir'], ['uptown', 'UPTOWN']]} />
       <Pied />
     </>
   );

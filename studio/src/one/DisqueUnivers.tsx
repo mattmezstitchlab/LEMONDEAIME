@@ -9,7 +9,6 @@
  * - Téléphone : le contenu prend la largeur, les mêmes commandes en liste, le Point reste en haut.
  */
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { DESTINATIONS } from "../lib/destinations";
 import { PROTOTYPES } from "../lib/site";
 import { Info, LayoutGrid, X } from "lucide-react";
 import DisqueOne from "../components/one/DisqueOne";
@@ -93,12 +92,11 @@ export default function DisqueUnivers() {
   const centre = <Centre key={contexte.id} etat={etat} outils={outils} publier={publier} />;
 
   return <div className={"one dq" + (mobile ? " dq-mobile" : "")} data-aime={theme} data-contexte={contexte.id}>
-    <header className="dq-tete">
+    <section className="dq-tete" aria-label="Contexte du Disque">
       <a className="one-marque" href={BASE + "one/univers"} onClick={e => { e.preventDefault(); naviguer({ u: "accueil" }); }}><span className="one-orbe" aria-hidden="true" />.0NE</a>
       <nav className="dq-fil" aria-label="Où je suis"><span>{u ? u.nom : "Accueil"}</span>{u && <span className={"dq-statut-mini om-" + u.statut}>{NOMS_STATUTS[u.statut]}</span>}</nav>
       <button type="button" className="one-bouton dq-bouton-grille" onClick={() => setGrille(true)}><LayoutGrid aria-hidden="true" />Univers</button>
-      <a className="one-bouton dq-accueil" href={PROTOTYPES ? DESTINATIONS.accueil : "/"} aria-label={PROTOTYPES ? "Accueil AIME" : "Accueil : Le Monde AIME"}>Accueil<span className="dq-accueil-aime"> AIME</span></a>
-    </header>
+    </section>
     <main className="dq-scene">
       <h1 ref={titre} tabIndex={-1} className="sr-only">{u ? `${u.nom}, dans le Disque .0NE` : "Le Disque .0NE"}</h1>
       {/* le même Disque partout, téléphone compris : seules ses dimensions s'adaptent (jamais une liste à la place du cadran) */}

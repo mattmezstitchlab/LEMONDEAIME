@@ -19,7 +19,13 @@ const ICONE_CONFORT = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
  * Un seul Point est à l'écran à la fois : le contexte qui a la main le rend, les autres le taisent.
  * Le Point ne crée rien et ne déplace pas : la création reste dans FAIRE, la navigation dans ALLER.
  */
-export default function Point({ contexte, modes, part, teinte, etiquette, refBouton, guide, ancrage, memoire, scene, centre, tambour }: {
+export default function Point({ cheminInitial, cheminScenario, pageScenario, contexte, modes, part, teinte, etiquette, refBouton, guide, ancrage, memoire, scene, centre, tambour }: {
+  /** ouvrir sur ce chemin de familles : voir LePoint */
+  cheminInitial?: string[];
+  /** Navigation illustrative facultative, sans activer de commande ni prendre le focus. */
+  cheminScenario?: string[];
+  /** Page du niveau illustré, lorsque le nuancier est paginé. */
+  pageScenario?: number;
   /** l'anneau autour d'un tambour (présentation scène) : voir LePoint */
   tambour?: { rayon: number; cote: number; parPage: number };
   /** le raccourci du centre (mode Tambour) : voir LePoint */
@@ -58,7 +64,7 @@ export default function Point({ contexte, modes, part, teinte, etiquette, refBou
     ...modes.map(m => ({ ...m, ouvrir: () => { setConfort(false); m.ouvrir(); } })),
   ];
   return <span className="lp-contexte" data-contexte={contexte}>
-    <LePoint modes={tous} tambour={tambour} centre={centre && { ...centre, ouvrir: () => { setConfort(false); centre.ouvrir(); } }} scene={scene} memoire={memoire} ancrage={ancrage} part={part} teinte={teinte} etiquette={etiquette} guide={guide} refBouton={ref} annonceExterne={annonce} />
+    <LePoint cheminInitial={cheminInitial} cheminScenario={cheminScenario} pageScenario={pageScenario} modes={tous} tambour={tambour} centre={centre && { ...centre, ouvrir: () => { setConfort(false); centre.ouvrir(); } }} scene={scene} memoire={memoire} ancrage={ancrage} part={part} teinte={teinte} etiquette={etiquette} guide={guide} refBouton={ref} annonceExterne={annonce} />
     {confort && createPortal(<PanneauConfort onFermer={fermer} onAnnonce={setAnnonce} />, hotePortail(ref.current))}
   </span>;
 }

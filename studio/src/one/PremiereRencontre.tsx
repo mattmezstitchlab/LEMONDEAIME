@@ -179,11 +179,11 @@ export default function PremiereRencontre() {
   </>;
 
   return <div className="one one-rencontre" data-aime={theme} data-etape={etape}>
-    <header className="one-tete">
-      <a className="one-marque" href={DESTINATIONS.accueil}><span className="one-orbe" aria-hidden="true" />AIME</a>
+    <section className="one-tete" aria-label="Contexte de l’expérience">
+      <span className="one-marque"><span className="one-orbe" aria-hidden="true" />Mes préférences</span>
       {etape > 0 && <ol className="one-progres" aria-label={`Étape ${etape} sur ${ETAPES.length - 1}`}>{ETAPES.slice(1).map((n, k) => <li key={n} aria-current={k + 1 === etape ? "step" : undefined}><span className="sr-only">{n}</span></li>)}</ol>}
       <a className="one-bouton one-passer" href={DESTINATIONS.accueil}>{etape > 0 ? "Plus tard" : "Passer"}</a>
-    </header>
+    </section>
     <main className="one-grille">
       <section className="one-colonne" aria-labelledby="one-etape">
         {etape > 0 && <p className="one-sur" id="one-etape">{String(etape).padStart(2, "0")} / {String(ETAPES.length - 1).padStart(2, "0")} · {ETAPES[etape]}</p>}

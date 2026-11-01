@@ -19,9 +19,6 @@ const liens = (base: string) => PROTOTYPES ? [
   { nom: "Mes préférences", chemin: base + "one/premiere-rencontre?modifier" },
   { nom: "ATLAS (site séparé) ↗", chemin: ATLAS_URL },
 ] : [
-  { nom: "Le Monde AIME — les projets", chemin: "/" },
-  { nom: "L’atelier de broderie", chemin: base },
-  { nom: ".0NE — tous les univers", chemin: base + "one/univers" },
   { nom: "Mes préférences", chemin: base + "one/premiere-rencontre?modifier" },
 ];
 
@@ -41,14 +38,16 @@ export function NavigationConvergence({ base = S }: { base?: string } = {}) {
   const ici = window.location.pathname.replace(/\/+$/, "");
   /* venu du Disque (Broder, Ouvrir…) : le retour au contexte exact, en un geste */
   const retour = /\/one(\/univers)?$/.test(ici) ? null : lireRetour();
-  return <nav className="cv-nav" aria-label={PROTOTYPES ? "Navigation de la version candidate" : "Navigation"}>
+  // Les préférences publiques sont accessibles depuis le panneau du header.
+  if (!PROTOTYPES) return retour ? <a className="cv-retour" href={retour.adresse}>Revenir à .0NE · {retour.nom}</a> : null;
+  return <nav className="cv-nav" aria-label={PROTOTYPES ? "Navigation de la version candidate" : "Outils contextuels"}>
     {retour && !ouvert && <a className="cv-retour" href={retour.adresse}><span className="cv-orbe" aria-hidden="true" />Revenir à .0NE · {retour.nom}</a>}
     {ouvert && <div className="cv-nav-panneau" ref={panneau} id="cv-nav-panneau">
       {LIENS.map(l => <a key={l.chemin} href={l.chemin} aria-current={ici === l.chemin.replace(/\/+$/, "") ? "page" : undefined}>{l.nom}</a>)}
-      {history.length > 1 && <button type="button" onClick={() => history.back()}>Revenir à la page précédente</button>}
+      {PROTOTYPES && history.length > 1 && <button type="button" onClick={() => history.back()}>Revenir à la page précédente</button>}
     </div>}
-    <button ref={bouton} type="button" className="cv-nav-bouton" title={ouvert ? "Fermer" : "Naviguer"} aria-expanded={ouvert} aria-controls="cv-nav-panneau" onClick={() => setOuvert(v => !v)}>
-      <span className="cv-orbe" aria-hidden="true" /><span className="cv-nav-texte">{ouvert ? "Fermer" : "Naviguer"}</span>
+    <button ref={bouton} type="button" className="cv-nav-bouton" title={ouvert ? "Fermer" : "Préférences"} aria-expanded={ouvert} aria-controls="cv-nav-panneau" onClick={() => setOuvert(v => !v)}>
+      <span className="cv-orbe" aria-hidden="true" /><span className="cv-nav-texte">{ouvert ? "Fermer" : "Préférences"}</span>
     </button>
   </nav>;
 }

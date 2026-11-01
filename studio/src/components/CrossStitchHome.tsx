@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import TopDock from "./TopDock";
 import UneFlorale from "./UneFlorale";
 import TraineePoints from "./TraineePoints";
 import "../design/aime.css";
@@ -63,8 +62,7 @@ const TOUT: [string, string][] = [
   ["Le Point", "La visite guidée de bout en bout, au clavier, qui imite le geste de chaque point."],
 ];
 
-const SECTIONS = [["chapitres", "Le studio"], ["ch-point", "Le Point"], ["tout", "Tout le studio"], ["commencer", "Commencer"]] as const;
-type SectionId = typeof SECTIONS[number][0];
+type SectionId = "chapitres" | "ch-point" | "tout" | "commencer";
 
 /** Un chapitre : un grand fond peint (la toile de roses, floutée et teintée), une phrase, l'écran réel ; tout bouge un peu au défilement. */
 function ChapitreVue({ c, n, onVoir }: { c: Chapitre; n: number; onVoir: (id: string) => void }) {
@@ -118,7 +116,7 @@ function useParallaxe() {
 
 /** Un écran d'accueil seulement : l'ouvrir ne crée aucun patron et ne réécrit aucun projet. */
 export default function CrossStitchHome({ projectName, onOpen, onImport, onShare, onOuvrages, onVisite }: Props) {
-  const [current, setCurrent] = useState<SectionId | null>(null);
+  const [_current, setCurrent] = useState<SectionId | null>(null);
   const [chapitre, setChapitre] = useState<string | null>(null);
   const enter = () => (onOuvrages ? onOuvrages() : onOpen("library"));
   const visite = () => (onVisite ? onVisite() : onOpen("create"));
@@ -167,14 +165,11 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
     <a className="csh-skip" href="#csh-main">Aller au contenu</a>
     <TraineePoints />
 
-    <TopDock label="Navigation point de croix" idBloc="pzh-menu"
-      menu={[{ label: "Mes ouvrages", faire: () => onOpen("library") }, { label: "Ouvrir le studio", faire: () => onOpen("stitch") }, { label: "Faire la visite avec Le Point", faire: visite }]}
-      droite={<button type="button" className="pzs-tool pzs-noir pzh-entrer" onClick={enter} aria-label="Entrer dans Point Zéro"><span aria-hidden="true">+</span> Entrer</button>}>
-      <a className="pzs-tool" href="#chapitres" onClick={go("chapitres")}>Le studio</a>
-      <a className="pzs-tool" href={edition ? "#ed-origine" : "#ch-point"} onClick={go(edition ? "ed-origine" : "ch-point")}>Le Point</a>
-      <a className="pzs-tool" href="#tout" onClick={go("tout")}>Tout le studio</a>
-      <a className="pzs-tool" href="#csh-import" onClick={go("csh-import")}>Importer</a>
-    </TopDock>
+    <section className="csh-actions-contextuelles" aria-label="Actions de la présentation Broderie">
+      <button type="button" onClick={enter}>Mes ouvrages de broderie</button>
+      <button type="button" onClick={() => onOpen("stitch")}>Ouvrir l’atelier</button>
+      <button type="button" onClick={visite}>Faire la visite avec Le Point</button>
+    </section>
 
     {/* l'index des chapitres, à gauche, comme une table des matières qui suit la lecture */}
     {!edition && <nav className={"ix" + (chapitre ? " ix-on" : "")} aria-label="Chapitres">
@@ -295,9 +290,6 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
       <p className="pzh-foot-line">Un studio AIME<sup>®</sup> · Point de croix</p>
     </footer>
 
-    <nav className="pzh-bottom" aria-label="Sections de la page">
-      <button type="button" className="pzh-bottom-orb" aria-label="Le Point : faire la visite du studio" title="Le Point : faire la visite" onClick={visite} />
-      {SECTIONS.map(([id0, label]) => [edition && id0 === "ch-point" ? "ed-origine" : id0, label] as const).map(([id, label]) => <a key={id} href={"#" + id} onClick={go(id)} aria-current={current === id ? "location" : undefined} className={current === id ? "is-on" : undefined}>{label}</a>)}
-    </nav>
+
   </div>;
 }

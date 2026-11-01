@@ -1,4 +1,4 @@
-import { Tete, DockBas, VerbesProjets, Pied, Visuel } from '../charte/Charte';
+import {Tete, DockBas, Pied, Visuel } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { MEDIAS } from '../lib/medias';
 import { FONDATEUR } from '../lib/reseau-exemples';
@@ -10,7 +10,7 @@ export default function APropos() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/a-propos" verbes={<VerbesProjets actif="apropos" />} />
+      <Tete courant="/a-propos" />
       <main id="contenu">
         <section aria-labelledby="titre-apropos" style={{ padding: 'clamp(48px, 7vw, 96px) var(--marge) 64px' }}>
           <p className="surtitre">À propos</p>

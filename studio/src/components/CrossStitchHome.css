@@ -275,3 +275,6 @@ html[data-aime-studio="nuit"] .cross-stitch-home .pzs-head :is(button, a):focus-
 /* des cibles d’au moins 24 px de haut dans les sommaires (WCAG 2.5.8) */
 .ix ol a, .mm-sommaire a { min-height: 24px; display: inline-flex; align-items: center; }
 .ix ol a { display: flex; }
+
+.csh-actions-contextuelles { display:flex; flex-wrap:wrap; gap:10px; padding:16px; justify-content:center; }
+.csh-actions-contextuelles button { min-height:44px; padding:8px 16px; border:1px solid #cfcfcb; border-radius:12px; color:#0b0b0c; background:#fff; font:inherit; cursor:pointer; }

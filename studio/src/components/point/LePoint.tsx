@@ -28,7 +28,12 @@ const SIGNES: Record<string, ReactNode> = {
   [EFFACER]: svg(<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />),
 };
 
-export default function LePoint({ modes, part = 0, teinte = "#FFFFFF", etiquette, guide = "cercle", annonceExterne, refBouton, ancrage = "dessus", memoire, scene = false, centre, tambour }: {
+export default function LePoint({ cheminInitial, cheminScenario, pageScenario, modes, part = 0, teinte = "#FFFFFF", etiquette, guide = "cercle", annonceExterne, refBouton, ancrage = "dessus", memoire, scene = false, centre, tambour }: {
+  /** ouvrir le Point sur ce chemin de familles (identifiants) : l'entrée directe de l'atelier ; un identifiant inconnu laisse le premier cercle */
+  cheminInitial?: string[];
+  /** En scène seulement : montrer un niveau sans appeler ses actions ni déplacer le focus. Absent pour la navigation de la personne. */
+  cheminScenario?: string[];
+  pageScenario?: number;
   modes: ModePoint[];
   /**
    * Facultatif (mode Tambour seulement, accord de Matt du 29/10) : au premier cercle, la sphère centrale devient un raccourci vers cette action
@@ -78,7 +83,7 @@ export default function LePoint({ modes, part = 0, teinte = "#FFFFFF", etiquette
   const [onde, setOnde] = useState(0);
   const [annonce, setAnnonce] = useState("");
   /* le chemin dans les familles : des identifiants, résolus à chaque rendu dans les modes frais (l'état change sous nos pieds) */
-  const [chemin, setChemin] = useState<string[]>([]);
+  const [chemin, setChemin] = useState<string[]>(cheminInitial ?? []);
   const [page, setPage] = useState(0);
   const bouton = useRef<HTMLButtonElement>(null);
   const racine = useRef<HTMLDivElement>(null);
@@ -111,6 +116,14 @@ export default function LePoint({ modes, part = 0, teinte = "#FFFFFF", etiquette
   const [arc, setArc] = useState<ReturnType<typeof dispositionArc> | null>(null);
   const [panneau, setPanneau] = useState({ left: 8, right: 8, bottom: 80 });
   useEffect(() => { if (annonceExterne) setAnnonce(annonceExterne); }, [annonceExterne]);
+  const cheminScenarioCle = scene && cheminScenario !== undefined ? cheminScenario.join("\u0000") : undefined;
+  useEffect(() => {
+    if (cheminScenarioCle === undefined) return;
+    /* Une démonstration montre le vrai menu, sans clic synthétique ni vol de focus. */
+    interagi.current = false;
+    setChemin(cheminScenarioCle ? cheminScenarioCle.split("\u0000") : []);
+    setPage(Math.max(0, pageScenario ?? 0)); setFocus(0);
+  }, [cheminScenarioCle, pageScenario]);
   useEffect(() => { if (ouvert && interagi.current) items.current[Math.min(focus, n - 1)]?.focus(); }, [ouvert, focus, n, chemin, page, pres]);
   useEffect(() => { if (scene) setPres(lirePresentation() === "liste" ? "liste" : "anneau"); }, [scene]);
   /* un clic ailleurs referme l'anneau, sans prendre le focus */

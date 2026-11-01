@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { Tete, DockBas, Pied } from '../charte/Charte';
-import VerbesAccueil from '../charte/VerbesAccueil';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { useTheme, CHOIX_THEMES } from '../../studio/src/design/theme';
@@ -142,7 +141,7 @@ export default function Systaime() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/systaime" verbes={<VerbesAccueil />} />
+      <Tete courant="/systaime" />
       <div data-aime={theme} className="sy">
         <main id="contenu" className="sy-in">
           <header className="sy-tete">

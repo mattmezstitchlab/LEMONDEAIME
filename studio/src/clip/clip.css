@@ -21,6 +21,13 @@
 .clip[data-demo="affichage"] [data-mode="affichage"] .lp-rond, .clip[data-demo="fils"] [data-mode="fils"] .lp-rond, .clip[data-demo="points"] [data-mode="points"] .lp-rond,
 .clip[data-demo="broder"] [data-mode="broder"] .lp-rond, .clip[data-demo="loupe"] [data-mode="loupe"] .lp-rond { animation: clip-montre 1.07s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .clip [data-mode] .lp-rond { animation: none !important; } }
+/* Retour au site : même geste que l'atelier (flèche + AIME®), en haut à gauche, hors de l'image ; le clip lui-même n'est pas modifié */
+.clip-retour { position: fixed; z-index: 5; left: max(12px, env(safe-area-inset-left, 0px)); top: max(12px, env(safe-area-inset-top, 0px)); display: inline-flex; align-items: center; gap: 2px; padding: 2px; border-radius: 22px;
+  background: rgba(14,14,14,.82); box-shadow: 0 6px 20px rgba(0,0,0,.25); pointer-events: auto; }
+.clip-retour-fleche, .clip-retour-marque { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border: 0; border-radius: 22px; background: transparent; color: #fff; text-decoration: none; cursor: pointer;
+  font: 700 15px "Inter Tight", system-ui, sans-serif; letter-spacing: .02em; }
+.clip-retour-marque { padding: 0 14px 0 6px; } .clip-retour-marque sup { font-size: .6em; margin-left: 1px; }
+.clip-retour-fleche:focus-visible, .clip-retour-marque:focus-visible { outline: 3px solid #c9b8ff; outline-offset: 1px; }
 /* Disque replié : le clip seul, sur tout l'écran ; un bouton pour le retrouver */
 .clip-deplier { position: absolute; right: 16px; top: 16px; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px 0 12px; border: 0; border-radius: 22px;
   background: rgba(14,14,14,.88); color: #fff; font: 600 14px "Inter Tight", system-ui, sans-serif; cursor: pointer; pointer-events: auto; box-shadow: 0 6px 20px rgba(0,0,0,.3); }
@@ -35,3 +42,27 @@ html[data-pz-motion="reduce"] .clip-fond { transition: none; }
 @keyframes clip-confettis-entre { from { opacity: 0; transform: translate(-50%, -50%) scale(.4) rotate(-6deg); } to { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0); } }
 @keyframes clip-confettis-sort { to { opacity: 0; letter-spacing: .6em; filter: blur(3px); } }
 @media (prefers-reduced-motion: reduce) { .clip-confettis, .clip-confettis-nettoie { animation: none; } .clip-confettis-nettoie { opacity: 0; } }
+
+/* La même scène de clip peut être posée dans l'ouverture, sans deuxième toile ni deuxième Disque. */
+.clip-integre { position: absolute; inset: 0; z-index: 1; }
+.clip-integre .clip-toile { cursor: crosshair; }
+.clip-integre .clip-deplier { top: 70px; right: max(14px, env(safe-area-inset-right, 0px)); z-index: 4; }
+.clip-integre .clip-cartouche { max-width: min(420px, calc(100% - 32px)); z-index: 3; }
+.clip-disque { position: absolute; inset: 0; pointer-events: none; }
+/* Le mouvement du Disque et du pointeur est calculé à partir du temps audio, pas d'une animation CSS indépendante. */
+.clip-fleur .clip-disque .lp-secteur { animation: none; }
+.clip-fleur[data-demo] [data-mode] .lp-rond { animation: none; }
+.clip-fleur[data-demo="broder"] [data-mode="broder"] .lp-rond,
+.clip-fleur[data-demo="fils"] [data-mode="fils"] .lp-rond,
+.clip-fleur[data-demo="loupe"] [data-mode="loupe"] .lp-rond,
+.clip-fleur[data-demo="replier"] [data-mode="replier"] .lp-rond { box-shadow: 0 0 0 3px #e2d9ff, 0 0 24px rgba(201,184,255,.8); }
+.clip-fleur[data-guide="couleur"] .lp-pastille-anneau:has(.lp-marque) { box-shadow: 0 0 0 3px #fff, 0 0 22px #c9b8ff; }
+.clip-pointeur-demo { position: absolute; z-index: 6; width: 27px; height: 33px; pointer-events: none; filter: drop-shadow(0 3px 5px rgba(0,0,0,.45)); }
+.clip-pointeur-demo svg { display: block; width: 100%; height: 100%; }
+.clip-guide-indication { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 5; display: flex; align-items: center; gap: 7px; padding: 8px 12px; border: 1px solid rgba(255,255,255,.25); border-radius: 20px; background: rgba(18,16,24,.84); color: #fff; font: 600 12px/1.2 "Inter Tight", system-ui, sans-serif; white-space: nowrap; pointer-events: none; }
+.clip-guide-indication span { width: 6px; height: 6px; border-radius: 50%; background: #d9caff; }
+.clip-guide-indication i { font-style: normal; opacity: .6; }
+.clip-integre .clip-guide-indication { display: none; } /* La légende de l'ouverture porte la même précision. */
+@media (max-width: 520px) { .clip-guide-indication { top: 70px; } .clip-integre .clip-deplier { top: 64px; } }
+html.calme .clip-pointeur-demo, html[data-pz-motion="reduce"] .clip-pointeur-demo { display: none; }
+@media (prefers-reduced-motion: reduce) { .clip-pointeur-demo { display: none; } }

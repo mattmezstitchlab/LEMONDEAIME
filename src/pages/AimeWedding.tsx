@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Tete, VerbesSite, DockBas, Pied, Orbe } from '../charte/Charte';
+import {Tete, DockBas, Pied, Orbe } from '../charte/Charte';
 import { ApercuEspace } from '../charte/ApercuEspace';
 import { Metamorphose, type UniversM } from '../charte/Metamorphose';
 import { useConfort } from '../lib/confort';
@@ -249,7 +249,7 @@ export default function AimeWedding() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/aime-wedding" verbes={<VerbesSite />} />
+      <Tete courant="/aime-wedding" />
       <main id="contenu">
         <section aria-labelledby="titre-wedding" style={{ padding: '40px var(--marge) 0', textAlign: 'center' }}>
           <p style={{ margin: '0 0 18px', fontSize: 16 }}>{noms ? <><b style={{ fontWeight: 600 }}>Notre union</b>{meta.date.trim() && <> · {meta.date.trim()}</>}</> : <>Une union d’exemple · <b style={{ fontWeight: 600 }}>{UNION_EXEMPLE}</b></>}</p>

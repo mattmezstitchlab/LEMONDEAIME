@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import { Tete, DockBas, VerbesSite, Pied, Visuel } from '../charte/Charte';
+import {Tete, DockBas, Pied, Visuel } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { useSession, lireSession } from '../lib/session';
 import { ecrireBuro } from '../lib/buro';
@@ -90,7 +90,7 @@ export default function PointZero() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/point-zero" verbes={<VerbesSite />} />
+      <Tete courant="/point-zero" />
       <main id="contenu" style={{ padding: 'clamp(48px, 7vw, 96px) var(--marge) 160px' }}>
         <p className="surtitre">L’étape 0 · au centre de la grille</p>
         <h1 className="signature" style={{ fontSize: 'clamp(56px, 12vw, 200px)' }}>Point Zéro</h1>

@@ -99,8 +99,14 @@ html.pz-dock-accroche:not(.pz-tambour-ouvert) .toast-in { top: auto !important; 
 .pzt-cartouche[data-etat="action"], .pzt-cartouche[data-etat="erreur"] { box-shadow: 0 8px 20px rgba(0,0,0,.25), inset 0 0 0 1px rgba(255,143,115,.45); }
 .pzt-cartouche b + span { display: block; }
 /* Navigation intégrale .0 (essai) : la rangée du dock du haut s'efface ; ses panneaux (Mes ouvrages, Chercher…) restent, ouverts depuis le disque */
-html.pz-nav0 .pzs-ligne { display: none; }
-html.pz-nav0 .pzs-top:not(:has(#pzs-bloc)) { display: none; }
+/* Le retour au site reste visible : la rangée ne garde que la flèche « Revenir sur Le Monde AIME » et AIME®, en haut à gauche ; tout le reste est dans le Disque. */
+html.pz-nav0 .pzs-head { align-items: flex-start; }
+html.pz-nav0 .pzs-ligne > :not(.pzs-marque):not(.pzs-icon:first-child) { display: none; }
+html.pz-nav0 .pzs-top:not(:has(#pzs-bloc)) { width: auto; padding: 4px; border-radius: 16px; }
+
+/* Tambour ouvert (navigation classique) : les outils du dock du haut (Dessiner, Broder, Fils, Partager) sont déjà dans la couronne (Points, Broder, Fils, Exporter › Partager en direct).
+   On ne les répète pas : le dock garde l'orientation (retour au site, menu AIME, annuler/rétablir, chercher, Mes ouvrages). « Rétracter » les rend. */
+.pzs-sans-doublon .pzs-row, .pzs-sans-doublon .pzs-row + .pzs-sep { display: none; }
 
 /* — le suivi dans le cercle : l'avancée de la couleur active sur le bois (dite aussi dans le cartouche), et le prochain point — */
 .pzt-suivi { position: fixed; z-index: 3; pointer-events: none; overflow: visible; }
@@ -135,3 +141,8 @@ html:has(.pzt-centre-plein) .pzs-crumbs { visibility: hidden; }
 .pzt-centre-tete button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 0; background: #141414; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
 .pzt-centre-tete button:focus-visible { outline: 3px solid #7c5cff; outline-offset: 2px; }
 html[data-aime-studio="nuit"] .pzt-centre { background: #161618; color: #f4f4f2; }
+
+.pzs-ouvrages-contexte { pointer-events:auto; min-height:44px; padding:8px 12px; border:1px solid #cfcfcb; border-radius:10px; background:#fff; color:#0b0b0c; font:inherit; cursor:pointer; }
+
+.pzs-top.pzs-contexte-disque:not(:has(#pzs-bloc)) { display:none; }
+.pzs-bottom[hidden] { display:none !important; }

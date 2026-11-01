@@ -1,4 +1,4 @@
-import { Tete, Pied } from '../charte/Charte';
+import {Tete, Pied } from '../charte/Charte';
 import { EntrerBloc } from '../charte/EntrerBloc';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';

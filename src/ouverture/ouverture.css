@@ -1,0 +1,70 @@
+/* L'œuvre occupe toute la scène ; seul un voile de lecture porte le texte et les commandes. */
+.ouv { margin: 0 var(--marge) 16px; border-radius: 24px; overflow: hidden; background: #262331; color: #fff; }
+.ouv-scene { position: relative; width: 100%; height: clamp(570px, calc(100svh - 112px), 850px); overflow: hidden; isolation: isolate; }
+.ouv-couverture { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: 50% 47%; }
+.ouv-couverture[hidden] { display: none; }
+.ouv:not(.ouv-joue) .clip-integre { visibility: hidden; }
+.ouv-voile { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(180deg, rgba(13,12,22,.5), transparent 25%), linear-gradient(90deg, rgba(16,13,25,.65), rgba(16,13,25,.1) 55%, transparent), linear-gradient(0deg, rgba(13,12,22,.88), rgba(13,12,22,.15) 48%, transparent 75%); }
+.ouv-joue .ouv-voile { background: linear-gradient(180deg, rgba(13,12,22,.62), transparent 15%), linear-gradient(0deg, rgba(13,12,22,.85), rgba(13,12,22,.2) 24%, transparent 42%); }
+.ouv-contenu { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; justify-content: space-between; padding: clamp(20px, 2.5vw, 38px) clamp(24px, 3.4vw, 54px) 98px; pointer-events: none; }
+.ouv-haut { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.ouv-signature { display: flex; align-items: center; gap: 9px; margin: 0; min-height: 44px; color: rgba(255,255,255,.93); font-size: 10px; line-height: 1.3; font-weight: 700; letter-spacing: .13em; }
+.ouv-signature-point { width: 9px; height: 9px; flex: none; border-radius: 50%; background: var(--nacre); box-shadow: 0 0 10px rgba(229,214,255,.75); }
+.ouv-signature-sep { color: rgba(255,255,255,.45); }
+.ouv-passer { pointer-events: auto; flex: none; min-height: 44px; padding: 0 15px; border: 1px solid rgba(255,255,255,.5); border-radius: 24px; background: rgba(18,16,25,.55); color: #fff; font-size: 12px; font-weight: 600; }
+.ouv-passer span { margin-left: 6px; }
+.ouv-texte { width: min(680px, 100%); }
+.ouv-surtitle { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; color: #f2e3ec; font-size: 11px; line-height: 1.3; font-weight: 700; letter-spacing: .16em; }
+.ouv-surtitle span { display: inline-flex; align-items: center; gap: 9px; color: #e6c9e9; }
+.ouv-surtitle span::after { content: ''; display: block; width: 28px; height: 1px; background: rgba(236,215,236,.65); }
+.ouv-texte h2 { margin: 0; color: #fff; font-size: clamp(54px, 6.6vw, 102px); font-weight: 700; letter-spacing: -.055em; line-height: .96; text-wrap: balance; }
+.ouv-texte h2 em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; letter-spacing: -.065em; }
+.ouv-legende { margin: 15px 0 23px; max-width: 48ch; color: rgba(255,255,255,.91); font-size: clamp(16px, 1.3vw, 19px); line-height: 1.4; }
+.ouv-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; pointer-events: auto; }
+.ouv-principal, .ouv-secondaire, .ouv-controle { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 12px; font: inherit; font-weight: 650; cursor: pointer; }
+.ouv-principal { gap: 13px; min-height: 60px; padding: 8px 18px 8px 10px; border: 1px solid #fff; background: #fff; color: #17131b; text-align: left; font-size: 14px; }
+.ouv-principal small { display: block; margin-top: 3px; color: #66616b; font-size: 11px; font-weight: 500; }
+.ouv-play { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 9px; background: #eae5ee; font-size: 11px; }
+.ouv-secondaire, .ouv-controle { gap: 8px; padding: 0 16px; border: 1px solid rgba(255,255,255,.58); background: rgba(21,19,27,.55); color: #fff; font-size: 13px; }
+.ouv-secondaire span { color: rgba(255,255,255,.72); font-weight: 500; }
+.ouv-controle-clair { background: #fff; color: #17131b; border-color: #fff; }
+.ouv-lien { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 6px; color: #fff; font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+.ouv-lien:hover, .ouv-avis a:hover { color: #fff; }
+.ouv-temps { padding-left: 4px; color: rgba(255,255,255,.8); font-size: 12px; font-variant-numeric: tabular-nums; }
+.ouv-transparence { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin: 17px 0 0; color: rgba(255,255,255,.86); font-size: 11px; line-height: 1.35; letter-spacing: .015em; }
+.ouv-transparence > span { width: 6px; height: 6px; flex: none; border-radius: 50%; background: #e2cdff; }
+.ouv-transparence b { font-weight: 400; opacity: .6; }
+.ouv-avis { margin: 10px 0; max-width: 60ch; color: #fff; font-size: 14px; pointer-events: auto; }
+.ouv-avis a, .ouv-avis button { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.ouv-avis button { min-height: 44px; padding: 0 3px; border: 0; background: transparent; font: inherit; }
+.ouv button:focus-visible, .ouv a:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.ouv-joue .ouv-surtitle { display: none; }
+.ouv-joue .ouv-texte h2 { font-size: 24px; line-height: 1; letter-spacing: -.025em; }
+.ouv-joue .ouv-texte h2 em { font-family: inherit; font-style: normal; font-weight: inherit; letter-spacing: inherit; }
+.ouv-joue .ouv-legende { margin: 6px 0 10px; font-size: 13px; }
+.ouv-joue .ouv-transparence { margin-top: 9px; }
+.ouv-bande { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 0 var(--marge) 12px; padding: 12px 18px; border-radius: 16px; border: 1px solid var(--trait-2); background: var(--carte); }
+.ouv-bande p { margin: 0 auto 0 0; } .ouv-bande span { color: var(--encre-3); }
+@media (max-width: 760px) {
+  .ouv { border-radius: 20px; }
+  .ouv-scene { height: clamp(590px, calc(100svh - 100px), 800px); }
+  .ouv-couverture { object-position: 50% 50%; }
+  .ouv-voile { background: linear-gradient(180deg, rgba(13,12,22,.62), transparent 28%), linear-gradient(0deg, rgba(13,12,22,.95), rgba(13,12,22,.48) 34%, transparent 72%); }
+  .ouv-joue .ouv-voile { background: linear-gradient(180deg, rgba(13,12,22,.7), transparent 16%), linear-gradient(0deg, rgba(13,12,22,.92), rgba(13,12,22,.26) 26%, transparent 44%); }
+  .ouv-contenu { padding: 15px 18px calc(94px + env(safe-area-inset-bottom, 0px)); }
+  .ouv-signature { max-width: 155px; font-size: 9px; letter-spacing: .08em; }
+  .ouv-passer { max-width: 155px; padding: 0 12px; font-size: 11px; }
+  .ouv-texte h2 { font-size: clamp(47px, 11vw, 70px); }
+  .ouv-surtitle { margin-bottom: 12px; font-size: 10px; }
+  .ouv-legende { margin: 10px 0 15px; font-size: 15px; }
+  .ouv-principal { min-height: 54px; }
+  .ouv-play { width: 34px; height: 34px; }
+  .ouv-secondaire { min-height: 54px; }
+  .ouv-lien { padding-left: 0; }
+  .ouv-transparence { margin-top: 10px; font-size: 10px; }
+  .ouv-joue .ouv-texte h2 { font-size: 20px; }
+  .ouv-joue .ouv-legende { margin: 5px 0 8px; font-size: 12px; }
+  .ouv-joue .ouv-controle { min-height: 44px; }
+}
+@media (max-width: 360px) { .ouv-secondaire { padding-inline: 11px; } .ouv-principal { padding-right: 12px; } .ouv-passer { max-width: 142px; } }
+html.contraste .ouv button { outline: 1.5px solid #fff; }

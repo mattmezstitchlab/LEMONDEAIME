@@ -31,4 +31,4 @@ function audioPrive():Plugin {
  };
 }
 /* AIME_BASE=/studio/ : le studio servi dans le site AIME (lemondeaime.com/studio/) */
-export default defineConfig({base:process.env.AIME_BASE||'/',plugins:[react(),tailwindcss(),offlineAssets(),audioPrive()],resolve:{alias:{'@':path.resolve(root,'src')}}});
+export default defineConfig({base:process.env.AIME_BASE||'/',plugins:[react(),tailwindcss(),offlineAssets(),audioPrive()],resolve:{dedupe:["react","react-dom"],alias:{'@':path.resolve(root,'src')}}});

@@ -35,7 +35,7 @@ export default function TopDock({ label, menu, mini, miniLabel = "Affichage", ma
     if (ouvert) { e.preventDefault(); fermer(); return; }
     if (onEchap?.()) e.preventDefault();
   };
-  return <header className="pzs-head" aria-label={"En-tête : " + label}>
+  return <section className="pzs-head" aria-label={"En-tête : " + label}>
     {ouvert && <div className="pzs-voile" aria-hidden="true" onClick={() => fermer(false)} />}
     <nav className={"pzs-top" + (ouvert ? " pzs-ouvert" : "")} aria-label={label} onKeyDown={onKey}>
       <div className="pzs-ligne">
@@ -58,5 +58,5 @@ export default function TopDock({ label, menu, mini, miniLabel = "Affichage", ma
       </div>}
     </nav>
     {!ouvert && crumbs && crumbs.length > 0 && <p className="pzs-crumbs">{crumbs.map((c, i) => <span key={i}>{i > 0 && <span aria-hidden="true"> › </span>}{i === crumbs.length - 1 ? <strong>{c}</strong> : c}</span>)}</p>}
-  </header>;
+  </section>;
 }

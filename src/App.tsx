@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useChemin } from './lib/router';
 import Portfolio from './pages/Portfolio';
-import Accueil from './pages/Accueil';
+import AccueilBroderie from './pages/AccueilBroderie';
 import AimeWedding from './pages/AimeWedding';
 import Projet from './pages/Projet';
 import Admin from './pages/Admin';
@@ -15,11 +15,14 @@ import Boutique from './pages/Boutique';
 import Musique from './pages/Musique';
 import Systaime from './pages/Systaime';
 import System from './pages/System';
+import { Contact, ProjetsAVenir } from './pages/RubriquesPubliques';
 import { APlus, Introuvable } from './pages/Simples';
 import { aller } from './lib/router';
 
 const PAGES: Record<string, [() => React.JSX.Element, string]> = {
-  '/': [Accueil, 'LE MONDE AIME — Tout commence ici'],
+  '/contact': [Contact, 'Contact — LE MONDE AIME'],
+  '/projets-a-venir': [ProjetsAVenir, 'Projets à venir — LE MONDE AIME'],
+  '/': [AccueilBroderie, 'LE MONDE AIME — Broderie'],
   '/projets': [Portfolio, 'LE MONDE AIME — les projets d’AIME'],
   '/aime-wedding': [AimeWedding, 'AIME Wedding — le site officiel de l’union'],
   '/admin': [Admin, 'LE MONDE AIME — Administration'],

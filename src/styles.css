@@ -10,7 +10,7 @@
   -webkit-font-smoothing: antialiased;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 110px; scroll-padding-bottom: 110px; }
+html { scroll-behavior: smooth; scroll-padding-top: 110px; scroll-padding-bottom: var(--marge-dock); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 body { margin: 0; background: var(--fond); }
 a { color: var(--encre); }
@@ -83,7 +83,7 @@ img, video { display: block; max-width: 100%; }
 .menu-aime a:hover, .menu-aime button:hover { background: var(--doux); }
 
 /* dock du bas : les lieux de la page */
-.dock-bas { position: fixed; left: 0; right: 0; bottom: 18px; z-index: 20; display: flex; justify-content: center; padding: 0 12px; pointer-events: none; }
+.dock-bas { position: fixed; left: 0; right: 0; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 20; display: flex; justify-content: center; padding: 0 12px; pointer-events: none; }
 .orbe-dock { flex: none; width: 50px; height: 50px; padding: 0; border: 0; border-radius: 11px; background: #0B0B0C; display: flex; align-items: center; justify-content: center; }
 .orbe-dock:hover { background: #000; }
 .orbe-dock:focus-visible, .orbe-choix:focus-visible { outline-color: #fff; }
@@ -154,7 +154,7 @@ html.calme *, html.calme *::before, html.calme *::after { transition: none !impo
 .bientot { font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 5px; background: var(--encre); color: #fff; letter-spacing: 0; text-transform: none; }
 
 /* pied de page */
-.pied { padding: 96px var(--marge) 132px; border-top: 1px solid var(--trait); }
+.pied { padding: 96px var(--marge) calc(var(--marge-dock) + 36px); border-top: 1px solid var(--trait); }
 .pied nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 36px 24px; }
 .pied h2 { margin: 0 0 12px; font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--encre-3); }
 .pied ul { list-style: none; margin: 0; padding: 0; font-size: 18px; font-weight: 600; }
@@ -514,3 +514,39 @@ html.calme .carte-flip > .dos { opacity: 0; } html.calme .carte-flip.retournee >
 .ac-ensemble { list-style: none; margin: 48px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 28px; }
 .ac-ensemble li { padding-top: 18px; border-top: 1px solid rgba(255,255,255,.3); font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
 @media (max-width: 900px) { .ac-question { grid-template-columns: minmax(0, 1fr); } }
+/* ===== Docks, lot 1 : une navigation globale (haut), un dock de contexte (bas), une marge basse commune ===== */
+/* la place que prennent les éléments fixes du bas (dock, orbe flottante) : le contenu et le pied de page la laissent libre,
+   y compris sous la barre d'accueil de l'iPhone */
+:root { --marge-dock: calc(96px + env(safe-area-inset-bottom, 0px)); }
+.menu-mobile { display: none; }
+.bloc-entrees { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.bloc-entrees a { display: flex; align-items: center; min-height: 56px; padding: 8px 16px; border-radius: 14px; border: 1px solid var(--trait); background: var(--carte); color: var(--encre); font-size: 18px; font-weight: 600; letter-spacing: -0.02em; text-decoration: none; }
+.bloc-entrees a:hover { background: var(--doux); }
+.bloc-entrees a[aria-current="page"] { border: 2px solid var(--encre); }
+@media (max-width: 900px) {
+  /* la rangée de verbes défilait sans rien montrer : sur téléphone et tablette, un bouton « Menu » explicite la remplace */
+  .dock-haut .dock-ligne .rangee { display: none; }
+  .menu-mobile { display: flex; }
+  .dock-haut .dock-ligne { gap: 4px; }
+}
+@media (max-width: 480px) {
+  .bloc-entrees { grid-template-columns: 1fr; }
+  /* sur un iPhone : retour, orbe, logo, Menu, recherche et profil tiennent ensemble, sans défilement, tous >= 44 px */
+  .dock-haut .dock-ligne .separateur { display: none; }
+  .dock-haut .dock-ligne { gap: 2px; }
+  .dock-haut .carre, .dock-haut .carre-orbe, .dock-haut .loupe, .dock-haut .profil { width: 44px; }
+  .dock-haut .dock-ligne > a.outil { padding: 0 6px !important; }
+  .menu-mobile { padding: 0 10px; gap: 6px; }
+}
+.buro-actions { margin: 16px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.dock-bas-seul > div { padding: 5px; border-radius: 16px; }
+/* téléphone : le cercle du dock (modes, musique) reste toujours visible, même quand la rangée défile jusqu'à la section courante */
+.dock-bas > div > .orbe-dock { position: sticky; left: 0; z-index: 2; }
+@media (max-width: 640px) { .dock-bas > div { scroll-padding-left: 60px; } }
+/* très petit écran (320–360 px) : le bouton Menu garde son nom accessible mais ne montre que son icône, pour que le profil reste dans l'écran */
+@media (max-width: 360px) { .menu-mobile span { display: none; } .menu-mobile { width: 44px; padding: 0; justify-content: center; } }
+
+.rubrique-publique { max-width: 1100px; min-height: 65vh; padding: clamp(40px, 7vw, 90px) var(--marge) 100px; margin: auto; }
+.rubrique-publique h1 { font-size: clamp(42px, 7vw, 100px); line-height: 1; }
+.rubrique-publique section { max-width: 750px; margin-top: 48px; font-size: 20px; line-height: 1.6; }
+.rubrique-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
