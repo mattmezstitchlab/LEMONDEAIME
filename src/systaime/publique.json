@@ -1,0 +1,654 @@
+{
+ "schema": "systaime-public",
+ "version": "0.3.0",
+ "themes": [
+  "visuel",
+  "interaction",
+  "donnees",
+  "relations",
+  "restitution",
+  "memoire"
+ ],
+ "couches": [
+  "principes",
+  "tokens",
+  "composants",
+  "contrats",
+  "tests",
+  "versions"
+ ],
+ "libelles": {
+  "validee": {
+   "titre": "Validé par une personne",
+   "texte": "Une personne a validé ce point (nom, date, commit et portée sont inscrits)."
+  },
+  "a-reverifier": {
+   "titre": "À revérifier",
+   "texte": "Un fichier ou un test référencé a changé depuis la dernière vérification du manifeste."
+  },
+  "test-echoue": {
+   "titre": "Test en échec",
+   "texte": "Un test relié a échoué à sa dernière exécution."
+  },
+  "teste-reussi": {
+   "titre": "Testé, validation humaine en attente",
+   "texte": "Le code existe, un test relié a réussi. Cela ne prouve pas que toutes les règles du composant sont satisfaites : personne ne l’a encore validé."
+  },
+  "teste-non-rejoue": {
+   "titre": "Testé, non rejoué",
+   "texte": "Le code existe et des tests sont reliés, mais ils n’ont pas été rejoués pour ce manifeste."
+  },
+  "present-sans-test": {
+   "titre": "Présent, sans test relié",
+   "texte": "Le code existe ; aucun test ne lui est relié dans ce manifeste."
+  },
+  "hors-depot": {
+   "titre": "Source dans un autre dépôt",
+   "texte": "La source est ailleurs : elle n’est pas vérifiable depuis ce dépôt."
+  },
+  "rien": {
+   "titre": "Rien d’identifié dans ce dépôt",
+   "texte": "Aucune source n’a été identifiée pour ce point. Il n’est ni confirmé ni exclu."
+  },
+  "reserve": {
+   "titre": "Détail réservé",
+   "texte": "Le détail de ce point est réservé à l’administration."
+  }
+ },
+ "cases": [
+  {
+   "id": "visuel.principes",
+   "type": "croisement",
+   "theme": "visuel",
+   "couche": "principes",
+   "nom": "Visuel × Principes",
+   "resume": null,
+   "etat": "present-sans-test"
+  },
+  {
+   "id": "visuel.tokens",
+   "type": "croisement",
+   "theme": "visuel",
+   "couche": "tokens",
+   "nom": "Visuel × Tokens",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "visuel.composants",
+   "type": "croisement",
+   "theme": "visuel",
+   "couche": "composants",
+   "nom": "Visuel × Composants",
+   "resume": null,
+   "etat": "present-sans-test"
+  },
+  {
+   "id": "visuel.contrats",
+   "type": "croisement",
+   "theme": "visuel",
+   "couche": "contrats",
+   "nom": "Visuel × Contrats",
+   "resume": null,
+   "etat": "present-sans-test"
+  },
+  {
+   "id": "visuel.tests",
+   "type": "croisement",
+   "theme": "visuel",
+   "couche": "tests",
+   "nom": "Visuel × Tests",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "visuel.versions",
+   "type": "croisement",
+   "theme": "visuel",
+   "couche": "versions",
+   "nom": "Visuel × Versions",
+   "resume": null,
+   "etat": "rien"
+  },
+  {
+   "id": "interaction.principes",
+   "type": "croisement",
+   "theme": "interaction",
+   "couche": "principes",
+   "nom": "Interaction × Principes",
+   "resume": null,
+   "etat": "present-sans-test"
+  },
+  {
+   "id": "interaction.tokens",
+   "type": "croisement",
+   "theme": "interaction",
+   "couche": "tokens",
+   "nom": "Interaction × Tokens",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "interaction.composants",
+   "type": "croisement",
+   "theme": "interaction",
+   "couche": "composants",
+   "nom": "Interaction × Composants",
+   "resume": null,
+   "etat": "present-sans-test"
+  },
+  {
+   "id": "interaction.contrats",
+   "type": "croisement",
+   "theme": "interaction",
+   "couche": "contrats",
+   "nom": "Interaction × Contrats",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "interaction.tests",
+   "type": "croisement",
+   "theme": "interaction",
+   "couche": "tests",
+   "nom": "Interaction × Tests",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "interaction.versions",
+   "type": "croisement",
+   "theme": "interaction",
+   "couche": "versions",
+   "nom": "Interaction × Versions",
+   "resume": null,
+   "etat": "rien"
+  },
+  {
+   "id": "donnees.principes",
+   "type": "croisement",
+   "theme": "donnees",
+   "couche": "principes",
+   "nom": "Données × Principes",
+   "resume": null,
+   "etat": "hors-depot"
+  },
+  {
+   "id": "donnees.tokens",
+   "type": "croisement",
+   "theme": "donnees",
+   "couche": "tokens",
+   "nom": "Données × Tokens",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "donnees.composants",
+   "type": "croisement",
+   "theme": "donnees",
+   "couche": "composants",
+   "nom": "Données × Composants",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "donnees.contrats",
+   "type": "croisement",
+   "theme": "donnees",
+   "couche": "contrats",
+   "nom": "Données × Contrats",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "donnees.tests",
+   "type": "croisement",
+   "theme": "donnees",
+   "couche": "tests",
+   "nom": "Données × Tests",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "donnees.versions",
+   "type": "croisement",
+   "theme": "donnees",
+   "couche": "versions",
+   "nom": "Données × Versions",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "relations.principes",
+   "type": "croisement",
+   "theme": "relations",
+   "couche": "principes",
+   "nom": "Relations × Principes",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "relations.tokens",
+   "type": "croisement",
+   "theme": "relations",
+   "couche": "tokens",
+   "nom": "Relations × Tokens",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "relations.composants",
+   "type": "croisement",
+   "theme": "relations",
+   "couche": "composants",
+   "nom": "Relations × Composants",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "relations.contrats",
+   "type": "croisement",
+   "theme": "relations",
+   "couche": "contrats",
+   "nom": "Relations × Contrats",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "relations.tests",
+   "type": "croisement",
+   "theme": "relations",
+   "couche": "tests",
+   "nom": "Relations × Tests",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "relations.versions",
+   "type": "croisement",
+   "theme": "relations",
+   "couche": "versions",
+   "nom": "Relations × Versions",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "restitution.principes",
+   "type": "croisement",
+   "theme": "restitution",
+   "couche": "principes",
+   "nom": "Restitution × Principes",
+   "resume": null,
+   "etat": "present-sans-test"
+  },
+  {
+   "id": "restitution.tokens",
+   "type": "croisement",
+   "theme": "restitution",
+   "couche": "tokens",
+   "nom": "Restitution × Tokens",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "restitution.composants",
+   "type": "croisement",
+   "theme": "restitution",
+   "couche": "composants",
+   "nom": "Restitution × Composants",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "restitution.contrats",
+   "type": "croisement",
+   "theme": "restitution",
+   "couche": "contrats",
+   "nom": "Restitution × Contrats",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "restitution.tests",
+   "type": "croisement",
+   "theme": "restitution",
+   "couche": "tests",
+   "nom": "Restitution × Tests",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "restitution.versions",
+   "type": "croisement",
+   "theme": "restitution",
+   "couche": "versions",
+   "nom": "Restitution × Versions",
+   "resume": null,
+   "etat": "rien"
+  },
+  {
+   "id": "memoire.principes",
+   "type": "croisement",
+   "theme": "memoire",
+   "couche": "principes",
+   "nom": "Mémoire × Principes",
+   "resume": null,
+   "etat": "present-sans-test"
+  },
+  {
+   "id": "memoire.tokens",
+   "type": "croisement",
+   "theme": "memoire",
+   "couche": "tokens",
+   "nom": "Mémoire × Tokens",
+   "resume": null,
+   "etat": "rien"
+  },
+  {
+   "id": "memoire.composants",
+   "type": "croisement",
+   "theme": "memoire",
+   "couche": "composants",
+   "nom": "Mémoire × Composants",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "memoire.contrats",
+   "type": "croisement",
+   "theme": "memoire",
+   "couche": "contrats",
+   "nom": "Mémoire × Contrats",
+   "resume": null,
+   "etat": "hors-depot"
+  },
+  {
+   "id": "memoire.tests",
+   "type": "croisement",
+   "theme": "memoire",
+   "couche": "tests",
+   "nom": "Mémoire × Tests",
+   "resume": null,
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "memoire.versions",
+   "type": "croisement",
+   "theme": "memoire",
+   "couche": "versions",
+   "nom": "Mémoire × Versions",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.confidentialite",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Confidentialité",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.autorisations",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Autorisations",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.controle-humain",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Contrôle humain",
+   "resume": "Confirmation avant action destructive",
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "g.tracabilite",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Traçabilité",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.accessibilite",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Accessibilité",
+   "resume": "Préférences et interactions accessibles",
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "g.mouvement-reduit",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Mouvement réduit",
+   "resume": "Respect de la préférence",
+   "etat": "present-sans-test"
+  },
+  {
+   "id": "g.contraste",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Contraste",
+   "resume": "4,5:1 textes, 3:1 focus",
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "g.clavier",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Clavier",
+   "resume": "Navigation complète au clavier",
+   "etat": "rien"
+  },
+  {
+   "id": "g.lecture-d-ecran",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Lecture d’écran",
+   "resume": "Annonces et noms accessibles",
+   "etat": "rien"
+  },
+  {
+   "id": "g.ethique",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Éthique",
+   "resume": "Charte éthique",
+   "etat": "rien"
+  },
+  {
+   "id": "g.droits-auteur",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Droits auteur",
+   "resume": "Déclaration d'auteur et d'usage",
+   "etat": "present-sans-test"
+  },
+  {
+   "id": "g.licences",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Licences",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.provenance",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Provenance",
+   "resume": "Provenance déclarée du motif",
+   "etat": "present-sans-test"
+  },
+  {
+   "id": "g.integrite",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Intégrité",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.source-canonique",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Source canonique",
+   "resume": "Index des sources de vérité",
+   "etat": "rien"
+  },
+  {
+   "id": "g.non-duplication",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Non-duplication",
+   "resume": "Un moteur canonique par fonction",
+   "etat": "rien"
+  },
+  {
+   "id": "g.validation",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Validation",
+   "resume": "Contrôle de types",
+   "etat": "present-sans-test"
+  },
+  {
+   "id": "g.tests-executes",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Tests exécutés",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.etat-de-preuve",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "État de preuve",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.revisions",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Révisions",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.sauvegarde",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Sauvegarde",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.restauration",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Restauration",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.dependances",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Dépendances",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.import-securise",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Import sécurisé",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.export-fiable",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Export fiable",
+   "resume": "Export rejouable",
+   "etat": "teste-reussi"
+  },
+  {
+   "id": "g.origine-stockage",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Origine stockage",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.deploiement",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Déploiement",
+   "resume": null,
+   "etat": "reserve"
+  },
+  {
+   "id": "g.retour-arriere",
+   "type": "garde-fou",
+   "theme": null,
+   "couche": null,
+   "nom": "Retour arrière",
+   "resume": null,
+   "etat": "reserve"
+  }
+ ],
+ "decompte": {
+  "present-sans-test": 11,
+  "teste-reussi": 17,
+  "rien": 9,
+  "hors-depot": 2,
+  "reserve": 25
+ },
+ "inventaire": {
+  "total": 11,
+  "par_categorie": {
+   "utilise": 6,
+   "existant-inaccessible": 2,
+   "prototype-non-raccorde": 1,
+   "doublon-potentiel": 1,
+   "a-construire": 1
+  }
+ },
+ "note": "Version publique expurgée : ni chemins, ni défauts de sécurité, ni détails internes. Le détail est réservé à l’administration."
+}

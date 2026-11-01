@@ -13,6 +13,7 @@ import Reseau from './pages/Reseau';
 import FicheReseau from './pages/FicheReseau';
 import Boutique from './pages/Boutique';
 import Musique from './pages/Musique';
+import Systaime from './pages/Systaime';
 import { APlus, Introuvable } from './pages/Simples';
 import { aller } from './lib/router';
 
@@ -29,6 +30,7 @@ const PAGES: Record<string, [() => React.JSX.Element, string]> = {
   '/a-plus': [APlus, 'LE MONDE AIME — A+'],
   '/boutique': [Boutique, 'LE MONDE AIME — Boutique'],
   '/musique': [Musique, 'LE MONDE AIME — La journée en musique'],
+  '/systaime': [Systaime, 'SYST’AIME — la source de vérité de LE MONDE AIME'],
 };
 /* « Le Monde AIME » est la page des projets : /monde y mène (et non plus à la landing Broderie) */
 const ANCIENNES: Record<string, string> = { '/charte': '/projets', '/monde': '/projets' };
