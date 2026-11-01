@@ -3,6 +3,7 @@ import { Tete, VerbesProjets, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { ETATS, externe, lireProjet, useAdmin, useProjets, type Projet as P } from '../lib/projets';
 import { CarteProjet, Visiter } from './Portfolio';
+import { ENTREES_BRODERIE, estBroderie } from '../lib/entreesBroderie.mjs';
 
 /* /projets/<slug> : la page de présentation d'un projet, à la manière d'Awwwards. Le titre, l'accroche, la fiche (catégorie,
    année, état, rôle) et « Visiter le site » ; la grande image, le texte, la galerie ; puis le projet suivant. */
@@ -47,6 +48,12 @@ export default function Projet({ slug }: { slug: string }) {
               {admin && <Lien className="bouton" href={'/admin?projet=' + p.slug}>Modifier</Lien>}
             </div>
           </section>
+          {estBroderie(p) && <section aria-labelledby="titre-entrees" className="section" style={{ paddingInline: 'var(--marge)' }}>
+            <h2 id="titre-entrees" className="surtitre">Entrer dans l’atelier</h2>
+            <ul className="ac-chemins" aria-label="Entrées directes dans l’atelier de broderie">
+              {ENTREES_BRODERIE.map(e => <li key={e.id}><a className="ac-chemin" href={e.href} data-entree={e.id}><span style={{ margin: 0 }}><b>{e.nom}</b><span>{e.sub}</span></span><em>Atelier Brode Way<span className="sr-only"> (s’ouvre dans le Studio)</span></em></a></li>)}
+            </ul>
+          </section>}
           {p.couverture && <figure className="pf-couverture"><img src={p.couverture} alt={p.alt} /></figure>}
           {p.description && <section aria-label="Le projet" className="section blanche">
             <div className="pf-description">{p.description.split(/\n{2,}/).map((t, n) => <p key={n} className="texte">{t}</p>)}</div>
