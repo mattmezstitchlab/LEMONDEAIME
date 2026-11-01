@@ -5,8 +5,12 @@ import { useSession } from '../lib/session';
 import { useProjets } from '../lib/projets';
 import { CarteProjet } from './Portfolio';
 import { CHEMINS, DESTINATIONS, ETATS, proposer } from '../lib/intention.mjs';
+import TransitionBroderie from '../charte/TransitionBroderie';
+import { importerPdfHref } from '../lib/pointzero';
 
-/* LA PREMIÈRE PAGE (/) : Porte 1 d'AIME Wedding. Le héros dit la promesse du mariage et porte deux vraies actions
+/* LA PREMIÈRE PAGE (/) : Porte 1 d'AIME Wedding, livraison A1 : deux panneaux égaux, Mariage et Broderie, puis la transition photographie → broderie.
+   Mariage garde le h1 et ses deux vraies actions. Broderie : « Importer mon patron PDF » reste indisponible (« Bientôt ») tant que Point Zéro est protégé (lib/pointzero.ts) ; « Explorer la broderie » mène à la section de cette page.
+   Avant A1, le héros disait la promesse du mariage et porte deux vraies actions
    (Créer notre mariage → /buro?creer=mariage, Retrouver notre mariage → /buro) ; une section dit ce qui existe aujourd'hui, et seulement cela.
    La zone d'intention et les quatre chemins (moteur inchangé, lib/intention.mjs) sont repliés plus bas : ils ne concurrencent plus le mariage.
    Rien n'est simulé : chaque lien mène à une page existante ; la zone d'intention propose (elle n'exécute rien). */
@@ -14,6 +18,7 @@ type Chemin = keyof typeof CHEMINS;
 const ORDRE: Chemin[] = ['organiser', 'creer', 'projets', 'decouvrir'];
 
 export default function Accueil() {
+  const importer = importerPdfHref();
   const session = useSession();
   const projets = useProjets();
   const [texte, setTexte] = useState('');
@@ -34,11 +39,11 @@ export default function Accueil() {
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
       <Tete courant="/" />
       <main id="contenu">
-        <div className="ac-cadre">
-          <section className="ac-hero" id="entree" aria-labelledby="titre-entree">
+        <div className="ac-cadre ac-deux" id="entree">
+          <section className="ac-pan ac-pan-mariage" aria-labelledby="titre-entree">
             <img src="/media/union.jpg" alt="Un couple de mariés danse la nuit dans le désert, près d’une voiture ancienne et d’un tourne-disque, sous un ciel d’étoiles." />
-            <div className="ac-hero-contenu">
-              <p className="surtitre">LE MONDE AIME®</p>
+            <div className="ac-pan-contenu">
+              <p className="surtitre">LE MONDE AIME® · Mariage</p>
               <h1 id="titre-entree" className="signature">{'Vous imaginez votre mariage.\nAIME lui donne forme.'}</h1>
               <p className="ac-hero-sous">Tout votre mariage, au même endroit.</p>
               <p className="ac-hero-actions">
@@ -47,7 +52,24 @@ export default function Accueil() {
               </p>
             </div>
           </section>
+          <section className="ac-pan ac-pan-broderie" aria-labelledby="titre-broderie-pan">
+            <img src="/media/broderie.jpg" alt="Une brodeuse tient une tablette où s’affiche une grille de broderie, et un tambour brodé d’une rose." />
+            <div className="ac-pan-contenu">
+              <p className="surtitre">Broderie — L’atelier Point Zéro</p>
+              <h2 id="titre-broderie-pan" className="signature">{'Votre patron.\nVotre toile.\nVotre création.'}</h2>
+              <p className="ac-hero-sous">Importez, dessinez, brodez.</p>
+              <p className="ac-hero-actions">
+                {importer
+                  ? <a className="bouton ac-cta" href={importer} data-action="importer" target="_blank" rel="noopener">Importer mon patron PDF</a>
+                  : <button type="button" className="bouton ac-cta ac-cta-indispo" aria-disabled="true" aria-describedby="pz-note" data-action="importer" onClick={e => e.preventDefault()}>Importer mon patron PDF<span className="ac-bientot">Bientôt</span></button>}
+                <a className="bouton ac-cta ac-cta-calme" href="#broderie" data-action="explorer">Explorer la broderie</a>
+              </p>
+              {!importer && <p className="ac-pz-note" id="pz-note">L’atelier Point Zéro est en accès privé pour l’instant. L’import s’ouvrira ici dès qu’il sera public.</p>}
+            </div>
+          </section>
         </div>
+
+        <TransitionBroderie />
 
         <section className="section ac-aujourdhui" id="aujourdhui" aria-labelledby="titre-aujourdhui" style={{ paddingInline: 'var(--marge)' }}>
           <div className="ac-entete">
