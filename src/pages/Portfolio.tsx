@@ -4,6 +4,7 @@ import { Lien } from '../lib/router';
 import { FONDATEUR } from '../lib/reseau-exemples';
 import { CarteReseau } from './Reseau';
 import { ETATS, categories, externe, useAdmin, useProjets, type Projet } from '../lib/projets';
+import { ROSACE } from '../lib/entreesBroderie.mjs';
 
 /* LE MONDE AIME (/) : le portfolio des projets d'AIME, à la manière d'Awwwards. Le projet à la une en grand, puis tous les projets
    en cartes (filtrables par catégorie), chacune ouvrant sa page de présentation ; enfin le fondateur. */
@@ -15,13 +16,15 @@ export function Visiter({ p, className = 'bouton' }: { p: Projet; className?: st
     ? <a className={className} href={p.lien} target="_blank" rel="noopener">Visiter le site<span className="sr-only"> {p.titre} (nouvel onglet)</span></a>
     : <Lien className={className} href={p.lien}>Visiter le site<span className="sr-only"> {p.titre}</span></Lien>;
 }
+/* Brode Way garde sa fiche historique ; la carte Broderie mène à son expérience ROSACE. */
+const adresseProjet = (p: Projet) => p.slug === 'brode-way' ? ROSACE : '/projets/' + p.slug;
 export const Etat = ({ s }: { s: Projet['statut'] }) => <span className={'pf-etat ' + s}>{ETATS[s] || s}</span>;
 
 export function CarteProjet({ p, titre = 'h3' }: { p: Projet; titre?: 'h2' | 'h3' }) {
   const T = titre;
   return (
     <article className="pf-carte">
-      <Lien href={'/projets/' + p.slug} className="pf-carte-lien">
+      <Lien href={adresseProjet(p)} className="pf-carte-lien">
         <div className="pf-image">{p.couverture ? <img src={p.couverture} alt={p.alt} loading="lazy" /> : <span aria-hidden="true">{p.titre.slice(0, 1)}</span>}</div>
         <div className="pf-carte-texte">
           <T className="pf-carte-titre">{p.titre}</T>
@@ -69,7 +72,7 @@ export default function Portfolio() {
               <h3 className="pf-une-titre">{une.titre}</h3>
               {une.accroche && <p className="pf-une-accroche">{une.accroche}</p>}
               <div className="pf-boutons">
-                <Lien className="bouton noir pf-sur-image" href={'/projets/' + une.slug}>Voir le projet<span className="sr-only"> {une.titre}</span></Lien>
+                <Lien className="bouton noir pf-sur-image" href={adresseProjet(une)}>{une.slug === 'brode-way' ? 'Découvrir ROSACE' : 'Voir le projet'}<span className="sr-only"> {une.titre}</span></Lien>
                 <Visiter p={une} className="bouton pf-sur-image clair" />
               </div>
             </div>

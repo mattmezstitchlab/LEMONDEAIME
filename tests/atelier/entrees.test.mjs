@@ -1,8 +1,8 @@
-/* La carte Broderie ouvre l'atelier : chaque entrée correspond à une commande qui existe, sans nouvelle page entre la carte et l'atelier. */
+/* Les entrées Broderie restent directes ; ROSACE est une lecture de la fiche Brode Way existante. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ATELIER, ENTREES_BRODERIE, estBroderie, ouvrageARepris, CLE_OUVRAGE } from '../../src/lib/entreesBroderie.mjs';
+import { ATELIER, ENTREES_BRODERIE, estBroderie, ouvrageARepris, CLE_OUVRAGE, ROSACE } from '../../src/lib/entreesBroderie.mjs';
 
 const lire = (p) => readFileSync(new URL('../../' + p, import.meta.url), 'utf8');
 const ouvrirStudio = lire('studio/src/lib/ouvrir.ts');
@@ -22,18 +22,30 @@ test('« Fils » et « Importer » désignent de vraies commandes de l’arbre d
   assert.ok(/id: "fils"/.test(broderie) && /id: "importer"/.test(broderie));
   assert.ok(/id: "imp-rosace"[^\n]*Composer une rosace|Composer une rosace/.test(broderie));
 });
-test('la carte Broderie est le projet Brode Way ; aucune nouvelle landing ni route', () => {
+test('ROSACE est accessible depuis Brode Way sans réserver un nouveau slug ni retirer les entrées directes', () => {
   assert.ok(estBroderie({ slug: 'brode-way' }) && !estBroderie({ slug: 'aime-wedding', categorie: 'Mariage', lien: '/aime-wedding' }) && !estBroderie(null));
   const projet = lire('src/pages/Projet.tsx');
   assert.ok(projet.includes('ENTREES_BRODERIE') && /<a className="ac-chemin" href=\{e\.href\}/.test(projet), 'liens directs vers /studio/atelier');
   const app = lire('src/App.tsx'), vercel = lire('vercel.json');
-  assert.ok(!/ouvrir|broderie-entree|atelier-entree/i.test(app), 'aucune nouvelle route dans le site');
+  assert.equal(ROSACE, '/projets/brode-way?experience=rosace');
+  assert.ok(app.includes("chemin === '/projets/brode-way'") && app.includes("get('experience') === 'rosace'"), 'lecture de la même fiche, sans autre projet');
+  assert.ok(lire('src/pages/Portfolio.tsx').includes('adresseProjet') && projet.includes('href={ROSACE}'), 'entrée depuis la carte et la fiche Broderie');
   assert.ok(/\/studio\/\(\.\*\)|\/studio\//.test(vercel), 'le Studio reste servi sous /studio/');
 });
-test('le Studio ne touche ni aux sauvegardes ni aux modèles : lib/library et lib/store sont inchangés', async () => {
-  const { execSync } = await import('node:child_process');
-  const base = execSync('git merge-base HEAD origin/main', { encoding: 'utf8' }).trim();
-  const touches = execSync(`git diff --name-only ${base} HEAD`, { encoding: 'utf8' }).split('\n');
+test('le Studio ne touche ni aux sauvegardes ni aux modèles : lib/library et lib/store sont inchangés', async t => {
+  const { execFileSync } = await import('node:child_process');
+  const git = args => execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+  let base;
+  try { base = git(['merge-base', 'HEAD', 'origin/main']); }
+  catch (e) {
+    // Un checkout tronqué ne connaît pas le parent commun : vérifier au moins tout le lot depuis sa racine locale.
+    if (git(['rev-parse', '--is-shallow-repository']) !== 'true') throw e;
+    base = git(['rev-list', '--max-parents=0', 'HEAD']).split('\n')[0];
+    t.diagnostic('Historique tronqué : comparaison à la racine locale ' + base + ', pas à origin/main.');
+  }
+  assert.match(base, /^[0-9a-f]{40}$/);
+  // Inclut aussi les modifications non encore commitées (git diff <base> compare le fichier de travail).
+  const touches = git(['diff', '--name-only', base]).split('\n');
   for (const f of ['studio/src/lib/library.ts', 'studio/src/lib/store.ts', 'studio/src/lib/pattern.ts', 'studio/src/lib/aimeSync.ts', 'studio/src/lib/brodeuseProfile.ts', 'studio/src/lib/dmc.ts', 'studio/src/lib/tambour/disque.ts'])
     assert.ok(!touches.includes(f), f + ' ne doit pas changer dans ce lot');
   assert.ok(!touches.some(f => f.startsWith('studio/src/lib/motif5d/')), 'aucun moteur 5D modifié ou dupliqué');

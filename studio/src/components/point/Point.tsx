@@ -40,6 +40,7 @@ export default function Point({ cheminInitial, contexte, modes, part, teinte, et
   const [confort, setConfort] = useState(false);
   const [annonce, setAnnonce] = useState("");
   const bouton = useRef<HTMLButtonElement | null>(null);
+  const hote = useRef<HTMLSpanElement | null>(null);
   const ref = refBouton ?? bouton;
   /* les réglages de Confort s'appliquent dès que le Point est là, même dans un projet sans « coquille » d'accessibilité */
   useEffect(() => {
@@ -53,13 +54,16 @@ export default function Point({ cheminInitial, contexte, modes, part, teinte, et
     window.addEventListener(OUVRIR_CONFORT, ouvrir);
     return () => window.removeEventListener(OUVRIR_CONFORT, ouvrir);
   }, []);
-  const fermer = () => { setConfort(false); requestAnimationFrame(() => ref.current?.focus()); };
+  const fermer = () => { setConfort(false); requestAnimationFrame(() => {
+    /* En scène il n’y a pas de bouton central : rendre le focus au secteur Confort. */
+    (ref.current ?? (scene ? hote.current?.querySelector<HTMLButtonElement>('[data-mode="confort"]') : null))?.focus();
+  }); };
   const tous: ModePoint[] = [
     { id: "confort", nom: "Confort", aide: "taille du texte, contraste, thème, mouvement", groupe: "acces", icone: ICONE_CONFORT, actif: confort, ouvrir: () => setConfort(v => !v) },
     /* ouvrir un autre mode referme Confort : un seul panneau à la fois */
     ...modes.map(m => ({ ...m, ouvrir: () => { setConfort(false); m.ouvrir(); } })),
   ];
-  return <span className="lp-contexte" data-contexte={contexte}>
+  return <span ref={hote} className="lp-contexte" data-contexte={contexte}>
     <LePoint cheminInitial={cheminInitial} modes={tous} tambour={tambour} centre={centre && { ...centre, ouvrir: () => { setConfort(false); centre.ouvrir(); } }} scene={scene} memoire={memoire} ancrage={ancrage} part={part} teinte={teinte} etiquette={etiquette} guide={guide} refBouton={ref} annonceExterne={annonce} />
     {confort && createPortal(<PanneauConfort onFermer={fermer} onAnnonce={setAnnonce} />, hotePortail(ref.current))}
   </span>;

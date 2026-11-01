@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useChemin } from './lib/router';
+import { lazy, Suspense, useEffect } from 'react';
+import { useChemin, useRecherche } from './lib/router';
 import Portfolio from './pages/Portfolio';
 import Accueil from './pages/Accueil';
 import AimeWedding from './pages/AimeWedding';
@@ -17,6 +17,9 @@ import Systaime from './pages/Systaime';
 import System from './pages/System';
 import { APlus, Introuvable } from './pages/Simples';
 import { aller } from './lib/router';
+
+/* Sous /projets, la réécriture existante suffit : aucune configuration de production. */
+const Rosace = lazy(() => import('./pages/Rosace'));
 
 const PAGES: Record<string, [() => React.JSX.Element, string]> = {
   '/': [Accueil, 'LE MONDE AIME — Tout commence ici'],
@@ -40,11 +43,14 @@ const ANCIENNES: Record<string, string> = { '/charte': '/projets', '/monde': '/p
    la décision du 31/10/2026 « l'accueil = la page des projets » : à valider par Matt avant toute fusion. */
 export default function App() {
   const chemin = useChemin().replace(/\/+$/, '') || '/';
+  const recherche = useRecherche();
   useEffect(() => { if (ANCIENNES[chemin]) aller(ANCIENNES[chemin] + window.location.search + window.location.hash); }, [chemin]);
   const fiche = /^\/reseau\/([a-z0-9-]{1,60})$/.exec(chemin);
-  const projet = /^\/projets\/([a-z0-9-]{1,60})$/.exec(chemin);
+  const estRosace = chemin === '/projets/brode-way' && new URLSearchParams(recherche).get('experience') === 'rosace';
+  const projet = estRosace ? null : /^\/projets\/([a-z0-9-]{1,60})$/.exec(chemin);
   const [Page, titre] = PAGES[ANCIENNES[chemin] || chemin] || [Introuvable, 'LE MONDE AIME — Page introuvable'];
-  useEffect(() => { if (!fiche && !projet) document.title = titre; }, [titre, fiche, projet]);
+  useEffect(() => { if (estRosace) document.title = 'ROSACE — Chaque fil dessine un monde'; else if (!fiche && !projet) document.title = titre; }, [titre, fiche, projet, estRosace]);
+  if (estRosace) return <Suspense fallback={<p className="pf-attente" role="status">La rosace se prépare…</p>}><Rosace /></Suspense>;
   if (fiche) return <FicheReseau key={fiche[1]} cle={fiche[1]} />;
   if (projet) return <Projet key={projet[1]} slug={projet[1]} />;
   return <Page />;

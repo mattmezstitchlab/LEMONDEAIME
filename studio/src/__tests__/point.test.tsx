@@ -7,6 +7,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import App from "../App";
 import AccessibilityShell from "../components/AccessibilityShell";
+import Point from "../components/point/Point";
 import { anneau, dispositionArc, ecrirePresentation, lirePresentation, nomAccessible, positionDe, presentationPour, PRESENTATION_CLE, secteurVise, tourner, type ModePoint } from "../lib/point/modes";
 import { annonce, PROFILS, reglagesActifs } from "../lib/point/confort";
 import { ACCESS_KEY, DEFAULT_ACCESS, readPrefs } from "../lib/accessibilityCore";
@@ -155,6 +156,7 @@ describe("Le Point · dans l'atelier", () => {
     expect(champs.length).toBeGreaterThan(8);
     expect(champs.every(i => ["checkbox", "radio", "range"].includes(i.type))).toBe(true);
     expect(champs.every(i => !!i.closest("label"))).toBe(true);
+    expect(champs.filter(i => i.type === "range").map(i => i.getAttribute("aria-label"))).toEqual(["Taille du texte", "Interligne", "Espacement des lettres"]);
   });
   it("le lien d'évitement ouvre Confort de n'importe où, en deux gestes (Tab, Entrée)", async () => {
     await ouvrirAtelier();
@@ -309,5 +311,28 @@ describe("Le Point selon le support", () => {
     await cliquer([...container!.querySelectorAll(".dg-loupe-formes button")].find(b => b.textContent?.startsWith("Carrée")));
     expect(toile().getAttribute("data-forme")).toBe("carree");
     expect(localStorage.getItem("pointzero:loupe:forme")).toBe("carree");
+  });
+});
+
+
+describe("Le Point posé dans une page", () => {
+  it("la liste choisie dans Confort s’applique sans recharger, conserve le focus, puis rend le focus au secteur", async () => {
+    container = document.createElement("div"); document.body.appendChild(container); root = createRoot(container);
+    await act(async () => { root!.render(<Point scene contexte="test-scene" modes={[m("formes", "creation")]} tambour={{ rayon: 100, cote: 300, parPage: 8 }} />); });
+    await attendre();
+    expect(document.querySelector('[data-presentation="anneau"]')).toBeTruthy();
+    await cliquer(secteurs()[0]);
+    const liste = [...panneau()!.querySelectorAll("label")].find(l => l.textContent?.startsWith("Liste en mots"))!.querySelector("input")!;
+    await act(async () => { liste.focus(); });
+    await cliquer(liste);
+    expect(document.querySelector('[data-presentation="liste"]')).toBeTruthy();
+    expect(document.activeElement).toBe(liste); // Confort ne perd pas le clavier pendant le changement
+    await touche(panneau(), "Escape");
+    expect(panneau()).toBeNull();
+    expect((document.activeElement as HTMLElement).dataset.mode).toBe("confort");
+    await cliquer(secteurs()[0]);
+    const auto = [...panneau()!.querySelectorAll("label")].find(l => l.textContent?.startsWith("Automatique"))!.querySelector("input")!;
+    await cliquer(auto);
+    expect(document.querySelector('[data-presentation="anneau"]')).toBeTruthy();
   });
 });

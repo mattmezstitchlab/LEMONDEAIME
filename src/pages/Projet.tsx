@@ -3,7 +3,7 @@ import {Tete, Pied } from '../charte/Charte';
 import { Lien } from '../lib/router';
 import { ETATS, externe, lireProjet, useAdmin, useProjets, type Projet as P } from '../lib/projets';
 import { CarteProjet, Visiter } from './Portfolio';
-import { ENTREES_BRODERIE, estBroderie, ouvrageARepris } from '../lib/entreesBroderie.mjs';
+import { ENTREES_BRODERIE, estBroderie, ouvrageARepris, ROSACE } from '../lib/entreesBroderie.mjs';
 
 /* /projets/<slug> : la page de présentation d'un projet, à la manière d'Awwwards. Le titre, l'accroche, la fiche (catégorie,
    année, état, rôle) et « Visiter le site » ; la grande image, le texte, la galerie ; puis le projet suivant. */
@@ -41,7 +41,8 @@ export default function Projet({ slug }: { slug: string }) {
               {p.role && <div><dt>Rôle</dt><dd>{p.role}</dd></div>}
             </dl>
             <div className="pf-boutons">
-              <Visiter p={p} className="bouton noir" />
+              {p.slug === 'brode-way' && <Lien className="bouton noir" href={ROSACE}>Découvrir ROSACE</Lien>}
+              <Visiter p={p} className={p.slug === 'brode-way' ? 'bouton' : 'bouton noir'} />
               {(p.liens || []).map(l => externe(l.href)
                 ? <a key={l.href} className="bouton" href={l.href} target="_blank" rel="noopener">{l.libelle}<span className="sr-only"> ({p.titre}, nouvel onglet)</span></a>
                 : <Lien key={l.href} className="bouton" href={l.href}>{l.libelle}</Lien>)}

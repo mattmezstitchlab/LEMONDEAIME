@@ -1,7 +1,9 @@
 /* La carte Broderie (Brode Way) : cinq entrées directes dans l'atelier du Studio (/studio/atelier).
    Chacune appelle une commande qui existe déjà ; « ?ouvrir= » est lu une fois par l'atelier (studio/src/lib/ouvrir.ts) puis retiré de l'adresse.
-   Aucune nouvelle page entre la carte et l'atelier. Le texte dit ce qui se passe, y compris quand il n'y a rien à reprendre. */
+   Ces entrées restent directes même si la carte présente aussi ROSACE. Le texte dit ce qui se passe, y compris quand il n'y a rien à reprendre. */
 export const ATELIER = '/studio/atelier';
+/* L'expérience est une lecture de la fiche Brode Way : pas de nouveau slug de projet réservé. */
+export const ROSACE = '/projets/brode-way?experience=rosace';
 export const ENTREES_BRODERIE = [
   { id: 'ouvrages', nom: 'Mes ouvrages', sub: 'Rouvrir un ouvrage rangé sur cet appareil.', href: ATELIER + '?ouvrir=ouvrages' },
   { id: 'reprendre', nom: 'Reprendre un ouvrage', sub: 'L’atelier s’ouvre sur le dernier ouvrage de cet appareil, tel que vous l’avez laissé.', href: ATELIER + '?ouvrir=reprendre' },
