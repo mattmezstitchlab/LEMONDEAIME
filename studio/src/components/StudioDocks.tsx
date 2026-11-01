@@ -51,6 +51,8 @@ export interface DockActions {
 }
 
 interface Props {
+  /** l'entrée directe de l'atelier (« ?ouvrir= ») : le Disque s'ouvre à l'arrivée, sur cette commande (facultatif) */
+  ouvrirTambour?: { noeud?: string };
   /** un autre contexte (le compositeur) a la main sur le Point : le dock ne le rend pas, un seul Point à l'écran */
   sansPoint?: boolean;
   patternName: string;
@@ -191,7 +193,7 @@ export default function StudioDocks(p: Props) {
   /* essai : le Cadre-Tambour (le dock du bas accroché sous le format ; le tambour, cercle d'outils posé sur l'ouvrage) */
   const [cadreTambour, setCadreTambour] = useState(() => (lireCadreTambour() || lireNav0()) && !lireEssaiBloc());
   /* en .0, le disque est la navigation : il est ouvert dès l'arrivée */
-  const [tambourOuvert, setTambourOuvert] = useState(() => lireNav0() && !lireEssaiBloc());
+  const [tambourOuvert, setTambourOuvert] = useState(() => (lireNav0() || !!p.ouvrirTambour) && !lireEssaiBloc());
   /* essai « Navigation intégrale .0 » : le dock du haut s'efface, le disque devient la navigation (retour possible par Réglages) */
   const [nav0, setNav0] = useState(lireNav0);
   const changerNav0 = (v: boolean) => { setNav0(v); try { localStorage.setItem(NAV0_CLE, v ? "1" : "0"); } catch { /* rien */ }
@@ -455,7 +457,7 @@ export default function StudioDocks(p: Props) {
     <header className="pzs-head" aria-label="En-tête du studio">
       <button type="button" className="lp-evitement" onClick={() => { setLoupe(false); ouvrirConfort(); }}>Réglages de confort</button>
       {bloc && <div className="pzs-voile" aria-hidden="true" onClick={fermer} />}
-      <nav className={"pzs-top" + (bloc ? " pzs-ouvert" : "")} aria-label="Dock des outils du studio de broderie" onKeyDown={onKey}>
+      <nav className={"pzs-top" + (bloc ? " pzs-ouvert" : "") + (cadreTambour && tambourOuvert && !nav0 && !p.sansPoint ? " pzs-sans-doublon" : "")} aria-label="Dock des outils du studio de broderie" onKeyDown={onKey}>
         <div className="pzs-ligne">
           {aime && <button type="button" className="pzs-tool pzs-icon" aria-label="Revenir sur Le Monde AIME" title="Retour" onClick={retourSite}><ArrowLeft size={18} aria-hidden="true" /></button>}
           <button id="pzs-brand" data-guide="orbe" type="button" className="pzs-orbe" aria-label="Menu AIME : accueil, réglages, affichage" title="Menu AIME" aria-expanded={bloc === "menu"} aria-controls="pzs-bloc" onClick={() => ouvrir("menu")}>
@@ -601,7 +603,7 @@ export default function StudioDocks(p: Props) {
       <button type="button" data-guide="loupe" className="pzs-btm pzs-loupe-btn" aria-pressed={loupe} aria-label="Loupe : la grille agrandie sous le pointeur" title="Loupe" onClick={() => setLoupe(v => !v)}><Search size={17} aria-hidden="true" /><span className="pzs-loupe-txt">Loupe</span></button>
         </>}
     </nav>
-    {cadreTambour && tambourOuvert && !p.sansPoint && <TambourAtelier racine={nav0 ? (vueDisque === "bureau" ? racineBureau() : racine0()) : undefined} centreContenu={bureauCentre} indicateurs={indicateurs} ouvrage={p.pattern?.id} contexte={contexteBroderie} retracter={retracterTambour} suivi={active && active.cells > 0 && p.pattern && p.couleur != null ? { code: active.code, hex: active.hex, cells: active.cells, done: active.done, motif: p.pattern!, couleur: p.couleur!, depuis, montrer: suggestions && (p.workspace === "stitch" || conseil?.commande === "broder") } : undefined} part={prog} etiquette={total ? "patron brodé à " + Math.round(prog * 100) + " %" : undefined} />}
+    {cadreTambour && tambourOuvert && !p.sansPoint && <TambourAtelier noeudDepart={p.ouvrirTambour?.noeud} racine={nav0 ? (vueDisque === "bureau" ? racineBureau() : racine0()) : undefined} centreContenu={bureauCentre} indicateurs={indicateurs} ouvrage={p.pattern?.id} contexte={contexteBroderie} retracter={retracterTambour} suivi={active && active.cells > 0 && p.pattern && p.couleur != null ? { code: active.code, hex: active.hex, cells: active.cells, done: active.done, motif: p.pattern!, couleur: p.couleur!, depuis, montrer: suggestions && (p.workspace === "stitch" || conseil?.commande === "broder") } : undefined} part={prog} etiquette={total ? "patron brodé à " + Math.round(prog * 100) + " %" : undefined} />}
     </>}
   </>;
 }

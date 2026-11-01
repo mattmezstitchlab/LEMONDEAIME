@@ -44,6 +44,7 @@ import { formatParDefaut, generer } from "./lib/motif5d/generer";
 import { OFFERTE_CLE } from "./components/edition/creation";
 import Sceau from "./components/Sceau";
 import { lireCode } from "./lib/motif5d/code";
+import { disquePour, lireOuvrir, sansOuvrir } from "./lib/ouvrir";
 import { lireRetour } from "./lib/one/contextes";
 import { reprendre as reprendreTambour } from "./lib/tambour/capture";
 import { lireContenu } from "./galerie/api";
@@ -145,12 +146,20 @@ export default function App() {
   const [composer, setComposer] = useState<{ depart?: string | null; lecture?: boolean } | null>(() => {
     try { const c = new URLSearchParams(window.location.search).get("rosace"); return c && lireCode(c) ? { depart: c, lecture: true } : null; } catch { return null; }
   });
+  /** l'entrée directe depuis la carte Broderie (« ?ouvrir= ») : lue une fois, retirée de l'adresse, puis une commande existante s'ouvre */
+  const [ouvrir] = useState(() => lireOuvrir(window.location.search));
   const [fitKey, setFitKey] = useState(0), wide = useMedia("(min-width: 1280px)");
   const ready = useRef(true), prevTool = useRef<Tool>("cross"), lastViews = useRef<{ create: ViewMode; stitch: ViewMode }>({ create: "real", stitch: "pattern" });
   const snapshot = useRef({ P, remote, prefs, workspace, store }); snapshot.current = { P, remote, prefs, workspace, store };
   const checked = useRef(false);
   const notify = useCallback((msg: string) => setToast(msg), []);
   const closePanel = useCallback(() => setPanel(null), []);
+  useEffect(() => {
+    if (!ouvrir) return;
+    const propre = sansOuvrir(window.location.href); if (propre) window.history.replaceState(window.history.state, "", propre);
+    if (ouvrir === "ouvrages") setPanel("library");
+    else if (ouvrir === "composer") setComposer(c => c ?? {});   /* un lien ?rosace= (lecture seule) garde la main */
+  }, [ouvrir]);
   /* le nuancier DMC se déplie dans le dock du haut (Fils), plus dans un panneau à droite */
   const ouvrirNuancier = useCallback(() => { setDockPath("fils"); setBlocDemande(d => ({ bloc: "nuancier", n: (d?.n ?? 0) + 1 })); }, []);
   // Les outils sont de véritables panneaux, comme dans Photo.
@@ -397,7 +406,8 @@ export default function App() {
   /* l'orbe qui guide : à la première ouverture de l'atelier, elle présente les deux docks, outil par outil */
   const [visite, setVisite] = useState(false);
   /* avec le tambour (navigation .0), la visite des docks ne s'impose plus : elle décrit une autre interface ; elle reste proposée par la landing */
-  useEffect(() => { if (atelierLibre && !panel && !showWelcome && !composer && !visiteVue() && !lireRetour() && !lireNav0()) setVisite(true); }, [atelierLibre, panel, showWelcome, composer]);
+  /* arrivé depuis une carte projet (?ouvrir=…) : la personne sait ce qu'elle veut faire, aucune visite ne s'impose ; elle reste proposée dans le menu de l'orbe */
+  useEffect(() => { if (ouvrir === null && atelierLibre && !panel && !showWelcome && !composer && !visiteVue() && !lireRetour() && !lireNav0()) setVisite(true); }, [atelierLibre, panel, showWelcome, composer]);
   useEffect(() => {
     if (!atelierLibre) return;
     const utile = (e: DragEvent) => { const t = Array.from(e.dataTransfer?.types ?? []); return t.includes(OUVRAGE_DRAG_TYPE) || t.includes("Files"); };
@@ -644,7 +654,7 @@ export default function App() {
     {composer && <ComposerRosace depart={composer.depart} lecture={composer.lecture} onFermer={() => { setComposer(null); retirerParametreRosace(); }}
       onBroder={(p) => { void useImportedPattern(p).then(ok => { if (ok) { setComposer(null); retirerParametreRosace(); } }); }} />}
     {!pdfFile && !promptOpen && !compositionInput && !file && !autoImage && <StudioDocks
-      sansPoint={!!composer}
+      sansPoint={!!composer} ouvrirTambour={disquePour(ouvrir)}
       grille={grille} onGrille={basculerGrille} onImporter={genre => { const el = actionImportRef.current; if (!el) return; el.accept = genre === "image" ? "image/png,image/jpeg,image/webp" : genre === "pdf" ? ".pdf,application/pdf" : genre === "projet" ? ".json,.oxs" : "image/png,image/jpeg,image/webp,.pdf,.json,.oxs"; el.click(); }} onComposer={() => setComposer({})}
       patternName={P.name} saving={saving} workspace={workspace}
       onWorkspace={mode => { chooseWorkspace(mode); setActiveCategory(mode === "stitch" ? "stitch" : "compose"); setShowWelcome(false); }}
