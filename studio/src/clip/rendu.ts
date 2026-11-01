@@ -27,6 +27,7 @@ uniform vec2 uParties[${MAX_PARTIES}]; uniform int uNParties;
 uniform int uNFils;
 out vec4 o;
 
+uvec4 lireIdx(ivec2 c, int l){ return texelFetch(uIdx, c, l) & uvec4(127u); }   // le bit 128 : demi-point (données brodées pas à pas)
 float h21(vec2 p){ p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
 float front(vec2 c){ vec2 d = (c + .5 - ${G / 2}.) / ${G / 2}.; return length(d) / 1.41421 * .9 + h21(c) * .1; }
 float ordre(vec2 c){ vec2 d = (c + .5 - ${G / 2}.) / ${G / 2}.; float f = length(d) / 1.41421 * .92 + h21(c + 7.) * .08;
@@ -81,9 +82,11 @@ vec3 caseRendu(vec2 g, float macro){
   vec2 c = floor(g); vec2 uv = fract(g);
   if (uEnvers > .5) { c.x = ${G - 1}. - c.x; uv.x = 1. - uv.x; }
   if (c.x < 0. || c.y < 0. || c.x > ${G - 1}. || c.y > ${G - 1}.) return aida(uv, c) * .96;
-  uint k = texelFetch(uIdx, ivec2(c), 0).r; vec4 f = fil(k); vec3 col = f.rgb;
+  uint k = lireIdx(ivec2(c), 0).r; vec4 f = fil(k); vec3 col = f.rgb;
   float etat = f.a;                        // 1 : montré ; ~.4 : estompé ; 0 : caché (la toile nue)
   int m = modeCase(c);
+  bool demiData = texelFetch(uIdx, ivec2(c), 0).r >= 128u;   // un point en cours (les données le disent) : la demi-croix
+  if (demiData && m != 2 && m != 3) m = 4;
   if (macro > .5 && m != 4) m = 0;         // la loupe montre la vraie broderie (et ses symboles au bord)
   if (macro > 1.5) m = 2;
   // l'ouverture (et « Broder ») : un point n'existe qu'une fois brodé ; d'abord « / », puis « \\ »
@@ -101,12 +104,12 @@ vec3 caseRendu(vec2 g, float macro){
     x = brin(x, uv, vec2(.88, .04), vec2(.88, .96), .30, col, h21(c + 1.) * 6.28, true, f2);
     for (int s = 2; s <= 3; s++){          // un passage : le même fil reprend deux ou trois cases plus loin
       vec2 n = c + vec2(float(s), 0.); if (n.x > ${G - 1}.) break;
-      uint kn = texelFetch(uIdx, ivec2(n), 0).r; uint k1 = texelFetch(uIdx, ivec2(c + vec2(1., 0.)), 0).r;
+      uint kn = lireIdx( ivec2(n), 0).r; uint k1 = lireIdx( ivec2(c + vec2(1., 0.)), 0).r;
       if (kn == k && k1 != k && h21(c + 11.) > .45){ x = brin(x, uv, vec2(.5, .62), vec2(1.02, .58), .16, col * .92, 0., false, 1.); break; }
     }
     for (int s = 2; s <= 3; s++){
       vec2 n = c - vec2(float(s), 0.); if (n.x < 0.) break;
-      uint kn = texelFetch(uIdx, ivec2(n), 0).r; uint k1 = texelFetch(uIdx, ivec2(c - vec2(1., 0.)), 0).r;
+      uint kn = lireIdx( ivec2(n), 0).r; uint k1 = lireIdx( ivec2(c - vec2(1., 0.)), 0).r;
       if (kn == k && k1 != k && h21(n + 11.) > .45){ x = brin(x, uv, vec2(-.02, .58), vec2(.5, .62), .16, col * .92, 0., false, 1.); break; }
     }
     return mix(fond, x, etat);
@@ -127,7 +130,7 @@ vec3 caseRendu(vec2 g, float macro){
   if (etat > .05 && etat < .9) r = mix(vec3(lum(r)) * .9 + .1, r, .28);   // estompé
   // les points arrière : le contour des formes, un fil sombre sur le bord des cases (calculé là où deux fils s'opposent)
   if (uArriere > .5 && m != 3){
-    vec3 nr = fil(texelFetch(uIdx, ivec2(min(c + vec2(1., 0.), vec2(${G - 1}.))), 0).r).rgb, nb = fil(texelFetch(uIdx, ivec2(min(c + vec2(0., 1.), vec2(${G - 1}.))), 0).r).rgb;
+    vec3 nr = fil(lireIdx( ivec2(min(c + vec2(1., 0.), vec2(${G - 1}.))), 0).r).rgb, nb = fil(lireIdx( ivec2(min(c + vec2(0., 1.), vec2(${G - 1}.))), 0).r).rgb;
     vec3 noir = vec3(.09, .09, .1);
     if (abs(lum(nr) - lum(col)) > .28) r = brin(r, uv, vec2(1., -.02), vec2(1., 1.02), .16, noir, h21(c + 21.) * 6.28, true, 1.);
     if (abs(lum(nb) - lum(col)) > .28) r = brin(r, uv, vec2(-.02, 1.), vec2(1.02, 1.), .16, noir, h21(c + 22.) * 6.28, true, 1.);
