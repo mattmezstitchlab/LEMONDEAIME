@@ -1,9 +1,9 @@
 /**
  * « ?ouvrir=… » : l'entrée directe dans l'atelier (depuis la carte Broderie de LE MONDE AIME).
  * Une seule valeur, lue une fois à l'ouverture puis retirée de l'adresse (comme « ?rosace= ») : aucun état n'est créé,
- * chaque valeur appelle une commande qui existe déjà. Les anciens liens (?rosace=, ?studio=, #atelier, ?offerte=) ne changent pas.
+ * chaque valeur appelle une commande qui existe déjà (« reprendre » : l'atelier restaure le dernier ouvrage, sans visite guidée). Les anciens liens (?rosace=, ?studio=, #atelier, ?offerte=) ne changent pas.
  */
-export const OUVRIR = ["ouvrages", "composer", "importer", "fils"] as const;
+export const OUVRIR = ["ouvrages", "reprendre", "composer", "importer", "fils"] as const;
 export type Ouvrir = (typeof OUVRIR)[number];
 
 export function lireOuvrir(search: string): Ouvrir | null {

@@ -13,10 +13,10 @@ test('les cinq entrées demandées, dans cet ordre, toutes vers l’atelier', ()
   assert.deepEqual(ENTREES_BRODERIE.map(e => e.nom), ['Mes ouvrages', 'Reprendre un ouvrage', 'Créer un motif', 'Importer un patron', 'Explorer les fils et couleurs']);
   for (const e of ENTREES_BRODERIE) assert.ok(e.href === ATELIER || e.href.startsWith(ATELIER + '?ouvrir='), e.href);
 });
-test('chaque ?ouvrir= est compris par l’atelier, et « Reprendre » garde l’adresse ordinaire', () => {
+test('chaque ?ouvrir= est compris par l’atelier (« reprendre » ne demande aucune visite guidée)', () => {
   const valeurs = ENTREES_BRODERIE.map(e => e.href.split('?ouvrir=')[1]).filter(Boolean);
   assert.deepEqual(valeurs.sort(), [...valeursStudio].sort());
-  assert.equal(ENTREES_BRODERIE.find(e => e.id === 'reprendre').href, '/studio/atelier');
+  assert.equal(ENTREES_BRODERIE.find(e => e.id === 'reprendre').href, '/studio/atelier?ouvrir=reprendre');
 });
 test('« Fils » et « Importer » désignent de vraies commandes de l’arbre de l’atelier, « Composer une rosace » existe dans Importer', () => {
   assert.ok(/id: "fils"/.test(broderie) && /id: "importer"/.test(broderie));
