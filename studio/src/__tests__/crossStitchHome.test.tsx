@@ -91,7 +91,7 @@ describe("Point Zéro spécialisé", () => {
     act(()=>invite.click());expect(onShare).toHaveBeenCalled();
     expect(view.textContent).toContain('Bientôt');
   });
-  it("explique par l’image : le fond floral de la une, brodé sous la loupe, puis huit chapitres illustrés et tout le studio", () => {
+  it("explique par l’image : le fond floral de la une, brodé sous la loupe, puis huit chapitres sur fonds DMC, sans captures", () => {
     const { view, onOpen } = mount();
     expect(view.querySelector("#editions")).toBeNull();
     expect(view.querySelector(".ru .ed-brode-vue")?.getAttribute("aria-label")).toMatch(/palampore.*points de croix/);
@@ -100,18 +100,34 @@ describe("Point Zéro spécialisé", () => {
     expect(chapitres).toHaveLength(8);
     for (const c of chapitres) {
       expect(c.querySelector("h2")?.textContent, c.id).toBeTruthy();
-      const imgs = c.querySelectorAll<HTMLImageElement>(".ch-ecran img");
-      expect(imgs.length, c.id).toBeGreaterThanOrEqual(1);
-      for (const im of imgs) { expect(im.alt.length, c.id).toBeGreaterThan(10); expect(im.getAttribute("src")).toMatch(/images\/landing\/ecran-.+\.webp$/); }
+      expect(c.querySelectorAll('img,.ch-ecrans,.ch-ecran')).toHaveLength(0);
+      expect(c.getAttribute('data-dmc')).toBeTruthy();
+      expect(c.querySelector('.ch-num')?.textContent).toContain('DMC');
     }
-    expect(view.querySelector("#ch-lectures")!.querySelectorAll(".ch-ecran img")).toHaveLength(3);
     const index = view.querySelector('nav[aria-label="Chapitres"]')!;
-    expect([...index.querySelectorAll("a")].map(a => a.getAttribute("href"))).toEqual([...chapitres].map(c => "#" + c.id));
+    expect([...index.querySelectorAll('a')].map(a=>a.getAttribute('href'))).toEqual([...chapitres].map(c=>'#'+c.id));
     const tout = view.querySelector("#tout")!;
     expect(tout.querySelectorAll("dt")).toHaveLength(12);
     for (const t of ["demi-point", "point arrière", "puzzle PDF", "Miyuki Delica", "parking des fils", "PDF paginé", "contraste élevé"]) expect(tout.textContent).toContain(t);
     act(() => [...view.querySelectorAll<HTMLButtonElement>(".ru button")].find(b => b.textContent === "Créer mon patron")!.click());
     expect(onOpen).toHaveBeenLastCalledWith("create");
+  });
+  it("l’intégration ne reproduit ni vidéo, main, catalogue, import, reprise ou boutons d’entrée", () => {
+    host=document.createElement('div');document.body.append(host);root=createRoot(host);
+    const onOpen=vi.fn();
+    act(()=>root!.render(<CrossStitchHome integre projectName="Vos ouvrages" onOpen={onOpen} onImport={vi.fn()} />));
+    expect(host.querySelector('main,h1,footer,.ru,.csh-actions-contextuelles,#tout,#csh-import,#commencer')).toBeNull();
+    expect(host.querySelectorAll('.ch[data-dmc]')).toHaveLength(8);
+    expect(host.querySelectorAll('input[type="file"]')).toHaveLength(0);
+    expect(onOpen).not.toHaveBeenCalled();
+  });
+  it("le lien visite du header appelle le guide existant une seule fois",()=>{
+    window.history.replaceState({},'', '/studio/?visite=1');
+    const onVisite=vi.fn();
+    mount({onVisite});
+    expect(onVisite).toHaveBeenCalledTimes(1);
+    expect(window.location.search).not.toContain('visite');
+    window.history.replaceState({},'','/');
   });
   it("sans visite branchée, « Faire la visite » ouvre l’atelier", () => {
     const { view, onOpen } = mount();

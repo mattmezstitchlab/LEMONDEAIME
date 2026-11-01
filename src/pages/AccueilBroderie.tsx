@@ -1,24 +1,31 @@
 import { Tete, Pied } from '../charte/Charte';
-import { Lien } from '../lib/router';
-import OuvertureFleur from '../ouverture/OuvertureFleur';
+import CrossStitchHome, { type StitchEntry } from '../../studio/src/components/CrossStitchHome';
+import { couleurChapitre } from '../../studio/src/components/couleursChapitres';
+import './accueil-broderie.css';
 
-// Présentation publique dédiée ; l'ancien accueil et les autres modules restent dans le dépôt.
+// Grandes entrées en aplats ; commandes détaillées et films dans le header.
 export default function AccueilBroderie() {
+  const ouvrir = (entree: StitchEntry) => {
+    const choix = entree === 'library' ? '?ouvrir=ouvrages' : entree === 'create' ? '?ouvrir=composer' : '?ouvrir=reprendre';
+    window.location.assign('/studio/atelier' + choix);
+  };
   return <>
     <a className="lien-evitement" href="#contenu">Aller au contenu</a><Tete courant="/" />
     <main id="contenu">
-      <OuvertureFleur />
-      <section className="rubrique-publique" aria-labelledby="broderie-titre">
+      <section className="entree-broderie" style={{backgroundColor:couleurChapitre(0).hex,color:couleurChapitre(0).texte}} aria-labelledby="broderie-titre">
         <p className="surtitre">LE MONDE AIME · Broderie</p>
         <h1 id="broderie-titre" className="titre">Tout commence par un point.</h1>
         <p className="chapeau">Importer un motif, choisir ses fils, préparer son patron et broder à son rythme. Un atelier, un Disque et vos ouvrages.</p>
-        <div className="rubrique-actions"><Lien className="bouton noir" href="/studio/atelier">Ouvrir l’atelier</Lien><Lien className="bouton" href="/studio/">Découvrir la broderie</Lien><Lien className="bouton" href="/buro">Mes ouvrages et projets partagés</Lien></div>
       </section>
-      <section id="demonstrations" className="rubrique-publique" aria-labelledby="films-titre">
-        <p className="surtitre">Le point en mouvement</p><h2 id="films-titre" className="titre">Deux films à explorer</h2>
-        <p className="chapeau">La Fleur du Ciel et UPTOWN montrent le rendu brodé et les outils du Disque. Ce sont des démonstrations, pas des patrons éditables.</p>
-        <div className="rubrique-actions"><Lien className="bouton" href="/studio/fleur-du-ciel">La Fleur du Ciel</Lien><Lien className="bouton" href="/studio/uptown">UPTOWN</Lien></div>
-      </section>
+      {[
+        {titre:'Créer et broder',texte:'Ouvrez le véritable atelier et retrouvez les outils du Disque.',href:'/studio/atelier',fil:1},
+        {titre:'Importer un motif',texte:'Photo, PDF ou projet : choisissez votre fichier dans l’atelier.',href:'/studio/atelier?ouvrir=importer',fil:3},
+        {titre:'Mes ouvrages',texte:'Retrouvez votre bibliothèque sur cet appareil. Le compte et les projets partagés restent dans Mon espace.',href:'/studio/atelier?ouvrir=ouvrages',fil:5},
+      ].map(e=>{const f=couleurChapitre(e.fil);return <section key={e.href} className="entree-broderie" data-entree-dmc={f.code} style={{backgroundColor:f.hex,color:f.texte}}><a className="entree-broderie-lien" href={e.href}><p>DMC {f.code}</p><h2>{e.titre}</h2><p>{e.texte}</p><span aria-hidden="true">→</span></a></section>;})}
+      <CrossStitchHome integre projectName="Vos ouvrages" onOpen={ouvrir}
+        onImport={() => window.location.assign('/studio/atelier?ouvrir=importer')}
+        onOuvrages={() => ouvrir('library')}
+        onVisite={() => window.location.assign('/studio/?visite=1')} />
     </main><Pied />
   </>;
 }

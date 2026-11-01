@@ -40,7 +40,7 @@ async function page(width = 1280) {
 }
 const goto = (p, route) => p.goto(base + route, { waitUntil: 'domcontentloaded' });
 const entries = [
-  ['Accueil', '/'], ['Broderie', '/studio/'], ['Atelier', '/studio/atelier'],
+  ['Accueil', '/'], ['Broderie', '/studio/'], ['Atelier', '/studio/atelier'], ['Vidéo', '/studio/fleur-du-ciel'],
 ];
 try {
   const errors = [];
@@ -172,8 +172,11 @@ try {
   {
     const p = await page(320); await goto(p, '/');
     await p.getByRole('heading', {name:'Tout commence par un point.'}).waitFor();
-    ok(await p.locator('#demonstrations a[href="/studio/fleur-du-ciel"]').count()===1, 'Fleur reste une démonstration accessible');
-    ok(await p.locator('#demonstrations a[href="/studio/uptown"]').count()===1, 'UPTOWN reste une démonstration accessible');
+    ok(await p.locator('.ouv,#demonstrations').count()===0,'vidéo déplacée hors de l’accueil');
+    await p.getByRole('button',{name:'Studio',exact:true}).click();
+    const studio=p.getByRole('dialog',{name:'Menu du Studio'});
+    ok(await studio.getByRole('link',{name:'UPTOWN',exact:true}).count()===1,'UPTOWN conservé dans le menu');
+    await p.keyboard.press('Escape');
     ok(await p.locator('main a[href="/aime-wedding"],main a[href="/reseau"],footer a[href="/projets"]').count()===0, 'autres univers absents des entrées publiques');
     await p.getByRole('button',{name:'Mon espace',exact:true}).click();
     await p.getByRole('button',{name:'Chercher dans tout AIME, et le plan du site',exact:true}).click();

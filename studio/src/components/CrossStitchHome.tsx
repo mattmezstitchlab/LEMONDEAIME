@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { couleurChapitre } from "./couleursChapitres";
 import UneFlorale from "./UneFlorale";
 import TraineePoints from "./TraineePoints";
 import "../design/aime.css";
@@ -7,11 +8,14 @@ import { CHAPITRES_EDITION, EditionEnLigne } from "./edition/Edition";
 
 /** L'édition (la nouvelle narration sous le héros) : en essai privé derrière ?edition, la page actuelle reste la même sans ce paramètre. */
 /* le site Point Zéro (broderie seule) : l’édition en chapitres est sa landing, sans paramètre */
+import { TOUT } from "./catalogueStudio";
 import { SITE_BRODERIE } from "../lib/site";
 const estEdition = () => { if (SITE_BRODERIE) return true; try { return new URLSearchParams(window.location.search).has("edition"); } catch { return false; } };
 
 export type StitchEntry = "create" | "library" | "prepare" | "stitch";
 interface Props {
+  /** Réutilisation sous la vidéo de l’accueil ; pas de second main/header/footer. */
+  integre?: boolean;
   projectName: string;
   onOpen: (entry: StitchEntry) => void;
   onImport: (file: File) => void;
@@ -31,8 +35,6 @@ function pick(onImport: (file: File) => void) {
   };
 }
 
-const IMG = import.meta.env.BASE_URL + "images/landing/";
-
 /* Les chapitres : chacun montre, par l'image, une fonction du studio. Une phrase, pas plus. */
 interface Chapitre { id: string; num: string; titre: string; phrase: string; detail: string; images: [string, string][]; teinte: string; cadrage: string }
 export const CHAPITRES: Chapitre[] = [
@@ -47,24 +49,10 @@ export const CHAPITRES: Chapitre[] = [
 ];
 
 /* Tout le studio, en une liste : le nom, puis une ligne. */
-const TOUT: [string, string][] = [
-  ["Tous les points", "Croix, demi-point, quart, trois quarts, petite croix, point arrière, point lancé, nœud, perle."],
-  ["Les outils", "Main, gomme, remplir, pipette, sélection, lasso, déplacer, ligne, rectangle, ellipse, symétrie."],
-  ["Composer", "Motifs à glisser, calques, sujets déplaçables, lettres en croix, redimensionner, nettoyer."],
-  ["Importer", "Photo convertie en fils DMC, puzzle PDF recomposé, projets JSON et OXS, glisser-déposer."],
-  ["Les fils", "489 références DMC, recherche en français, fils mélangés, perles Miyuki Delica, remplacer au plus proche."],
-  ["Le stock", "Votre stock de fils, les fils manquants, la liste de courses, les quantités estimées."],
-  ["Broder", "Marquer case, bloc ou ligne ; parking des fils, notes, cases à défaire, journal des séances."],
-  ["Se repérer", "Le cercle de progression, la timeline fil par fil, la loupe, symboles, tout voir."],
-  ["Partager", "Inviter à regarder en direct, visibilité, PDF paginé, SVG, PNG, JSON."],
-  ["Garder", SITE_BRODERIE ? "Sauvegarde automatique sur cet appareil, Mes ouvrages, le fichier du projet à télécharger, hors ligne." : "Sauvegarde automatique, Mes ouvrages dans le dock, compte AIME synchronisé, hors ligne."],
-  ["Confort", "Débutante, confirmée, experte ; contraste élevé, texte plus grand, stylet, clavier, lecteur d’écran."],
-  ["Le Point", "La visite guidée de bout en bout, au clavier, qui imite le geste de chaque point."],
-];
 
 type SectionId = "chapitres" | "ch-point" | "tout" | "commencer";
 
-/** Un chapitre : un grand fond peint (la toile de roses, floutée et teintée), une phrase, l'écran réel ; tout bouge un peu au défilement. */
+/** Même narration, sans capture encadrée ; fond uni issu de la palette DMC canonique. */
 function ChapitreVue({ c, n, onVoir }: { c: Chapitre; n: number; onVoir: (id: string) => void }) {
   const ref = useRef<HTMLElement>(null);
   const [vu, setVu] = useState(false);
@@ -74,21 +62,14 @@ function ChapitreVue({ c, n, onVoir }: { c: Chapitre; n: number; onVoir: (id: st
     const o = new IntersectionObserver(es => { for (const e of es) { if (e.isIntersecting) { setVu(true); if (e.intersectionRatio > .35) onVoir(c.id); } } }, { threshold: [0, .15, .35, .6] });
     o.observe(el); return () => o.disconnect();
   }, [c.id, onVoir]);
-  return <section ref={ref} id={c.id} className={"ch ch-" + c.teinte + (n % 2 ? " ch-inverse" : "") + (vu ? " vu" : "")} aria-labelledby={c.id + "-titre"} data-parallaxe="">
-    <div className="ch-fond" aria-hidden="true" style={{ backgroundImage: `url(${IMG}peinture-roses.webp)`, backgroundPosition: c.cadrage }} data-vitesse=".22" />
-    <div className="ch-voile" aria-hidden="true" />
+  const fil = couleurChapitre(n);
+  return <section style={{ backgroundColor: fil.hex, color: fil.texte }} data-dmc={fil.code} ref={ref} id={c.id} className={"ch ch-" + c.teinte + (n % 2 ? " ch-inverse" : "") + (vu ? " vu" : "")} aria-labelledby={c.id + "-titre"} data-parallaxe="">
     <div className="ch-corps">
       <div className="ch-texte">
-        <p className="ch-num">{c.num}</p>
+        <p className="ch-num">{c.num} · DMC {fil.code}</p>
         <h2 id={c.id + "-titre"} tabIndex={-1}>{c.titre}</h2>
         <p className="ch-phrase">{c.phrase}</p>
         <p className="ch-detail">{c.detail}</p>
-      </div>
-      <div className={"ch-ecrans ch-ecrans-" + c.images.length} data-vitesse="-.06">
-        {c.images.map(([fichier, alt], k) => <figure key={fichier} className="ch-ecran" style={{ transitionDelay: k * 120 + "ms" }}>
-          <img src={IMG + fichier} alt={alt} loading="lazy" decoding="async" width={1600} height={1000} />
-          {c.images.length > 1 && <figcaption>{alt.replace("Lecture ", "")}</figcaption>}
-        </figure>)}
       </div>
     </div>
   </section>;
@@ -115,13 +96,23 @@ function useParallaxe() {
 }
 
 /** Un écran d'accueil seulement : l'ouvrir ne crée aucun patron et ne réécrit aucun projet. */
-export default function CrossStitchHome({ projectName, onOpen, onImport, onShare, onOuvrages, onVisite }: Props) {
+export default function CrossStitchHome({ integre = false, projectName, onOpen, onImport, onShare, onOuvrages, onVisite }: Props) {
   const [_current, setCurrent] = useState<SectionId | null>(null);
   const [chapitre, setChapitre] = useState<string | null>(null);
   const enter = () => (onOuvrages ? onOuvrages() : onOpen("library"));
   const visite = () => (onVisite ? onVisite() : onOpen("create"));
-  const [edition] = useState(estEdition);
+  const [edition] = useState(() => !integre && estEdition());
   useParallaxe();
+  const visiteDemandee = useRef(false);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (integre || visiteDemandee.current || !params.has('visite')) return;
+    visiteDemandee.current = true;
+    params.delete('visite');
+    const q=params.toString();
+    window.history.replaceState(window.history.state, '', window.location.pathname+(q?'?'+q:'')+window.location.hash);
+    visite();
+  }, [integre, visite]);
 
   // Repère : la section visible est mise en évidence dans le dock du bas.
   useEffect(() => {
@@ -161,15 +152,16 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
     (el.querySelector<HTMLElement>("h2") ?? el).focus?.({ preventScroll: true });
   };
 
-  return <div className="cross-stitch-home">
-    <a className="csh-skip" href="#csh-main">Aller au contenu</a>
-    <TraineePoints />
+  const Contenu = integre ? "div" : "main";
+  return <div className={"cross-stitch-home" + (integre ? " csh-integre" : "")}>
+    {!integre && <a className="csh-skip" href="#csh-main">Aller au contenu</a>}
+    {!integre && <TraineePoints />}
 
-    <section className="csh-actions-contextuelles" aria-label="Actions de la présentation Broderie">
+    {!integre && <section className="csh-actions-contextuelles" aria-label="Actions de la présentation Broderie">
       <button type="button" onClick={enter}>Mes ouvrages de broderie</button>
       <button type="button" onClick={() => onOpen("stitch")}>Ouvrir l’atelier</button>
       <button type="button" onClick={visite}>Faire la visite avec Le Point</button>
-    </section>
+    </section>}
 
     {/* l'index des chapitres, à gauche, comme une table des matières qui suit la lecture */}
     {!edition && <nav className={"ix" + (chapitre ? " ix-on" : "")} aria-label="Chapitres">
@@ -177,15 +169,15 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
       <ol>{CHAPITRES.map(c => <li key={c.id}><a href={"#" + c.id} onClick={go(c.id)} aria-current={chapitre === c.id ? "true" : undefined}><span className="ix-nom">{c.titre}</span><span className="ix-points" aria-hidden="true" /><span className="ix-num">{c.num}</span></a></li>)}</ol>
     </nav>}
 
-    <main id="csh-main">
-      <UneFlorale titre="Point Zéro">
+    <Contenu id="csh-main">
+      {!integre && <UneFlorale titre="Point Zéro">
         <p className="mm-sous">Du tableau à la dernière croix.</p>
         <ol className="mm-sommaire">{(edition ? CHAPITRES_EDITION : CHAPITRES).map(c => <li key={c.id}><a href={"#" + c.id} onClick={go(c.id)}>{c.titre}</a><span>{c.num}</span></li>)}</ol>
         <div className="mm-actions">
           <button className="pzh-btn pzh-btn-clair" onClick={() => onOpen("create")}>Créer mon patron</button>
           <button className="pzh-btn mm-btn-point" onClick={visite}><span className="pzh-dot" aria-hidden="true" />Faire la visite avec Le Point</button>
         </div>
-      </UneFlorale>
+      </UneFlorale>}
 
       {edition
         ? <div id="chapitres"><EditionEnLigne actions={{ ouvrir: e => onOpen(e), importer: onImport, visite }} /></div>
@@ -193,6 +185,7 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
         {CHAPITRES.map((c, n) => <ChapitreVue key={c.id} c={c} n={n} onVoir={setChapitre} />)}
       </div>}
 
+      {!integre && <>
       <section className="pzh-section tout" id="tout" aria-labelledby="tout-titre">
         <div className="tout-tete">
           <p className="pzh-kicker">Tout ce que fait le studio</p>
@@ -210,7 +203,7 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
           </div>
           <p>Une photo, un patron, un projet à retrouver.</p>
         </div>
-        <div className="pzh-import">
+        {integre ? <a className="pzh-btn pzh-btn-primary" href="/studio/atelier?ouvrir=importer">Importer mon fichier dans l’atelier</a> : <div className="pzh-import">
           <div className="pzh-ways">
             <label className="pzh-way">
               <span><strong>Une photo</strong><span>Convertie en couleurs DMC, puis ajustée avant de broder.</span></span>
@@ -235,15 +228,16 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
             <input type="file" aria-label="Importer une image, un PDF ou un projet" accept="image/png,image/jpeg,image/webp,.pdf,.json,.oxs" onChange={pick(onImport)}/>
           </label>
         </div>
+        }
         <p className="pzh-fine">Vérifiez les détails et les couleurs avant de broder. L’import PDF dépend du document ; un calage peut être nécessaire. Respectez les droits de l’auteur.</p>
       </section>
 
       <section className="pzh-section" id="commencer" aria-labelledby="pzh-resume-title">
         <div className="pzh-resume">
           <div>
-            <p className="pzh-kicker">Projet actif sur cet appareil</p>
+            <p className="pzh-kicker">{integre ? "Retrouver mes ouvrages" : "Projet actif sur cet appareil"}</p>
             <h2 id="pzh-resume-title" tabIndex={-1}>{projectName}</h2>
-            <p>Reprenez là où vous vous êtes arrêtée, ou invitez quelqu’un à suivre votre ouvrage en lecture.</p>
+            <p>{integre ? "Ouvrez l’atelier pour retrouver le dernier ouvrage enregistré sur cet appareil ou consulter votre bibliothèque." : "Reprenez là où vous vous êtes arrêtée, ou invitez quelqu’un à suivre votre ouvrage en lecture."}</p>
           </div>
           <div className="pzh-actions">
             <button className="pzh-btn pzh-btn-primary" onClick={() => onOpen("stitch")}>Continuer à broder</button>
@@ -256,9 +250,10 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
           <p>Le stockage du navigateur n’est pas une sauvegarde permanente : son effacement supprime les projets locaux. Dans le studio, téléchargez régulièrement votre projet JSON depuis Exporter. Les couleurs à l’écran sont indicatives et les quantités de fil estimées.</p>
         </aside>
       </section>
-    </main>
+      </>}
+    </Contenu>
 
-    <footer className="pzh-foot">
+    {!integre && <footer className="pzh-foot">
       <p className="pzh-foot-brand"><span className="pzh-x" aria-hidden="true">×</span> Point Zéro</p>
       <nav aria-label="Plan du site Point Zéro" className="pzh-foot-cols">
         <div>
@@ -288,7 +283,7 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
       </nav>
       <div className="pzh-dots" aria-hidden="true" />
       <p className="pzh-foot-line">Un studio AIME<sup>®</sup> · Point de croix</p>
-    </footer>
+    </footer>}
 
 
   </div>;

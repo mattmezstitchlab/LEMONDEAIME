@@ -278,3 +278,14 @@ html[data-aime-studio="nuit"] .cross-stitch-home .pzs-head :is(button, a):focus-
 
 .csh-actions-contextuelles { display:flex; flex-wrap:wrap; gap:10px; padding:16px; justify-content:center; }
 .csh-actions-contextuelles button { min-height:44px; padding:8px 16px; border:1px solid #cfcfcb; border-radius:12px; color:#0b0b0c; background:#fff; font:inherit; cursor:pointer; }
+
+/* Présentation sur l’accueil et le Studio : aplats DMC, sans fenêtre ni fond illustré. */
+.ch[data-dmc] { min-height:65vh; padding:clamp(64px,9vw,120px) clamp(20px,6vw,96px); }
+.ch[data-dmc] .ch-corps,.ch[data-dmc].ch-inverse .ch-corps { display:block; max-width:1100px; }
+.ch[data-dmc] .ch-texte { max-width:850px; }
+.ch[data-dmc] .ch-detail { color:inherit; max-width:48rem; }
+.ch[data-dmc] .ch-num { opacity:1; }
+.csh-integre { min-height:0; }
+.csh-integre .ix { display:none; }
+.csh-integre .pzh-section { padding-bottom:48px; }
+@media (prefers-reduced-motion:reduce) { .ch[data-dmc] .ch-texte>* { opacity:1; transform:none; } }

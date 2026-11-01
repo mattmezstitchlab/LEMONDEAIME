@@ -1,0 +1,7 @@
+.entree-broderie { padding:clamp(52px,8vw,110px) clamp(20px,6vw,96px); }
+.entree-broderie .surtitre,.entree-broderie .chapeau { color:inherit; }
+.entree-broderie h2 { font-size:clamp(36px,6vw,80px); line-height:1; margin:12px 0 24px; }
+.entree-broderie p { max-width:720px; font-size:clamp(18px,2vw,24px); line-height:1.5; }
+.entree-broderie-lien { display:block; color:inherit; text-decoration:none; border-radius:8px; }
+.entree-broderie-lien:hover {color:inherit;}.entree-broderie-lien:focus-visible {outline:3px solid currentColor;outline-offset:8px;}
+.entree-broderie-lien>span {font-size:40px;}
