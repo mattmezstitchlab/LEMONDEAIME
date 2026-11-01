@@ -130,19 +130,17 @@ export default function OuvertureFleur() {
       <div className="ouv-scene">
         <img className="ouv-couverture" src={COUVERTURE} width={880} height={880} alt="" fetchPriority="high" decoding="async" hidden={joue} />
         <canvas ref={toile} className="ouv-toile" role="img" aria-label="La Fleur du Ciel, brodée point par point au point de croix (animation)" hidden={!joue} />
-        {etat === 'repos' && <button type="button" className="ouv-orbe" onClick={() => lancer('complete')} aria-label="Lancer La Fleur du Ciel, avec le son (4 min 13)"><Orbe taille={56} /><span>Lancer, avec le son</span></button>}
         {etat === 'chargement' && <p className="ouv-statut" role="status">La toile se prépare…</p>}
         {etat === 'indispo' && <p className="ouv-statut" role="status">Ce navigateur ne peut pas dessiner la broderie. <a href={DONNEES + 'la-fleur-du-ciel-brodee.mp4'}>Voir la vidéo (4 min 13, 23 Mo)</a></p>}
         {etat === 'fin' && <div className="ouv-fin"><p>La fleur a éclos.</p><button ref={suite} type="button" className="bouton noir" onClick={() => refermer()}>Entrer dans LE MONDE AIME</button><button type="button" className="bouton" onClick={rejouer}>Revoir</button></div>}
       </div>
       <div className="ouv-texte">
-        <p className="surtitre">Une œuvre, point par point</p>
         <h2 id="titre-ouverture" className="grand-mot">La Fleur du Ciel</h2>
         <p className="ouv-legende" aria-live="off">{joue ? legendeA(t) : 'Une création qui naît d’un point, s’ouvre, relie, et garde son histoire.'}</p>
         <div className="ouv-actions" role="group" aria-label="Commandes de l’ouverture">
           {etat === 'repos' && <>
-            <button type="button" className="bouton noir" onClick={() => lancer('complete')}>Lancer avec le son</button>
-            <button type="button" className="bouton" onClick={() => lancer('courte')}>Version courte (43 s)</button>
+            <button type="button" className="bouton noir ouv-principal" onClick={() => lancer('complete')}><Orbe taille={22} />Lancer avec le son<span className="sr-only"> (4 min 13)</span></button>
+            <button type="button" className="bouton" onClick={() => lancer('courte')}>Version courte · 43 s</button>
             {reprise && <button type="button" className="bouton" onClick={() => lancer('complete', reprise)}>Reprendre à {mmss(reprise)}</button>}
           </>}
           {(etat === 'lecture' || etat === 'pause') && <>
@@ -150,9 +148,9 @@ export default function OuvertureFleur() {
             <button type="button" className="bouton" aria-pressed={!son} onClick={basculerSon}>{son ? 'Couper le son' : 'Remettre le son'}</button>
             <span className="ouv-temps" aria-hidden="true">{courte ? 'Version courte' : mmss(t) + ' / 4:13'}</span>
           </>}
-          <button type="button" className="bouton ouv-passer" onClick={() => refermer()}>Passer l’introduction</button>
+          {etat !== 'fin' && <button type="button" className="ouv-lien ouv-passer" onClick={() => refermer()}>Passer l’introduction</button>}
+          {etat === 'repos' && <a className="ouv-lien" href="/studio/fleur-du-ciel">Le clip complet<span className="sr-only"> (s’ouvre dans le Studio)</span></a>}
         </div>
-        <p className="ouv-note">Rien ne se joue sans votre geste. <a href="/studio/fleur-du-ciel">Le clip complet</a> reste toujours accessible.</p>
       </div>
       <p className="sr-only" role="status" aria-live="polite">{annonce}</p>
     </section>

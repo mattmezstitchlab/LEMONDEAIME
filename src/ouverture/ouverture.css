@@ -4,9 +4,6 @@
 .ouv .surtitre { color: rgba(255,255,255,.72); }
 .ouv-scene { position: relative; aspect-ratio: 1; width: 100%; max-height: calc(100svh - 240px); justify-self: center; border-radius: 18px; overflow: hidden; background: #111; }
 .ouv-couverture, .ouv-toile { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; }
-.ouv-orbe { position: absolute; inset: auto 0 6% 0; margin-inline: auto; width: max-content; max-width: 92%; display: flex; align-items: center; gap: 14px; border: 0; background: rgba(11,11,12,.62); color: #fff; padding: 10px 22px 10px 10px; border-radius: 999px; cursor: pointer; font: inherit; font-weight: 600; backdrop-filter: blur(6px); }
-.ouv-orbe .orbe { box-shadow: 0 0 0 4px rgba(255,255,255,.35), 0 0 34px rgba(201,184,255,.65); }
-.ouv-orbe:focus-visible, .ouv .bouton:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 .ouv-statut, .ouv-fin { position: absolute; inset: auto 12px 12px 12px; margin: 0; padding: 12px 16px; border-radius: 14px; background: rgba(11,11,12,.72); color: #fff; }
 .ouv-fin { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .ouv-fin p { margin: 0 auto 0 0; font-weight: 600; }
@@ -16,11 +13,14 @@
 .ouv .bouton { min-height: 48px; }
 .ouv .bouton:not(.noir) { background: transparent; color: #fff; border-color: rgba(255,255,255,.6); }
 .ouv .bouton.noir { background: #fff; color: var(--encre); border-color: #fff; }
+.ouv-principal { gap: 10px; }
+.ouv-lien { background: none; border: 0; padding: 12px 6px; min-height: 44px; color: rgba(255,255,255,.88); font: inherit; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.ouv-lien:focus-visible { outline: 3px solid #fff; outline-offset: 3px; border-radius: 6px; }
 .ouv-passer { margin-left: auto; }
+.ouv-principal .orbe { box-shadow: 0 0 0 2px rgba(11,11,12,.25); }
 .ouv-temps { font-size: 14px; color: rgba(255,255,255,.72); font-variant-numeric: tabular-nums; }
-.ouv-note { margin: 18px 0 0; font-size: 14px; color: rgba(255,255,255,.72); }
 .ouv-bande { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 0 var(--marge) 12px; padding: 12px 18px; border-radius: 16px; border: 1px solid var(--trait-2); background: var(--carte); }
 .ouv-bande p { margin: 0 auto 0 0; } .ouv-bande span { color: var(--encre-3); }
-@media (max-width: 760px) { .ouv { grid-template-columns: minmax(0, 1fr); min-height: 0; } .ouv-scene { max-height: none; } .ouv-passer { margin-left: 0; } .ouv-legende { min-height: 0; } }
+@media (max-width: 760px) { .ouv { grid-template-columns: minmax(0, 1fr); min-height: 0; padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); } .ouv-scene { max-height: none; } .ouv-passer { margin-left: 0; } .ouv-actions { flex-direction: column; align-items: stretch; } .ouv-actions .bouton { justify-content: center; } .ouv-lien { text-align: center; } .ouv-temps { text-align: center; } .ouv-legende { min-height: 0; } }
 @media (prefers-reduced-motion: no-preference) { .ouv-fin, .ouv-statut { animation: ouv-entree .5s ease both; } @keyframes ouv-entree { from { opacity: 0; transform: translateY(8px); } } }
 html.contraste .ouv .bouton { outline: 1.5px solid #fff; }
