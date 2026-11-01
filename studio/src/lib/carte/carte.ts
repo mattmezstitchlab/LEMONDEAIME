@@ -31,6 +31,8 @@ export const ROLES: { id: Role; nom: string }[] = [
 /** Qui peut voir un module : tout le monde, les clients (et la personne), la personne seule. */
 export type Visibilite = "public" | "clients" | "prive";
 const VOIT: Record<Role, Visibilite[]> = { visiteur: ["public"], client: ["public", "clients"], proprietaire: ["public", "clients", "prive"] };
+/** Qui voit quoi : la règle de visibilité, partagée avec les fiches contextuelles (lib/fiche) pour n'exister qu'une fois. */
+export const voit = (role: Role, v: Visibilite): boolean => VOIT[role].includes(v);
 
 export type IdAction = "contacter" | "devis" | "reserver" | "enregistrer" | "partager" | "modifier";
 export const ACTIONS: Record<IdAction, { nom: string; roles: Role[] }> = {

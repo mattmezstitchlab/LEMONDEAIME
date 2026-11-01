@@ -81,3 +81,10 @@
 .dq-mobile .dq-vide-gestes { flex-direction: column; gap: 4px; margin-top: 4px; } .dq-mobile .dq-vide-gestes .one-bouton { min-height: 40px; padding: 0 14px; }
 .dq-mobile .dq-scene { align-content: center; padding-top: 0; }
 .dq-mobile .dq-vide-titre { font-size: .8rem; line-height: 1.15; }
+
+/* la fiche contextuelle dans le centre du Disque, et les fils cliquables de la toile */
+.dq-fiche { width: 100%; height: 100%; display: grid; place-items: center; padding: 14% 14% 16%; box-sizing: border-box; overflow: hidden; }
+.dq-fils button.dq-fil { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,.18); cursor: pointer; }
+.dq-fils button.dq-fil:hover { transform: scale(1.12); } .dq-fils button.dq-fil:focus-visible { outline: 2px solid var(--aime-focus); outline-offset: 2px; }
+[data-aime="nuit"] .dq-fils button.dq-fil { box-shadow: 0 0 0 1px rgba(255,255,255,.35); }
+.dq-grand-contenu:has(.fc-etendu) { align-items: start; justify-items: center; overflow-y: auto; width: 100%; height: 100%; place-items: start center; }
