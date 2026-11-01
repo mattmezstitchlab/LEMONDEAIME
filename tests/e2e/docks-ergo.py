@@ -68,7 +68,7 @@ with sync_playwright() as p:
     ok(h2 >= haut['b'] - 4, '[longue] /projets : une ancre du dock du bas amène la section sous le dock du haut, pas dessous', (h2, haut['b']))
     pg.context.close()
     # 4 · clavier iOS ouvert (émulation : fenêtre réduite) : le champ reste visible et libre
-    pg = page(b, 390); pg.goto(B + '/'); pg.wait_for_selector('.ac-details'); pg.locator('.ac-details > summary').click(); pg.wait_for_selector('#q')
+    pg = page(b, 390); pg.goto(B + '/'); (pg.locator('.ac-details > summary').click() if pg.locator('.ac-details').count() else None); pg.wait_for_selector('#q')  # la zone d'intention est repliée sur l'accueil « Porte 1 » (non intégré ici), ouverte sur celui de production
     pg.set_viewport_size({'width': 390, 'height': 440}); pg.locator('#q').focus(); pg.wait_for_timeout(500)
     q = rect(pg, '#q'); dock = rect(pg, '.dock-bas > div'); haut = rect(pg, '.dock-haut')
     ok(q and q['y'] >= 0 and q['b'] <= 440, '[clavier] le champ de la question est entièrement visible avec un clavier ouvert', q)
