@@ -189,17 +189,19 @@ export interface EtatRendu {
 }
 
 export class RenduClip {
-  gl: WebGL2RenderingContext; prog: WebGLProgram; tIdx: WebGLTexture; tPal: WebGLTexture; tSym: WebGLTexture; tMarque: WebGLTexture;
+  gl: WebGL2RenderingContext; prog: WebGLProgram; tIdx: WebGLTexture; tPal: WebGLTexture; tSym: WebGLTexture; tMarque: WebGLTexture; tampon: WebGLBuffer | null;
   u: Record<string, WebGLUniformLocation | null> = {};
   constructor(public canvas: HTMLCanvasElement) {
     const gl = canvas.getContext("webgl2", { antialias: false, preserveDrawingBuffer: false });
     if (!gl) throw new Error("WebGL 2 indisponible");
     this.gl = gl;
     const sh = (type: number, src: string) => { const s = gl.createShader(type)!; gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s) || "nuanceur"); return s; };
-    const p = gl.createProgram()!; gl.attachShader(p, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(p);
+    const p = gl.createProgram()!, sommet = sh(gl.VERTEX_SHADER, VS), fragment = sh(gl.FRAGMENT_SHADER, FS);
+    gl.attachShader(p, sommet); gl.attachShader(p, fragment); gl.linkProgram(p);
+    gl.deleteShader(sommet); gl.deleteShader(fragment);
     if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p) || "programme");
     this.prog = p; gl.useProgram(p);
-    const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const b = gl.createBuffer(); this.tampon = b; gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     const loc = gl.getAttribLocation(p, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     for (const n of ["uIdx", "uPal", "uSym", "uTaille", "uVue", "uLoupe", "uTambour", "uT", "uBattue", "uBrode", "uBrodeT0", "uEclat", "uEnvers", "uArriere", "uGrille", "uParties", "uNParties", "uNFils", "uMarque", "uPulse"]) this.u[n] = gl.getUniformLocation(p, n);
     const tex = (unit: number) => { const t = gl.createTexture()!; gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); return t; };
@@ -235,6 +237,12 @@ export class RenduClip {
     const p = new Float32Array(MAX_PARTIES * 2); e.parties.slice(0, MAX_PARTIES).forEach(([t, m], i) => { p[2 * i] = t; p[2 * i + 1] = m; });
     gl.uniform2fv(this.u.uParties, p); gl.uniform1i(this.u.uNParties, Math.min(MAX_PARTIES, e.parties.length));
     gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+  /** Libère les ressources GPU lorsque le lecteur est démonté. */
+  arreter() {
+    const gl = this.gl;
+    for (const texture of [this.tIdx, this.tPal, this.tSym, this.tMarque]) gl.deleteTexture(texture);
+    gl.deleteBuffer(this.tampon); gl.deleteProgram(this.prog);
   }
 }
 
