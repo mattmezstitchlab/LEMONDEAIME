@@ -9,7 +9,7 @@
  * Géométrie du Disque, Point, couronne et cartouche : ceux de l'atelier (lib/tambour/disque, components/point), repris sans changement.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Clapperboard, Eye, FlipHorizontal2, Layers, Pause, Play, Search, Sparkles, Spline } from "lucide-react";
+import { Clapperboard, Expand, Minimize2, Shrink, Eye, FlipHorizontal2, Layers, Pause, Play, Search, Sparkles, Spline } from "lucide-react";
 import Point from "../components/point/Point";
 import type { ModePoint } from "../lib/point/modes";
 import { anneauSvg, geometrieDisque, type Disque } from "../lib/tambour/disque";
@@ -30,6 +30,8 @@ const AIDE_MODE: Record<ModeClip, string> = {
   mosaique: "les couleurs DMC à plat, une case par point",
   demi: "le demi-point : seulement « / », la première moitié de chaque croix",
 };
+/** la toile du Disque grossit le clip plein écran qui est derrière : le détail des points */
+const GROSSI = 3;
 const mmss = (t: number) => `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(Math.floor(t % 60)).padStart(2, "0")}`;
 
 /** une étape de la démonstration : à l'instant t, pendant d secondes, le Disque montre un outil */
@@ -108,13 +110,15 @@ export default function ClipBrode() {
   const aller = (v: number) => { const h = horloge.current; if (audio.current) audio.current.currentTime = v; h.t0 = v; if (h.depart) h.depart = performance.now(); setT(v); };
 
   /* le rendu, à chaque image de l'écran */
-  const etatRef = useRef({ clip, mode, etats, masquer, arriere, grille, retourne, loupe, brode, effet, demo });
-  etatRef.current = { clip, mode, etats, masquer, arriere, grille, retourne, loupe, brode, effet, demo };
+  const [replie, setReplie] = useState(false), [plein, setPlein] = useState(false);
+  const etatRef = useRef({ clip, mode, etats, masquer, arriere, grille, retourne, loupe, brode, effet, demo, geo: g, replie });
+  etatRef.current = { clip, mode, etats, masquer, arriere, grille, retourne, loupe, brode, effet, demo, geo: g, replie };
   useEffect(() => {
     if (!clip || !toile.current) return;
     try { rendu.current = new RenduClip(toile.current); } catch (e) { setErreur("Votre navigateur ne peut pas dessiner la broderie (WebGL 2) : " + String((e as Error).message)); return; }
     let raf = 0, dernier = -1, derniereImage: Uint8Array | null = null;
-    let qualite = 1, lent = 0, dernierInstant = 0;
+    /* ?qualite=0.5 : partir d'une toile moins fine (appareils modestes, essais) */
+    let qualite = Math.max(.3, Math.min(1, parseFloat(new URLSearchParams(location.search).get("qualite") ?? "1") || 1)), lent = 0, dernierInstant = 0;
     const boucle = () => {
       raf = requestAnimationFrame(boucle);
       const s = etatRef.current, c = s.clip!, r = rendu.current!, cv = toile.current!;
@@ -142,29 +146,40 @@ export default function ClipBrode() {
       }
       /* la qualité suit l'appareil : si les images tardent, la toile se dessine en moins de pixels (jamais moins de la moitié) */
       const ici = performance.now(); if (dernierInstant) { const ecart = ici - dernierInstant; lent = lent * .9 + (ecart > 45 ? 1 : 0) * .1; if (lent > .5 && qualite > .5) { qualite = Math.max(.5, qualite - .15); lent = 0; } } dernierInstant = ici;
-      const dpr = Math.min(2, window.devicePixelRatio || 1) * qualite, cote = cv.clientWidth * dpr;
-      if (cv.width !== Math.round(cote)) { cv.width = cv.height = Math.round(cote); }
-      const cpp = c.grille / cote / z;
+      /* le clip couvre tout l'écran ; la toile du Disque le montre grossi (le détail), comme un tambour posé dessus */
+      const dpr = Math.min(1.5, window.devicePixelRatio || 1) * qualite, W = Math.round(cv.clientWidth * dpr), H = Math.round(cv.clientHeight * dpr);
+      if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+      const cpp = c.grille / Math.max(W, H) / z, s0 = s.geo, cote = Math.min(W, H);
+      const tambour: [number, number, number, number] | null = s.replie ? null : [s0.cx * dpr, s0.cy * dpr, s0.r * dpr, GROSSI];
+      /* le point de la grille sous un pixel : dans le tambour (grossi) ou sur le fond */
+      const place = (x: number, y: number): [number, number, number] => {
+        if (tambour && Math.hypot(x - tambour[0], y - tambour[1]) < tambour[2]) { const zz = cpp / GROSSI; return [c.grille / 2 + (tambour[0] - W / 2) * cpp + (x - tambour[0]) * zz, c.grille / 2 + (tambour[1] - H / 2) * cpp + (y - tambour[1]) * zz, zz]; }
+        return [c.grille / 2 + (x - W / 2) * cpp, c.grille / 2 + (y - H / 2) * cpp, cpp];
+      };
       let eclat = 0; for (const [ta, f] of c.accents) if (tt - ta >= 0 && tt - ta < 1) eclat = Math.max(eclat, f / 99 * Math.exp(-(tt - ta) * 6));
       /* la loupe : sous la main ; dans la démonstration, elle se promène autour du centre */
       let lp: [number, number, number, number] | null = null;
-      const rayon = Math.max(56, cote * .17);
-      if (s.effet?.loupe && !loupePos.current) { const a = tt * .9; lp = [cote / 2 + Math.cos(a) * cote * .18, cote / 2 + Math.sin(a * 1.3) * cote * .14, rayon, 6]; }
+      const rayon = Math.max(56, cote * .12);
+      if (s.effet?.loupe && !loupePos.current) { const a = tt * .9; lp = [W / 2 + Math.cos(a) * W * .3, H / 2 + Math.sin(a * 1.3) * H * .3, rayon, 6]; }
       else if (s.loupe && loupePos.current) lp = [loupePos.current[0] * dpr, loupePos.current[1] * dpr, rayon, 6];
       if (lp && derniereImage) {
-        let cx = Math.floor(c.grille / 2 + (lp[0] - cote / 2) * cpp), cy = Math.floor(c.grille / 2 + (lp[1] - cote / 2) * cpp);
+        const q = place(lp[0], lp[1]); let cx = Math.floor(q[0]); const cy = Math.floor(q[1]);
         if (s.retourne) cx = c.grille - 1 - cx;
         const k = cx >= 0 && cy >= 0 && cx < c.grille && cy < c.grille ? derniereImage[cy * c.grille + cx] : null;
         setSousLoupe(v => v === k ? v : k);
       } else setSousLoupe(v => v === null ? v : null);
       const b = s.brode ?? { t0: 0, d: c.brodeJusqua };
       r.dessiner({ t: tt, battue: c.battue, brode: b.d, brodeT0: s.brode ? b.t0 : 0, eclat, envers: s.retourne,
-        arriere: s.arriere || !!s.effet?.arriere, grille: s.grille, parties: vue, vue: [c.grille / 2, c.grille / 2, cpp], loupe: lp });
+        arriere: s.arriere || !!s.effet?.arriere, grille: s.grille, parties: vue, vue: [c.grille / 2, c.grille / 2, cpp], loupe: lp, tambour });
     };
     raf = requestAnimationFrame(boucle);
     return () => cancelAnimationFrame(raf);
   }, [clip, maintenant]);
 
+  /* le plein écran de l'appareil (Échap le quitte aussi) */
+  useEffect(() => { const f = () => setPlein(!!document.fullscreenElement); document.addEventListener("fullscreenchange", f); return () => document.removeEventListener("fullscreenchange", f); }, []);
+  /* Disque replié : Échap le redéploie */
+  useEffect(() => { if (!replie) return; const f = (e: KeyboardEvent) => { if (e.key === "Escape" && !document.fullscreenElement) setReplie(false); }; window.addEventListener("keydown", f); return () => window.removeEventListener("keydown", f); }, [replie]);
   /* la fin du morceau : la lecture s'arrête */
   useEffect(() => { const a = audio.current; if (!a) return; const fin = () => setLecture(false); a.addEventListener("ended", fin); return () => a.removeEventListener("ended", fin); }, []);
 
@@ -215,12 +230,15 @@ export default function ClipBrode() {
         ] },
       { id: "broder", nom: "Broder", aide: "le clip se rebrode depuis le centre, point par point", groupe: "creation", icone: <Sparkles aria-hidden="true" />, ouvrir: () => { main(); setBrode({ t0: maintenant(), d: 8 }); if (!lecture) void jouer(); } },
       { id: "loupe", nom: "Loupe", aide: "au survol, le point vivant au plus près ; au bord, son symbole du patron", groupe: "socle", icone: <Search aria-hidden="true" />, actif: loupe, ouvrir: () => { main(); setLoupe(v => !v); } },
+      { id: "replier", nom: "Replier", aide: "le Disque se range : le clip brodé en entier, sur tout l’écran", groupe: "socle", icone: <Minimize2 aria-hidden="true" />, ouvrir: () => setReplie(true) },
+      ...(document.fullscreenEnabled ? [{ id: "plein", nom: plein ? "Quitter" : "Plein écran", aide: plein ? "quitter le plein écran" : "le clip sur tout l’écran de l’appareil", groupe: "socle" as const, icone: plein ? <Shrink aria-hidden="true" /> : <Expand aria-hidden="true" />, actif: plein,
+        ouvrir: () => { if (document.fullscreenElement) void document.exitFullscreen(); else void document.documentElement.requestFullscreen?.().catch(() => {}); } }] : []),
       { id: "demo", nom: "Démonstration", aide: demo ? "la démonstration est en cours ; un outil choisi la met de côté" : "relancer la démonstration : le Disque montre ses outils au rythme du morceau", groupe: "socle", icone: <Clapperboard aria-hidden="true" />, actif: demo,
         ouvrir: () => { setDemo(true); setMode(null); setEtats(clip.fils.map(() => 1)); setArriere(false); setEnvers(false); setBrode(null); if (!lecture) void jouer(); } },
     ];
     return m;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clip, lecture, etats, masquer, mode, grille, envers, arriere, loupe, demo, t > 0]);
+  }, [clip, lecture, etats, masquer, mode, grille, envers, arriere, loupe, demo, plein, t > 0]);
 
   /* la place des messages sous le disque (celle de l'atelier) */
   const c = g.Ro + 2;
@@ -239,8 +257,8 @@ export default function ClipBrode() {
     const pas = e.shiftKey ? 40 : 10, d: Record<string, [number, number]> = { ArrowLeft: [-pas, 0], ArrowRight: [pas, 0], ArrowUp: [0, -pas], ArrowDown: [0, pas] };
     if (e.key === " ") { e.preventDefault(); if (lecture) pause(); else void jouer(); return; }
     if (!d[e.key]) return; e.preventDefault();
-    const w = e.currentTarget.clientWidth, p = loupePos.current ?? [w / 2, w / 2];
-    loupePos.current = [Math.max(0, Math.min(w, p[0] + d[e.key][0])), Math.max(0, Math.min(w, p[1] + d[e.key][1]))]; if (!loupe) setLoupe(true);
+    const w = e.currentTarget.clientWidth, h = e.currentTarget.clientHeight, p = loupePos.current ?? [g.cx, g.cy];
+    loupePos.current = [Math.max(0, Math.min(w, p[0] + d[e.key][0])), Math.max(0, Math.min(h, p[1] + d[e.key][1]))]; if (!loupe) setLoupe(true);
   };
 
   if (erreur) return <main className="clip-erreur"><h1>UPTOWN brodé</h1><p>{erreur}</p></main>;
@@ -249,15 +267,15 @@ export default function ClipBrode() {
       ["--pzt-bl" as string]: g.env.l + "px", ["--pzt-bh" as string]: g.env.h + "px", ["--pzt-bd" as string]: g.env.rond + "px" }}
     onPointerOver={viser} onPointerOut={() => setVisee(null)} onFocus={viser}>
     <h1 className="sr-only">UPTOWN brodé : la démonstration des outils de Point Zéro</h1>
-    <div className="pzt-voile" aria-hidden="true" />
-    <div className="pzt-bois" aria-hidden="true" style={{ left: g.cx - g.rb, top: g.cy - g.rb, width: 2 * g.rb, height: 2 * g.rb }} />
-    <div className={"clip-tambour" + (enversVoulu ? " clip-retourne" : "")} style={{ left: g.cx - g.r, top: g.cy - g.r, width: 2 * g.r, height: 2 * g.r }}>
+    <div className={"clip-fond" + (enversVoulu ? " clip-retourne" : "")}>
       <canvas ref={toile} className={"clip-toile" + (retourne ? " clip-dos" : "")} tabIndex={0} role="img"
         aria-label={`Le clip UPTOWN brodé au point de croix, ${retourne ? "vu de l’envers" : "vu de l’endroit"}. Flèches : déplacer la loupe ; Espace : lecture ou pause.`}
         onPointerMove={surToile} onPointerDown={surToile} onPointerLeave={e => { if (e.pointerType === "mouse") loupePos.current = null; }} onKeyDown={clavier} />
     </div>
+    {!replie && <div className="pzt-bois" aria-hidden="true" style={{ left: g.cx - g.rb, top: g.cy - g.rb, width: 2 * g.rb, height: 2 * g.rb }} />}
     {!lance && clip && <button type="button" className="clip-lancer" style={{ left: g.cx, top: g.cy }} onClick={() => void jouer()}>
       <Play aria-hidden="true" /><span>Lancer le clip</span><small>avec le son</small></button>}
+    {!replie && <>
     <svg className="pzt-anneau" width={2 * c} height={2 * c} aria-hidden="true">
       <defs><linearGradient id="clip-corps" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#262626" /><stop offset=".55" stopColor="#141414" /><stop offset="1" stopColor="#0c0c0c" /></linearGradient></defs>
       <path className="pzt-couronne-zone" d={anneauSvg(c, g.ri, g.Ro)} fillRule="evenodd" fill="url(#clip-corps)" />
@@ -268,13 +286,15 @@ export default function ClipBrode() {
     {clip && <div className="pzt-point">
       <Point scene tambour={{ rayon: g.rho, cote: 2 * c, parPage: g.capacite - 3 }} contexte="clip-brode" memoire="clip-brode" modes={modes} etiquette="UPTOWN brodé" />
     </div>}
-    <p className="pzt-cartouche clip-cartouche" aria-hidden="true">{cartouche}</p>
-    {clip && <div className="clip-temps" style={{ top: g.cy + g.Ro + 64 }}>
+    </>}
+    {replie && <button type="button" className="clip-deplier" onClick={() => setReplie(false)}><span className="lp-centre" aria-hidden="true" />Le Disque</button>}
+    <p className="pzt-cartouche clip-cartouche" aria-hidden="true" style={replie ? { top: "auto", bottom: 104 } : undefined}>{cartouche}</p>
+    {clip && <div className="clip-temps" style={replie ? { top: "auto", bottom: 44 } : { top: g.cy + g.Ro + 64 }}>
       <span>{mmss(t)}</span>
       <input type="range" min={0} max={clip.duree} step={0.1} value={t} aria-label="Avancer dans le clip" onChange={e => aller(parseFloat(e.target.value))} />
       <span>{mmss(clip.duree)}</span>
     </div>}
-    <p className="clip-credit" style={{ top: g.cy + g.Ro + 96 }}>UPTOWN (Saint-Luc) · musique « Amor amour 2 », Matt · {clip ? `${clip.fils.length} fils DMC` : "…"}</p>
+    <p className="clip-credit" style={replie ? { top: "auto", bottom: 12 } : { top: g.cy + g.Ro + 96 }}>UPTOWN (Saint-Luc) · musique « Amor amour 2 », Matt · {clip ? `${clip.fils.length} fils DMC` : "…"}</p>
     <audio ref={audio} src={AUDIO} preload="auto" />
     <span className="sr-only" role="status" aria-live="polite">{etape ? `${etape.titre} : ${etape.texte}` : ""}</span>
     {!clip && <p className="clip-chargement" style={{ left: g.cx, top: g.cy }}>La toile se prépare…</p>}
