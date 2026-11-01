@@ -53,38 +53,66 @@ export default function OuvertureFleur() {
   useEffect(() => { if (etat === 'fin') suite.current?.focus(); }, [etat]);
 
   async function lancer(version: 'courte' | 'complete', depuis = 0) {
+    moteur.current?.stop();
     if (!webgl2()) { setEtat('indispo'); return; }
     setEtat('chargement'); setCourte(version === 'courte');
+    // La session existe AVANT le premier await : fermer, rejouer ou démonter l'annule immédiatement.
+    let annule = false;
+    const nettoyages: (() => void)[] = [];
+    const session = {
+      stop: () => { if (annule) return; annule = true; for (const nettoyer of nettoyages) nettoyer(); },
+      pause: () => {}, reprendre: () => {}, son: (_v: boolean) => {},
+    };
+    moteur.current = session;
+    const indisponible = () => { if (!annule) { session.stop(); setEtat('indispo'); } };
     try {
       const [d, r] = await Promise.all([import('../../studio/src/clip/donnees'), import('../../studio/src/clip/rendu')]);
-      const clip = await d.lireClip(DONNEES), morceaux = new d.Morceaux(DONNEES, clip, 4);
+      if (annule) return;
+      const clip = await d.lireClip(DONNEES);
+      if (annule) return;
+      const morceaux = new d.Morceaux(DONNEES, clip, 4);
       const cv = toile.current!; const rendu = new r.RenduClip(cv);
+      nettoyages.push(() => {
+        const gl = rendu.gl;
+        for (const texture of [rendu.tIdx, rendu.tPal, rendu.tSym, rendu.tMarque]) gl.deleteTexture(texture);
+        gl.deleteProgram(rendu.prog);
+      });
       const segs: [number, number][] = version === 'courte' ? COURTE : [[depuis, clip.duree]];
       await morceaux.attendre(Math.floor(segs[0][0] * clip.fps));
+      if (annule) return;
       const a = new Audio(DONNEES + 'la-fleur-du-ciel.m4a'); a.preload = 'auto'; a.volume = 1; audio.current = a;
       let seg = 0, enPause = false, fini = false, silencieux = false, depart = 0, t0 = segs[0][0], raf = 0, dernier = -1, dernierT = 0, attente = false;
       const maintenant = () => (!silencieux && a.readyState > 0 ? a.currentTime : depart ? t0 + (performance.now() - depart) / 1000 : t0);
-      const fondu = (v: number, ms: number) => new Promise<void>(ok => { const d0 = a.volume, n = Math.max(1, Math.round(ms / 30)); let i = 0; const h = window.setInterval(() => { i++; a.volume = Math.max(0, Math.min(1, d0 + (v - d0) * i / n)); if (i >= n) { clearInterval(h); ok(); } }, 30); });
+      const fondus = new Map<number, () => void>();
+      nettoyages.unshift(() => {
+        fini = true; cancelAnimationFrame(raf);
+        if (version === 'complete') { const x = maintenant(); if (x > 5 && x < 240) ecrire(CLE_REPRISE, String(Math.floor(x))); }
+        for (const [h, terminer] of fondus) { clearInterval(h); terminer(); } fondus.clear();
+        a.onended = null; a.pause(); a.removeAttribute('src'); a.load();
+        if (audio.current === a) audio.current = null;
+      });
+      const fondu = (v: number, ms: number) => new Promise<void>(ok => { const d0 = a.volume, n = Math.max(1, Math.round(ms / 30)); let i = 0; const h = window.setInterval(() => { i++; a.volume = Math.max(0, Math.min(1, d0 + (v - d0) * i / n)); if (i >= n) { clearInterval(h); fondus.delete(h); ok(); } }, 30); fondus.set(h, ok); });
       a.currentTime = segs[0][0];
       try { await a.play(); } catch { silencieux = true; }
+      if (annule) return;
       depart = performance.now(); t0 = segs[0][0];
       const accents = clip.accents, parties = d.partieEn(clip.parties, r.CODE_MODE);
       const palette = [...clip.fils.map(f => ({ rgb: f.rgb as number[], etat: 1 })), { rgb: [236, 231, 219], etat: 0 }];
       rendu.palette(palette);
       let qualite = 1, lent = 0, dernierInstant = 0;
       const tourner = () => {
+        if (annule || fini) return;
         raf = requestAnimationFrame(tourner);
-        if (fini) return;
         let tt = Math.min(clip.duree, maintenant());
         if (!enPause && !attente) {
           const [, fin] = segs[seg];
           if (tt >= fin - .02) {
             if (seg + 1 < segs.length) {
               attente = true; const prochain = segs[seg + 1][0];
-              void (async () => { await fondu(0, 250); await morceaux.attendre(Math.floor(prochain * clip.fps)); a.currentTime = prochain; t0 = prochain; depart = performance.now(); seg++; if (!enPause) await fondu(1, 250); attente = false; })();
+              void (async () => { try { await fondu(0, 250); if (annule) return; await morceaux.attendre(Math.floor(prochain * clip.fps)); if (annule) return; a.currentTime = prochain; t0 = prochain; depart = performance.now(); seg++; if (!enPause) await fondu(1, 250); if (!annule) attente = false; } catch { indisponible(); } })();
               return;
             }
-            fini = true; a.pause(); setT(tt); setEtat('fin'); ecrire(CLE_VUE, '1'); ecrire(CLE_REPRISE, null); return;
+            fini = true; cancelAnimationFrame(raf); a.pause(); setT(tt); setEtat('fin'); ecrire(CLE_VUE, '1'); ecrire(CLE_REPRISE, null); return;
           }
         }
         if (attente) tt = Math.min(tt, segs[seg][1]);
@@ -98,16 +126,13 @@ export default function OuvertureFleur() {
         rendu.dessiner({ t: tt, battue: clip.battue, brode: clip.brodeJusqua, brodeT0: 0, eclat: reduit() ? eclat * .4 : eclat, envers: false, arriere: false, grille: false, parties, vue: [clip.grille / 2, clip.grille / 2, clip.grille / Math.max(W, H)], loupe: null, tambour: null });
       };
       raf = requestAnimationFrame(tourner);
-      a.addEventListener('ended', () => { if (!fini) { fini = true; setEtat('fin'); ecrire(CLE_VUE, '1'); } });
-      moteur.current = {
-        stop: () => { cancelAnimationFrame(raf); fini = true; if (version === 'complete') { const x = maintenant(); if (x > 5 && x < 240) ecrire(CLE_REPRISE, String(Math.floor(x))); } a.pause(); a.removeAttribute('src'); a.load(); },
-        pause: () => { enPause = true; t0 = maintenant(); depart = 0; a.pause(); },
-        reprendre: () => { enPause = false; depart = performance.now(); void a.play().catch(() => { silencieux = true; }); },
-        son: (v: boolean) => { a.muted = !v; },
-      };
+      a.onended = () => { if (!annule && !fini) { fini = true; cancelAnimationFrame(raf); setEtat('fin'); ecrire(CLE_VUE, '1'); } };
+      session.pause = () => { if (annule) return; enPause = true; t0 = maintenant(); depart = 0; a.pause(); };
+      session.reprendre = () => { if (annule) return; enPause = false; depart = performance.now(); void a.play().catch(() => { if (!annule) silencieux = true; }); };
+      session.son = (v: boolean) => { if (!annule) a.muted = !v; };
       setEtat('lecture'); setAnnonce(version === 'courte' ? 'Lecture de la version courte, avec le son.' : 'Lecture du clip complet, avec le son.');
     } catch {
-      moteur.current?.stop(); setEtat('indispo');
+      indisponible();
     }
   }
   const basculerPause = () => { if (etat === 'lecture') { moteur.current?.pause(); setEtat('pause'); setAnnonce('En pause.'); } else if (etat === 'pause') { moteur.current?.reprendre(); setEtat('lecture'); setAnnonce('Lecture.'); } };
