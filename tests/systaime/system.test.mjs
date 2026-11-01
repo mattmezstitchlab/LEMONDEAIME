@@ -86,14 +86,15 @@ test('la landing raconte UPTOWN et mène au clip sans dupliquer le lecteur', () 
   assert.match(a, /className="ac-hero"/, 'le hero existant est conservé');
 });
 
-test('une seule famille de navigation : /, /system et /systaime partagent les mêmes verbes, sans second dock', () => {
+test('un seul header public : /, /system et /systaime réutilisent Tete et sa source partagée', () => {
   for (const f of ['src/pages/Accueil.tsx', 'src/pages/System.tsx', 'src/pages/Systaime.tsx']) {
     /* convergence : la liste des verbes n'est plus passée page par page (prop `verbes`), elle est portée une seule fois par le dock */
     const t = lire(f); assert.match(t, /<Tete /, f); assert.doesNotMatch(t, /verbes=/, f + ' : aucune liste de verbes propre à la page');
   }
   const charte = lire('src/charte/Charte.tsx');
-  assert.match(charte, /import \{ DESTINATIONS \} from '\.\.\/lib\/intention\.mjs'/, 'les verbes viennent de la donnée canonique DESTINATIONS');
-  assert.match(charte, /export const ENTREES/, 'une seule liste, pour l\'ordinateur et pour le téléphone');
+  assert.match(charte, /import HeaderPublic from '.\/HeaderPublic'/);
+  assert.match(lire('src/charte/HeaderPublic.tsx'), /ENTREES_PUBLIQUES/);
+  assert.match(lire('studio/src/main.tsx'), /<HeaderPublic/);
   assert.doesNotMatch(lire('src/pages/System.tsx'), /position:\s*fixed|className="dock/);
 });
 

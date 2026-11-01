@@ -48,10 +48,10 @@ export default function Mosaique() {
   const familles = (u: Univers): ModePoint[] => u.familles.map(f => ({ id: "f-" + f.id, nom: f.nom, icone: <IconeOne nom={f.icone} />, groupe: "metier", aide: `${f.nom} — ouvre ${u.nom}`, ouvrir: () => window.location.assign(adresseUnivers(u)) }));
 
   return <div className="one one-mosaique" data-aime={theme}>
-    <header className="one-tete">
+    <section className="one-tete" aria-label="Contexte de l’expérience">
       <a className="one-marque" href={import.meta.env.BASE_URL + "one/univers"}><span className="one-orbe" aria-hidden="true" />.0NE</a>
       <a className="one-bouton one-passer" href={import.meta.env.BASE_URL + "one/premiere-rencontre"}>{p.rencontre.terminee ? "Mes réglages" : "Première rencontre"}</a>
-    </header>
+    </section>
     <main>
       <section className="om-heros" aria-labelledby="om-titre">
         <div>

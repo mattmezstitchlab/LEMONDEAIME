@@ -7,7 +7,6 @@ import type { Pattern } from "../lib/pattern";
 import type { ProjectRecord } from "../lib/library";
 import { FLOSS } from "../lib/dmc";
 import { dansAime } from "../lib/aimeSync";
-import { retourSite } from "../lib/retourSite";
 import PreferencesCompte from "./PreferencesCompte";
 import type { Tool } from "../lib/stitch";
 import type { ViewMode } from "./Canvas";
@@ -454,17 +453,16 @@ export default function StudioDocks(p: Props) {
   const retracterTambour = () => { setTambourOuvert(false); requestAnimationFrame(() => tambourBouton.current?.focus()); };
 
   return <>
-    <header className="pzs-head" aria-label="En-tête du studio">
+    <section className="pzs-head" aria-label="En-tête du studio">
       <button type="button" className="lp-evitement" onClick={() => { setLoupe(false); ouvrirConfort(); }}>Réglages de confort</button>
       {bloc && <div className="pzs-voile" aria-hidden="true" onClick={fermer} />}
       <nav className={"pzs-top" + (bloc ? " pzs-ouvert" : "") + (cadreTambour && tambourOuvert && !nav0 && !p.sansPoint ? " pzs-sans-doublon" : "")} aria-label="Dock des outils du studio de broderie" onKeyDown={onKey}>
         <div className="pzs-ligne">
-          {aime && <button type="button" className="pzs-tool pzs-icon" aria-label="Revenir sur Le Monde AIME" title="Retour" onClick={retourSite}><ArrowLeft size={18} aria-hidden="true" /></button>}
           <button id="pzs-brand" data-guide="orbe" type="button" className="pzs-orbe" aria-label="Menu AIME : accueil, réglages, affichage" title="Menu AIME" aria-expanded={bloc === "menu"} aria-controls="pzs-bloc" onClick={() => ouvrir("menu")}>
             <Menu size={18} aria-hidden="true" />
           </button>
           <span className="pzs-sep" aria-hidden="true" />
-          {aime ? <a className="pzs-tool pzs-marque" href="/" aria-label="AIME, Le Monde AIME">AIME<sup aria-hidden="true">®</sup></a> : <span className="pzs-tool pzs-marque">Point Zéro</span>}
+          <span className="pzs-tool pzs-marque">{aime ? "Broderie" : "Point Zéro"}</span>
           <span className="pzs-sep" aria-hidden="true" />
           <div className="pzs-row" data-guide="outils" data-defile ref={el => { rangHaut.current = el; }}>
             {p.path && <>
@@ -490,7 +488,6 @@ export default function StudioDocks(p: Props) {
           {bloc === "menu" && <>
             <div id="pzs-menu" className="pzs-bloc-corps" data-defile>
               <ul className="pzs-bloc-menu">
-                {aime && <li><a href="/">Le Monde AIME</a></li>}
                 <li><button type="button" onClick={() => { setBloc(null); p.actions.home(); }}>Accueil Point Zéro</button></li>
                 <li><button type="button" onClick={() => setBloc("inviter")}>Mes ouvrages</button></li>
                 <li><button type="button" onClick={() => setBloc("chercher")}>Chercher</button></li>
@@ -564,7 +561,7 @@ export default function StudioDocks(p: Props) {
       </nav>
       <span className="sr-only" role="status">{p.patternName} · {p.saving}</span>
       {!bloc && <p className="pzs-crumbs">{crumbs.map((c, i) => <span key={i}>{i > 0 && <span aria-hidden="true"> › </span>}{i === crumbs.length - 1 ? <strong>{c}</strong> : c}</span>)}</p>}
-    </header>
+    </section>
 
     {loupe && p.pattern && <div className="pzs-loupe-dock"><Loupe pattern={p.pattern} /><button type="button" className="pzs-loupe-fermer" aria-label="Fermer la loupe" onClick={() => setLoupe(false)}><X size={16} aria-hidden="true" /></button></div>}
     {essaiBloc ? (p.sansPoint ? null : <PointDuBloc<ContexteBroderie> type="broderie" nom={p.patternName} part={prog} etiquette={total ? "patron brodé à " + Math.round(prog * 100) + " %" : undefined} contexte={contexteBroderie} />) : <>

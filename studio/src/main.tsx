@@ -25,6 +25,7 @@ const Explorer = lazy(() => import("./convergence/Explorer"));
 const Accueil = lazy(() => import("./accueil/Accueil"));
 const ClipBrode = lazy(() => import("./clip/ClipBrode"));
 const ClipFleur = lazy(() => import("./clip/ClipBrode").then(m => ({ default: () => <m.default config={m.FLEUR} /> })));
+import HeaderPublic from "../../src/charte/HeaderPublic";
 import { GardeExperience, NavigationConvergence } from "./convergence/Navigation";
 
 /* essai privé : le bloc Image, piloté par le même Point (aucune autre application) */
@@ -64,6 +65,7 @@ const clipBrode = /\/uptown\/?$/.test(window.location.pathname);
 const clipFleur = /\/fleur-du-ciel\/?$/.test(window.location.pathname);
 
 appliquerApercuAime();
+if (!SITE_BRODERIE) document.documentElement.classList.add("aime-public-studio");
 /* le site Point Zéro (broderie seule) : seules la landing, l'atelier et le Tambour vivant existent ; toute autre adresse ramène à l'accueil */
 const horsBroderie = !/^\/(atelier|tambour)?\/?$/.test(window.location.pathname.slice(import.meta.env.BASE_URL.length - 1));
 const quitterBroderie = SITE_BRODERIE && horsBroderie;
@@ -81,7 +83,7 @@ const titre = TITRES.find(([v]) => v)?.[1]; if (titre) document.title = titre;
 
 /* une adresse qui n'existe pas sur ce site : rien n'est affiché (pas même un instant), on part */
 if (!quitterBroderie && !quitterPrive) createRoot(document.getElementById("root")!).render(
-  <StrictMode><GardeExperience>
+  <StrictMode>{!SITE_BRODERIE && <HeaderPublic />}<GardeExperience>
     {clipFleur ? <AccessibilityShell><Suspense fallback={null}><ClipFleur /></Suspense></AccessibilityShell>
       : clipBrode ? <AccessibilityShell><Suspense fallback={null}><ClipBrode /></Suspense></AccessibilityShell>
       : accueil ? <AccessibilityShell><Suspense fallback={null}><Accueil /></Suspense></AccessibilityShell>

@@ -5,7 +5,7 @@ import { ajouter as ajouterPistes, basculer as basculerLecture, precedent, suiva
 import { useSession, seDeconnecter, type Personne } from '../lib/session';
 import { Recherche, GROUPES } from './Recherche';
 import { EntrerBloc } from './EntrerBloc';
-import { DESTINATIONS } from '../lib/intention.mjs';
+import HeaderPublic from './HeaderPublic';
 import { arcs, earcon, ecrirePrefs, profilCourant, profils, useConfort, type Prefs, type Profil } from '../lib/confort';
 
 export function Orbe({ taille = 30 }: { taille?: number }) {
@@ -15,11 +15,14 @@ export function Marque() {
   return <span className="marque">AIME<sup aria-hidden="true">®</sup></span>;
 }
 
-/* Le dock du haut, en un seul bloc. À gauche : la flèche retour, l'orbe dans son carré, AIME®. Au centre : les verbes du site.
-   À droite : la loupe et le rond du profil. L'orbe, la loupe et le profil ouvrent le même bloc vers le bas :
-   le contenu au-dessus, un mini dock en bas (les orbes, les filtres de recherche, les accès de l'espace). */
-type ModeHaut = 'aime' | 'recherche' | 'espace' | 'menu' | null;
+/* Tete reste le point canonique des pages du site. Le header extrait est partagé avec le Studio.
+   Recherche, compte, déconnexion et confort ne disparaissent pas : ils restent des outils contextuels. */
+type ModeHaut = 'aime' | 'recherche' | 'espace' | null;
 export function Tete({ courant }: { courant?: string }) {
+  const chemin = useChemin();
+  return <><HeaderPublic chemin={chemin} /><details className="aime-outils-site"><summary>Compte, recherche et confort</summary><OutilsSite courant={courant} /></details></>;
+}
+function OutilsSite({ courant }: { courant?: string }) {
   const [mode, setMode] = useState<ModeHaut>(null);
   const [reglages, setReglages] = useState(false);
   const [groupe, setGroupe] = useState<string | null>(null);
@@ -30,7 +33,7 @@ export function Tete({ courant }: { courant?: string }) {
   const prefs = useConfort();
   const chemin = useChemin();
   const iris = useId().replace(/:/g, '');
-  const boutons = useRef<Partial<Record<'aime' | 'recherche' | 'espace' | 'menu', HTMLButtonElement | null>>>({});
+  const boutons = useRef<Partial<Record<'aime' | 'recherche' | 'espace', HTMLButtonElement | null>>>({});
   const bloc = useRef<HTMLDivElement>(null);
   const cp = profilCourant(prefs);
   const retour = chemin !== '/' || profondeur() > 0;
@@ -46,9 +49,9 @@ export function Tete({ courant }: { courant?: string }) {
   const regler = <K extends keyof Prefs>(k: K, v: Prefs[K], msg: string) => { ecrirePrefs({ ...prefs, [k]: v }); setAnnonce(msg); earcon('ok', k === 'sons' && v === 'on'); };
   const DOSSIERS: [string, string, string][] = [['projets', 'Projets', '#C9B8FF'], ['partages', 'Partagés avec moi', '#D9E8FF'], ['archives', 'Archives', '#E4E4E1'], ['profil', 'Profil', '#FFD6EC']];
   return (
-    <header className="tete">
+    <div className="tete">
       {mode && <div aria-hidden="true" className="tete-voile" onClick={fermer} />}
-      <nav className={'dock-haut' + (mode ? ' ouvert' : '')} aria-label="Dock du haut" onKeyDown={e => { if (e.key === 'Escape' && mode) { e.preventDefault(); fermer(); } }}>
+      <nav className={'dock-haut' + (mode ? ' ouvert' : '')} aria-label="Compte, recherche et confort" onKeyDown={e => { if (e.key === 'Escape' && mode) { e.preventDefault(); fermer(); } }}>
         <div className="dock-ligne">
           {retour && <button type="button" className="outil carre" aria-label="Revenir là où vous étiez" title="Retour" onClick={revenir}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
@@ -58,16 +61,7 @@ export function Tete({ courant }: { courant?: string }) {
             <Orbe taille={30} />
           </button>
           <span className="separateur" aria-hidden="true" />
-          <Lien href="/" className="outil" aria-label="AIME, accueil" aria-current={courant === '/' ? 'page' : undefined} style={{ padding: '0 10px' }}><Marque /></Lien>
-          <div className="rangee"><span className="separateur" aria-hidden="true" /><VerbesGlobaux chemin={chemin} /></div>
-          <button ref={el => { boutons.current.menu = el; }} type="button" className="outil menu-mobile" aria-expanded={mode === 'menu'} aria-controls="bloc-dock"
-            aria-label={mode === 'menu' ? 'Fermer le menu' : 'Menu principal'} title="Menu" onClick={() => ouvrir('menu')}>
-            {mode === 'menu'
-              ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>}
-            <span>Menu</span>
-          </button>
-          <span className="separateur" aria-hidden="true" />
+
           <button ref={el => { boutons.current.recherche = el; }} type="button" className="outil loupe" aria-expanded={mode === 'recherche'} aria-controls="bloc-dock" aria-label={mode === 'recherche' ? 'Fermer la recherche' : 'Chercher dans tout AIME, et le plan du site'} title="Chercher" onClick={() => ouvrir('recherche')}>
             {mode === 'recherche'
               ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
@@ -83,16 +77,13 @@ export function Tete({ courant }: { courant?: string }) {
           <div className="dock-bloc-corps">
             {mode === 'aime' && <>
               <ul className="bloc-menu">
-                {([['/', 'Accueil'], ['/a-propos', 'À propos d’AIME'], ['/reseau', 'Prestataires'], ['/musique', 'La journée en musique']] as [string, string][]).map(([h, l]) => <li key={h}><Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setMode(null)}>{l}</Lien></li>)}
+                {([['/buro', 'Mon espace'], ['/reseau', 'Prestataires'], ['/musique', 'La journée en musique']] as [string, string][]).map(([h, l]) => <li key={h}><Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setMode(null)}>{l}</Lien></li>)}
                 {session && <li><button type="button" onClick={() => { setMode(null); seDeconnecter(); }}>Déconnexion</button></li>}
               </ul>
               <p className="bloc-note">{reglages
                 ? <>Mon confort, en bas : touchez un picto pour l’activer. Réglé une fois, appliqué partout, gardé sur cet appareil. <b>{annonce}</b></>
                 : <>Votre orbe : <b>{cp ? cp.nom : 'personnalisée'}</b>{cp ? ' · ' + cp.indice : ''}. Choisissez-en une autre en bas, ou réglez chaque détail avec <b>Mon confort</b>.</>}</p>
             </>}
-            {mode === 'menu' && <ul className="bloc-entrees" aria-label="Les quatre entrées d’AIME">
-              {ENTREES.map(e => <li key={e.href}><Lien href={e.href} aria-current={e.actif(chemin) ? 'page' : undefined} onClick={() => setMode(null)}>{e.nom}</Lien></li>)}
-            </ul>}
             {mode === 'recherche' && <Recherche fermer={fermer} groupe={groupe} />}
             {mode === 'espace' && (session
               ? <>
@@ -109,7 +100,7 @@ export function Tete({ courant }: { courant?: string }) {
                 <EntrerBloc compact retour={/^\/[a-z0-9-]{1,40}$/.test(chemin) || chemin === '/' ? chemin : '/buro'} />
               </>)}
           </div>
-          <div className="mini-dock" role="group" aria-label={mode === 'aime' ? (reglages ? 'Mon confort' : 'Choisir mon orbe') : mode === 'recherche' ? 'Chercher dans' : mode === 'menu' ? 'Aussi' : 'Votre espace'}>
+          <div className="mini-dock" role="group" aria-label={mode === 'aime' ? (reglages ? 'Mon confort' : 'Choisir mon orbe') : mode === 'recherche' ? 'Chercher dans' : 'Votre espace'}>
             {mode === 'aime' && (reglages
               ? <ReglagesLigne prefs={prefs} regler={regler} retour={() => setReglages(false)} retablir={() => { ecrirePrefs(null); setAnnonce('Réglages de l’appareil rétablis.'); }} />
               : <>
@@ -120,7 +111,6 @@ export function Tete({ courant }: { courant?: string }) {
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
                 </button>
               </>)}
-            {mode === 'menu' && <><Lien className="lieu" href="/" onClick={() => setMode(null)}>Accueil</Lien><Lien className="lieu" href="/a-propos" onClick={() => setMode(null)}>À propos</Lien><Lien className="lieu" href="/reseau" onClick={() => setMode(null)}>Prestataires</Lien><Lien className="lieu" href="/musique" onClick={() => setMode(null)}>La journée en musique</Lien></>}
             {mode === 'recherche' && [null, ...GROUPES].map(g => <button key={g || 'tout'} type="button" className="lieu" aria-current={groupe === g ? 'true' : 'false'} onClick={() => setGroupe(g)}>{g || 'Tout'}</button>)}
             {mode === 'espace' && (session
               ? <><Lien className="lieu" href="/buro" onClick={() => setMode(null)}>Ouvrir mon espace</Lien><Lien className="lieu" href="/point-zero" onClick={() => setMode(null)}>Point Zéro</Lien><Lien className="lieu" href="/a-plus" onClick={() => setMode(null)}>A+</Lien><label className="lieu lieu-case" title="Vos ouvrages déjà rangés dans votre espace AIME restent sur votre compte ; ceux qui n’y sont pas encore restent sur l’appareil."><input type="checkbox" checked={effacerOuvrages} onChange={e => setEffacerOuvrages(e.target.checked)} aria-describedby="effacer-ouvrages-note" /> Effacer les ouvrages de cet appareil<span id="effacer-ouvrages-note" className="sr-only">Vos ouvrages déjà rangés dans votre espace AIME restent sur votre compte ; ceux qui n’y sont pas encore restent sur l’appareil.</span></label><button type="button" className="lieu" onClick={async () => { const e = effacerOuvrages; setEffacerOuvrages(false); setMode(null); const b = await seDeconnecter({ effacerOuvrages: e }); if (b) setAnnonce(b.effaces + ' ouvrage' + (b.effaces > 1 ? 's' : '') + ' effacé' + (b.effaces > 1 ? 's' : '') + ' de cet appareil' + (b.gardes ? ', ' + b.gardes + ' gardé' + (b.gardes > 1 ? 's' : '') + ' (pas encore rangé' + (b.gardes > 1 ? 's' : '') + ' dans votre espace)' : '') + '.'); }}>Déconnexion</button></>
@@ -128,7 +118,7 @@ export function Tete({ courant }: { courant?: string }) {
           </div>
         </div>}
       </nav>
-    </header>
+    </div>
   );
 }
 /* le rond du profil : la photo, sinon les initiales, sinon une silhouette (pas encore entré) */
@@ -137,22 +127,6 @@ function Avatar({ p }: { p: Personne | null | undefined }) {
   const ini = p ? ((p.name || p.email || '').trim().split(/[\s@.]+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase() || '·') : '';
   return <span className="avatar" aria-hidden="true">{p ? ini : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="9" r="3.6" /><path d="M5 19.5c1.4-3.2 4-4.7 7-4.7s5.6 1.5 7 4.7" /></svg>}</span>;
 }
-/* La navigation globale, la même sur toutes les pages (dock du haut : orientation globale). Une seule liste, pour l'ordinateur (la rangée du dock)
-   et pour le téléphone (le volet « Menu »). Les quatre verbes et leurs destinations viennent de DESTINATIONS (src/lib/intention.mjs), la donnée
-   canonique déjà utilisée par l'accueil, AIME SYSTEM et SYST'AIME : rien n'est recopié ici, seule la page « actuelle » est calculée. */
-export const ENTREES: { href: string; nom: string; actif: (c: string) => boolean }[] = [
-  { href: DESTINATIONS.organiser.href, nom: 'Organiser', actif: c => c === '/aime-wedding' || c === '/reseau' || c.startsWith('/reseau/') },
-  { href: DESTINATIONS.creer.href, nom: 'Créer', actif: c => c === '/point-zero' || c.startsWith('/studio') },
-  { href: DESTINATIONS.projets.href, nom: 'Mes projets', actif: c => c === '/buro' || c === '/entrer' },
-  { href: DESTINATIONS.decouvrir.href, nom: 'Découvrir', actif: c => c === '/projets' || c.startsWith('/projets/') || ['/boutique', '/musique', '/a-plus', '/system', '/systaime'].includes(c) },
-];
-export function VerbesGlobaux({ chemin }: { chemin: string }) {
-  return <>{ENTREES.map(e => <Verbe key={e.href} href={e.href} actif={e.actif(chemin)}>{e.nom}</Verbe>)}</>;
-}
-export function Verbe({ href, children, actif }: { href: string; children: ReactNode; actif?: boolean }) {
-  return <Lien className="outil" href={href} aria-current={actif ? 'page' : undefined}>{children}</Lien>;
-}
-
 /* Le dock du bas : toujours en bas de l'écran. Le cercle progresse avec la lecture et montre où l'on est (un arc par lieu).
    Un clic sur le cercle ouvre les modes du dock, chacun avec son halo : Navigation (les lieux de la page), Musique (vos morceaux),
    et ceux que la page apporte (Jour J sur l'accueil…). Le dock se transforme, sans rien ouvrir par-dessus la page. */
@@ -318,7 +292,7 @@ export function Pied() {
       <nav aria-label="Plan du site">
         {col('Le studio', [['Le studio', '/studio/'], ['L’atelier', '/studio/atelier']])}
         {col('Votre espace', [['Entrer', '/entrer'], ['Mon espace', '/buro'], ['Mon profil', '/buro?lieu=profil']])}
-        {col('La maison', [['À propos d’AIME', '/a-propos'], ['Les projets d’AIME', '/projets'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', null], ['Mentions légales', null]])}
+        {col('La maison', [['À propos d’AIME', '/a-propos'], ['Les projets d’AIME', '/projets'], ['Le fondateur', '/reseau/matthieu-lecointre'], ['Contact et presse', '/contact'], ['Mentions légales', null]])}
       </nav>
       <div className="bas"><p style={{ margin: 0 }}>AIME® est la marque mère. LE MONDE AIME est une association.</p><p style={{ margin: 0 }}>© 2026 AIME®</p></div>
     </footer>

@@ -1,7 +1,4 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import { ArrowLeft } from "lucide-react";
-import { dansAime } from "../lib/aimeSync";
-import { retourSite } from "../lib/retourSite";
 import TopDock from "./TopDock";
 import UneFlorale from "./UneFlorale";
 import TraineePoints from "./TraineePoints";
@@ -171,8 +168,8 @@ export default function CrossStitchHome({ projectName, onOpen, onImport, onShare
     <TraineePoints />
 
     <TopDock label="Navigation point de croix" idBloc="pzh-menu"
-      marque={dansAime() ? <><button type="button" className="pzs-tool pzs-icon" aria-label="Revenir sur Le Monde AIME" title="Retour" onClick={retourSite}><ArrowLeft size={18} aria-hidden="true" /></button><a className="pzs-tool pzs-marque" href="/" aria-label="AIME, Le Monde AIME">AIME<sup aria-hidden="true">®</sup></a></> : undefined}
-      menu={[...(dansAime() ? [{ label: "Revenir sur Le Monde AIME", faire: retourSite }] : []), { label: "Mes ouvrages", faire: () => onOpen("library") }, { label: "Ouvrir le studio", faire: () => onOpen("stitch") }, { label: "Faire la visite avec Le Point", faire: visite }]}
+      marque={<span className="pzs-tool pzs-marque">Broderie</span>}
+      menu={[{ label: "Mes ouvrages", faire: () => onOpen("library") }, { label: "Ouvrir le studio", faire: () => onOpen("stitch") }, { label: "Faire la visite avec Le Point", faire: visite }]}
       droite={<button type="button" className="pzs-tool pzs-noir pzh-entrer" onClick={enter} aria-label="Entrer dans Point Zéro"><span aria-hidden="true">+</span> Entrer</button>}>
       <a className="pzs-tool" href="#chapitres" onClick={go("chapitres")}>Le studio</a>
       <a className="pzs-tool" href={edition ? "#ed-origine" : "#ch-point"} onClick={go(edition ? "ed-origine" : "ch-point")}>Le Point</a>
