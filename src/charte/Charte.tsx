@@ -60,7 +60,7 @@ export function Tete({ courant }: { courant?: string }) {
           <Lien href="/" className="outil" aria-label="AIME, accueil" aria-current={courant === '/' ? 'page' : undefined} style={{ padding: '0 10px' }}><Marque /></Lien>
           <div className="rangee"><span className="separateur" aria-hidden="true" /><VerbesGlobaux chemin={chemin} /></div>
           <button ref={el => { boutons.current.menu = el; }} type="button" className="outil menu-mobile" aria-expanded={mode === 'menu'} aria-controls="bloc-dock"
-            aria-label={mode === 'menu' ? 'Fermer le menu' : 'Menu : mariage, prestataires, projets et créations, mon espace'} title="Menu" onClick={() => ouvrir('menu')}>
+            aria-label={mode === 'menu' ? 'Fermer le menu' : 'Menu principal'} title="Menu" onClick={() => ouvrir('menu')}>
             {mode === 'menu'
               ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
               : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>}

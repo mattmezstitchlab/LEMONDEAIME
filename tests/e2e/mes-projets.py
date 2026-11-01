@@ -28,8 +28,15 @@ def contexte(b, largeur, ip):
     mob = largeur < 700
     ctx = b.new_context(viewport={'width': largeur, 'height': 844 if mob else 900}, reduced_motion='reduce', has_touch=mob, is_mobile=mob, extra_http_headers={'x-forwarded-for': ip})
     ctx.set_default_timeout(8000); return ctx
+_n = [0]; _ip = ['10.0.0']
 def page(ctx):
-    pg = ctx.new_page(); pg.on('pageerror', lambda e: erreurs.append(str(e))); return pg
+    """Une page = une adresse cliente de test. Le limiteur de la connexion (30 requêtes par minute et par adresse, inchangé) compte par adresse :
+    sans cela, les onglets d'un même contexte partagent un seul seau et le test se bloque tout seul. Aucune limite n'est modifiée ni désactivée."""
+    pg = ctx.new_page(); pg.on('pageerror', lambda e: erreurs.append(str(e)))
+    _n[0] += 1; ip = '%s.%d' % (_ip[0], 1 + _n[0] % 250)
+    def avec_adresse(route):
+        h = dict(route.request.headers); h['x-forwarded-for'] = ip; route.continue_(headers=h)
+    pg.route('**/api/**', avec_adresse); return pg
 def se_connecter(pg, email):
     """depuis /buro sans session : le formulaire d'entrée, puis le lien reçu (lu sur le serveur de test)"""
     pg.locator('main input[type=email]').fill(email); pg.get_by_role('button', name='Recevoir mon lien').click()
@@ -42,7 +49,7 @@ with sync_playwright() as p:
     for nom, largeur in (('ordinateur', 1440), ('téléphone', 390)):
         t = nom + ' · '; jeton = secrets.token_hex(3); email = 'alice-' + jeton + '@test.lemondeaime.invalid'; oct = int(jeton, 16) % 200 + 20; ip = '10.%d.%d.1' % (oct, 1 if largeur > 700 else 2)   # une adresse par exécution : la limite de 3 liens par minute est par adresse
         TITRE, DESC = 'Mon premier projet ' + jeton, 'Première ligne.\nSeconde ligne : un mariage en Provence.'
-        ctx = contexte(b, largeur, ip); pg = page(ctx)
+        _ip[0] = '10.%d.%d' % (oct, 1 if largeur > 700 else 2); ctx = contexte(b, largeur, ip); pg = page(ctx)
         # 1-2 · de l'accueil à la connexion, et retour sur /buro
         pg.goto(B + '/'); pg.wait_for_selector('h1'); pg.get_by_role('link', name='Retrouver notre mariage').first.click(); pg.wait_for_url('**/buro')
         pg.wait_for_selector('main input[type=email]')
@@ -69,7 +76,7 @@ with sync_playwright() as p:
         ok(sql("select data->>'description' from spaces where id = '%s'" % pid)[0][0] == DESC, t + 'la description est enregistrée telle quelle (retours à la ligne compris)')
         capture(pg, 'buro-nouveau-' + str(largeur))
         # 7-8 · quitter l'espace : un tout nouveau navigateur, sans cookie ; se reconnecter ; retrouver exactement le même projet
-        ctx.close(); ctx = contexte(b, largeur, ip); pg = page(ctx)
+        ctx.close(); _ip[0] = '10.%d.%d' % (oct, 1 if largeur > 700 else 2); ctx = contexte(b, largeur, ip); pg = page(ctx)
         pg.goto(B + '/buro'); pg.wait_for_selector('main input[type=email]')
         ok(pg.locator('text=' + TITRE).count() == 0, t + 'sans session, aucun projet n’est visible')
         # (deuxième lien du même compte : l'adresse IP change pour la limite de 3 liens par minute)

@@ -595,3 +595,5 @@ html.calme .pf-univers-liste a { transition: none; }
 /* téléphone : le cercle du dock (modes, musique) reste toujours visible, même quand la rangée défile jusqu'à la section courante */
 .dock-bas > div > .orbe-dock { position: sticky; left: 0; z-index: 2; }
 @media (max-width: 640px) { .dock-bas > div { scroll-padding-left: 60px; } }
+/* très petit écran (320–360 px) : le bouton Menu garde son nom accessible mais ne montre que son icône, pour que le profil reste dans l'écran */
+@media (max-width: 360px) { .menu-mobile span { display: none; } .menu-mobile { width: 44px; padding: 0; justify-content: center; } }
