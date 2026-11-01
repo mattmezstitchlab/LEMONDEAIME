@@ -1,0 +1,64 @@
+/* La fiche contextuelle : uniquement les jetons d'aime.css ([data-aime]). Aucun jeton nouveau, aucune couleur écrite ici
+   (la couleur du fil montré est une DONNÉE, posée en ligne). États : glyphe + type de trait, jamais la couleur seule. */
+.fc { font-family: var(--aime-police); color: var(--aime-texte); display: grid; gap: 14px; min-width: 0; }
+.fc p, .fc h2, .fc h3, .fc h4, .fc ul, .fc dl, .fc dd { margin: 0; }
+.fc :focus-visible { outline: 2px solid var(--aime-focus); outline-offset: 3px; }
+.fc-sur { font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--aime-texte-2); font-weight: 600; }
+.fc-titre { font-size: clamp(1.3rem, 3vw, 2rem); font-weight: var(--aime-titre-graisse); letter-spacing: var(--aime-titre-chasse); line-height: 1.1; text-wrap: balance; }
+.fc-sous { color: var(--aime-texte-2); }
+.fc-glyphe { display: inline-grid; place-items: center; min-width: 1.35em; height: 1.35em; margin-right: .5em; border: 1.5px solid currentColor; border-radius: 6px; font-size: .78em; font-weight: 700; line-height: 1; }
+.fc-etat { display: flex; align-items: center; font-size: .86rem; color: var(--aime-texte-2); }
+.fc-etat[data-etat="partielle"] .fc-glyphe { border-style: dashed; }
+
+/* l'aperçu : la couleur d'écran du fil */
+.fc-apercu { display: grid; place-items: center; width: 96px; height: 96px; border-radius: var(--aime-r-grand); border: 1px solid var(--aime-bordure-forte); font-size: .72rem; font-weight: 600; letter-spacing: .04em; flex: none; }
+.fc-apercu-image { object-fit: cover; }
+
+/* en présentation « disque » : tient dans le centre du Disque */
+.fc-disque { justify-items: center; text-align: center; gap: 4px; }
+.fc-disque .fc-apercu { width: clamp(36px, 14%, 56px); height: auto; aspect-ratio: 1; border-radius: 50%; font-size: 0; }  /* l'hexa est dit dans la fiche étendue ; ici l'aria-label suffit */
+.fc-disque .fc-titre { font-size: 1.2rem; }
+.fc-disque .fc-ligne { font-size: .8rem; color: var(--aime-texte-2); display: flex; align-items: center; justify-content: center; }
+.fc-disque .fc-etat { font-size: .74rem; justify-content: center; }
+/* le centre du Disque est petit : « Tout voir » est dans la couronne (même action, au clavier comme au toucher) */
+.fc-disque .fc-tout { min-height: 44px; padding: 0 16px; margin-top: 4px; display: none; }
+.fc-disque .fc-ligne[data-statut="manquant"] .fc-glyphe, .fc-disque .fc-glyphe { margin-right: .4em; }
+
+/* en présentation « etendu » */
+.fc-etendu { width: min(100%, 760px); gap: 28px; padding: clamp(20px, 4vw, 40px); box-sizing: border-box; }
+.fc-tete { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.fc-etendu h3 { font-size: 1.05rem; font-weight: 650; margin-bottom: 10px; }
+.fc-etendu h4 { font-size: .9rem; font-weight: 650; margin: 14px 0 6px; }
+.fc-faits { display: grid; gap: 0; border-top: 1px solid var(--aime-bordure); }
+.fc-fait { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: 4px 16px; padding: 10px 0; border-bottom: 1px solid var(--aime-bordure); }
+.fc-fait dt { color: var(--aime-texte-2); font-size: .88rem; }
+.fc-fait dd { display: grid; gap: 2px; min-width: 0; }
+.fc-valeur { overflow-wrap: anywhere; }
+.fc-prov { font-size: .76rem; color: var(--aime-texte-2); display: flex; align-items: center; }
+.fc-prov .fc-glyphe { margin-right: .45em; }
+.fc-fait[data-statut="manquant"] { border-bottom-style: dashed; }
+.fc-fait[data-statut="manquant"] .fc-valeur { font-style: italic; color: var(--aime-texte-2); }
+.fc-fait[data-statut="manquant"] .fc-glyphe { border-style: dashed; }
+.fc-fait[data-statut="calcule"] .fc-glyphe { border-style: dotted; }
+.fc-manque { font-style: normal; }
+
+.fc-relations, .fc-actions, .fc-sources, .fc-limites { list-style: none; padding: 0; display: grid; gap: 8px; }
+.fc-relation { display: grid; gap: 2px; width: 100%; text-align: left; font: inherit; color: inherit; padding: 12px 14px; border: 1px solid var(--aime-bordure-forte); border-radius: var(--aime-r); background: var(--aime-surface); min-height: 44px; box-sizing: border-box; }
+button.fc-relation { cursor: pointer; } button.fc-relation:hover { background: var(--aime-surface-2); }
+.fc-relation span { font-size: .84rem; color: var(--aime-texte-2); } .fc-relation small { font-size: .78rem; color: var(--aime-texte-2); }
+.fc-actions li { display: grid; gap: 6px; justify-items: start; }
+.fc-actions li p { font-size: .84rem; color: var(--aime-texte-2); }
+.fc-resultat { min-height: 1.6em; margin-top: 10px; font-size: .92rem; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 .4em; }
+.fc-resultat[data-ok="false"] { color: var(--aime-erreur); } .fc-resultat[data-ok="true"] .fc-glyphe { color: var(--aime-succes); }
+.fc-resultat small { color: var(--aime-texte-2); }
+.fc-version { font-size: .9rem; margin-bottom: 8px; }
+.fc-sources li { display: grid; gap: 2px; font-size: .88rem; } .fc-sources small { color: var(--aime-texte-2); font-size: .78rem; } .fc-sources span { color: var(--aime-texte-2); font-size: .78rem; }
+.fc-limites { list-style: disc; padding-left: 1.2em; gap: 6px; font-size: .86rem; color: var(--aime-texte-2); }
+.fc-note { font-size: .9rem; color: var(--aime-texte-2); }
+.fc-vide { justify-items: center; text-align: center; color: var(--aime-texte-2); font-size: .9rem; } .fc-titre-vide { font-weight: 650; color: var(--aime-texte); }
+
+@media (max-width: 560px) { .fc-fait { grid-template-columns: minmax(0, 1fr); } .fc-tete { gap: 14px; } .fc-apercu { width: 72px; height: 72px; } }
+@media (prefers-reduced-motion: no-preference) { button.fc-relation { transition: background var(--aime-duree) var(--aime-courbe); } }
+
+/* téléphone : le centre du Disque ne garde que l'identité ; le reste est dans « Tout voir » plutôt que rogné en silence */
+@media (max-width: 560px) { .fc-disque .fc-ligne, .fc-disque .fc-etat { display: none; } .fc-disque .fc-titre { font-size: 1.05rem; } }

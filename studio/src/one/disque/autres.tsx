@@ -7,20 +7,29 @@
  *  - Les univers non raccordés : leur statut réel et leur présentation, sans simuler un fonctionnement.
  */
 import { useEffect, useState } from "react";
-import { BookOpen, Camera, Expand, FolderOpen, Scissors, Sparkles } from "lucide-react";
-import { FLOSS } from "../../lib/dmc";
+import { BookOpen, Camera, Expand, FolderOpen, Palette, Scissors, Sparkles } from "lucide-react";
+import { BASE_FLOSS, FLOSS } from "../../lib/dmc";
 import { loadStored } from "../../lib/store";
 import { NOMS_STATUTS, type Univers } from "../../lib/one/contrat";
 import type { ContexteUnivers } from "../../lib/one/contextes";
+import { adresse, lireAdresse } from "../../lib/fiche/registre";
+import { FilsDmc } from "./fils";
 import { IconeOne } from "../../components/one/icones";
 import { PROTOTYPES } from "../../lib/site";
 
+/** Broderie : la toile en cours (par défaut), ou la fiche d'un fil DMC quand un fil est choisi (?o=dmc-310) */
 export const BRODERIE: ContexteUnivers = {
   id: "broderie", permissions: { partager: false, modifier: true, supprimer: false },
-  Composant({ outils, publier }) {
+  Composant(p) { return lireAdresse(p.etat.o)?.domaine === "dmc" ? <FilsDmc {...p} /> : <Toile {...p} />; },
+};
+type PropsContexte = Parameters<ContexteUnivers["Composant"]>[0];
+
+function Toile({ outils, publier }: PropsContexte) {
     const [p] = useState(() => { try { return loadStored(); } catch { return null; } });
     const [img, setImg] = useState("");
     const fils = p ? [...new Set(Array.from((p as unknown as { cross: ArrayLike<number> }).cross).filter(f => f >= 0))] : [];
+    /* le fil par lequel on entre dans les fiches : le premier de la toile, sinon le DMC 310 (un fil de la table) */
+    const premierFil = adresse("dmc", fils.find(f => f < BASE_FLOSS.length) !== undefined ? FLOSS[fils.find(f => f < BASE_FLOSS.length)!].code : "310");
     useEffect(() => {
       if (!p) return;
       const cross = (p as unknown as { cross: ArrayLike<number> }).cross, s = Math.max(1, Math.floor(400 / Math.max(p.w, p.h)));
@@ -33,19 +42,21 @@ export const BRODERIE: ContexteUnivers = {
       publier([
         { id: "br-decouvrir", nom: "Découvrir", groupe: "metier", icone: <BookOpen aria-hidden="true" />, aide: "la landing Point Zéro : l’histoire de la broderie, puis « Créer mon patron »", ouvrir: () => outils.deployer("?edition") },
         { id: "br-atelier", nom: p ? "Continuer" : "Commencer", groupe: "metier", icone: <Scissors aria-hidden="true" />, aide: "l’atelier en plein écran ; le Disque garde ce contexte pour le retour", ouvrir: () => outils.deployer("atelier") },
+        { id: "br-fils", nom: "Fils DMC", groupe: "metier", icone: <Palette aria-hidden="true" />, aide: "une fiche pour chacun des 489 fils : sa couleur, son stock, son usage, ses voisins", ouvrir: () => outils.aller({ o: premierFil, f: undefined }) },
         { id: "br-ouvrages", nom: "Mes ouvrages", groupe: "metier", icone: <FolderOpen aria-hidden="true" />, aide: "le Bureau : tous vos ouvrages", ouvrir: () => outils.changerUnivers("bureau") },
         ...(PROTOTYPES ? [{ id: "br-rosaces", nom: "Rosaces", groupe: "metier" as const, icone: <Sparkles aria-hidden="true" />, aide: "la Galerie des rosaces du moteur 5D", ouvrir: () => outils.changerUnivers("galerie") }] : []),
         { id: "br-tambour", nom: "Tambour", groupe: "metier", icone: <Camera aria-hidden="true" />, aide: "le Tambour vivant : de la caméra au point", ouvrir: () => outils.deployer("tambour") },
       ], p ? `La toile en cours : « ${p.name} » · ${p.w} × ${p.h} points · ${fils.length} fils` : "Aucune toile ouverte dans l’atelier sur cet appareil.");
     }, [p?.name]); // eslint-disable-line react-hooks/exhaustive-deps
     if (!p) return <div className="dq-vide"><p className="dq-vide-titre">La toile est vierge</p><p>Une photographie devient un patron : importez-la dans l’atelier.</p>
-      <div className="dq-vide-gestes"><button type="button" className="one-bouton" onClick={() => outils.deployer("atelier")}>Commencer</button><button type="button" className="one-bouton" onClick={() => outils.deployer("?edition")}>Découvrir</button></div></div>;
+      <div className="dq-vide-gestes"><button type="button" className="one-bouton" onClick={() => outils.deployer("atelier")}>Commencer</button><button type="button" className="one-bouton" onClick={() => outils.deployer("?edition")}>Découvrir</button><button type="button" className="one-bouton" onClick={() => outils.aller({ o: premierFil, f: undefined })}>Parcourir les fils DMC</button></div></div>;
     return <figure className="dq-broderie">
       {img && <img className="dq-ouvrage-img" src={img} alt={`La toile en cours : ${p.name}`} />}
-      <figcaption className="dq-fils" aria-label="Les fils">{fils.slice(0, 12).map(f => <i key={f} title={`DMC ${FLOSS[f]?.code} — ${FLOSS[f]?.name}`} style={{ background: FLOSS[f]?.hex }} />)}{fils.length > 12 && <span>+{fils.length - 12}</span>}</figcaption>
+      <figcaption className="dq-fils" aria-label="Les fils">{fils.slice(0, 12).map(f => f < BASE_FLOSS.length
+        ? <button key={f} type="button" className="dq-fil" title={`DMC ${FLOSS[f].code} — ${FLOSS[f].name}`} aria-label={`Voir la fiche du fil DMC ${FLOSS[f].code}, ${FLOSS[f].name}`} style={{ background: FLOSS[f].hex }} onClick={() => outils.aller({ o: adresse("dmc", FLOSS[f].code), f: undefined })} />
+        : <i key={f} title={`Mélange ${FLOSS[f]?.name ?? ""}`} style={{ background: FLOSS[f]?.hex }} />)}{fils.length > 12 && <span>+{fils.length - 12}</span>}</figcaption>
     </figure>;
-  },
-};
+}
 
 /** un espace qui est déjà un Disque plein écran : on le déploie, le retour est gardé */
 export const deploiement = (id: string, chemin: string, ce: string): ContexteUnivers => ({
