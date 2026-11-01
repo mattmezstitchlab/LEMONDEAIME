@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
-import { Tete, Verbe, DockBas, Pied, Orbe } from '../charte/Charte';
+import { Tete, DockBas, Pied, Orbe } from '../charte/Charte';
+import VerbesAccueil from '../charte/VerbesAccueil';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { useProjets } from '../lib/projets';
@@ -29,12 +30,7 @@ export default function Accueil() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/" verbes={<>
-        <Verbe href={DESTINATIONS.organiser.href}>Organiser</Verbe>
-        <Verbe href={DESTINATIONS.creer.href}>Créer</Verbe>
-        <Verbe href={DESTINATIONS.projets.href}>Mes projets</Verbe>
-        <Verbe href={DESTINATIONS.decouvrir.href}>Découvrir</Verbe>
-      </>} />
+      <Tete courant="/" verbes={<VerbesAccueil />} />
       <main id="contenu">
         <div className="ac-cadre">
           <section className="ac-hero" id="entree" aria-labelledby="titre-entree">
@@ -105,6 +101,15 @@ export default function Accueil() {
           <p style={{ marginTop: 40 }}><Lien className="bouton" href="/projets">Tous les projets</Lien> <Lien className="bouton" href="/reseau">Le réseau</Lien></p>
         </section>
 
+        <section className="section" id="uptown" aria-labelledby="titre-uptown" style={{ paddingInline: 'var(--marge)' }}>
+          <div className="ac-entete">
+            <p className="surtitre">Une œuvre, point par point</p>
+            <h2 id="titre-uptown" className="grand-mot">UPTOWN, brodé.</h2>
+            <p>Le clip de Matt à Saint-Luc, restauré puis brodé sur « Amor amour 2 », sa musique : chaque image est dessinée en 160 × 160 points, chaque point est un fil DMC.</p>
+          </div>
+          <p style={{ marginTop: 24 }}><a className="bouton" href="/studio/uptown">Voir le clip brodé<span className="sr-only"> (s’ouvre dans le Studio)</span></a></p>
+        </section>
+
         <section className="ac-bande" aria-label="Une seule maison">
           <p className="surtitre" style={{ color: 'rgba(255,255,255,.7)' }}>LE MONDE AIME®</p>
           <p className="grand-mot">Une seule maison, plusieurs façons d’y entrer.</p>
@@ -113,7 +118,7 @@ export default function Accueil() {
           </ul>
         </section>
       </main>
-      <DockBas lieux={[['entree', 'Entrée'], ['intention', 'Question'], ['chemins', 'Chemins'], ['decouvrir', 'Découvrir']]} />
+      <DockBas lieux={[['entree', 'Entrée'], ['intention', 'Question'], ['chemins', 'Chemins'], ['decouvrir', 'Découvrir'], ['uptown', 'UPTOWN']]} />
       <Pied />
     </>
   );

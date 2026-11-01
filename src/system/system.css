@@ -1,0 +1,142 @@
+/* AIME SYSTEM : la page. Uniquement les tokens de aime.css ([data-aime]) ; aucun jeton nouveau.
+   Le nacré vient de --aime-nacre et --aime-halo. Un état n'est jamais porté par la couleur seule : un signe + un trait (plein, tireté, pointillé, double). */
+.sys { background: var(--aime-fond); color: var(--aime-texte); font-family: var(--aime-police); padding-block: clamp(32px, 6vw, 88px) clamp(56px, 8vw, 112px); padding-inline: var(--marge, 16px); overflow-x: clip; }
+.sys *, .sys *::before, .sys *::after { box-sizing: border-box; }
+.sys-in { max-width: 1180px; margin: 0 auto; display: grid; gap: clamp(48px, 7vw, 96px); }
+.sys h1, .sys h2, .sys h3 { font-weight: var(--aime-titre-graisse); letter-spacing: var(--aime-titre-chasse); text-wrap: balance; margin: 0; }
+.sys h1 { font-size: clamp(36px, 7vw, 84px); line-height: 1.02; max-width: 16ch; }
+.sys h2 { font-size: clamp(26px, 3.6vw, 44px); line-height: 1.08; max-width: 24ch; }
+.sys h3 { font-size: 20px; line-height: 1.2; }
+.sys h2:focus { outline: none; }
+.sys p, .sys li, .sys dd { line-height: 1.55; }
+.sys p { margin: 0; }
+.sys code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .86em; overflow-wrap: anywhere; }
+.sys a { color: var(--aime-texte); text-underline-offset: 3px; }
+.sys :focus-visible { outline: 3px solid var(--aime-focus); outline-offset: 3px; }
+.sys-sur { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--aime-texte-2); font-weight: 600; }
+.sys-note { font-size: 14px; color: var(--aime-texte-2); max-width: 70ch; }
+.sys-texte { color: var(--aime-texte-2); max-width: 62ch; font-size: clamp(16px, 1.6vw, 19px); }
+.sys-pied { font-size: 13px; color: var(--aime-texte-3, var(--aime-texte-2)); max-width: 70ch; }
+
+/* le héros : un orbe nacré, atmosphérique, qui ne porte aucune information */
+.sys-hero { position: relative; display: grid; gap: 18px; align-content: start; padding-block: clamp(8px, 4vw, 48px); isolation: isolate; }
+.sys-orbe { position: absolute; z-index: -1; right: clamp(-120px, -6vw, 0px); top: clamp(-20px, 2vw, 24px); width: clamp(180px, 36vw, 440px); aspect-ratio: 1; border-radius: 50%;
+  background: var(--aime-nacre); box-shadow: 0 0 0 1px var(--aime-bordure), 0 30px 90px var(--aime-halo), inset 0 0 60px var(--aime-halo); opacity: .9; animation: sys-flotte 14s ease-in-out infinite alternate; }
+.sys-fondu { background: var(--aime-titre-fondu); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@supports not (background-clip: text) { .sys-fondu { color: var(--aime-texte-2); background: none; } }
+.sys-chapeau { font-size: clamp(17px, 1.8vw, 21px); color: var(--aime-texte-2); max-width: 58ch; }
+.sys-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+.sys-bouton { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; padding: 0 22px; border-radius: var(--aime-pilule); border: 1px solid var(--aime-bordure-forte); background: var(--aime-surface); color: var(--aime-texte); font: inherit; font-size: 15px; text-decoration: none; cursor: pointer; transition: background var(--aime-duree, .2s) var(--aime-courbe, ease); }
+.sys-bouton:hover { background: var(--aime-surface-2); }
+.sys-bouton.primaire, .sys a.sys-bouton.primaire { background: var(--aime-primaire); color: var(--aime-primaire-texte); border-color: var(--aime-primaire); }
+.sys-bouton.primaire:hover { background: var(--aime-primaire-survol); }
+.sys-bouton[aria-pressed="true"] { background: var(--aime-selection); color: var(--aime-selection-texte); border-color: var(--aime-selection); }
+.sys-barre { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: flex-start; margin-top: 18px; }
+.sys-seg { display: inline-flex; padding: 3px; border-radius: var(--aime-pilule); background: var(--aime-secondaire); border: 1px solid var(--aime-bordure); }
+.sys-seg button { min-height: 44px; min-width: 64px; padding: 0 16px; border: 0; border-radius: var(--aime-pilule); background: transparent; color: var(--aime-secondaire-texte); font: inherit; font-size: 14px; cursor: pointer; }
+.sys-seg button[aria-checked="true"] { background: var(--aime-primaire); color: var(--aime-primaire-texte); }
+.sys-legende { flex: 1 1 260px; min-width: 0; font-size: 14px; }
+.sys-legende summary { min-height: 44px; display: inline-flex; align-items: center; cursor: pointer; color: var(--aime-texte-2); }
+.sys-legende ul { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; }
+.sys-legende li { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; font-size: 13px; color: var(--aime-texte-2); }
+
+/* l'état : un signe, un trait (plein / tireté / pointillé / double) et, en plus seulement, la couleur */
+.sys-statut { display: inline-flex; align-items: center; gap: 8px; width: fit-content; min-height: 28px; padding: 0 12px 0 8px; border-radius: var(--aime-pilule); border: 2px solid currentColor; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--aime-texte); background: var(--aime-surface); }
+.sys-statut-g { display: inline-grid; place-items: center; width: 1.5em; height: 1.5em; font-size: 14px; }
+.sys-statut[data-statut="reel"] { border-style: solid; color: var(--aime-succes); }
+.sys-statut[data-statut="demonstration"] { border-style: double; border-width: 4px; padding-inline: 8px 10px; color: var(--aime-focus); }
+.sys-statut[data-statut="prototype"] { border-style: dashed; color: var(--aime-texte); }
+.sys-statut[data-statut="aconstruire"] { border-style: dotted; color: var(--aime-texte-2); }
+
+.sys-section { display: grid; gap: 28px; align-content: start; min-width: 0; scroll-margin-top: 0; }
+.sys-section-tete { display: grid; gap: 14px; justify-items: start; }
+.sys-reserve { min-height: 120px; }
+.sys-attente { font-size: 14px; color: var(--aime-texte-2); }
+
+/* le Disque + la fiche entière */
+.sys-disque-grille { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.sys-disque-col { display: grid; gap: 18px; min-width: 0; justify-items: center; }
+.sys-fiche { min-width: 0; border-radius: var(--aime-r-grand); border: 1px solid var(--aime-bordure); background: var(--aime-surface); }
+.sys-echiquier-grille { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 40px); align-items: start; }
+.sys-echiquier-col { display: grid; gap: 16px; min-width: 0; }
+.sys-fiche-collante { position: sticky; top: 110px; }
+.sys-essais { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 14px; color: var(--aime-texte-2); }
+.df { width: 100%; display: grid; gap: 10px; }
+.df-dit { min-height: 1.6em; text-align: center; font-size: 14px; color: var(--aime-texte-2); }
+/* la lumière nacrée est une finition de l'objet : un liseré sur le bord du centre, rien derrière ni autour du Disque */
+.sys .df .one-centre { border: 3px solid transparent; background: linear-gradient(var(--aime-surface), var(--aime-surface)) padding-box, var(--aime-nacre) border-box; }
+.df, .df .one-disque, .df .one-disque-hote { background: none; box-shadow: none; overflow: visible; }
+.df-dit { position: relative; z-index: 1; }
+
+/* les capacités */
+.sys-cartes, .sys-cubes, .sys-compte, .sys-etats, .sys-liens, .sys-legende { list-style: none; margin: 0; padding: 0; }
+.sys-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+.sys-carte { display: grid; gap: 12px; align-content: start; padding: 22px; border-radius: var(--aime-r-grand); border: 1px solid var(--aime-bordure); background: var(--aime-surface); min-width: 0; }
+.sys-carte p { color: var(--aime-texte-2); }
+.sys-carte dl, .sys-duo dl { display: grid; gap: 10px; margin: 0; font-size: 14px; }
+.sys-carte dt, .sys-duo dt { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--aime-texte-2); }
+.sys-carte dd, .sys-duo dd { margin: 2px 0 0; min-width: 0; }
+
+/* thèmes : six cubes, chacun ouvre la fiche */
+.sys-cubes { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 120px), 1fr)); gap: 8px; }
+.sys-cube { width: 100%; min-height: 64px; display: grid; gap: 4px; align-content: center; justify-items: start; padding: 10px 14px; border-radius: var(--aime-r); border: 1px solid var(--aime-bordure-forte); background: var(--aime-surface); color: var(--aime-texte); font: inherit; text-align: left; cursor: pointer; transition: transform var(--aime-duree, .2s) var(--aime-courbe, ease), background var(--aime-duree, .2s); }
+.sys-cube b { font-size: 16px; }
+.sys-cube span { font-size: 13px; color: var(--aime-texte-2); }
+.sys-cube:hover { background: var(--aime-surface-2); transform: translateY(-2px); }
+.sys-cube[aria-pressed="true"] { background: var(--aime-selection); color: var(--aime-selection-texte); border-color: var(--aime-selection); }
+.sys-cube[aria-pressed="true"] span { color: inherit; opacity: .85; }
+
+/* échiquier */
+.sys-compte { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 14px; }
+.sys-compte li { display: inline-flex; align-items: center; gap: 8px; }
+.sys-compte b { font-variant-numeric: tabular-nums; }
+.sys-g { display: inline-grid; place-items: center; min-width: 1.4em; height: 1.4em; border-radius: 6px; border: 2px solid currentColor; font-weight: 700; font-size: 13px; line-height: 1; color: var(--aime-texte-2); }
+.sys-tab { overflow-x: auto; max-width: 100%; }
+.sys-echiquier { border-collapse: separate; border-spacing: 4px; margin: 0 auto; }
+.sys-echiquier th { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--aime-texte-2); font-weight: 600; padding: 2px 4px; text-align: center; }
+.sys-echiquier th[scope="row"] { text-align: right; }
+.sys-echiquier td { padding: 0; }
+.sys-echiquier button { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 10px; border: 2px solid var(--aime-bordure-forte); background: var(--aime-surface); color: var(--aime-texte-2); font: inherit; font-weight: 700; font-size: 14px; cursor: pointer; }
+.sys-echiquier button:hover { background: var(--aime-surface-2); }
+.sys-echiquier button[data-etat="teste-reussi"] { color: var(--aime-succes); border-color: currentColor; }
+.sys-echiquier button[data-etat="test-echoue"] { color: var(--aime-erreur); border-color: currentColor; }
+.sys-echiquier button[data-etat="present-sans-test"], .sys-echiquier button[data-etat="teste-non-rejoue"] { border-style: dashed; color: var(--aime-texte); }
+.sys-echiquier button[data-etat="reserve"], .sys-echiquier button[data-etat="rien"], .sys-echiquier button[data-etat="hors-depot"] { border-style: dotted; }
+.sys-echiquier button[aria-current="true"] { background: var(--aime-selection); color: var(--aime-selection-texte); border-color: var(--aime-selection); border-style: solid; outline: 2px solid var(--aime-selection); outline-offset: 2px; }
+.sys-echiquier button[aria-current="true"]::after { content: ""; }
+
+/* jumeau, ripple, démos, liens */
+.sys-etats { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 12px; counter-reset: e; }
+.sys-etats li { display: grid; gap: 4px; padding: 16px; border: 1px dotted var(--aime-bordure-forte); border-radius: var(--aime-r); font-size: 14px; color: var(--aime-texte-2); }
+.sys-etats b { color: var(--aime-texte); font-size: 15px; }
+.sys-duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px; }
+.sys-duo ul { margin: 12px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.sys-duo dl > div { padding-block: 8px; border-top: 1px solid var(--aime-bordure); }
+.sys-demos { display: grid; gap: 20px; }
+.sys-demo { display: grid; gap: 18px; padding: clamp(18px, 3vw, 32px); border-radius: var(--aime-r-grand); border: 1px solid var(--aime-bordure); background: var(--aime-surface); min-width: 0; }
+.sys-demo header { display: grid; gap: 10px; justify-items: start; }
+.sys-demo header p { color: var(--aime-texte-2); max-width: 62ch; }
+.sys-etapes { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; font-size: 14px; color: var(--aime-texte-2); }
+.sys-reste { font-size: 14px; color: var(--aime-texte-2); max-width: 70ch; padding-top: 14px; border-top: 1px solid var(--aime-bordure); }
+.sys-liens { display: grid; gap: 12px; }
+.sys-liens li { display: grid; gap: 2px; }
+.sys-liens span { font-size: 14px; color: var(--aime-texte-2); }
+
+/* broderie */
+.sys-broderie { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 24px; align-items: start; }
+.sys-broderie-motif { display: grid; place-items: center; padding: 10px; border-radius: 50%; background: var(--aime-nacre); max-width: 300px; }
+.sys-broderie-motif canvas, .sys-broderie-motif svg { max-width: 100%; height: auto; }
+.sys-broderie-texte { display: grid; gap: 14px; min-width: 0; }
+.sys-puces { display: flex; flex-wrap: wrap; gap: 8px; }
+.sys-puce { min-height: 44px; padding: 0 14px; border-radius: var(--aime-pilule); border: 1px solid var(--aime-bordure-forte); background: var(--aime-surface); color: var(--aime-texte); font: inherit; font-size: 14px; cursor: pointer; }
+.sys-puce[aria-pressed="true"] { background: var(--aime-selection); color: var(--aime-selection-texte); border-color: var(--aime-selection); }
+.sys-prov { display: grid; gap: 0; margin: 0; font-size: 14px; }
+.sys-prov > div { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 12px; padding-block: 8px; border-top: 1px solid var(--aime-bordure); }
+.sys-prov dt { color: var(--aime-texte-2); }
+.sys-prov dd { margin: 0; overflow-wrap: anywhere; }
+
+@keyframes sys-flotte { from { transform: translateY(0) rotate(0deg); } to { transform: translateY(14px) rotate(6deg); } }
+@media (max-width: 900px) { .sys-disque-grille, .sys-echiquier-grille { grid-template-columns: minmax(0, 1fr); } .sys-fiche-collante { position: static; } .sys-broderie { grid-template-columns: minmax(0, 1fr); } .sys-broderie-motif { margin-inline: auto; } }
+@media (max-width: 480px) { .sys-echiquier button { width: 38px; height: 38px; } .sys-prov > div { grid-template-columns: minmax(0, 1fr); gap: 2px; } .sys-orbe { opacity: .55; } }
+@media (prefers-reduced-motion: reduce) { .sys-orbe { animation: none; } .sys-cube { transition: none; } .sys-cube:hover { transform: none; } }
+@media (forced-colors: active) { .sys-statut, .sys-g, .sys-echiquier button { border-color: CanvasText; } .sys-fondu { color: CanvasText; background: none; } }

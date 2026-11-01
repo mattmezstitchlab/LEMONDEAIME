@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build && cp dist/index.html dist/404.html && npm run build:studio",
     "preview": "vite preview",
-    "test": "node --test tests/server/*.test.mjs",
+    "test": "node --test tests/server/*.test.mjs tests/systaime/*.test.mjs",
     "verify": "npm run test && npm run build",
     "build:studio": "cd studio && AIME_BASE=/studio/ npm run build && rm -rf ../dist/studio && cp -r dist ../dist/studio",
     "test:studio": "cd studio && npm run test:api && npx vitest run"
