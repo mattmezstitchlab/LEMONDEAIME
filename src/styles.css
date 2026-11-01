@@ -545,3 +545,8 @@ html.calme .carte-flip > .dos { opacity: 0; } html.calme .carte-flip.retournee >
 @media (max-width: 640px) { .dock-bas > div { scroll-padding-left: 60px; } }
 /* très petit écran (320–360 px) : le bouton Menu garde son nom accessible mais ne montre que son icône, pour que le profil reste dans l'écran */
 @media (max-width: 360px) { .menu-mobile span { display: none; } .menu-mobile { width: 44px; padding: 0; justify-content: center; } }
+
+.rubrique-publique { max-width: 1100px; min-height: 65vh; padding: clamp(40px, 7vw, 90px) var(--marge) 100px; margin: auto; }
+.rubrique-publique h1 { font-size: clamp(42px, 7vw, 100px); line-height: 1; }
+.rubrique-publique section { max-width: 750px; margin-top: 48px; font-size: 20px; line-height: 1.6; }
+.rubrique-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }

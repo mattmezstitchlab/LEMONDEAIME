@@ -45,7 +45,7 @@ try {
     const gate = new Promise(r => release = r), request = new Promise(r => reached = r);
     await p.route('**/studio/clip/fleur-du-ciel/' + resource, async r => { reached(); await gate; if (sortie === 'erreur-tardive') await r.abort(); else await r.continue(); });
     await goto(p, '/?ouverture=1'); await p.getByRole('button', { name: /Lancer avec le son/ }).click(); await request;
-    if (sortie === 'quitter') { await p.locator('.dock-haut a[href="/projets"]').first().click(); }
+    if (sortie === 'quitter') { await p.locator('.aime-header-liens a[href="/projets-a-venir"]').first().click(); }
     else await p.getByRole('button', { name: 'Passer l’introduction' }).click();
     release(); await pause(900);
     ok(await p.evaluate(() => window.__plays === 0 && window.__draws === 0), `${resource}/${sortie} : ni audio ni rendu après sortie`);
@@ -81,8 +81,7 @@ try {
     ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width} : aucun débordement`);
     await p.getByRole('button', { name: /Lancer avec le son/ }).click(); await p.getByRole('button', { name: 'Pause', exact: true }).waitFor();
     await p.waitForFunction(() => window.__draws > 1);
-    // Le rendu WebGL logiciel peut empêcher le critère de stabilité Playwright ; clic pointeur sur le contrôle visible.
-    await p.getByRole('button', { name: 'Passer l’introduction' }).click({ force: true }); await pause(100);
+    await p.getByRole('button', { name: 'Passer l’introduction' }).click(); await pause(100);
     const before = await p.evaluate(() => window.__draws); await pause(450);
     ok(await p.evaluate(() => window.__audio.every(a => a.paused && !a.getAttribute('src'))), `${width} : audio arrêté et source libérée`);
     ok(await p.evaluate(() => window.__draws) === before, `${width} : rendu arrêté après fermeture`);
@@ -94,41 +93,15 @@ try {
   // Studio : lien direct, rechargement, retour accueil, puis site -> studio -> site.
   for (const route of ['/studio/', '/studio/atelier', '/studio/uptown', '/studio/fleur-du-ciel']) {
     const p = await page(390); await goto(p, route); await p.reload({ waitUntil: 'domcontentloaded' });
-    const link = p.getByRole('link', { name: 'AIME, Le Monde AIME', exact: true });
-    if (route === '/studio/atelier' || route === '/studio/') { // Sur téléphone la marque est masquée par la charte ; la flèche reste disponible.
-      const retour = p.getByRole('button', { name: /Revenir sur Le Monde AIME|Retour au site/ }).first();
-      await retour.waitFor(); await retour.click();
-    } else { await link.waitFor(); await link.click(); }
+    const link = p.locator('.aime-header-logo');
+    await link.waitFor(); await link.click();
     await p.waitForURL(base + '/'); ok(true, `${route} : accès direct + rechargement + retour accueil`);
     await p.context().close();
-  }
-  {
-    const p = await page(); await goto(p, '/projets'); await p.goto(base + '/studio/', {waitUntil: 'domcontentloaded', referer: base + '/projets'});
-    await p.getByRole('button', { name: 'Revenir sur Le Monde AIME', exact: true }).click();
-    await p.waitForURL(base + '/projets'); ok(true, 'site -> Studio -> retour au site'); await p.context().close();
-  }
-  // Régression Arena : l'atelier utilise pushState ; history.back() ramènerait au Studio.
-  for (const reload of [false, true]) {
-    const p = await page(390); await goto(p, '/projets');
-    await p.goto(base + '/studio/', { waitUntil: 'domcontentloaded', referer: base + '/projets' });
-    await p.getByRole('button', { name: 'Créer mon patron', exact: true }).click();
-    await p.waitForURL(base + '/studio/atelier');
-    if (reload) await p.reload({ waitUntil: 'domcontentloaded' });
-    await p.getByRole('button', { name: 'Revenir sur Le Monde AIME', exact: true }).click();
-    await p.waitForURL(base + '/projets');
-    ok(true, `Site -> Studio -> Atelier -> site, rechargement=${reload}`);
-    await p.context().close();
-  }
-  for (const [label, destination] of [['Organiser', '/aime-wedding'], ['Créer', '/studio/atelier'], ['Mes projets', '/buro'], ['Découvrir', '/projets']]) {
-    const p = await page(); await goto(p, '/');
-    await p.locator('.dock-haut').getByRole('link', {name: label, exact: true}).click();
-    await p.waitForURL(base + destination); await p.locator('main, .pz-atelier').first().waitFor();
-    ok(true, `accueil : clic ${label} -> ${destination}`); await p.context().close();
   }
   for (const route of ['/', '/aime-wedding', '/point-zero', '/buro', '/projets', '/reseau', '/system', '/systaime']) {
     const p = await page(); const r = await goto(p, route); await p.locator('main').waitFor();
     ok(r.status() === 200, `route ${route} : shell 200 et main rendu (API simulées)`);
-    for (const label of ['Organiser', 'Créer', 'Mes projets', 'Découvrir']) ok(await p.locator('.dock-haut').getByRole('link', { name: label, exact: true }).count() > 0, `${route} : chemin ${label}`);
+    for (const label of ['Accueil', 'Broderie', 'Mariage', 'Projets à venir', 'À propos', 'Contact']) ok(await p.locator('.aime-header-public').getByRole('link', { name: label, exact: true }).count() > 0, `${route} : chemin ${label}`);
     await p.context().close();
   }
   for (const width of [390, 360]) {

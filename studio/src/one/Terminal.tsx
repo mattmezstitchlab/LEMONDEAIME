@@ -177,11 +177,11 @@ export default function Terminal({ relation = false }: { relation?: boolean } = 
   const vue = <Centre centre={centre} moteur={moteur} occupe={occupe} lancer={lancer} rafraichir={rafraichir} derniere={derniere} etendu={etendu} basculer={() => setEtendu(!etendu)}
     orbe={relation ? <OrbeRelation reponse={rep} evenement={evenement} onEvenement={c => { setEvenement(null); void choixOrbe(c); }} points={points} occupe={occupe} retrait={centre.genre === "audio" || centre.genre === "sortie" || centre.genre === "progression"} onIntention={intention} onChoix={c => void choixOrbe(c)} onFermer={() => setRep(null)} /> : undefined} />;
   return <div className={"one ot" + (relation ? " ot-relation" : "")} data-aime={theme} data-etendu={etendu ? "oui" : "non"}>
-    <header className="one-tete">
+    <section className="one-tete" aria-label="Contexte de l’expérience">
       <a className="one-marque" href={import.meta.env.BASE_URL + "one/univers"}><span className="one-orbe" aria-hidden="true" />.0NE</a>
       <p className="ot-titre">Disque Terminal <span className="om-statut om-experimental">{relation ? "Preuve : l’Orbe relationnelle" : "Expérimental"}</span></p>
       <p className="ot-source" title="Le dossier sur lequel agit le Disque">{ic("dossier")}{moteur?.fs.nom ?? "…"}</p>
-    </header>
+    </section>
     {etendu
       ? <main className="ot-etendu">{vue}<div className="ot-point"><Point contexte="terminal-etendu" etiquette="Le Disque Terminal" modes={decores} /></div></main>
       : <main className="ot-scene"><DisqueOne contexte="terminal" etiquette="Le Disque Terminal : familles de commandes ; le centre montre le contexte" modes={decores} centre={vue} max={720} /></main>}
