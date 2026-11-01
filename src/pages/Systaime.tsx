@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import { Tete, DockBas, VerbesProjets, Pied } from '../charte/Charte';
+import { Tete, DockBas, Pied } from '../charte/Charte';
+import VerbesAccueil from '../charte/VerbesAccueil';
 import { Lien } from '../lib/router';
 import { useSession } from '../lib/session';
 import { useTheme, CHOIX_THEMES } from '../../studio/src/design/theme';
@@ -141,7 +142,7 @@ export default function Systaime() {
   return (
     <>
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/systaime" verbes={<VerbesProjets />} />
+      <Tete courant="/systaime" verbes={<VerbesAccueil />} />
       <div data-aime={theme} className="sy">
         <main id="contenu" className="sy-in">
           <header className="sy-tete">
@@ -236,7 +237,7 @@ export default function Systaime() {
         </main>
       </div>
       <Pied />
-      <DockBas />
+      <DockBas lieux={[['sy-etats', 'États'], ['sy-echiquier', 'Échiquier'], ['sy-gf', 'Garde-fous'], ['sy-oublis', 'Créations']]} />
     </>
   );
 }

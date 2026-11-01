@@ -67,14 +67,14 @@ export function domaineSyst(src: SourcesSyst): Domaine {
       const sansPhrase = m.cases.filter(x => !x.resume).length;
 
       const faits: Fait[] = [
-        { cle: "nature", libelle: "Nature", valeur: croisement ? "Croisement thème × couche" : "Garde-fou transversal", statut: "lu", source: "manifeste" },
-        ...(croisement && c.theme && c.couche ? [
-          { cle: "theme", libelle: "Thème", valeur: NOMS_THEMES[c.theme] ?? c.theme, statut: "lu" as const, source: "manifeste" },
-          { cle: "couche", libelle: "Couche", valeur: NOMS_COUCHES[c.couche] ?? c.couche, statut: "lu" as const, source: "manifeste" },
-        ] : []),
         { cle: "constat", libelle: "Ce que le manifeste constate", valeur: etat.titre, statut: "lu", source: "manifeste", principal: true },
-        ...(etat.texte ? [{ cle: "sens", libelle: "Ce que cela veut dire", valeur: etat.texte, statut: "lu" as const, source: "manifeste" }] : []),
         { cle: "validation", libelle: "Validé par une personne", valeur: c.etat === "validee" ? "Oui" : "Pas encore", statut: "calcule", source: "manifeste", principal: true },
+        ...(croisement && c.theme && c.couche ? [
+          { cle: "theme", libelle: "Thème", valeur: NOMS_THEMES[c.theme] ?? c.theme, statut: "lu" as const, source: "manifeste", principal: true },
+          { cle: "couche", libelle: "Couche", valeur: NOMS_COUCHES[c.couche] ?? c.couche, statut: "lu" as const, source: "manifeste", principal: true },
+        ] : []),
+        { cle: "nature", libelle: "Nature", valeur: croisement ? "Croisement thème × couche" : "Garde-fou transversal", statut: "lu", source: "manifeste" },
+        ...(etat.texte ? [{ cle: "sens", libelle: "Ce que cela veut dire", valeur: etat.texte, statut: "lu" as const, source: "manifeste" }] : []),
         c.resume
           ? { cle: "resume", libelle: "En une phrase", valeur: c.resume, statut: "lu", source: "manifeste" }
           : { cle: "resume", libelle: "En une phrase", valeur: null, statut: "manquant", source: "manifeste", manque: `le manifeste public ne donne une phrase que pour ${m.cases.length - sansPhrase} cases sur ${m.cases.length}.` },
@@ -118,6 +118,7 @@ export function domaineSyst(src: SourcesSyst): Domaine {
         domaine: "syst", id: c.id,
         surtitre: croisement ? "Élément SYST'AIME" : "Garde-fou SYST'AIME",
         titre: c.nom,
+        sigle: croisement && c.theme && c.couche ? `${(NOMS_THEMES[c.theme] ?? c.theme)[0]}·${(NOMS_COUCHES[c.couche] ?? c.couche)[0]}` : "G",
         sous: etat.titre,
         faits, relations, sources, actions,
         limites: [

@@ -1,5 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { Tete, DockBas, VerbesProjets, Pied } from '../charte/Charte';
+import { Tete, DockBas, Pied } from '../charte/Charte';
+import VerbesAccueil from '../charte/VerbesAccueil';
 import { Lien } from '../lib/router';
 import { useTheme, CHOIX_THEMES } from '../../studio/src/design/theme';
 import '../../studio/src/design/aime.css';
@@ -14,6 +15,7 @@ import { NOMS_COUCHES, NOMS_THEMES } from '../../studio/src/lib/fiche/syst';
    Le Disque et la démo broderie sont chargés à la demande. Page préparatoire : non indexée. */
 
 const DisqueDemo = lazy(() => import('../system/DisqueDemo'));
+const FicheEchiquier = lazy(() => import('../system/FicheEchiquier'));
 const DemoBroderie = lazy(() => import('../system/DemoBroderie'));
 
 type Statut = keyof typeof C.statuts;
@@ -82,7 +84,7 @@ export default function System() {
     return () => { m.remove(); };
   }, []);
   const choisirFiche = useCallback((a: string) => {
-    setCourante(a); setDisqueVu(true);
+    setCourante(a);
     try { const u = new URL(window.location.href); u.searchParams.set('o', a); window.history.replaceState(null, '', u.pathname + u.search + u.hash); } catch { /* adresse non modifiable */ }
   }, []);
   useEffect(() => { if (!vu.current) { vu.current = true; if (new URLSearchParams(window.location.search).get('o')) setDisqueVu(true); } }, []);
@@ -95,11 +97,11 @@ export default function System() {
 
   const decompte = MANIFESTE_PUBLIC.decompte;
   const S = C.sections;
-  const versDisque = (a: string) => { choisirFiche(a); document.getElementById('disque')?.scrollIntoView({ block: 'start', behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); };
+  const nomChoisi = CASES.find(x => 'syst-' + x.id === courante)?.nom;
 
   return <>
     <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-    <Tete courant="/system" verbes={<VerbesProjets />} />
+    <Tete courant="/system" verbes={<VerbesAccueil />} />
     <div data-aime={theme} className="sys">
       <main id="contenu" className="sys-in">
         <header className="sys-hero">
@@ -115,9 +117,10 @@ export default function System() {
             <div role="radiogroup" aria-label="Thème d’affichage" className="sys-seg">
               {CHOIX_THEMES.map(t => <button key={t.id} type="button" role="radio" aria-checked={choix === t.id} onClick={() => choisir(t.id)}>{t.nom}</button>)}
             </div>
-            <ul className="sys-legende" aria-label="Les quatre états utilisés sur cette page">
-              {(Object.keys(C.statuts) as Statut[]).map(k => <li key={k}><Statut s={k} /><span>{C.statuts[k].sens}</span></li>)}
-            </ul>
+            <details className="sys-legende">
+              <summary>Les quatre états</summary>
+              <ul>{(Object.keys(C.statuts) as Statut[]).map(k => <li key={k}><Statut s={k} /><span>{C.statuts[k].sens}</span></li>)}</ul>
+            </details>
           </div>
         </header>
 
@@ -135,18 +138,22 @@ export default function System() {
           </li>)}</ul>
         </Section>
 
-        <Section id="themes" titre={S.themes.titre} statut={S.themes.statut} texte={S.themes.texte}>
-          <ul className="sys-cubes">{MANIFESTE_PUBLIC.themes.map(t => <li key={t}>
-            <button type="button" className="sys-cube" aria-pressed={courante.startsWith(`syst-${t}.`)} onClick={() => versDisque(`syst-${t}.principes`)}>
-              <b>{NOMS_THEMES[t] ?? t}</b><span>{CASES.filter(x => x.theme === t).length} cases</span></button></li>)}</ul>
-        </Section>
-
         <Section id="echiquier" titre={S.echiquier.titre} statut={S.echiquier.statut} texte={S.echiquier.texte}>
-          <ul className="sys-compte" aria-label="Décompte des états du manifeste">
-            {ORDRE.filter(k => decompte[k]).map(k => <li key={k} data-etat={k}><span aria-hidden="true" className="sys-g">{GLYPHE[k]}</span>{lib(k).titre}<b>{decompte[k]}</b></li>)}
-          </ul>
-          <Echiquier courante={courante} onChoisir={versDisque} />
-          <p className="sys-note">Aucune case n’est validée par une personne : un état « testé » ou « présent » ne dit pas que la fonction est validée.</p>
+          <div className="sys-echiquier-grille">
+            <div className="sys-echiquier-col">
+              <ul className="sys-cubes" aria-label="Les six thèmes">{MANIFESTE_PUBLIC.themes.map(t => <li key={t}>
+                <button type="button" className="sys-cube" aria-pressed={courante.startsWith(`syst-${t}.`)} onClick={() => choisirFiche(`syst-${t}.principes`)}>
+                  <b>{NOMS_THEMES[t] ?? t}</b><span>{CASES.filter(x => x.theme === t).length} cases</span></button></li>)}</ul>
+              <Echiquier courante={courante} onChoisir={choisirFiche} />
+              <ul className="sys-compte" aria-label="Décompte des états du manifeste">
+                {ORDRE.filter(k => decompte[k]).map(k => <li key={k} data-etat={k}><span aria-hidden="true" className="sys-g">{GLYPHE[k]}</span>{lib(k).titre}<b>{decompte[k]}</b></li>)}
+              </ul>
+            </div>
+            <div className="sys-fiche sys-fiche-collante" role="region" aria-label="Fiche de l'élément choisi">
+              <Suspense fallback={<Attente nom="la fiche" />}><FicheEchiquier courante={courante} onChoisir={choisirFiche} /></Suspense>
+            </div>
+          </div>
+          <p className="sr-only" role="status" aria-live="polite">{nomChoisi ? `Case choisie : ${nomChoisi}.` : ''}</p>
         </Section>
 
         <Section id="sources" titre={S.sources.titre} statut={S.sources.statut} texte={S.sources.texte}>
@@ -184,6 +191,6 @@ export default function System() {
       </main>
     </div>
     <Pied />
-    <DockBas />
+    <DockBas lieux={[['disque', 'Disque'], ['capacites', 'Capacités'], ['echiquier', 'Échiquier'], ['demos', 'Démos']]} />
   </>;
 }

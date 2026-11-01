@@ -1,6 +1,6 @@
-/* Le Disque de la page /system : la même pièce que l'atelier (DisqueFiches → DisqueOne + Point), deux domaines raccordés,
-   la fiche entière à côté. Chargé à la demande : la page reste légère tant que le Disque n'est pas à l'écran. */
-import { useCallback, useMemo, useRef } from "react";
+/* Le Disque de la page /system : la même pièce que l'atelier (DisqueFiches → DisqueOne + Point), deux domaines raccordés.
+   À côté : la fiche en CARTE compacte ; « Tout voir » (couronne) ouvre ses détails. Chargé à la demande. */
+import { useCallback, useMemo, useState } from "react";
 import DisqueFiches, { type GroupeFiches } from "../../studio/src/components/fiche/DisqueFiches";
 import FicheContextuelle from "../../studio/src/components/fiche/FicheContextuelle";
 import { BASE_FLOSS } from "../../studio/src/lib/dmc";
@@ -18,7 +18,7 @@ export const FILS_DE_DEPART = ["310", "321", "666", "703", "798", "3799"];
 const ROLE = "proprietaire" as const;   // la personne devant son propre appareil : ses données locales sont les siennes
 
 export default function DisqueDemo({ courante, onChoisir }: { courante: string; onChoisir: (a: string) => void }) {
-  const panneau = useRef<HTMLDivElement>(null);
+  const [details, setDetails] = useState(false);
   const groupes = useMemo<GroupeFiches[]>(() => [
     { id: "dmc", nom: "Fils DMC", icone: <Pastille d="M12 3a9 9 0 1 0 0 18c1.7 0 2-1 1.4-2-.7-1.2 0-2.5 1.6-2.5H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z" />, aide: "quelques fils de la table DMC",
       elements: FILS_DE_DEPART.flatMap(c => { const f = BASE_FLOSS.find(x => x.code === c); return f ? [{ adresse: adresse("dmc", c), nom: `DMC ${c}`, couleur: f.hex, aide: `la fiche du fil DMC ${c} · ${f.name}` }] : []; }) },
@@ -28,23 +28,18 @@ export default function DisqueDemo({ courante, onChoisir }: { courante: string; 
         contient: (a: string) => a.startsWith(`syst-${t}.`),
       })) },
   ], []);
-  const toutVoir = useCallback(() => {
-    const h = panneau.current?.querySelector<HTMLElement>("h2");
-    panneau.current?.scrollIntoView({ block: "start", behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-    h?.focus({ preventScroll: true });
-  }, []);
+  const toutVoir = useCallback(() => setDetails(true), []);
 
   return <div className="sys-disque-grille">
     <div className="sys-disque-col">
-      <DisqueFiches groupes={groupes} courante={courante} onChoisir={onChoisir} role={ROLE} max={480} etiquette="Le Disque : fils DMC et éléments SYST'AIME" onToutVoir={toutVoir} />
+      <DisqueFiches groupes={groupes} courante={courante} onChoisir={onChoisir} role={ROLE} max={460} etiquette="Le Disque : fils DMC et éléments SYST'AIME" onToutVoir={toutVoir} />
       <div className="sys-essais" role="group" aria-label="Choisir sans le Disque">
-        <span>Essayer :</span>
         <button type="button" className="sys-bouton" aria-pressed={courante.startsWith("dmc-")} onClick={() => onChoisir(adresse("dmc", "310"))}>Un fil DMC</button>
         <button type="button" className="sys-bouton" aria-pressed={courante.startsWith("syst-")} onClick={() => onChoisir(adresse("syst", "visuel.tokens"))}>Un élément SYST'AIME</button>
       </div>
     </div>
-    <div className="sys-fiche" ref={panneau}>
-      <FicheContextuelle adresse={courante} role={ROLE} presentation="etendu" onNaviguer={onChoisir} />
+    <div className="sys-fiche" role="region" aria-label="Fiche de l'élément choisi">
+      <FicheContextuelle adresse={courante} role={ROLE} presentation="carte" onNaviguer={onChoisir} details={details} onDetails={setDetails} />
     </div>
   </div>;
 }

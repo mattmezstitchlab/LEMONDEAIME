@@ -1,79 +1,250 @@
 {
   "version": "0.1",
   "statuts": {
-    "reel": { "nom": "Réel", "glyphe": "✓", "sens": "Branché à une source réelle, et un test le rejoue." },
-    "demonstration": { "nom": "Démonstration", "glyphe": "◈", "sens": "Fonctionne vraiment, mais sur un échantillon : ce n'est pas le produit complet." },
-    "prototype": { "nom": "Prototype", "glyphe": "◐", "sens": "Le code existe ; il n'est pas branché à cette page, ou son fonctionnement n'a pas été rejoué." },
-    "aconstruire": { "nom": "À construire", "glyphe": "○", "sens": "Étudié ou voulu, pas encore écrit." }
+    "reel": {
+      "nom": "Réel",
+      "glyphe": "✓",
+      "sens": "Branché à une source réelle, et un test le rejoue."
+    },
+    "demonstration": {
+      "nom": "Démonstration",
+      "glyphe": "◈",
+      "sens": "Fonctionne vraiment, mais sur un échantillon : ce n'est pas le produit complet."
+    },
+    "prototype": {
+      "nom": "Prototype",
+      "glyphe": "◐",
+      "sens": "Le code existe ; il n'est pas branché à cette page, ou son fonctionnement n'a pas été rejoué."
+    },
+    "aconstruire": {
+      "nom": "À construire",
+      "glyphe": "○",
+      "sens": "Étudié ou voulu, pas encore écrit."
+    }
   },
   "hero": {
     "sur": "AIME SYSTEM",
     "titre": "L'intelligence qui relie",
     "titreFondu": "ce que vous créez.",
-    "texte": "Retrouver, comprendre, relier et faire évoluer ce que vous avez déjà créé, avec des preuves, des permissions et de la continuité. Cette page montre ce qui fonctionne aujourd'hui, et dit ce qui reste à construire.",
-    "actions": [["Essayer le Disque", "#disque"], ["Voir les preuves", "/systaime"]]
+    "texte": "Retrouver, comprendre, relier et faire évoluer ce que vous avez déjà créé, avec des preuves et des permissions. Cette page dit ce qui fonctionne aujourd'hui, et ce qui reste à construire.",
+    "actions": [
+      [
+        "Essayer le Disque",
+        "#disque"
+      ],
+      [
+        "Voir les preuves",
+        "/systaime"
+      ]
+    ]
   },
   "sections": {
-    "disque": { "titre": "Choisissez un élément : la fiche s'adapte.", "statut": "reel", "texte": "Un fil DMC ou un élément SYST'AIME : une seule architecture de fiche, deux métiers. Chaque information dit d'où elle vient ; ce qui manque est dit, avec la raison." },
-    "capacites": { "titre": "Six capacités, chacune avec son état réel.", "texte": "Ce qui existe est dit réel ; le reste est dit tel qu'il est." },
-    "themes": { "titre": "Six thèmes, six couches.", "statut": "reel", "texte": "Une carte de lecture, pas une navigation obligatoire : chaque case ouvre sa fiche dans le Disque ci-dessus." },
-    "echiquier": { "titre": "64 cases, lues dans le manifeste.", "statut": "reel", "texte": "Cette page ne crée pas sa propre vérité : elle lit la version publique du manifeste, comme la page SYST'AIME." },
-    "sources": { "titre": "Sources et jumeau numérique.", "statut": "aconstruire", "texte": "Le Disque Terminal existe en prototype. Le jumeau numérique, lui, n'est pas construit : aucun état « À jour » n'est affiché ici, parce qu'aucune comparaison réelle n'existe encore." },
-    "ripple": { "titre": "RIPPLE : comprendre les conséquences.", "statut": "prototype", "texte": "Avant d'agir, savoir ce qu'une action pourrait toucher. Le contrat existe ; aucune conséquence réelle n'est calculée sur cette page." },
-    "demos": { "titre": "Trois démonstrations fondatrices.", "texte": "Chacune dit ce qui est réel, ce qui est simulé et ce qui manque." },
-    "documentation": { "titre": "Documentation et connecteurs.", "statut": "reel", "texte": "La documentation consultable n'est pas l'autorité technique : les règles sont reliées au manifeste, aux tests et aux décisions." },
-    "invitation": { "titre": "Rejoindre LE MONDE AIME.", "texte": "Un lien, sans formulaire : rien n'est collecté sur cette page.", "lien": ["Entrer dans LE MONDE AIME", "/"] }
+    "disque": {
+      "titre": "Choisissez un élément : la fiche s'adapte.",
+      "statut": "reel",
+      "texte": "Un fil DMC ou un élément SYST'AIME : une seule fiche, deux métiers."
+    },
+    "capacites": {
+      "titre": "Six capacités, chacune avec son état réel.",
+      "texte": "Ce qui existe est dit réel ; le reste est dit tel qu'il est."
+    },
+    "echiquier": {
+      "titre": "Six thèmes, six couches, 64 cases.",
+      "statut": "reel",
+      "texte": "Lues dans le manifeste public, comme sur la page SYST'AIME. Choisir une case ne déplace pas la page."
+    },
+    "sources": {
+      "titre": "Sources et jumeau numérique.",
+      "statut": "aconstruire",
+      "texte": "Le Disque Terminal existe en prototype. Le jumeau numérique, lui, n'est pas construit : aucun état « À jour » n'est affiché ici, parce qu'aucune comparaison réelle n'existe encore."
+    },
+    "ripple": {
+      "titre": "RIPPLE : comprendre les conséquences.",
+      "statut": "prototype",
+      "texte": "Avant d'agir, savoir ce qu'une action pourrait toucher. Le contrat existe ; aucune conséquence réelle n'est calculée sur cette page."
+    },
+    "demos": {
+      "titre": "Trois démonstrations fondatrices.",
+      "texte": "Chacune dit ce qui est réel, ce qui est simulé et ce qui manque."
+    },
+    "documentation": {
+      "titre": "Documentation et connecteurs.",
+      "statut": "reel",
+      "texte": "La documentation consultable n'est pas l'autorité technique : les règles sont reliées au manifeste, aux tests et aux décisions."
+    },
+    "invitation": {
+      "titre": "Rejoindre LE MONDE AIME.",
+      "texte": "Un lien, sans formulaire : rien n'est collecté sur cette page.",
+      "lien": [
+        "Entrer dans LE MONDE AIME",
+        "/"
+      ]
+    }
   },
   "capacites": [
-    { "id": "systaime", "nom": "SYST'AIME", "promesse": "Comprendre la structure : composants, règles, preuves.", "statut": "reel",
-      "reel": "Le manifeste de 64 cases, son validateur et la page /systaime.", "reste": "Aucune case n'est encore validée fonctionnellement par une personne.",
-      "preuve": { "fichier": "tests/systaime/valider.mjs" } },
-    { "id": "sources", "nom": "AIME SOURCES", "promesse": "Explorer ses dossiers sans taper de commande, en lecture seule.", "statut": "prototype",
-      "reel": "Le Disque Terminal existe et agit sur un espace d'essai du navigateur.", "reste": "La lecture seule par défaut et les comparaisons de versions n'ont pas été rejouées pour cette page.",
-      "preuve": { "fichier": "studio/src/one/Terminal.tsx" } },
-    { "id": "twin", "nom": "AIME TWIN", "promesse": "Une représentation de référence par œuvre, sans copier les fichiers.", "statut": "aconstruire",
-      "reel": "Une étude (audit du jumeau numérique).", "reste": "Le registre, la comparaison et les six états ne sont pas écrits." },
-    { "id": "ripple", "nom": "RIPPLE", "promesse": "Voir ce qu'une action pourrait toucher, avant d'agir.", "statut": "prototype",
-      "reel": "Un contrat géométrique (l'onde) qui sépare l'onde décorative de l'onde causale.", "reste": "La causalité n'est branchée à aucune donnée réelle.",
-      "preuve": { "fichier": "studio/src/lib/onde/contrat.ts" } },
-    { "id": "atlas", "nom": "ATLAS", "promesse": "Retrouver et composer fragments, références et représentations.", "statut": "prototype",
-      "reel": "La fiche contextuelle, en production pour les fils DMC et, ici, pour les éléments SYST'AIME.", "reste": "La grille de composition Métamorphose vit dans un autre dépôt et n'est pas raccordée.",
-      "preuve": { "fichier": "studio/src/lib/fiche/fiche.ts" } },
-    { "id": "agent", "nom": "AIME AGENT", "promesse": "Un assistant qui dit ce qu'il a trouvé, dans quelle source, et ce qu'il ne peut pas confirmer.", "statut": "aconstruire",
-      "reel": "Rien : aucun parcours n'a été démontré.", "reste": "L'agent, ses sources autorisées et ses garde-fous." }
+    {
+      "id": "systaime",
+      "nom": "SYST'AIME",
+      "promesse": "Comprendre la structure : composants, règles, preuves.",
+      "statut": "reel",
+      "reel": "Le manifeste de 64 cases, son validateur et la page /systaime.",
+      "reste": "Aucune case n'est encore validée fonctionnellement par une personne.",
+      "preuve": {
+        "fichier": "tests/systaime/valider.mjs"
+      }
+    },
+    {
+      "id": "sources",
+      "nom": "AIME SOURCES",
+      "promesse": "Explorer ses dossiers sans taper de commande, en lecture seule.",
+      "statut": "prototype",
+      "reel": "Le Disque Terminal existe et agit sur un espace d'essai du navigateur.",
+      "reste": "La lecture seule par défaut et les comparaisons de versions n'ont pas été rejouées pour cette page.",
+      "preuve": {
+        "fichier": "studio/src/one/Terminal.tsx"
+      }
+    },
+    {
+      "id": "twin",
+      "nom": "AIME TWIN",
+      "promesse": "Une représentation de référence par œuvre, sans copier les fichiers.",
+      "statut": "aconstruire",
+      "reel": "Une étude (audit du jumeau numérique).",
+      "reste": "Le registre, la comparaison et les six états ne sont pas écrits."
+    },
+    {
+      "id": "ripple",
+      "nom": "RIPPLE",
+      "promesse": "Voir ce qu'une action pourrait toucher, avant d'agir.",
+      "statut": "prototype",
+      "reel": "Un contrat géométrique (l'onde) qui sépare l'onde décorative de l'onde causale.",
+      "reste": "La causalité n'est branchée à aucune donnée réelle.",
+      "preuve": {
+        "fichier": "studio/src/lib/onde/contrat.ts"
+      }
+    },
+    {
+      "id": "atlas",
+      "nom": "ATLAS",
+      "promesse": "Retrouver et composer fragments, références et représentations.",
+      "statut": "prototype",
+      "reel": "La fiche contextuelle, en production pour les fils DMC et, ici, pour les éléments SYST'AIME.",
+      "reste": "La grille de composition Métamorphose vit dans un autre dépôt et n'est pas raccordée.",
+      "preuve": {
+        "fichier": "studio/src/lib/fiche/fiche.ts"
+      }
+    },
+    {
+      "id": "agent",
+      "nom": "AIME AGENT",
+      "promesse": "Un assistant qui dit ce qu'il a trouvé, dans quelle source, et ce qu'il ne peut pas confirmer.",
+      "statut": "aconstruire",
+      "reel": "Rien : aucun parcours n'a été démontré.",
+      "reste": "L'agent, ses sources autorisées et ses garde-fous."
+    }
   ],
   "jumeau": {
     "etats": [
-      ["À jour", "Les deux représentations ont été comparées, et leur contenu est identique."],
-      ["Version différente", "La comparaison a eu lieu : le contenu diffère."],
-      ["Conflit", "Deux versions ont changé de leur côté depuis leur origine commune."],
-      ["Source indisponible", "La source n'a pas pu être lue au moment de la vérification."],
-      ["Origine inconnue", "Aucune provenance n'est enregistrée pour cette représentation."],
-      ["À vérifier", "Aucune comparaison enregistrée : on ne dit pas « À jour »."]
+      [
+        "À jour",
+        "Les deux représentations ont été comparées, et leur contenu est identique."
+      ],
+      [
+        "Version différente",
+        "La comparaison a eu lieu : le contenu diffère."
+      ],
+      [
+        "Conflit",
+        "Deux versions ont changé de leur côté depuis leur origine commune."
+      ],
+      [
+        "Source indisponible",
+        "La source n'a pas pu être lue au moment de la vérification."
+      ],
+      [
+        "Origine inconnue",
+        "Aucune provenance n'est enregistrée pour cette représentation."
+      ],
+      [
+        "À vérifier",
+        "Aucune comparaison enregistrée : on ne dit pas « À jour »."
+      ]
     ],
     "regle": "Un état « À jour » n'existe qu'avec une comparaison vérifiable et une date de dernière vérification. Sans comparaison, l'état est « À vérifier »."
   },
   "ripple": {
-    "separations": ["Variation de valeur calculée", "Perte de données", "Relation supprimée", "Décision annulée", "Information devenue inaccessible"],
-    "preuves": [["Conséquence prouvée", "Établie par un calcul ou un test rejoué."], ["Règle déclarée", "Écrite par une personne, pas encore vérifiée."], ["Hypothèse", "Plausible, non démontrée."], ["Point à vérifier", "On ne sait pas encore."]],
+    "separations": [
+      "Variation de valeur calculée",
+      "Perte de données",
+      "Relation supprimée",
+      "Décision annulée",
+      "Information devenue inaccessible"
+    ],
+    "preuves": [
+      [
+        "Conséquence prouvée",
+        "Établie par un calcul ou un test rejoué."
+      ],
+      [
+        "Règle déclarée",
+        "Écrite par une personne, pas encore vérifiée."
+      ],
+      [
+        "Hypothèse",
+        "Plausible, non démontrée."
+      ],
+      [
+        "Point à vérifier",
+        "On ne sait pas encore."
+      ]
+    ],
     "regle": "Une simulation ne modifie aucune source. Appliquer un changement demande les autorisations appropriées."
   },
   "demos": [
-    { "id": "dev", "nom": "Développeur : retrouver son composant", "statut": "aconstruire",
+    {
+      "id": "dev",
+      "nom": "Développeur : retrouver son composant",
+      "statut": "aconstruire",
       "texte": "« Retrouve mon composant, montre-moi les versions, ce qui est publié et ce qui pourrait changer si je le remplace. »",
-      "etapes": ["Consulter les sources autorisées", "Identifier le composant", "Comparer les versions accessibles", "Afficher le commit réellement publié", "Distinguer dépendances directes et supposées", "Préparer une fiche des risques", "Laisser la décision à la personne"],
-      "reste": "Aucune de ces étapes n'est écrite en parcours : le manifeste en pose seulement la structure. La branche courante, le commit de production et le comportement vérifié en ligne ne seront jamais confondus." },
-    { "id": "broderie", "nom": "Créatrice de broderie : un motif 5D original", "statut": "demonstration",
+      "etapes": [
+        "Consulter les sources autorisées",
+        "Identifier le composant",
+        "Comparer les versions accessibles",
+        "Afficher le commit réellement publié",
+        "Distinguer dépendances directes et supposées",
+        "Préparer une fiche des risques",
+        "Laisser la décision à la personne"
+      ],
+      "reste": "Aucune de ces étapes n'est écrite en parcours : le manifeste en pose seulement la structure. La branche courante, le commit de production et le comportement vérifié en ligne ne seront jamais confondus."
+    },
+    {
+      "id": "broderie",
+      "nom": "Créatrice de broderie : un motif 5D original",
+      "statut": "demonstration",
       "texte": "Un motif généré par le moteur 5D de Point Zéro, à partir d'une recette. Sa provenance se vérifie : le même code redonne la même empreinte.",
-      "reste": "Seul le motif et sa provenance sont démontrés. L'import d'un PDF, le diagnostic, la correction approuvée et l'export ne sont pas branchés ici ; aucun patron tiers n'est utilisé ; aucune boutique, Etsy compris." },
-    { "id": "famille", "nom": "Famille et mariage : qui est concerné ?", "statut": "aconstruire",
+      "reste": "Seul le motif et sa provenance sont démontrés. L'import d'un PDF, le diagnostic, la correction approuvée et l'export ne sont pas branchés ici ; aucun patron tiers n'est utilisé ; aucune boutique, Etsy compris."
+    },
+    {
+      "id": "famille",
+      "nom": "Famille et mariage : qui est concerné ?",
+      "statut": "aconstruire",
       "texte": "Un projet partagé, une modification : qui peut la voir, qui est réellement concerné, ce qui doit être revérifié, ce qui reste privé.",
       "etapes": [],
-      "reste": "Aucune dépendance métier n'est inventée pour cette page : elle ne montre aucune démonstration tant qu'elle ne s'appuie pas sur des permissions réelles." }
+      "reste": "Aucune dépendance métier n'est inventée pour cette page : elle ne montre aucune démonstration tant qu'elle ne s'appuie pas sur des permissions réelles."
+    }
   ],
   "documentation": {
-    "liens": [["SYST'AIME : composants, règles et preuves", "/systaime", "La référence : les 64 cases, les statuts, les dépendances."]],
-    "connecteurs": { "statut": "aconstruire", "texte": "Aucun connecteur externe n'est proposé aux visiteurs dans cette version." }
+    "liens": [
+      [
+        "SYST'AIME : composants, règles et preuves",
+        "/systaime",
+        "La référence : les 64 cases, les statuts, les dépendances."
+      ]
+    ],
+    "connecteurs": {
+      "statut": "aconstruire",
+      "texte": "Aucun connecteur externe n'est proposé aux visiteurs dans cette version."
+    }
   },
   "pied": "Version préparatoire, non indexée. Les statuts de cette page sont écrits ici ; les 64 cases et leur état viennent du manifeste public SYST'AIME."
 }

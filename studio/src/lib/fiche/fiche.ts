@@ -85,6 +85,8 @@ export interface Fiche {
   titre: string;
   sous?: string;
   apercu?: Apercu;
+  /** deux à quatre caractères qui identifient visuellement l'élément quand il n'a ni couleur ni image (présentation « carte ») */
+  sigle?: string;
   faits: Fait[];
   relations: Relation[];
   sources: Source[];

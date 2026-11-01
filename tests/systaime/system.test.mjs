@@ -78,3 +78,24 @@ test('la démo broderie n\'exporte rien et n\'utilise aucun patron tiers', () =>
   assert.doesNotMatch(b, /download|createObjectURL|toDataURL|\.pdf|etsy/i);
   assert.match(b, /empreinteCroix/);
 });
+
+test('la landing raconte UPTOWN et mène au clip sans dupliquer le lecteur', () => {
+  const a = lire('src/pages/Accueil.tsx');
+  assert.match(a, /href="\/studio\/uptown"/);
+  assert.doesNotMatch(a, /webgl|getContext|<video|<audio|clip-brode|\/clip\//i, 'aucun lecteur dans la landing');
+  assert.match(a, /className="ac-hero"/, 'le hero existant est conservé');
+});
+
+test('une seule famille de navigation : /, /system et /systaime partagent les mêmes verbes, sans second dock', () => {
+  for (const f of ['src/pages/Accueil.tsx', 'src/pages/System.tsx', 'src/pages/Systaime.tsx']) {
+    const t = lire(f); assert.match(t, /VerbesAccueil/, f); assert.match(t, /<Tete /, f);
+  }
+  assert.doesNotMatch(lire('src/pages/System.tsx'), /position:\s*fixed|className="dock/);
+});
+
+test('choisir une case ne déplace pas la page : aucun défilement dans le code de sélection', () => {
+  const t = lire('src/pages/System.tsx');
+  const sel = t.slice(t.indexOf('const choisirFiche'), t.indexOf('useEffect(() => { if (!vu.current)'));
+  assert.doesNotMatch(sel, /scrollIntoView|scrollTo|location\.hash|\.focus\(/);
+  assert.doesNotMatch(lire('src/system/DisqueDemo.tsx'), /scrollIntoView/);
+});

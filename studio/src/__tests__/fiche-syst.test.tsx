@@ -135,3 +135,35 @@ describe("même architecture, deux métiers", () => {
     const ids = [...host.querySelectorAll("[id]")].map(e => e.id); expect(new Set(ids).size).toBe(ids.length);
   });
 });
+
+describe("présentation « carte » : compacte, sans voler le focus", () => {
+  const monterCarte = (a: string, role: "visiteur" | "proprietaire" = "proprietaire") => {
+    host = document.createElement("div"); document.body.append(host); root = createRoot(host);
+    act(() => root!.render(<FicheContextuelle adresse={a} role={role} presentation="carte" />)); return host;
+  };
+  it("deux à quatre informations, une action principale, la provenance dite une seule fois", () => {
+    syst(); const h = monterCarte("syst-visuel.tokens");
+    const n = h.querySelectorAll(".fc-cle").length; expect(n).toBeGreaterThanOrEqual(2); expect(n).toBeLessThanOrEqual(4);
+    expect(h.querySelectorAll(".fc-principale")).toHaveLength(1);
+    expect(h.querySelectorAll(".fc-prov-globale")).toHaveLength(1);
+    expect(h.textContent).not.toMatch(/Lu ·/);
+    expect(h.querySelector(".fc-sigle")?.textContent).toBe("V·T");
+  });
+  it("les détails (relations, provenance, limites) sont fermés puis s'ouvrent à la demande", () => {
+    syst(); const h = monterCarte("syst-visuel.tokens");
+    expect(h.querySelector(".fc-details")).toBeNull();
+    const b = h.querySelector<HTMLButtonElement>(".fc-details-bouton")!; expect(b.getAttribute("aria-expanded")).toBe("false");
+    act(() => b.click());
+    expect(b.getAttribute("aria-expanded")).toBe("true");
+    const t = [...h.querySelectorAll("summary")].map(x => x.textContent ?? "").join("|");
+    expect(t).toMatch(/Relations/); expect(t).toMatch(/Provenance/); expect(t).toMatch(/Limites/); expect(t).toMatch(/Toutes les informations/);
+  });
+  it("le visiteur n'a pas de bouton d'action ; un changement d'adresse ne déplace pas le focus", () => {
+    syst(); const h = monterCarte("syst-visuel.tokens", "visiteur"); expect(h.querySelector(".fc-principale")).toBeNull();
+    act(() => root!.render(<><button id="pt">x</button><FicheContextuelle adresse="syst-visuel.tokens" role="visiteur" presentation="carte" /></>));
+    document.getElementById("pt")!.focus();
+    act(() => root!.render(<><button id="pt">x</button><FicheContextuelle adresse="syst-visuel.contrats" role="visiteur" presentation="carte" /></>));
+    expect(document.activeElement?.id).toBe("pt");
+  });
+});
+
