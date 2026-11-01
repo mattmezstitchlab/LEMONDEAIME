@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ATELIER, ENTREES_BRODERIE, estBroderie } from '../../src/lib/entreesBroderie.mjs';
+import { ATELIER, ENTREES_BRODERIE, estBroderie, ouvrageARepris, CLE_OUVRAGE } from '../../src/lib/entreesBroderie.mjs';
 
 const lire = (p) => readFileSync(new URL('../../' + p, import.meta.url), 'utf8');
 const ouvrirStudio = lire('studio/src/lib/ouvrir.ts');
@@ -37,4 +37,20 @@ test('le Studio ne touche ni aux sauvegardes ni aux modèles : lib/library et li
   for (const f of ['studio/src/lib/library.ts', 'studio/src/lib/store.ts', 'studio/src/lib/pattern.ts', 'studio/src/lib/aimeSync.ts', 'studio/src/lib/brodeuseProfile.ts', 'studio/src/lib/dmc.ts', 'studio/src/lib/tambour/disque.ts'])
     assert.ok(!touches.includes(f), f + ' ne doit pas changer dans ce lot');
   assert.ok(!touches.some(f => f.startsWith('studio/src/lib/motif5d/')), 'aucun moteur 5D modifié ou dupliqué');
+});
+
+const stock = (v) => ({ getItem: (k) => (k === CLE_OUVRAGE ? v : null) });
+test('« Reprendre » : un ouvrage n’existe que s’il a un point posé ; sinon état vide explicite', () => {
+  assert.equal(ouvrageARepris(stock(null)), null);
+  assert.equal(ouvrageARepris(stock('pas du json')), null);
+  assert.equal(ouvrageARepris(stock(JSON.stringify({ name: 'Nouveau motif', cross: [-1, -1], q0: [-1] }))), null, 'un canevas vide n’est pas un ouvrage');
+  const o = ouvrageARepris(stock(JSON.stringify({ name: 'Rosace 5D-11111', cross: [-1, 0, -1] })));
+  assert.equal(o.nom, 'Rosace 5D-11111', 'le fil 0 est un vrai point');
+  assert.equal(ouvrageARepris(undefined), null);
+  const projet = lire('src/pages/Projet.tsx');
+  assert.ok(projet.includes('ouvrageARepris') && projet.includes('Aucun ouvrage sur cet appareil'), 'l’état vide est écrit dans la carte');
+});
+test('arrivé depuis une carte (?ouvrir=), aucune visite guidée ne s’impose dans l’atelier', () => {
+  const app = lire('studio/src/App.tsx');
+  assert.ok(/ouvrir === null && atelierLibre/.test(app));
 });

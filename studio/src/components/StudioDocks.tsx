@@ -457,7 +457,7 @@ export default function StudioDocks(p: Props) {
     <header className="pzs-head" aria-label="En-tête du studio">
       <button type="button" className="lp-evitement" onClick={() => { setLoupe(false); ouvrirConfort(); }}>Réglages de confort</button>
       {bloc && <div className="pzs-voile" aria-hidden="true" onClick={fermer} />}
-      <nav className={"pzs-top" + (bloc ? " pzs-ouvert" : "")} aria-label="Dock des outils du studio de broderie" onKeyDown={onKey}>
+      <nav className={"pzs-top" + (bloc ? " pzs-ouvert" : "") + (cadreTambour && tambourOuvert && !nav0 && !p.sansPoint ? " pzs-sans-doublon" : "")} aria-label="Dock des outils du studio de broderie" onKeyDown={onKey}>
         <div className="pzs-ligne">
           {aime && <button type="button" className="pzs-tool pzs-icon" aria-label="Revenir sur Le Monde AIME" title="Retour" onClick={retourSite}><ArrowLeft size={18} aria-hidden="true" /></button>}
           <button id="pzs-brand" data-guide="orbe" type="button" className="pzs-orbe" aria-label="Menu AIME : accueil, réglages, affichage" title="Menu AIME" aria-expanded={bloc === "menu"} aria-controls="pzs-bloc" onClick={() => ouvrir("menu")}>

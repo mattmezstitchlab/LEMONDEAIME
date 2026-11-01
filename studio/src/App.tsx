@@ -406,7 +406,8 @@ export default function App() {
   /* l'orbe qui guide : à la première ouverture de l'atelier, elle présente les deux docks, outil par outil */
   const [visite, setVisite] = useState(false);
   /* avec le tambour (navigation .0), la visite des docks ne s'impose plus : elle décrit une autre interface ; elle reste proposée par la landing */
-  useEffect(() => { if (atelierLibre && !panel && !showWelcome && !composer && !visiteVue() && !lireRetour() && !lireNav0()) setVisite(true); }, [atelierLibre, panel, showWelcome, composer]);
+  /* arrivé depuis une carte projet (?ouvrir=…) : la personne sait ce qu'elle veut faire, aucune visite ne s'impose ; elle reste proposée dans le menu de l'orbe */
+  useEffect(() => { if (ouvrir === null && atelierLibre && !panel && !showWelcome && !composer && !visiteVue() && !lireRetour() && !lireNav0()) setVisite(true); }, [atelierLibre, panel, showWelcome, composer]);
   useEffect(() => {
     if (!atelierLibre) return;
     const utile = (e: DragEvent) => { const t = Array.from(e.dataTransfer?.types ?? []); return t.includes(OUVRAGE_DRAG_TYPE) || t.includes("Files"); };

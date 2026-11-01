@@ -11,3 +11,18 @@ export const ENTREES_BRODERIE = [
 ];
 /* la carte Broderie : le projet « Brode Way » (ou tout projet de catégorie Broderie dont le lien est l'atelier) */
 export const estBroderie = (p) => !!p && (p.slug === 'brode-way' || (p.categorie === 'Broderie' && p.lien === ATELIER));
+
+/* « Reprendre un ouvrage » : l'atelier restaure le dernier ouvrage de cet appareil (clé du Studio, lecture seule ; rien n'est écrit ni copié).
+   Un ouvrage « existe » s'il a au moins un point posé ; un canevas vide n'est pas un ouvrage à reprendre. */
+export const CLE_OUVRAGE = 'point-zero:motif:v1';
+export function ouvrageARepris(stockage) {
+  try {
+    const brut = stockage && stockage.getItem(CLE_OUVRAGE);
+    if (!brut) return null;
+    const o = JSON.parse(brut);
+    const posés = (a) => Array.isArray(a) && a.some(v => typeof v === 'number' && v >= 0);
+    const nombre = ['cross', 'fwd', 'bwd', 'q0', 'q1', 'q2', 'q3'].some(k => posés(o[k]));
+    if (!nombre) return null;
+    return { nom: typeof o.name === 'string' && o.name.trim() ? o.name.trim() : 'votre dernier ouvrage', modifie: typeof o.updated === 'number' ? o.updated : null };
+  } catch { return null; }
+}

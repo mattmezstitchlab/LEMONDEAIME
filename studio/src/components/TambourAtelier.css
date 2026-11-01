@@ -102,6 +102,10 @@ html.pz-dock-accroche:not(.pz-tambour-ouvert) .toast-in { top: auto !important; 
 html.pz-nav0 .pzs-ligne { display: none; }
 html.pz-nav0 .pzs-top:not(:has(#pzs-bloc)) { display: none; }
 
+/* Tambour ouvert (navigation classique) : les outils du dock du haut (Dessiner, Broder, Fils, Partager) sont déjà dans la couronne (Points, Broder, Fils, Exporter › Partager en direct).
+   On ne les répète pas : le dock garde l'orientation (retour au site, menu AIME, annuler/rétablir, chercher, Mes ouvrages). « Rétracter » les rend. */
+.pzs-sans-doublon .pzs-row, .pzs-sans-doublon .pzs-row + .pzs-sep { display: none; }
+
 /* — le suivi dans le cercle : l'avancée de la couleur active sur le bois (dite aussi dans le cartouche), et le prochain point — */
 .pzt-suivi { position: fixed; z-index: 3; pointer-events: none; overflow: visible; }
 .pzt-suivi-piste { fill: none; stroke: rgba(0, 0, 0, .14); stroke-width: 4; }
