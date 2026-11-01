@@ -38,6 +38,8 @@ export function NavigationConvergence({ base = S }: { base?: string } = {}) {
   const ici = window.location.pathname.replace(/\/+$/, "");
   /* venu du Disque (Broder, Ouvrir…) : le retour au contexte exact, en un geste */
   const retour = /\/one(\/univers)?$/.test(ici) ? null : lireRetour();
+  // Les préférences publiques sont accessibles depuis le panneau du header.
+  if (!PROTOTYPES) return retour ? <a className="cv-retour" href={retour.adresse}>Revenir à .0NE · {retour.nom}</a> : null;
   return <nav className="cv-nav" aria-label={PROTOTYPES ? "Navigation de la version candidate" : "Outils contextuels"}>
     {retour && !ouvert && <a className="cv-retour" href={retour.adresse}><span className="cv-orbe" aria-hidden="true" />Revenir à .0NE · {retour.nom}</a>}
     {ouvert && <div className="cv-nav-panneau" ref={panneau} id="cv-nav-panneau">

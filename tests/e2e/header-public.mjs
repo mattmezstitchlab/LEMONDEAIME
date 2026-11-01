@@ -40,8 +40,7 @@ async function page(width = 1280) {
 }
 const goto = (p, route) => p.goto(base + route, { waitUntil: 'domcontentloaded' });
 const entries = [
-  ['Accueil', '/'], ['Broderie', '/studio/'], ['Mariage', '/aime-wedding'],
-  ['Projets à venir', '/projets-a-venir'], ['À propos', '/a-propos'], ['Contact', '/contact'],
+  ['Accueil', '/'], ['Broderie', '/studio/'], ['Atelier', '/studio/atelier'],
 ];
 try {
   const errors = [];
@@ -101,7 +100,7 @@ try {
         ok(violations.length === 0, `${width} ${route} : axe ciblé header sans violation (${violations.join(', ')})`);
       }
       const labels = await nav.locator('a').allTextContents();
-      ok(JSON.stringify(labels) === JSON.stringify(entries.map(e => e[0])), `${width} ${route} : ordre exact des six entrées`);
+      ok(JSON.stringify(labels) === JSON.stringify(entries.map(e => e[0])), `${width} ${route} : ordre exact des entrées broderie`);
       ok(await nav.locator('[aria-current="page"]').innerText() === name, `${width} ${route} : rubrique active`);
       ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width} ${route} : sans débordement`);
       if (width < 1051) {
@@ -169,6 +168,18 @@ try {
     await p.getByRole('button', {name:'Mon confort : régler chaque détail',exact:true}).click();
     ok(await p.locator('.mini-dock').isVisible(), 'réglages de confort conservés');
     await p.context().close();
+  }
+  {
+    const p = await page(320); await goto(p, '/');
+    await p.getByRole('heading', {name:'Tout commence par un point.'}).waitFor();
+    ok(await p.locator('#demonstrations a[href="/studio/fleur-du-ciel"]').count()===1, 'Fleur reste une démonstration accessible');
+    ok(await p.locator('#demonstrations a[href="/studio/uptown"]').count()===1, 'UPTOWN reste une démonstration accessible');
+    ok(await p.locator('main a[href="/aime-wedding"],main a[href="/reseau"],footer a[href="/projets"]').count()===0, 'autres univers absents des entrées publiques');
+    await p.getByRole('button',{name:'Mon espace',exact:true}).click();
+    await p.getByRole('button',{name:'Chercher dans tout AIME, et le plan du site',exact:true}).click();
+    const search=p.getByRole('search');
+    ok(await search.locator('a[href^="/aime-wedding"],a[href^="/reseau"],a[href^="/musique"],a[href^="/projets"]').count()===0,'recherche sans autre univers');
+    await p.keyboard.press('Escape'); await p.context().close();
   }
   const p = await page(); await goto(p, '/contact');
   ok(await p.getByText('Aucun message n’est envoyé depuis cette page.', {exact:false}).count() === 1, 'contact honnête, aucun formulaire factice');
