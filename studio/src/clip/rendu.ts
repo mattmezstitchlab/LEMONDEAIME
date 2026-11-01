@@ -21,6 +21,7 @@ uniform usampler2D uIdx; uniform sampler2D uPal; uniform sampler2D uSym;
 uniform vec2 uTaille;            // la toile, en pixels (du canevas)
 uniform vec3 uVue;               // centre de la vue (en cases) et cases par pixel
 uniform vec4 uLoupe;             // x, y (pixels), rayon (pixels), grossissement (0 : pas de loupe)
+uniform vec4 uTambour;           // la toile du Disque, posée sur le clip plein écran : x, y, rayon (pixels), grossissement (0 : pas de tambour)
 uniform float uT, uBattue, uBrode, uBrodeT0, uEclat, uEnvers, uArriere, uGrille;
 uniform vec2 uParties[${MAX_PARTIES}]; uniform int uNParties;
 uniform int uNFils;
@@ -135,18 +136,28 @@ vec3 caseRendu(vec2 g, float macro){
   return r * (1. + .10 * uEclat) + .024 * uEclat;
 }
 
+// où tombe un pixel dans la grille : dans le tambour (grossi), ou sur le fond (le clip plein écran) ; z : cases par pixel
+vec3 place(vec2 p){
+  if (uTambour.w > 0. && length(p - uTambour.xy) < uTambour.z){
+    vec2 c = uVue.xy + (uTambour.xy - uTaille / 2.) * uVue.z; float z = uVue.z / uTambour.w; return vec3(c + (p - uTambour.xy) * z, z); }
+  return vec3(uVue.xy + (p - uTaille / 2.) * uVue.z, uVue.z);
+}
+vec3 vue(vec2 p){
+  vec3 q = place(p);
+  // de loin, un pixel couvre une bonne part de point : quatre échantillons (sinon les brins scintillent)
+  if (q.z > .08){ float e = q.z * .25; return (caseRendu(q.xy + vec2(-e, -e * .5), 0.) + caseRendu(q.xy + vec2(e, e * .5), 0.)
+      + caseRendu(q.xy + vec2(-e * .5, e), 0.) + caseRendu(q.xy + vec2(e * .5, -e), 0.)) * .25; }
+  return caseRendu(q.xy, 0.);
+}
 void main(){
   vec2 px = vec2(gl_FragCoord.x, uTaille.y - gl_FragCoord.y);
-  vec2 g = uVue.xy + (px - uTaille / 2.) * uVue.z;
-  // de loin, un pixel couvre une bonne part de point : quatre échantillons (sinon les brins scintillent)
-  vec3 r;
-  if (uVue.z > .08){ float e = uVue.z * .25; r = (caseRendu(g + vec2(-e, -e * .5), 0.) + caseRendu(g + vec2(e, -e * .5) * vec2(1., -1.), 0.)
-      + caseRendu(g + vec2(-e * .5, e), 0.) + caseRendu(g + vec2(e * .5, e) * vec2(1., 1.), 0.)) * .25; }
-  else r = caseRendu(g, 0.);
+  vec3 r = vue(px);
+  if (uTambour.w > 0.){ float dt = length(px - uTambour.xy); if (dt > uTambour.z - 1.5 && dt < uTambour.z + 1.) r *= .7; }
   if (uLoupe.w > 0.){
     float d = length(px - uLoupe.xy);
     if (d < uLoupe.z){
-      vec2 gz = uVue.xy + (uLoupe.xy - uTaille / 2.) * uVue.z + (px - uLoupe.xy) * uVue.z / uLoupe.w;
+      vec3 q = place(uLoupe.xy);
+      vec2 gz = q.xy + (px - uLoupe.xy) * q.z / uLoupe.w;
       float bord = smoothstep(uLoupe.z * .70, uLoupe.z * .76, d);
       vec3 l = caseRendu(gz, bord > .5 ? 2. : 1.);
       r = l * (1. - .25 * smoothstep(uLoupe.z * .9, uLoupe.z, d));
@@ -165,6 +176,8 @@ export interface EtatRendu {
   /** centre de la vue (en cases) et cases par pixel */
   vue: [number, number, number];
   loupe: [number, number, number, number] | null;
+  /** la toile du Disque sur le clip plein écran : x, y, rayon (pixels du canevas), grossissement */
+  tambour?: [number, number, number, number] | null;
 }
 
 export class RenduClip {
@@ -180,7 +193,7 @@ export class RenduClip {
     this.prog = p; gl.useProgram(p);
     const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     const loc = gl.getAttribLocation(p, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    for (const n of ["uIdx", "uPal", "uSym", "uTaille", "uVue", "uLoupe", "uT", "uBattue", "uBrode", "uBrodeT0", "uEclat", "uEnvers", "uArriere", "uGrille", "uParties", "uNParties", "uNFils"]) this.u[n] = gl.getUniformLocation(p, n);
+    for (const n of ["uIdx", "uPal", "uSym", "uTaille", "uVue", "uLoupe", "uTambour", "uT", "uBattue", "uBrode", "uBrodeT0", "uEclat", "uEnvers", "uArriere", "uGrille", "uParties", "uNParties", "uNFils"]) this.u[n] = gl.getUniformLocation(p, n);
     const tex = (unit: number) => { const t = gl.createTexture()!; gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); return t; };
     this.tIdx = tex(0); gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1); gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8UI, G, G, 0, gl.RED_INTEGER, gl.UNSIGNED_BYTE, new Uint8Array(G * G));
     this.tPal = tex(1); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, NB_FILS, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(NB_FILS * 4));
@@ -202,7 +215,7 @@ export class RenduClip {
   dessiner(e: EtatRendu) {
     const gl = this.gl, c = this.canvas; gl.viewport(0, 0, c.width, c.height);
     gl.uniform2f(this.u.uTaille, c.width, c.height); gl.uniform3f(this.u.uVue, ...e.vue);
-    gl.uniform4f(this.u.uLoupe, ...(e.loupe ?? [0, 0, 0, 0]));
+    gl.uniform4f(this.u.uLoupe, ...(e.loupe ?? [0, 0, 0, 0])); gl.uniform4f(this.u.uTambour, ...(e.tambour ?? [0, 0, 0, 0]));
     gl.uniform1f(this.u.uT, e.t); gl.uniform1f(this.u.uBattue, e.battue); gl.uniform1f(this.u.uBrode, e.brode); gl.uniform1f(this.u.uBrodeT0, e.brodeT0);
     gl.uniform1f(this.u.uEclat, e.eclat); gl.uniform1f(this.u.uEnvers, e.envers ? 1 : 0); gl.uniform1f(this.u.uArriere, e.arriere ? 1 : 0); gl.uniform1f(this.u.uGrille, e.grille ? 1 : 0);
     const p = new Float32Array(MAX_PARTIES * 2); e.parties.slice(0, MAX_PARTIES).forEach(([t, m], i) => { p[2 * i] = t; p[2 * i + 1] = m; });
