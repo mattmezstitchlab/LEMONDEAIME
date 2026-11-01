@@ -1,0 +1,548 @@
+{
+ "format": "clip-brode",
+ "version": 1,
+ "titre": "UPTOWN",
+ "musique": "Amor amour 2 (Matt)",
+ "source": "UPTOWN (Saint-Luc), restauré puis brodé",
+ "grille": 160,
+ "fps": 25,
+ "images": 5123,
+ "parMorceau": 50,
+ "morceaux": 103,
+ "duree": 204.92,
+ "battue": 0.49067713444553485,
+ "brodeJusqua": 21.5,
+ "finDuPassage": 196.379,
+ "carte": [
+  [
+   0.0,
+   0.0
+  ],
+  [
+   33.373,
+   29.65
+  ],
+  [
+   132.445,
+   111.53
+  ],
+  [
+   196.379,
+   176.22
+  ],
+  [
+   200.959,
+   180.8
+  ]
+ ],
+ "parties": [
+  [
+   0,
+   "toile"
+  ],
+  [
+   33.373,
+   "tissu"
+  ],
+  [
+   66.059,
+   "symboles"
+  ],
+  [
+   70.971,
+   "tissu"
+  ],
+  [
+   86.213,
+   "mosaique"
+  ],
+  [
+   101.472,
+   "symboles"
+  ],
+  [
+   105.395,
+   "tissu"
+  ],
+  [
+   120.44,
+   "toile"
+  ],
+  [
+   132.445,
+   "tissu"
+  ],
+  [
+   145.757,
+   "symboles"
+  ],
+  [
+   149.661,
+   "mosaique"
+  ],
+  [
+   173.757,
+   "tissu"
+  ],
+  [
+   196.379,
+   "toile"
+  ]
+ ],
+ "accents": [
+  [
+   34.056,
+   86
+  ],
+  [
+   72.936,
+   87
+  ],
+  [
+   76.376,
+   99
+  ],
+  [
+   80.803,
+   97
+  ],
+  [
+   84.739,
+   94
+  ],
+  [
+   92.605,
+   88
+  ],
+  [
+   118.672,
+   99
+  ],
+  [
+   119.653,
+   99
+  ],
+  [
+   123.589,
+   99
+  ],
+  [
+   127.523,
+   99
+  ],
+  [
+   130.965,
+   98
+  ],
+  [
+   131.949,
+   99
+  ],
+  [
+   135.883,
+   87
+  ],
+  [
+   137.36,
+   95
+  ]
+ ],
+ "fils": [
+  {
+   "code": "831",
+   "nom": "Golden Olive Medium",
+   "rgb": [
+    170,
+    143,
+    86
+   ],
+   "clair": false,
+   "points": 1454183
+  },
+  {
+   "code": "704",
+   "nom": "Chartreuse Bright",
+   "rgb": [
+    158,
+    207,
+    52
+   ],
+   "clair": false,
+   "points": 16399162
+  },
+  {
+   "code": "31",
+   "nom": "Blueberry",
+   "rgb": [
+    80,
+    81,
+    141
+   ],
+   "clair": false,
+   "points": 2556102
+  },
+  {
+   "code": "937",
+   "nom": "Avocado Green Medium",
+   "rgb": [
+    98,
+    113,
+    51
+   ],
+   "clair": false,
+   "points": 1212687
+  },
+  {
+   "code": "211",
+   "nom": "Lavender Light",
+   "rgb": [
+    227,
+    203,
+    227
+   ],
+   "clair": false,
+   "points": 267319
+  },
+  {
+   "code": "720",
+   "nom": "Orange Spice Dark",
+   "rgb": [
+    229,
+    92,
+    31
+   ],
+   "clair": false,
+   "points": 359091
+  },
+  {
+   "code": "318",
+   "nom": "Steel Gray Light",
+   "rgb": [
+    171,
+    171,
+    171
+   ],
+   "clair": false,
+   "points": 3644024
+  },
+  {
+   "code": "3051",
+   "nom": "Green Gray Dark",
+   "rgb": [
+    95,
+    102,
+    72
+   ],
+   "clair": false,
+   "points": 2939154
+  },
+  {
+   "code": "523",
+   "nom": "Fern Green Light",
+   "rgb": [
+    171,
+    177,
+    151
+   ],
+   "clair": false,
+   "points": 2248111
+  },
+  {
+   "code": "18",
+   "nom": "Yellow Plum",
+   "rgb": [
+    217,
+    213,
+    109
+   ],
+   "clair": false,
+   "points": 1255470
+  },
+  {
+   "code": "820",
+   "nom": "Royal Blue Very Dark",
+   "rgb": [
+    14,
+    54,
+    92
+   ],
+   "clair": false,
+   "points": 488267
+  },
+  {
+   "code": "3325",
+   "nom": "Baby Blue Light",
+   "rgb": [
+    184,
+    210,
+    230
+   ],
+   "clair": false,
+   "points": 2813586
+  },
+  {
+   "code": "154",
+   "nom": "Grape Very Dark",
+   "rgb": [
+    87,
+    36,
+    51
+   ],
+   "clair": false,
+   "points": 310165
+  },
+  {
+   "code": "169",
+   "nom": "Pewter Light",
+   "rgb": [
+    132,
+    132,
+    132
+   ],
+   "clair": false,
+   "points": 5699611
+  },
+  {
+   "code": "3799",
+   "nom": "Pewter Gray Very Dark",
+   "rgb": [
+    66,
+    66,
+    66
+   ],
+   "clair": false,
+   "points": 5221677
+  },
+  {
+   "code": "3607",
+   "nom": "Plum Light",
+   "rgb": [
+    197,
+    73,
+    137
+   ],
+   "clair": false,
+   "points": 448649
+  },
+  {
+   "code": "702",
+   "nom": "Kelly Green",
+   "rgb": [
+    71,
+    167,
+    47
+   ],
+   "clair": false,
+   "points": 507031
+  },
+  {
+   "code": "3804",
+   "nom": "Cyclamen Pink Dark",
+   "rgb": [
+    224,
+    40,
+    118
+   ],
+   "clair": false,
+   "points": 1003530
+  },
+  {
+   "code": "772",
+   "nom": "Yellow Green Very Light",
+   "rgb": [
+    228,
+    236,
+    212
+   ],
+   "clair": false,
+   "points": 1362970
+  },
+  {
+   "code": "907",
+   "nom": "Parrot Green Light",
+   "rgb": [
+    199,
+    230,
+    102
+   ],
+   "clair": false,
+   "points": 734629
+  },
+  {
+   "code": "762",
+   "nom": "Pearl Gray Very Light",
+   "rgb": [
+    236,
+    236,
+    236
+   ],
+   "clair": true,
+   "points": 6844981
+  },
+  {
+   "code": "934",
+   "nom": "Avocado Grn Black",
+   "rgb": [
+    49,
+    57,
+    25
+   ],
+   "clair": false,
+   "points": 1878225
+  },
+  {
+   "code": "973",
+   "nom": "Canary Bright",
+   "rgb": [
+    255,
+    227,
+    0
+   ],
+   "clair": false,
+   "points": 13634233
+  },
+  {
+   "code": "3805",
+   "nom": "Cyclamen Pink",
+   "rgb": [
+    243,
+    71,
+    139
+   ],
+   "clair": false,
+   "points": 2273632
+  },
+  {
+   "code": "3755",
+   "nom": "Baby Blue",
+   "rgb": [
+    147,
+    180,
+    206
+   ],
+   "clair": false,
+   "points": 4343658
+  },
+  {
+   "code": "310",
+   "nom": "Black",
+   "rgb": [
+    0,
+    0,
+    0
+   ],
+   "clair": false,
+   "points": 21886045
+  },
+  {
+   "code": "775",
+   "nom": "Baby Blue Very Light",
+   "rgb": [
+    217,
+    235,
+    241
+   ],
+   "clair": true,
+   "points": 2965884
+  },
+  {
+   "code": "927",
+   "nom": "Gray Green Light",
+   "rgb": [
+    189,
+    203,
+    203
+   ],
+   "clair": false,
+   "points": 1549544
+  },
+  {
+   "code": "B5200",
+   "nom": "Snow White",
+   "rgb": [
+    255,
+    255,
+    255
+   ],
+   "clair": true,
+   "points": 17127417
+  },
+  {
+   "code": "02",
+   "nom": "Tin",
+   "rgb": [
+    215,
+    215,
+    216
+   ],
+   "clair": false,
+   "points": 2011083
+  },
+  {
+   "code": "3608",
+   "nom": "Plum Very Light",
+   "rgb": [
+    234,
+    156,
+    196
+   ],
+   "clair": false,
+   "points": 584942
+  },
+  {
+   "code": "307",
+   "nom": "Lemon",
+   "rgb": [
+    253,
+    237,
+    84
+   ],
+   "clair": false,
+   "points": 1009684
+  },
+  {
+   "code": "906",
+   "nom": "Parrot Green Medium",
+   "rgb": [
+    127,
+    179,
+    53
+   ],
+   "clair": false,
+   "points": 381794
+  },
+  {
+   "code": "322",
+   "nom": "Baby Blue Dark",
+   "rgb": [
+    90,
+    143,
+    184
+   ],
+   "clair": false,
+   "points": 2143240
+  },
+  {
+   "code": "3371",
+   "nom": "Black Brown",
+   "rgb": [
+    30,
+    17,
+    8
+   ],
+   "clair": false,
+   "points": 1464095
+  },
+  {
+   "code": "938",
+   "nom": "Coffee Brown Ultra Dark",
+   "rgb": [
+    54,
+    31,
+    14
+   ],
+   "clair": false,
+   "points": 124925
+  }
+ ]
+}

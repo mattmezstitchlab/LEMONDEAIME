@@ -1,0 +1,25 @@
+/* UPTOWN brodé : la page de démonstration (le Disque de l'atelier, ses classes .pzt, et ce qui est propre au clip) */
+.clip { background: #ecebe6; overflow: hidden; }
+.clip .pzt-voile { background: radial-gradient(circle at var(--pzt-x) var(--pzt-y), transparent calc(var(--pzt-rb) - 2px), #ecebe6 calc(var(--pzt-rb) - 1px)); }
+.clip-tambour { position: absolute; border-radius: 50%; perspective: 1400px; transition: transform .6s cubic-bezier(.4,.1,.2,1); transform-style: preserve-3d; }
+.clip-retourne { transform: rotateY(180deg); }
+.clip-dos { transform: scaleX(-1); }
+.clip-toile { display: block; width: 100%; height: 100%; border-radius: 50%; pointer-events: auto; cursor: none; touch-action: none; background: #e9e4d9; }
+.clip-toile:focus-visible { outline: 3px solid #c9b8ff; outline-offset: 6px; }
+.clip-lancer { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 4px; min-width: 132px; min-height: 132px; padding: 18px; border: 0; border-radius: 50%;
+  background: rgba(14,14,14,.86); color: #fff; font: 600 15px/1.2 "Inter Tight", system-ui, sans-serif; cursor: pointer; pointer-events: auto; box-shadow: 0 0 0 3px rgba(255,255,255,.8), 0 0 28px rgba(201,184,255,.45); z-index: 2; }
+.clip-lancer svg { width: 30px; height: 30px; } .clip-lancer small { font-weight: 450; opacity: .7; }
+.clip-lancer:focus-visible { outline: 3px solid #c9b8ff; outline-offset: 4px; }
+.clip-cartouche { min-height: 44px; }
+.clip-temps { position: absolute; left: 50%; transform: translateX(-50%); width: min(520px, calc(100vw - 32px)); display: flex; align-items: center; gap: 10px; pointer-events: auto;
+  font: 500 13px/1 "Inter Tight", system-ui, sans-serif; color: #141414; font-variant-numeric: tabular-nums; }
+.clip-temps input { flex: 1; min-height: 40px; accent-color: #141414; }
+.clip-credit { position: absolute; left: 50%; transform: translateX(-50%); margin: 0; width: calc(100vw - 32px); text-align: center; font: 450 12px/1.4 "Inter Tight", system-ui, sans-serif; color: rgba(20,20,20,.62); }
+.clip-chargement { position: absolute; transform: translate(-50%, -50%); margin: 0; font: 500 15px "Inter Tight", system-ui, sans-serif; color: #141414; }
+.clip-erreur { max-width: 560px; margin: 15vh auto; padding: 0 16px; font: 450 16px/1.5 "Inter Tight", system-ui, sans-serif; color: #141414; }
+/* la démonstration : l'outil montré s'allume dans la couronne */
+@keyframes clip-montre { 0%, 100% { box-shadow: 0 0 0 2px rgba(201,184,255,.95), 0 0 22px rgba(201,184,255,.55); } 50% { box-shadow: 0 0 0 4px rgba(255,255,255,.95), 0 0 34px rgba(201,184,255,.8); } }
+.clip[data-demo="affichage"] [data-mode="affichage"] .lp-rond, .clip[data-demo="fils"] [data-mode="fils"] .lp-rond, .clip[data-demo="points"] [data-mode="points"] .lp-rond,
+.clip[data-demo="broder"] [data-mode="broder"] .lp-rond, .clip[data-demo="loupe"] [data-mode="loupe"] .lp-rond { animation: clip-montre 1.07s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .clip-tambour { transition: none; } .clip [data-mode] .lp-rond { animation: none !important; } }
+html[data-pz-motion="reduce"] .clip-tambour { transition: none; }
