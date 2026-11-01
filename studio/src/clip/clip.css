@@ -42,3 +42,27 @@ html[data-pz-motion="reduce"] .clip-fond { transition: none; }
 @keyframes clip-confettis-entre { from { opacity: 0; transform: translate(-50%, -50%) scale(.4) rotate(-6deg); } to { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0); } }
 @keyframes clip-confettis-sort { to { opacity: 0; letter-spacing: .6em; filter: blur(3px); } }
 @media (prefers-reduced-motion: reduce) { .clip-confettis, .clip-confettis-nettoie { animation: none; } .clip-confettis-nettoie { opacity: 0; } }
+
+/* La même scène de clip peut être posée dans l'ouverture, sans deuxième toile ni deuxième Disque. */
+.clip-integre { position: absolute; inset: 0; z-index: 1; }
+.clip-integre .clip-toile { cursor: crosshair; }
+.clip-integre .clip-deplier { top: 70px; right: max(14px, env(safe-area-inset-right, 0px)); z-index: 4; }
+.clip-integre .clip-cartouche { max-width: min(420px, calc(100% - 32px)); z-index: 3; }
+.clip-disque { position: absolute; inset: 0; pointer-events: none; }
+/* Le mouvement du Disque et du pointeur est calculé à partir du temps audio, pas d'une animation CSS indépendante. */
+.clip-fleur .clip-disque .lp-secteur { animation: none; }
+.clip-fleur[data-demo] [data-mode] .lp-rond { animation: none; }
+.clip-fleur[data-demo="broder"] [data-mode="broder"] .lp-rond,
+.clip-fleur[data-demo="fils"] [data-mode="fils"] .lp-rond,
+.clip-fleur[data-demo="loupe"] [data-mode="loupe"] .lp-rond,
+.clip-fleur[data-demo="replier"] [data-mode="replier"] .lp-rond { box-shadow: 0 0 0 3px #e2d9ff, 0 0 24px rgba(201,184,255,.8); }
+.clip-fleur[data-guide="couleur"] .lp-pastille-anneau:has(.lp-marque) { box-shadow: 0 0 0 3px #fff, 0 0 22px #c9b8ff; }
+.clip-pointeur-demo { position: absolute; z-index: 6; width: 27px; height: 33px; pointer-events: none; filter: drop-shadow(0 3px 5px rgba(0,0,0,.45)); }
+.clip-pointeur-demo svg { display: block; width: 100%; height: 100%; }
+.clip-guide-indication { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 5; display: flex; align-items: center; gap: 7px; padding: 8px 12px; border: 1px solid rgba(255,255,255,.25); border-radius: 20px; background: rgba(18,16,24,.84); color: #fff; font: 600 12px/1.2 "Inter Tight", system-ui, sans-serif; white-space: nowrap; pointer-events: none; }
+.clip-guide-indication span { width: 6px; height: 6px; border-radius: 50%; background: #d9caff; }
+.clip-guide-indication i { font-style: normal; opacity: .6; }
+.clip-integre .clip-guide-indication { display: none; } /* La légende de l'ouverture porte la même précision. */
+@media (max-width: 520px) { .clip-guide-indication { top: 70px; } .clip-integre .clip-deplier { top: 64px; } }
+html.calme .clip-pointeur-demo, html[data-pz-motion="reduce"] .clip-pointeur-demo { display: none; }
+@media (prefers-reduced-motion: reduce) { .clip-pointeur-demo { display: none; } }

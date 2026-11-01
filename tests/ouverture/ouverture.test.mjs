@@ -42,12 +42,16 @@ test('la version courte et les légendes restent dans le morceau', async () => {
 test('rien ne se joue ni ne se charge avant un geste ; le mp4 n’est qu’un lien de secours', () => {
   const src = texte('src/ouverture/OuvertureFleur.tsx');
   assert.ok(!/autoplay/i.test(src), 'pas d’autoplay');
-  const lancer = src.indexOf('async function lancer'), fin = src.indexOf('const basculerPause');
-  assert.equal([...src.matchAll(/\.play\(\)/g)].filter(m => m.index < lancer || m.index > fin).length, 0, 'aucune lecture hors de lancer()');
+  const lancer = src.indexOf('function lancer'), fin = src.indexOf('const basculerPause');
+  assert.ok(lancer >= 0 && fin > lancer, 'le lancement est bien isolé');
+  assert.ok(!/\.play\(\)|<audio\b/.test(src), 'aucun second lecteur audio dans l’ouverture');
   const appels = [...src.matchAll(/lancer\('/g)].filter(m => m.index > fin);
   assert.ok(appels.length >= 3 && appels.every(m => /onClick=\{\(\) => $/.test(src.slice(m.index - 15, m.index))), 'lancer() n’est appelé que par un clic');
   assert.ok(!/<video/.test(src), 'aucune balise video : le film est dessiné par le moteur du Studio');
-  assert.ok(src.includes("import('../../studio/src/clip/rendu')") && src.includes("import('../../studio/src/clip/donnees')"), 'le moteur de rendu du Studio, chargé à la demande');
+  assert.ok(src.includes("lazy(() => import('../../studio/src/clip/ClipBrode')"), 'le lecteur partagé du Studio est chargé à la demande');
+  assert.match(src, /\{integration && <Suspense[^>]*><ClipFleur/, 'le lecteur n’est monté qu’après un lancement');
+  const lecteur = texte('studio/src/clip/ClipBrode.tsx');
+  assert.ok(lecteur.includes('from "./rendu"') && lecteur.includes('from "./donnees"') && lecteur.includes('export const ClipFleurIntroduction'), 'le lecteur réutilise le moteur et les données du Studio');
   const mp4 = [...src.matchAll(/mp4/g)].length; assert.ok(mp4 <= 2, 'le mp4 n’apparaît que dans le lien de secours');
   assert.ok(/Passer l’introduction/.test(src) && /prefers-reduced-motion/.test(src) && /webgl2/.test(src));
 });

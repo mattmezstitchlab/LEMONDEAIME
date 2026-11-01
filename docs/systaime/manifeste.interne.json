@@ -184,7 +184,7 @@
     "fichiers": [
      {
       "path": "src/charte/Charte.tsx",
-      "blob": "0471c2a108e5909a7e9e5c9b3a2313af0c744d0a"
+      "blob": "c0b5b18a304374dca1f9d65a2f21da08b18f7ba4"
      }
     ]
    },
@@ -3439,7 +3439,7 @@
    "de": "src/charte/Charte.tsx",
    "a": "src/lib/session.ts",
    "type": "import_technique",
-   "fichier_de": "src/charte/Charte.tsx",
+   "fichier_de": "src/charte/PanneauPersonnel.tsx",
    "module_a": "lib/session",
    "fichier_a": "src/lib/session.ts",
    "blob_a": "2b735845b5d05e804b55cfbb765c95ce623bbfac",
@@ -3449,7 +3449,7 @@
    "de": "src/charte/Charte.tsx",
    "a": "src/lib/buro.ts",
    "type": "import_technique",
-   "fichier_de": "src/charte/Charte.tsx",
+   "fichier_de": "src/charte/PanneauPersonnel.tsx",
    "module_a": "lib/buro",
    "fichier_a": "src/lib/buro.ts",
    "blob_a": "b1e06afac8865d8d3cdce1f4b1a586e1f8e12ef4",

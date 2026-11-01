@@ -39,3 +39,18 @@ html.aime-public-studio .csh-skip:focus { top: calc(var(--aime-header-height) + 
 
 .aime-header-evitement { position: absolute; left: 12px; top: -200px; z-index: 2; padding: 12px; background: #fff; color: #0b0b0c; }
 .aime-header-evitement:focus { top: 8px; }
+
+html.aime-public-studio .clip-deplier { top: calc(var(--aime-header-height) + 16px); }
+
+.aime-header-compte { min-height:44px; flex:none; padding:8px 12px; font:inherit; background:#fff; color:#0b0b0c; border:1px solid #cfcfcb; border-radius:12px; cursor:pointer; }
+.aime-header-ligne { gap:12px; }
+@media(min-width:1051px) { .aime-header-liens ul { gap:6px; } .aime-header-liens a { padding-inline:6px; } }
+@media(max-width:480px) { .aime-header-ligne { padding-inline:10px; gap:6px; } .aime-header-logo {font-size:22px; gap:6px;} .aime-header-menu {font-size:14px; padding:6px 8px;} .aime-header-compte {font-size:14px; padding:6px 8px;} }
+.aime-sections-locales { position:static; margin:24px auto; padding:16px; max-width:1100px; }
+.aime-sections-locales nav,.aime-actions-locales,.aime-lecture-locale { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.aime-sections-locales a,.aime-sections-locales button { min-height:44px; display:inline-flex; align-items:center; padding:8px 12px; color:#0b0b0c; background:#fff; border:1px solid #cfcfcb; border-radius:10px; font:inherit; text-decoration:none; }
+.aime-sections-locales .piste-dock { color:#0b0b0c; }
+.aime-actions-locales { margin-block:12px; }
+html.aime-public-studio .clip-integre .clip-deplier { top:70px; }
+html.aime-public-studio .clip:not(.clip-integre) .clip-guide-indication { top:calc(var(--aime-header-height) + 16px); }
+html.aime-public-studio .pzt:has(.pzt-point) ~ .pzs-bottom { display:none; }

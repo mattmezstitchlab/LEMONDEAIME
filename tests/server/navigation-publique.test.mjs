@@ -27,7 +27,7 @@ test('header public : routes profondes, ancienne navigation et fonctions métier
   assert.match(lire('src/charte/Charte.tsx'), /<HeaderPublic chemin=\{chemin\}/);
   assert.match(lire('studio/src/main.tsx'), /<HeaderPublic/);
   assert.doesNotMatch(lire('src/main.tsx'), /NavigationConvergence/);
-  const charte = lire('src/charte/Charte.tsx');
+  const charte = lire('src/charte/Charte.tsx') + lire('src/charte/PanneauPersonnel.tsx');
   for (const capability of ['<Recherche ', '<EntrerBloc ', 'seDeconnecter({ effacerOuvrages:', '<ReglagesLigne ', '<Musique />']) assert.ok(charte.includes(capability), capability);
   for (const command of ['<TambourAtelier', 'onImporter=', 'onComposer=']) {
     // Les commandes sont dans les composants métier, non remplacées par la navigation publique.

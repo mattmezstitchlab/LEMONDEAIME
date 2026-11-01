@@ -1,12 +1,8 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
-import { Lien, profondeur, revenir, useChemin } from '../lib/router';
-import { lireBuro } from '../lib/buro';
+import { useId, useRef, useState, type ReactNode } from 'react';
+import { Lien, useChemin } from '../lib/router';
 import { ajouter as ajouterPistes, basculer as basculerLecture, precedent, suivant, useLecteur } from '../lib/lecteur';
-import { useSession, seDeconnecter, type Personne } from '../lib/session';
-import { Recherche, GROUPES } from './Recherche';
-import { EntrerBloc } from './EntrerBloc';
 import HeaderPublic from './HeaderPublic';
-import { arcs, earcon, ecrirePrefs, profilCourant, profils, useConfort, type Prefs, type Profil } from '../lib/confort';
+import { arcs,  type Prefs, type Profil } from '../lib/confort';
 
 export function Orbe({ taille = 30 }: { taille?: number }) {
   return <span className="orbe" aria-hidden="true" style={{ width: taille, height: taille }} />;
@@ -17,196 +13,28 @@ export function Marque() {
 
 /* Tete reste le point canonique des pages du site. Le header extrait est partagé avec le Studio.
    Recherche, compte, déconnexion et confort ne disparaissent pas : ils restent des outils contextuels. */
-type ModeHaut = 'aime' | 'recherche' | 'espace' | null;
-export function Tete({ courant }: { courant?: string }) {
+export function Tete({ courant: _courant }: { courant?: string }) {
   const chemin = useChemin();
-  return <><HeaderPublic chemin={chemin} /><details className="aime-outils-site"><summary>Compte, recherche et confort</summary><OutilsSite courant={courant} /></details></>;
-}
-function OutilsSite({ courant }: { courant?: string }) {
-  const [mode, setMode] = useState<ModeHaut>(null);
-  const [reglages, setReglages] = useState(false);
-  const [groupe, setGroupe] = useState<string | null>(null);
-  const [effacerOuvrages, setEffacerOuvrages] = useState(false);   /* jamais coché par défaut */
-  const [annonce, setAnnonce] = useState('');
-  const [comptes, setComptes] = useState<Record<string, number> | null>(null);
-  const session = useSession();
-  const prefs = useConfort();
-  const chemin = useChemin();
-  const iris = useId().replace(/:/g, '');
-  const boutons = useRef<Partial<Record<'aime' | 'recherche' | 'espace', HTMLButtonElement | null>>>({});
-  const bloc = useRef<HTMLDivElement>(null);
-  const cp = profilCourant(prefs);
-  const retour = chemin !== '/' || profondeur() > 0;
-  useEffect(() => { setMode(null); }, [chemin]);
-  useEffect(() => { if (mode && mode !== 'recherche') bloc.current?.querySelector<HTMLElement>('input, a, button')?.focus(); }, [mode]);
-  useEffect(() => { if (mode === 'espace' && session) lireBuro().then(r => {
-    const ps = r.ok ? r.projets || [] : [];
-    setComptes({ projets: ps.filter(p => p.role === 'owner' && !p.archive).length, partages: ps.filter(p => p.role !== 'owner' && !p.archive).length, archives: ps.filter(p => p.archive).length });
-  }); }, [mode, session]);
-  const ouvrir = (m: Exclude<ModeHaut, null>) => { setReglages(false); setMode(x => x === m ? null : m); };
-  const fermer = () => { const m = mode; setMode(null); setReglages(false); if (m) boutons.current[m]?.focus(); };
-  const choisir = (p: Profil) => { ecrirePrefs({ ...p.prefs }); setAnnonce(p.msg); if (p.prefs.sons === 'on') earcon('ok', true); };
-  const regler = <K extends keyof Prefs>(k: K, v: Prefs[K], msg: string) => { ecrirePrefs({ ...prefs, [k]: v }); setAnnonce(msg); earcon('ok', k === 'sons' && v === 'on'); };
-  const DOSSIERS: [string, string, string][] = [['projets', 'Projets', '#C9B8FF'], ['partages', 'Partagés avec moi', '#D9E8FF'], ['archives', 'Archives', '#E4E4E1'], ['profil', 'Profil', '#FFD6EC']];
-  return (
-    <div className="tete">
-      {mode && <div aria-hidden="true" className="tete-voile" onClick={fermer} />}
-      <nav className={'dock-haut' + (mode ? ' ouvert' : '')} aria-label="Compte, recherche et confort" onKeyDown={e => { if (e.key === 'Escape' && mode) { e.preventDefault(); fermer(); } }}>
-        <div className="dock-ligne">
-          {retour && <button type="button" className="outil carre" aria-label="Revenir là où vous étiez" title="Retour" onClick={revenir}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
-          </button>}
-          <button ref={el => { boutons.current.aime = el; }} type="button" className="carre-orbe" aria-expanded={mode === 'aime'} aria-controls="bloc-dock"
-            aria-label={'Menu AIME et Mon confort, orbe ' + (cp ? cp.nom : 'personnalisée')} title="Menu et Mon confort" onClick={() => ouvrir('aime')}>
-            <Orbe taille={30} />
-          </button>
-          <span className="separateur" aria-hidden="true" />
-
-          <button ref={el => { boutons.current.recherche = el; }} type="button" className="outil loupe" aria-expanded={mode === 'recherche'} aria-controls="bloc-dock" aria-label={mode === 'recherche' ? 'Fermer la recherche' : 'Chercher dans tout AIME, et le plan du site'} title="Chercher" onClick={() => ouvrir('recherche')}>
-            {mode === 'recherche'
-              ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              : <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-4.2-4.2" /></svg>}
-          </button>
-          <button ref={el => { boutons.current.espace = el; }} type="button" className="outil profil" aria-expanded={mode === 'espace'} aria-controls="bloc-dock" aria-current={courant === '/buro' || courant === '/entrer' ? 'page' : undefined}
-            aria-label={session ? 'Votre espace' + (session.name ? ', ' + session.name : '') : 'Votre espace : entrer dans AIME'} title="Votre espace" onClick={() => ouvrir('espace')}>
-            <Avatar p={session} />
-          </button>
-        </div>
-        <p className="sr-only" aria-live="polite">{annonce}</p>
-        {mode && <div id="bloc-dock" ref={bloc} className="dock-bloc">
-          <div className="dock-bloc-corps">
-            {mode === 'aime' && <>
-              <ul className="bloc-menu">
-                {([['/buro', 'Mon espace'], ['/reseau', 'Prestataires'], ['/musique', 'La journée en musique']] as [string, string][]).map(([h, l]) => <li key={h}><Lien href={h} aria-current={courant === h ? 'page' : undefined} onClick={() => setMode(null)}>{l}</Lien></li>)}
-                {session && <li><button type="button" onClick={() => { setMode(null); seDeconnecter(); }}>Déconnexion</button></li>}
-              </ul>
-              <p className="bloc-note">{reglages
-                ? <>Mon confort, en bas : touchez un picto pour l’activer. Réglé une fois, appliqué partout, gardé sur cet appareil. <b>{annonce}</b></>
-                : <>Votre orbe : <b>{cp ? cp.nom : 'personnalisée'}</b>{cp ? ' · ' + cp.indice : ''}. Choisissez-en une autre en bas, ou réglez chaque détail avec <b>Mon confort</b>.</>}</p>
-            </>}
-            {mode === 'recherche' && <Recherche fermer={fermer} groupe={groupe} />}
-            {mode === 'espace' && (session
-              ? <>
-                <p className="bloc-note" style={{ marginTop: 0 }}>Bonjour{session.name ? ' ' + session.name.split(' ')[0] : ''}. Votre espace, sans quitter la page.</p>
-                <ul className="bloc-dossiers">
-                  {DOSSIERS.map(([id, nom, teinte]) => <li key={id}><Lien href={'/buro?lieu=' + id} onClick={() => setMode(null)}>
-                    <svg width="40" height="40" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2.2h8.5A1.5 1.5 0 0 1 21 9.7v8.8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z" fill={teinte} stroke="#0B0B0C" strokeWidth="1.2" strokeLinejoin="round" /></svg>
-                    <b>{nom}</b><span>{id === 'profil' ? 'Ma page du Réseau' : comptes ? comptes[id] + ' projet' + (comptes[id] > 1 ? 's' : '') : '…'}</span>
-                  </Lien></li>)}
-                </ul>
-              </>
-              : <>
-                <p className="bloc-note" style={{ marginTop: 0 }}>Entrez dans AIME, sans quitter la page : vos projets, vos ouvrages et votre profil vous suivent sur tous vos appareils.</p>
-                <EntrerBloc compact retour={/^\/[a-z0-9-]{1,40}$/.test(chemin) || chemin === '/' ? chemin : '/buro'} />
-              </>)}
-          </div>
-          <div className="mini-dock" role="group" aria-label={mode === 'aime' ? (reglages ? 'Mon confort' : 'Choisir mon orbe') : mode === 'recherche' ? 'Chercher dans' : 'Votre espace'}>
-            {mode === 'aime' && (reglages
-              ? <ReglagesLigne prefs={prefs} regler={regler} retour={() => setReglages(false)} retablir={() => { ecrirePrefs(null); setAnnonce('Réglages de l’appareil rétablis.'); }} />
-              : <>
-                {profils().map(p => { const on = cp?.id === p.id;
-                  return <button key={p.id} type="button" className="orbe-choix" aria-pressed={on} aria-label={'Orbe ' + p.nom + ' : ' + p.indice} title={'Orbe ' + p.nom + ' : ' + p.indice} onClick={() => choisir(p)}><OrbeDessin p={p} taille={40} iris={iris} /></button>; })}
-                <span className="separateur sombre" aria-hidden="true" />
-                <button type="button" className="orbe-choix" aria-label="Mon confort : régler chaque détail" title="Mon confort" style={{ color: '#fff' }} onClick={() => setReglages(true)}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
-                </button>
-              </>)}
-            {mode === 'recherche' && [null, ...GROUPES].map(g => <button key={g || 'tout'} type="button" className="lieu" aria-current={groupe === g ? 'true' : 'false'} onClick={() => setGroupe(g)}>{g || 'Tout'}</button>)}
-            {mode === 'espace' && (session
-              ? <><Lien className="lieu" href="/buro" onClick={() => setMode(null)}>Ouvrir mon espace</Lien><Lien className="lieu" href="/point-zero" onClick={() => setMode(null)}>Point Zéro</Lien><Lien className="lieu" href="/a-plus" onClick={() => setMode(null)}>A+</Lien><label className="lieu lieu-case" title="Vos ouvrages déjà rangés dans votre espace AIME restent sur votre compte ; ceux qui n’y sont pas encore restent sur l’appareil."><input type="checkbox" checked={effacerOuvrages} onChange={e => setEffacerOuvrages(e.target.checked)} aria-describedby="effacer-ouvrages-note" /> Effacer les ouvrages de cet appareil<span id="effacer-ouvrages-note" className="sr-only">Vos ouvrages déjà rangés dans votre espace AIME restent sur votre compte ; ceux qui n’y sont pas encore restent sur l’appareil.</span></label><button type="button" className="lieu" onClick={async () => { const e = effacerOuvrages; setEffacerOuvrages(false); setMode(null); const b = await seDeconnecter({ effacerOuvrages: e }); if (b) setAnnonce(b.effaces + ' ouvrage' + (b.effaces > 1 ? 's' : '') + ' effacé' + (b.effaces > 1 ? 's' : '') + ' de cet appareil' + (b.gardes ? ', ' + b.gardes + ' gardé' + (b.gardes > 1 ? 's' : '') + ' (pas encore rangé' + (b.gardes > 1 ? 's' : '') + ' dans votre espace)' : '') + '.'); }}>Déconnexion</button></>
-              : <><Lien className="lieu" href="/a-propos" onClick={() => setMode(null)}>Pourquoi un compte ?</Lien><Lien className="lieu" href="/a-plus" onClick={() => setMode(null)}>A+ pour les pros</Lien></>)}
-          </div>
-        </div>}
-      </nav>
-    </div>
-  );
-}
-/* le rond du profil : la photo, sinon les initiales, sinon une silhouette (pas encore entré) */
-function Avatar({ p }: { p: Personne | null | undefined }) {
-  if (p && p.image) return <img src={p.image} alt="" className="avatar" />;
-  const ini = p ? ((p.name || p.email || '').trim().split(/[\s@.]+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase() || '·') : '';
-  return <span className="avatar" aria-hidden="true">{p ? ini : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="9" r="3.6" /><path d="M5 19.5c1.4-3.2 4-4.7 7-4.7s5.6 1.5 7 4.7" /></svg>}</span>;
+  return <HeaderPublic chemin={chemin} />;
 }
 /* Le dock du bas : toujours en bas de l'écran. Le cercle progresse avec la lecture et montre où l'on est (un arc par lieu).
    Un clic sur le cercle ouvre les modes du dock, chacun avec son halo : Navigation (les lieux de la page), Musique (vos morceaux),
    et ceux que la page apporte (Jour J sur l'accueil…). Le dock se transforme, sans rien ouvrir par-dessus la page. */
 export type ModeDock = { id: string; nom: string; halo: string; progres?: number; rendu: () => ReactNode };
 export function DockBas({ lieux = [], label = 'Sections de la page', children, modes = [] }: { lieux?: [string, string][]; label?: string; children?: ReactNode; modes?: ModeDock[] }) {
-  const [courant, setCourant] = useState<string | null>(null);
-  const [lu, setLu] = useState(0);
-  const [haut, setHaut] = useState(false);
-  const [menu, setMenu] = useState(false);
-  const [modeId, setModeId] = useState('nav');
-  const prefs = useConfort();
   const musique = useLecteur();
-  const cercle = useRef<HTMLButtonElement>(null);
-  const iris = useId().replace(/:/g, '');
-  const avant = useRef<string | null>(null);
-  useEffect(() => {
-    let raf = 0;
-    const f = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => {
-      let c: string | null = null; const ligne = window.innerHeight * 0.4;
-      lieux.forEach(([id]) => { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top <= ligne) c = id; });
-      const d = document.documentElement, max = Math.max(1, d.scrollHeight - window.innerHeight);
-      setLu(Math.min(1, Math.max(0, window.scrollY / max)));
-      setHaut(window.scrollY > window.innerHeight * 0.8);
-      if (c !== avant.current) { if (avant.current !== null && c) earcon('nav'); avant.current = c; }
-      setCourant(c);
-    }); };
-    window.addEventListener('scroll', f, { passive: true }); window.addEventListener('resize', f); f();
-    return () => { window.removeEventListener('scroll', f); window.removeEventListener('resize', f); cancelAnimationFrame(raf); };
-  }, [lieux]);
-  /* Contextuel : sans section, sans action de page et sans mode propre, le dock du bas disparaît.
-     Deux choses restent : le lecteur (si des morceaux sont chargés, ses commandes restent accessibles) et « Remonter ». */
-  const vide = !lieux.length && !children && !modes.length;
-  const tous: ModeDock[] = [
-    ...(vide ? [] : [{ id: 'nav', nom: 'Navigation', halo: '#FFFFFF', rendu: () => children || lieux.map(([id, l]) => <a key={id} className="lieu" href={'#' + id} aria-current={courant === id ? 'true' : 'false'}>{l}</a>) }]),
-    ...modes,
-    { id: 'musique', nom: 'Musique', halo: '#A46BFF', progres: musique.duree ? musique.temps / musique.duree : 0, rendu: () => <Musique /> },
-  ];
-  const m = tous.find(x => x.id === modeId) || tous[0];
-  const cp = profilCourant(prefs);
-  const teinte = m.id === 'nav' ? (cp ? cp.couleurs[0] : '#FFFFFF') : m.halo;
-  const progres = m.progres ?? lu;
-  const circ = 2 * Math.PI * 11;
-  const segments = m.id === 'nav' && lieux.length
-    ? lieux.map(([id], k) => { const on = id === courant; return { d: arc(k, lieux.length), w: on ? 4 : 2, o: on ? 1 : 0.32, c: on ? teinte : '#FFFFFF' }; })
-    : arcs(12, [teinte], 18, 10).map(a => ({ d: a.d, w: 2, o: 0.55, c: a.c }));
-  const nomLieu = lieux.find(([id]) => id === courant)?.[1];
-  const rang = useRef<HTMLDivElement>(null);
-  useEffect(() => { rang.current?.querySelector<HTMLElement>('[aria-current="true"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' }); });
-  const choisirMode = (id: string) => { setModeId(id); setMenu(false); earcon('ok'); requestAnimationFrame(() => cercle.current?.focus()); };
-  const remonter = <button type="button" className="lieu remonter" aria-label="Remonter en haut de la page" title="Remonter" onClick={() => { window.scrollTo({ top: 0, behavior: prefs.mouvement === 'reduit' ? 'auto' : 'smooth' }); }}>
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg>
-  </button>;
-  if (vide && !musique.pistes.length) return haut ? <nav className="dock-bas dock-bas-seul" aria-label="Remonter"><div>{remonter}</div></nav> : null;
-  return (
-    <nav className="dock-bas" aria-label={label} onKeyDown={e => { if (e.key === 'Escape' && menu) { e.preventDefault(); setMenu(false); cercle.current?.focus(); } }}>
-      <div ref={rang}>
-        <button ref={cercle} type="button" className="orbe-dock" aria-expanded={menu} onClick={() => setMenu(o => !o)}
-          title={menu ? 'Revenir au dock' : 'Changer le dock'}
-          aria-label={(menu ? 'Revenir au dock ' : 'Changer le dock, mode ') + m.nom + '. ' + (m.id === 'nav' ? (nomLieu ? 'Vous êtes dans la section ' + nomLieu + ', ' : '') + Math.round(lu * 100) + ' % de la page lue' : Math.round(progres * 100) + ' %')}>
-          <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
-            {segments.map((g, k) => <path key={k} d={g.d} fill="none" stroke={g.c} strokeWidth={g.w} strokeOpacity={g.o} strokeLinecap="round" />)}
-            <circle cx="22" cy="22" r="11" fill="none" stroke="#FFFFFF" strokeOpacity={0.18} strokeWidth="2" />
-            <circle cx="22" cy="22" r="11" fill="none" stroke={m.id === 'nav' ? '#FFFFFF' : m.halo} strokeWidth="2" strokeDasharray={(circ * progres).toFixed(1) + ' ' + circ.toFixed(1)} transform="rotate(-90 22 22)" />
-            <circle cx="22" cy="22" r="5.5" fill={'url(#' + iris + ')'} />
-            <defs><Iris id={iris} /></defs>
-          </svg>
-        </button>
-        {menu
-          ? <div role="group" aria-label="Les modes du dock" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            {tous.map(x => <button key={x.id} type="button" className="halo-mode" aria-pressed={x.id === m.id} onClick={() => choisirMode(x.id)}>
-              <span aria-hidden="true" className="halo" style={{ boxShadow: '0 0 0 2px ' + x.halo + ', 0 0 14px 2px ' + x.halo }} />{x.nom}
-            </button>)}
-          </div>
-          : m.rendu()}
-        {haut && !menu && <button type="button" className="lieu remonter" aria-label="Remonter en haut de la page" title="Remonter" onClick={() => { window.scrollTo({ top: 0, behavior: prefs.mouvement === 'reduit' ? 'auto' : 'smooth' }); cercle.current?.focus(); }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg>
-        </button>}
-      </div>
-    </nav>
-  );
+  const [mode, setMode] = useState('sections');
+  const contenu = modes.find(m => m.id === mode);
+  if (!lieux.length && !children && !modes.length && !musique.pistes.length) return null;
+  return <section className="aime-sections-locales" aria-label={label}>
+    <nav aria-label={label}>{lieux.map(([id, nom]) => <a key={id} href={'#' + id}>{nom}</a>)}{children}</nav>
+    {(modes.length > 0 || musique.pistes.length > 0) && <div className="aime-actions-locales">
+      <button type="button" onClick={() => setMode('sections')} aria-pressed={mode === 'sections'}>Sections</button>
+      {modes.map(m => <button type="button" key={m.id} aria-pressed={mode === m.id} onClick={() => setMode(m.id)}>{m.nom}</button>)}
+      <button type="button" onClick={() => setMode('musique')} aria-pressed={mode === 'musique'}>Musique</button>
+    </div>}
+    {contenu && <div>{contenu.rendu()}</div>}{mode === 'musique' && <div className="aime-lecture-locale"><Musique /></div>}
+  </section>;
 }
 /* Le mode Musique : vos morceaux, choisis sur l'appareil (rien n'est envoyé), lus sans quitter la page */
 function Musique() {
@@ -227,11 +55,6 @@ function Musique() {
       <Lien className="lieu" href="/musique">La journée en musique</Lien>
     </> : <><Lien className="lieu" href="/musique">La journée en musique</Lien><button type="button" className="lieu" onClick={() => choix.current?.click()}>Écouter un fichier de cet appareil</button></>}
   </>;
-}
-function arc(i: number, n: number) {
-  const gap = 14, span = 360 / n, a0 = -90 + i * span + gap / 2, a1 = a0 + span - gap, r = 18;
-  const pt = (a: number) => { const t = a * Math.PI / 180; return (22 + r * Math.cos(t)).toFixed(2) + ' ' + (22 + r * Math.sin(t)).toFixed(2); };
-  return 'M ' + pt(a0) + ' A ' + r + ' ' + r + ' 0 0 1 ' + pt(a1);
 }
 function Iris({ id }: { id: string }) {
   return <radialGradient id={id} cx="35%" cy="32%" r="75%"><stop offset="0%" stopColor="#ffffff" /><stop offset="35%" stopColor="#d9e8ff" /><stop offset="60%" stopColor="#c9b8ff" /><stop offset="80%" stopColor="#ffd6ec" /><stop offset="100%" stopColor="#b9f0e4" /></radialGradient>;
@@ -262,7 +85,7 @@ const PICTOS: Record<keyof Prefs, ReactNode> = {
   mouvement: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" aria-hidden="true"><path d="M3 12c2.5-4 5-4 7.5 0s5 4 7.5 0" /><path d="M20 6v12" strokeWidth="2.4" /></svg>,
   sons: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" /></svg>,
 };
-function ReglagesLigne({ prefs, regler, retour, retablir }: { prefs: Prefs; regler: <K extends keyof Prefs>(k: K, v: Prefs[K], msg: string) => void; retour: () => void; retablir: () => void }) {
+export function ReglagesLigne({ prefs, regler, retour, retablir }: { prefs: Prefs; regler: <K extends keyof Prefs>(k: K, v: Prefs[K], msg: string) => void; retour: () => void; retablir: () => void }) {
   return <>
     <button type="button" className="orbe-choix" aria-label="Revenir aux orbes" title="Revenir aux orbes" style={{ color: '#fff' }} onClick={retour}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
