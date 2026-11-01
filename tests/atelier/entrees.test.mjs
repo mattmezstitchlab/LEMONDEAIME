@@ -54,3 +54,10 @@ test('arrivé depuis une carte (?ouvrir=), aucune visite guidée ne s’impose d
   const app = lire('studio/src/App.tsx');
   assert.ok(/ouvrir === null && atelierLibre/.test(app));
 });
+
+test('le retour au site reste visible quand le Disque remplace le dock (navigation .0) ; aucun doublon quand le Tambour est ouvert en navigation classique', () => {
+  const css = lire('studio/src/components/TambourAtelier.css');
+  assert.ok(/html\.pz-nav0 \.pzs-ligne > :not\(\.pzs-marque\):not\(\.pzs-icon:first-child\) \{ display: none; \}/.test(css), 'la flèche de retour et AIME® restent');
+  assert.ok(!/html\.pz-nav0 \.pzs-top:not\(:has\(#pzs-bloc\)\) \{ display: none; \}/.test(css), 'le dock n’est plus caché en entier');
+  assert.ok(/\.pzs-sans-doublon \.pzs-row/.test(css) && lire('studio/src/components/StudioDocks.tsx').includes('pzs-sans-doublon'));
+});
