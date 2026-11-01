@@ -29,7 +29,7 @@ export default function HeaderPublic({ chemin = window.location.pathname }: { ch
     }}>Aller au contenu principal</a>
     <div className="aime-header-ligne">
       <a className="aime-header-logo" href="/" aria-label="AIME, accueil"><span className="aime-header-nacre" aria-hidden="true" />AIME<sup aria-hidden="true">®</sup></a>
-      <button ref={bouton} type="button" className="aime-header-menu" aria-expanded={ouvert} aria-controls={id} onClick={() => setOuvert(v => !v)}>{ouvert ? 'Fermer le menu' : 'Menu principal'}<span aria-hidden="true">{ouvert ? ' ×' : ' ☰'}</span></button>
+      <button ref={bouton} type="button" className="aime-header-menu" aria-expanded={ouvert} aria-controls={id} onClick={() => setOuvert(v => !v)}>{ouvert ? 'Fermer le menu' : 'Menu principal'}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d={ouvert ? 'M6 6l12 12M18 6L6 18' : 'M4 6h16M4 12h16M4 18h16'} /></svg></button>
       <nav ref={nav} id={id} className={'aime-header-liens' + (ouvert ? ' est-ouvert' : '')} aria-label="Navigation principale" onBlur={e => {
         if (ouvert && !e.currentTarget.contains(e.relatedTarget as Node) && e.relatedTarget !== bouton.current) setOuvert(false);
       }}>
