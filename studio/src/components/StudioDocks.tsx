@@ -7,6 +7,7 @@ import type { Pattern } from "../lib/pattern";
 import type { ProjectRecord } from "../lib/library";
 import { FLOSS } from "../lib/dmc";
 import { dansAime } from "../lib/aimeSync";
+import { retourSite } from "../lib/retourSite";
 import PreferencesCompte from "./PreferencesCompte";
 import type { Tool } from "../lib/stitch";
 import type { ViewMode } from "./Canvas";
@@ -224,7 +225,6 @@ export default function StudioDocks(p: Props) {
   const ouvrir = (b: Exclude<Bloc, null>) => setBloc(x => x === b ? null : b);
   useEffect(() => { if (p.blocDemande) setBloc(p.blocDemande.bloc === "aucun" ? null : p.blocDemande.bloc); }, [p.blocDemande]);
   const fermer = () => setBloc(null);
-  const retourSite = () => { try { if (document.referrer && new URL(document.referrer).origin === window.location.origin && !new URL(document.referrer).pathname.startsWith("/studio")) { window.history.back(); return; } } catch { /* adresse illisible */ } window.location.href = "/"; };
   useEffect(() => { if (bloc === "chercher") document.getElementById("pzs-cherche")?.focus(); else if (bloc === "nuancier") document.getElementById("dg-cherche-fil")?.focus(); else if (bloc) blocRef.current?.querySelector<HTMLElement>("[aria-pressed=\"true\"], a, button")?.focus(); }, [bloc]);
   const [modes, setModes] = useState(false);
   const [modeBas, setModeBas] = useState<ModeBas>(p.path === "fils" ? "fils" : "reperes");

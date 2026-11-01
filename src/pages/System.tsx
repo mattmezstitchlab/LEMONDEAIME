@@ -71,6 +71,8 @@ function Echiquier({ courante, onChoisir }: { courante: string; onChoisir: (a: s
 export default function System() {
   const { choix, theme, choisir } = useTheme();
   const [courante, setCourante] = useState(lireChoix);
+  /* la fiche du Disque ne suit que les choix faits dans le Disque : choisir une case plus bas ne change pas la hauteur d'une zone située au-dessus (décalage de 58 px sur téléphone) */
+  const [courDisque, setCourDisque] = useState(courante);
   const vu = useRef(false);
   const [disqueVu, setDisqueVu] = useState(false);
   const [broderieVue, setBroderieVue] = useState(false);
@@ -86,6 +88,7 @@ export default function System() {
     setCourante(a);
     try { const u = new URL(window.location.href); u.searchParams.set('o', a); window.history.replaceState(null, '', u.pathname + u.search + u.hash); } catch { /* adresse non modifiable */ }
   }, []);
+  const choisirDisque = useCallback((a: string) => { setCourDisque(a); choisirFiche(a); }, [choisirFiche]);
   useEffect(() => { if (!vu.current) { vu.current = true; if (new URLSearchParams(window.location.search).get('o')) setDisqueVu(true); } }, []);
   useEffect(() => {   // le Disque et la broderie ne se chargent que lorsqu'ils approchent de l'écran
     if (typeof IntersectionObserver === 'undefined') { setDisqueVu(true); setBroderieVue(true); return; }
@@ -125,7 +128,7 @@ export default function System() {
 
         <Section id="disque" large titre={S.disque.titre} statut={S.disque.statut} texte={S.disque.texte}>
           <div ref={disqueRef} className="sys-reserve">
-            {disqueVu ? <Suspense fallback={<Attente nom="le Disque" />}><DisqueDemo courante={courante} onChoisir={choisirFiche} /></Suspense> : <Attente nom="le Disque" />}
+            {disqueVu ? <Suspense fallback={<Attente nom="le Disque" />}><DisqueDemo courante={courDisque} onChoisir={choisirDisque} /></Suspense> : <Attente nom="le Disque" />}
           </div>
         </Section>
 

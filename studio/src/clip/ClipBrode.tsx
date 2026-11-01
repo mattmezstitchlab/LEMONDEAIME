@@ -9,13 +9,14 @@
  * Géométrie du Disque, Point, couronne et cartouche : ceux de l'atelier (lib/tambour/disque, components/point), repris sans changement.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Clapperboard, Expand, Minimize2, Shrink, Eye, FlipHorizontal2, Layers, Pause, Play, Search, Sparkles, Spline } from "lucide-react";
+import { ArrowLeft, Clapperboard, Expand, Minimize2, Shrink, Eye, FlipHorizontal2, Layers, Pause, Play, Search, Sparkles, Spline } from "lucide-react";
 import Point from "../components/point/Point";
 import type { ModePoint } from "../lib/point/modes";
 import { anneauSvg, geometrieDisque, type Disque } from "../lib/tambour/disque";
 import { lireClip, Morceaux, partieEn, type Clip } from "./donnees";
 import { CODE_MODE, RenduClip, type ModeClip } from "./rendu";
 import { removeConfetti } from "../lib/quantize";
+import { retourSite } from "../lib/retourSite";
 import "../components/TambourAtelier.css";
 import "./clip.css";
 
@@ -336,12 +337,19 @@ export default function ClipBrode({ config = UPTOWN }: { config?: ConfigClip }) 
     loupePos.current = [Math.max(0, Math.min(w, p[0] + d[e.key][0])), Math.max(0, Math.min(h, p[1] + d[e.key][1]))]; if (!loupe) setLoupe(true);
   };
 
-  if (erreur) return <main className="clip-erreur"><h1>{config.titre}</h1><p>{erreur}</p></main>;
+  const retour = (
+    <nav className="clip-retour" aria-label="Retour au site">
+      <button type="button" className="clip-retour-fleche" aria-label="Revenir sur Le Monde AIME" title="Retour" onClick={retourSite}><ArrowLeft size={18} aria-hidden="true" /></button>
+      <a className="clip-retour-marque" href="/" aria-label="AIME, Le Monde AIME">AIME<sup aria-hidden="true">®</sup></a>
+    </nav>
+  );
+  if (erreur) return <main className="clip-erreur">{retour}<h1>{config.titre}</h1><p>{erreur}</p></main>;
   return <main className={"clip pzt pzt-ouvert pzt-etiq-" + g.etiquettes} data-demo={etape?.outil}
     style={{ ["--pzt-x" as string]: g.cx + "px", ["--pzt-y" as string]: g.cy + "px", ["--pzt-r" as string]: g.r + "px", ["--pzt-rb" as string]: g.rb + "px", ["--pzt-ri" as string]: g.ri + "px", ["--pzt-ro" as string]: g.Ro + "px",
       ["--pzt-bl" as string]: g.env.l + "px", ["--pzt-bh" as string]: g.env.h + "px", ["--pzt-bd" as string]: g.env.rond + "px" }}
     onPointerOver={viser} onPointerOut={() => setVisee(null)} onFocus={viser}>
     <h1 className="sr-only">{config.titre} : la démonstration des outils de Point Zéro</h1>
+    {retour}
     <div className={"clip-fond" + (enversVoulu ? " clip-retourne" : "")}>
       <canvas ref={toile} className={"clip-toile" + (retourne ? " clip-dos" : "")} tabIndex={0} role="img"
         aria-label={`${config.aria}, ${retourne ? "vu de l’envers" : "vu de l’endroit"}. Flèches : déplacer la loupe ; Espace : lecture ou pause.`}

@@ -21,6 +21,13 @@
 .clip[data-demo="affichage"] [data-mode="affichage"] .lp-rond, .clip[data-demo="fils"] [data-mode="fils"] .lp-rond, .clip[data-demo="points"] [data-mode="points"] .lp-rond,
 .clip[data-demo="broder"] [data-mode="broder"] .lp-rond, .clip[data-demo="loupe"] [data-mode="loupe"] .lp-rond { animation: clip-montre 1.07s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .clip [data-mode] .lp-rond { animation: none !important; } }
+/* Retour au site : même geste que l'atelier (flèche + AIME®), en haut à gauche, hors de l'image ; le clip lui-même n'est pas modifié */
+.clip-retour { position: fixed; z-index: 5; left: max(12px, env(safe-area-inset-left, 0px)); top: max(12px, env(safe-area-inset-top, 0px)); display: inline-flex; align-items: center; gap: 2px; padding: 2px; border-radius: 22px;
+  background: rgba(14,14,14,.82); box-shadow: 0 6px 20px rgba(0,0,0,.25); pointer-events: auto; }
+.clip-retour-fleche, .clip-retour-marque { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border: 0; border-radius: 22px; background: transparent; color: #fff; text-decoration: none; cursor: pointer;
+  font: 700 15px "Inter Tight", system-ui, sans-serif; letter-spacing: .02em; }
+.clip-retour-marque { padding: 0 14px 0 6px; } .clip-retour-marque sup { font-size: .6em; margin-left: 1px; }
+.clip-retour-fleche:focus-visible, .clip-retour-marque:focus-visible { outline: 3px solid #c9b8ff; outline-offset: 1px; }
 /* Disque replié : le clip seul, sur tout l'écran ; un bouton pour le retrouver */
 .clip-deplier { position: absolute; right: 16px; top: 16px; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px 0 12px; border: 0; border-radius: 22px;
   background: rgba(14,14,14,.88); color: #fff; font: 600 14px "Inter Tight", system-ui, sans-serif; cursor: pointer; pointer-events: auto; box-shadow: 0 6px 20px rgba(0,0,0,.3); }
