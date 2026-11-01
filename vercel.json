@@ -38,7 +38,7 @@
       "destination": "/index.html"
     },
     {
-      "source": "/:page(projets|aime-wedding|admin|a-propos|point-zero|buro|reseau|entrer|a-plus|boutique|musique|charte|monde|systaime)",
+      "source": "/:page(projets|aime-wedding|admin|a-propos|point-zero|buro|reseau|entrer|a-plus|boutique|musique|charte|monde|systaime|system)",
       "destination": "/index.html"
     }
   ],
