@@ -23,6 +23,7 @@ const VivreLumiere = lazy(() => import("./film/lumiere/Vivre"));
 const PlanchesLumiere = lazy(() => import("./film/lumiere/Planches"));
 const Explorer = lazy(() => import("./convergence/Explorer"));
 const Accueil = lazy(() => import("./accueil/Accueil"));
+const ClipBrode = lazy(() => import("./clip/ClipBrode"));
 import { GardeExperience, NavigationConvergence } from "./convergence/Navigation";
 
 /* essai privé : le bloc Image, piloté par le même Point (aucune autre application) */
@@ -56,6 +57,8 @@ const explorer = /\/explorer\/?$/.test(window.location.pathname);
 /* l'accueil de choix AIME : le Disque (.0NE) ou le Cube (ATLAS) */
 const accueil = /\/accueil\/?$/.test(window.location.pathname);
 const essaiTraversee = /\/essai-traversee\/?$/.test(window.location.pathname);
+/* UPTOWN brodé : le clip de Saint-Luc dans le Disque de broderie, la démonstration des outils de Point Zéro (public) */
+const clipBrode = /\/uptown\/?$/.test(window.location.pathname);
 
 appliquerApercuAime();
 /* le site Point Zéro (broderie seule) : seules la landing, l'atelier et le Tambour vivant existent ; toute autre adresse ramène à l'accueil */
@@ -70,13 +73,14 @@ if (quitterPrive) window.location.replace(import.meta.env.BASE_URL + "one/univer
 /* le titre de l'onglet dit où l'on est (sinon, celui de la landing Broderie s'affichait partout) ; une page qui connaît mieux son titre le remplace */
 const TITRES: [boolean, string][] = [[explorer, "Explorer les prototypes — AIME"], [bureau, "Le Bureau — AIME"], [onePremiere, "Première rencontre — .0NE"],
   [oneTerminalOrbe, "Disque Terminal, l’orbe relationnelle — .0NE"], [oneTerminal, "Disque Terminal — .0NE"], [oneMosaique, "Tous les univers — .0NE"],
-  [planchesLumiere, "LUMIERE — les planches"], [essaiCarte, "Essai · la carte vivante"], [essaiTraversee, "Essai · la traversée du Point"]];
+  [planchesLumiere, "LUMIERE — les planches"], [clipBrode, "UPTOWN brodé — Point Zéro"], [essaiCarte, "Essai · la carte vivante"], [essaiTraversee, "Essai · la traversée du Point"]];
 const titre = TITRES.find(([v]) => v)?.[1]; if (titre) document.title = titre;
 
 /* une adresse qui n'existe pas sur ce site : rien n'est affiché (pas même un instant), on part */
 if (!quitterBroderie && !quitterPrive) createRoot(document.getElementById("root")!).render(
   <StrictMode><GardeExperience>
-    {accueil ? <AccessibilityShell><Suspense fallback={null}><Accueil /></Suspense></AccessibilityShell>
+    {clipBrode ? <AccessibilityShell><Suspense fallback={null}><ClipBrode /></Suspense></AccessibilityShell>
+      : accueil ? <AccessibilityShell><Suspense fallback={null}><Accueil /></Suspense></AccessibilityShell>
       : explorer ? <Suspense fallback={null}><Explorer /></Suspense>
       : bureau ? <Suspense fallback={null}><Bureau /></Suspense>
       : essaiCarte ? <Suspense fallback={null}><EssaiCarte /></Suspense>
@@ -94,5 +98,5 @@ if (!quitterBroderie && !quitterPrive) createRoot(document.getElementById("root"
       : essaiTraversee ? <AccessibilityShell><Suspense fallback={null}><EssaiTraversee /></Suspense></AccessibilityShell>
       : essaiImage ? <AccessibilityShell><Suspense fallback={null}><EssaiImage /></Suspense></AccessibilityShell>
       : <AccessibilityShell><StorageRecoveryNotice/><App /></AccessibilityShell>}
-  </GardeExperience>{!SITE_BRODERIE && !filmLumiere && !vivreLumiere && !planchesLumiere && !oneUnivers && !accueil && <NavigationConvergence />}</StrictMode>
+  </GardeExperience>{!SITE_BRODERIE && !filmLumiere && !vivreLumiere && !planchesLumiere && !oneUnivers && !accueil && !clipBrode && <NavigationConvergence />}</StrictMode>
 );
