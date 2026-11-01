@@ -15,6 +15,7 @@ import type { ModePoint } from "../lib/point/modes";
 import { anneauSvg, geometrieDisque, type Disque } from "../lib/tambour/disque";
 import { lireClip, Morceaux, partieEn, type Clip } from "./donnees";
 import { CODE_MODE, RenduClip, type ModeClip } from "./rendu";
+import { removeConfetti } from "../lib/quantize";
 import "../components/TambourAtelier.css";
 import "./clip.css";
 
@@ -30,6 +31,9 @@ const AIDE_MODE: Record<ModeClip, string> = {
   mosaique: "les couleurs DMC à plat, une case par point",
   demi: "le demi-point : seulement « / », la première moitié de chaque croix",
 };
+/** la surprise des confettis : le clip s'arrête sur le temps de 30,309 s (un temps fort mesuré à 30,299 s, force 81),
+    montre ses points isolés (un point seul de sa couleur), les nettoie avec l'outil de l'atelier (lib/quantize), puis reprend */
+const T_CONFETTIS = 30.309, MONTRE = 2.2, NETTOIE = 1.0;
 /** la toile du Disque grossit le clip plein écran qui est derrière : le détail des points */
 const GROSSI = 3;
 const mmss = (t: number) => `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(Math.floor(t % 60)).padStart(2, "0")}`;
@@ -111,22 +115,34 @@ export default function ClipBrode() {
 
   /* le rendu, à chaque image de l'écran */
   const [replie, setReplie] = useState(false), [plein, setPlein] = useState(false);
-  const etatRef = useRef({ clip, mode, etats, masquer, arriere, grille, retourne, loupe, brode, effet, demo, geo: g, replie });
-  etatRef.current = { clip, mode, etats, masquer, arriere, grille, retourne, loupe, brode, effet, demo, geo: g, replie };
+  /* les confettis : la surprise (une fois par passage) et l'outil, qui reste ensuite */
+  const [sansConfetti, setSansConfetti] = useState(false);
+  const [confettis, setConfettis] = useState<{ x: number; y: number; n: number; phase: "montre" | "nettoie" } | null>(null);
+  const evRef = useRef<{ debut: number; t: number; image: Uint8Array; propre: Uint8Array; ordre: number[]; marque: Uint8Array; n: number; replie: boolean } | null>(null), confettiFait = useRef(false);
+  const etatRef = useRef({ clip, mode, etats, masquer, arriere, grille, retourne, loupe, brode, effet, demo, geo: g, replie, sansConfetti });
+  etatRef.current = { clip, mode, etats, masquer, arriere, grille, retourne, loupe, brode, effet, demo, geo: g, replie, sansConfetti };
   useEffect(() => {
     if (!clip || !toile.current) return;
     try { rendu.current = new RenduClip(toile.current); } catch (e) { setErreur("Votre navigateur ne peut pas dessiner la broderie (WebGL 2) : " + String((e as Error).message)); return; }
     let raf = 0, dernier = -1, derniereImage: Uint8Array | null = null;
     /* ?qualite=0.5 : partir d'une toile moins fine (appareils modestes, essais) */
+    let tAvant = 0;
     let qualite = Math.max(.3, Math.min(1, parseFloat(new URLSearchParams(location.search).get("qualite") ?? "1") || 1)), lent = 0, dernierInstant = 0;
     const boucle = () => {
       raf = requestAnimationFrame(boucle);
       const s = etatRef.current, c = s.clip!, r = rendu.current!, cv = toile.current!;
-      let tt = Math.min(c.duree, maintenant());
+      const ev = evRef.current;
+      let tt = ev ? ev.t : Math.min(c.duree, maintenant());
+      if (!ev && tt < T_CONFETTIS - 1 && confettiFait.current && s.demo) { confettiFait.current = false; setSansConfetti(false); }
       if (horloge.current.sansSon && horloge.current.depart && tt >= c.duree) { horloge.current.t0 = c.duree; horloge.current.depart = 0; setLecture(false); }
       setT(v => Math.abs(v - tt) > .2 ? tt : v);
       const n = Math.min(c.images - 1, Math.floor(tt * c.fps));
-      if (n !== dernier) { const im = morceaux.current!.image(n); if (im) { r.image(im); dernier = n; derniereImage = im; } }
+      if (n !== dernier && !ev) {
+        let im = morceaux.current!.image(n);
+        /* l'outil Confettis (Points) : chaque image est nettoyée comme dans l'atelier */
+        if (im && s.sansConfetti) { const cells = Int16Array.from(im); removeConfetti(cells, c.grille, c.grille); im = Uint8Array.from(cells); }
+        if (im) { r.image(im); dernier = n; derniereImage = im; }
+      }
       /* les fils : illuminés (les autres estompés) ou masqués ; la démonstration peut en illuminer un */
       let et = s.etats.slice();
       if (s.effet?.fil === "premier") {
@@ -156,7 +172,47 @@ export default function ClipBrode() {
         if (tambour && Math.hypot(x - tambour[0], y - tambour[1]) < tambour[2]) { const zz = cpp / GROSSI; return [c.grille / 2 + (tambour[0] - W / 2) * cpp + (x - tambour[0]) * zz, c.grille / 2 + (tambour[1] - H / 2) * cpp + (y - tambour[1]) * zz, zz]; }
         return [c.grille / 2 + (x - W / 2) * cpp, c.grille / 2 + (y - H / 2) * cpp, cpp];
       };
+      /* la surprise : à 30,309 s (démonstration), le clip s'arrête ; les confettis battent, le mot est posé là où ils sont ; puis ils sont nettoyés */
+      const franchi = tAvant < T_CONFETTIS && tt >= T_CONFETTIS && tt < T_CONFETTIS + 3;   /* on vient de passer le temps (même si l'appareil est lent) */
+      const imgT = franchi ? morceaux.current!.image(Math.floor(T_CONFETTIS * c.fps)) ?? derniereImage : null;
+      if (!ev && franchi && s.demo && !s.mode && !confettiFait.current && !s.sansConfetti && imgT) {
+        tt = T_CONFETTIS;
+        const image = imgT.slice(), cells = Int16Array.from(image), N = c.grille;
+        const nb = removeConfetti(cells, N, N), propre = Uint8Array.from(cells), marque = new Uint8Array(N * N), change: number[] = [];
+        for (let i = 0; i < N * N; i++) if (propre[i] !== image[i]) { marque[i] = 255; change.push(i); }
+        if (change.length) {
+          /* là où ils sont le plus nombreux : des blocs de 10 × 10 points */
+          const B = 10, nbB = N / B, bloc = new Array(nbB * nbB).fill(0); for (const i of change) bloc[Math.floor(i / N / B) * nbB + Math.floor((i % N) / B)]++;
+          const meilleur = bloc.indexOf(Math.max(...bloc)), dans = change.filter(i => Math.floor(i / N / B) * nbB + Math.floor((i % N) / B) === meilleur);
+          const gx = dans.reduce((a, i) => a + i % N, 0) / dans.length + .5, gy = dans.reduce((a, i) => a + Math.floor(i / N), 0) / dans.length + .5;
+          const ordre = change.slice().sort((a, b) => Math.hypot(a % N - gx, Math.floor(a / N) - gy) - Math.hypot(b % N - gx, Math.floor(b / N) - gy));
+          if (audio.current) { audio.current.pause(); audio.current.currentTime = T_CONFETTIS; } horloge.current.t0 = tt; horloge.current.depart = 0; r.image(image); derniereImage = image;
+          evRef.current = { debut: performance.now(), t: tt, image, propre, ordre, marque, n: nb, replie: s.replie };
+          /* le Disque se range un instant : on voit tout le clip, et le mot à sa vraie place (le fond, sans tambour) */
+          const cppFond = c.grille / Math.max(W, H);
+          const x = Math.max(80, Math.min(cv.clientWidth - 80, (W / 2 + (gx - N / 2) / cppFond) / dpr)), y = Math.max(40, Math.min(cv.clientHeight - 40, (H / 2 + (gy - N / 2) / cppFond) / dpr));
+          setReplie(true); setConfettis({ x, y, n: nb, phase: "montre" }); r.marque(marque, 1);
+        } else confettiFait.current = true;
+      }
+      const e2 = evRef.current;
+      if (e2) {
+        const el = (performance.now() - e2.debut) / 1000;
+        if (el < MONTRE) r.marque(null, reduit() ? 1 : .6 + .4 * Math.sin(el * 9));
+        else if (el < MONTRE + NETTOIE) {
+          /* nettoyés depuis le mot, vers le bord : chaque point prend le fil de ses voisins */
+          const k = Math.floor(e2.ordre.length * Math.min(1, (el - MONTRE) / NETTOIE * 1.1)), im = e2.image.slice(), m = e2.marque.slice();
+          for (let j = 0; j < k; j++) { const i = e2.ordre[j]; im[i] = e2.propre[i]; m[i] = 0; }
+          r.image(im); r.marque(m, 1); setConfettis(v => v && v.phase !== "nettoie" ? { ...v, phase: "nettoie" } : v);
+        } else {
+          r.image(e2.propre); derniereImage = e2.propre; r.marque(null, 0);
+          evRef.current = null; confettiFait.current = true; setSansConfetti(true); setConfettis(null); setReplie(e2.replie);
+          const a = audio.current, h = horloge.current;
+          if (a && !h.sansSon) void a.play().catch(() => { h.sansSon = true; h.depart = performance.now(); }); else { h.depart = performance.now(); }
+        }
+      }
+      tAvant = evRef.current ? T_CONFETTIS : tt;
       let eclat = 0; for (const [ta, f] of c.accents) if (tt - ta >= 0 && tt - ta < 1) eclat = Math.max(eclat, f / 99 * Math.exp(-(tt - ta) * 6));
+      if (evRef.current) eclat = 0;   /* le clip est arrêté : le temps fort ne bat plus */
       /* la loupe : sous la main ; dans la démonstration, elle se promène autour du centre */
       let lp: [number, number, number, number] | null = null;
       const rayon = Math.max(56, cote * .12);
@@ -226,6 +282,7 @@ export default function ClipBrode() {
         enfants: () => [
           { id: "pts-croix", nom: "Croix", aide: "la croix entière (réaliste)", groupe: "creation", actif: actuel === CODE_MODE.tissu, resteOuvert: true, ouvrir: () => choisirMode("tissu") },
           { id: "pts-demi", nom: "Demi-point", aide: AIDE_MODE.demi, groupe: "creation", actif: actuel === CODE_MODE.demi, resteOuvert: true, ouvrir: () => choisirMode("demi") },
+          { id: "pts-confettis", nom: "Confettis", aide: sansConfetti ? "les confettis sont retirés ; toucher pour les garder" : "retirer les confettis : un point seul de sa couleur prend le fil de ses voisins (l’outil de l’atelier)", groupe: "creation", actif: sansConfetti, resteOuvert: true, ouvrir: () => { main(); setSansConfetti(v => !v); } },
           { id: "pts-arriere", nom: "Point arrière", aide: "les contours au point arrière, là où deux fils s’opposent (calculés)", groupe: "creation", actif: arriere, resteOuvert: true, ouvrir: () => { main(); setArriere(v => !v); } },
         ] },
       { id: "broder", nom: "Broder", aide: "le clip se rebrode depuis le centre, point par point", groupe: "creation", icone: <Sparkles aria-hidden="true" />, ouvrir: () => { main(); setBrode({ t0: maintenant(), d: 8 }); if (!lecture) void jouer(); } },
@@ -238,12 +295,15 @@ export default function ClipBrode() {
     ];
     return m;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clip, lecture, etats, masquer, mode, grille, envers, arriere, loupe, demo, plein, t > 0]);
+  }, [clip, lecture, etats, masquer, mode, grille, envers, arriere, loupe, demo, plein, sansConfetti, t > 0]);
 
   /* la place des messages sous le disque (celle de l'atelier) */
   const c = g.Ro + 2;
   const fil = sousLoupe !== null && clip ? clip.fils[sousLoupe] : null;
-  const cartouche = visee ? <><b>{visee.nom}</b>{visee.aide && <span>{visee.aide}</span>}</>
+  const cartouche = confettis ? (confettis.phase === "montre"
+      ? <><b>Points › Confettis</b><span>{confettis.n.toLocaleString("fr-FR")} points seuls de leur couleur : difficiles à broder, ils dispersent le fil</span></>
+      : <><b>Confettis nettoyés</b><span>chacun prend le fil de ses voisins : l’outil de l’atelier, sur le clip</span></>)
+    : visee ? <><b>{visee.nom}</b>{visee.aide && <span>{visee.aide}</span>}</>
     : fil && loupePos.current ? <><i className="pzt-pastille" style={{ background: `rgb(${fil.rgb.join(",")})` }} aria-hidden="true" /><b>DMC {fil.code}</b><span> · {fil.nom}</span></>
     : etape?.effet?.fil && filMontre !== null && clip ? <><i className="pzt-pastille" style={{ background: `rgb(${clip.fils[filMontre].rgb.join(",")})` }} aria-hidden="true" /><b>Fils › DMC {clip.fils[filMontre].code}</b><span> · {clip.fils[filMontre].nom} : ses points s’illuminent, les autres s’estompent</span></>
     : etape ? <><b>{etape.titre}</b><span>{etape.texte}</span></>
@@ -287,7 +347,8 @@ export default function ClipBrode() {
       <Point scene tambour={{ rayon: g.rho, cote: 2 * c, parPage: g.capacite - 3 }} contexte="clip-brode" memoire="clip-brode" modes={modes} etiquette="UPTOWN brodé" />
     </div>}
     </>}
-    {replie && <button type="button" className="clip-deplier" onClick={() => setReplie(false)}><span className="lp-centre" aria-hidden="true" />Le Disque</button>}
+    {confettis && <p className={"clip-confettis clip-confettis-" + confettis.phase} style={{ left: confettis.x, top: confettis.y }} aria-hidden="true">CONFETTIS</p>}
+    {replie && !confettis && <button type="button" className="clip-deplier" onClick={() => setReplie(false)}><span className="lp-centre" aria-hidden="true" />Le Disque</button>}
     <p className="pzt-cartouche clip-cartouche" aria-hidden="true" style={replie ? { top: "auto", bottom: 104 } : undefined}>{cartouche}</p>
     {clip && <div className="clip-temps" style={replie ? { top: "auto", bottom: 44 } : { top: g.cy + g.Ro + 64 }}>
       <span>{mmss(t)}</span>
@@ -296,7 +357,7 @@ export default function ClipBrode() {
     </div>}
     <p className="clip-credit" style={replie ? { top: "auto", bottom: 12 } : { top: g.cy + g.Ro + 96 }}>UPTOWN (Saint-Luc) · musique « Amor amour 2 », Matt · {clip ? `${clip.fils.length} fils DMC` : "…"}</p>
     <audio ref={audio} src={AUDIO} preload="auto" />
-    <span className="sr-only" role="status" aria-live="polite">{etape ? `${etape.titre} : ${etape.texte}` : ""}</span>
+    <span className="sr-only" role="status" aria-live="polite">{confettis ? (confettis.phase === "montre" ? `Le clip s’arrête : ${confettis.n} confettis, des points seuls de leur couleur.` : "Les confettis sont nettoyés ; le clip reprend.") : etape ? `${etape.titre} : ${etape.texte}` : ""}</span>
     {!clip && <p className="clip-chargement" style={{ left: g.cx, top: g.cy }}>La toile se prépare…</p>}
   </main>;
 }
