@@ -1,0 +1,583 @@
+{
+ "format": "clip-brode",
+ "version": 1,
+ "titre": "La Fleur du Ciel",
+ "musique": "La Fleur du Ciel (Matt)",
+ "source": "dessin original, brodé point par point au rythme du morceau",
+ "grille": 160,
+ "fps": 25,
+ "images": 6325,
+ "parMorceau": 50,
+ "morceaux": 127,
+ "duree": 253.01333333333332,
+ "battue": 0.5,
+ "brodeJusqua": 0.001,
+ "finDuPassage": 254.01333333333332,
+ "carte": [
+  [
+   0,
+   0
+  ],
+  [
+   253.01333333333332,
+   253.01333333333332
+  ]
+ ],
+ "parties": [
+  [
+   0,
+   "tissu"
+  ],
+  [
+   221.25,
+   "symboles"
+  ],
+  [
+   229.25,
+   "tissu"
+  ]
+ ],
+ "accents": [
+  [
+   198.255,
+   99
+  ],
+  [
+   198.755,
+   80
+  ],
+  [
+   199.255,
+   70
+  ],
+  [
+   242.75,
+   99
+  ],
+  [
+   243.25,
+   70
+  ],
+  [
+   243.75,
+   70
+  ],
+  [
+   244.25,
+   70
+  ],
+  [
+   244.75,
+   70
+  ],
+  [
+   245.25,
+   70
+  ],
+  [
+   245.75,
+   70
+  ],
+  [
+   246.25,
+   70
+  ]
+ ],
+ "fils": [
+  {
+   "code": "939",
+   "nom": "Navy Blue Very Dark",
+   "rgb": [
+    27,
+    40,
+    83
+   ],
+   "clair": false,
+   "points": 8
+  },
+  {
+   "code": "823",
+   "nom": "Navy Blue Dark",
+   "rgb": [
+    33,
+    48,
+    99
+   ],
+   "clair": false,
+   "points": 4615000
+  },
+  {
+   "code": "336",
+   "nom": "Navy Blue",
+   "rgb": [
+    37,
+    59,
+    115
+   ],
+   "clair": false,
+   "points": 9221806
+  },
+  {
+   "code": "333",
+   "nom": "Blue Violet Very Dark",
+   "rgb": [
+    92,
+    84,
+    120
+   ],
+   "clair": false,
+   "points": 11893342
+  },
+  {
+   "code": "3746",
+   "nom": "Blue Violet Dark",
+   "rgb": [
+    119,
+    107,
+    152
+   ],
+   "clair": false,
+   "points": 7782911
+  },
+  {
+   "code": "3838",
+   "nom": "Lavender Blue Dark",
+   "rgb": [
+    92,
+    114,
+    148
+   ],
+   "clair": false,
+   "points": 7399060
+  },
+  {
+   "code": "3807",
+   "nom": "Cornflower Blue",
+   "rgb": [
+    96,
+    103,
+    140
+   ],
+   "clair": false,
+   "points": 227949
+  },
+  {
+   "code": "3755",
+   "nom": "Baby Blue",
+   "rgb": [
+    147,
+    180,
+    206
+   ],
+   "clair": false,
+   "points": 5818028
+  },
+  {
+   "code": "3325",
+   "nom": "Baby Blue Light",
+   "rgb": [
+    184,
+    210,
+    230
+   ],
+   "clair": false,
+   "points": 4797576
+  },
+  {
+   "code": "775",
+   "nom": "Baby Blue Very Light",
+   "rgb": [
+    217,
+    235,
+    241
+   ],
+   "clair": false,
+   "points": 4887051
+  },
+  {
+   "code": "3756",
+   "nom": "Baby Blue Ultra Very Light",
+   "rgb": [
+    238,
+    252,
+    252
+   ],
+   "clair": false,
+   "points": 4736792
+  },
+  {
+   "code": "3716",
+   "nom": "Dusty Rose Medium Very Light",
+   "rgb": [
+    255,
+    189,
+    189
+   ],
+   "clair": false,
+   "points": 2886012
+  },
+  {
+   "code": "3354",
+   "nom": "Dusty Rose Light",
+   "rgb": [
+    228,
+    166,
+    172
+   ],
+   "clair": false,
+   "points": 2913216
+  },
+  {
+   "code": "778",
+   "nom": "Antique Mauve Very Light",
+   "rgb": [
+    223,
+    179,
+    187
+   ],
+   "clair": false,
+   "points": 2605815
+  },
+  {
+   "code": "3609",
+   "nom": "Plum Ultra Light",
+   "rgb": [
+    244,
+    174,
+    213
+   ],
+   "clair": false,
+   "points": 4132953
+  },
+  {
+   "code": "3740",
+   "nom": "Antique Violet Dark",
+   "rgb": [
+    120,
+    87,
+    98
+   ],
+   "clair": false,
+   "points": 2900734
+  },
+  {
+   "code": "3768",
+   "nom": "Gray Green Dark",
+   "rgb": [
+    101,
+    127,
+    127
+   ],
+   "clair": false,
+   "points": 2365624
+  },
+  {
+   "code": "931",
+   "nom": "Antique Blue Medium",
+   "rgb": [
+    106,
+    133,
+    158
+   ],
+   "clair": false,
+   "points": 2803824
+  },
+  {
+   "code": "3810",
+   "nom": "Turquoise Dark",
+   "rgb": [
+    72,
+    142,
+    154
+   ],
+   "clair": false,
+   "points": 556236
+  },
+  {
+   "code": "3766",
+   "nom": "Peacock Blue Light",
+   "rgb": [
+    153,
+    207,
+    217
+   ],
+   "clair": false,
+   "points": 581140
+  },
+  {
+   "code": "3865",
+   "nom": "Winter White",
+   "rgb": [
+    249,
+    247,
+    241
+   ],
+   "clair": false,
+   "points": 123498
+  },
+  {
+   "code": "B5200",
+   "nom": "Snow White",
+   "rgb": [
+    255,
+    255,
+    255
+   ],
+   "clair": false,
+   "points": 475215
+  },
+  {
+   "code": "712",
+   "nom": "Cream",
+   "rgb": [
+    255,
+    251,
+    239
+   ],
+   "clair": false,
+   "points": 14928
+  },
+  {
+   "code": "3822",
+   "nom": "Straw Light",
+   "rgb": [
+    246,
+    220,
+    152
+   ],
+   "clair": false,
+   "points": 522357
+  },
+  {
+   "code": "729",
+   "nom": "Old Gold Medium",
+   "rgb": [
+    208,
+    165,
+    62
+   ],
+   "clair": false,
+   "points": 409251
+  },
+  {
+   "code": "676",
+   "nom": "Old Gold Light",
+   "rgb": [
+    229,
+    206,
+    151
+   ],
+   "clair": false,
+   "points": 50233
+  },
+  {
+   "code": "3078",
+   "nom": "Golden Yellow Very Light",
+   "rgb": [
+    253,
+    249,
+    205
+   ],
+   "clair": false,
+   "points": 763453
+  },
+  {
+   "code": "726",
+   "nom": "Topaz Light",
+   "rgb": [
+    253,
+    215,
+    85
+   ],
+   "clair": false,
+   "points": 243171
+  },
+  {
+   "code": "3348",
+   "nom": "Yellow Green Light",
+   "rgb": [
+    204,
+    217,
+    177
+   ],
+   "clair": false,
+   "points": 1196801
+  },
+  {
+   "code": "3347",
+   "nom": "Yellow Green Medium",
+   "rgb": [
+    113,
+    147,
+    92
+   ],
+   "clair": false,
+   "points": 1535928
+  },
+  {
+   "code": "3346",
+   "nom": "Hunter Green",
+   "rgb": [
+    64,
+    106,
+    58
+   ],
+   "clair": false,
+   "points": 829819
+  },
+  {
+   "code": "988",
+   "nom": "Forest Green Medium",
+   "rgb": [
+    115,
+    139,
+    91
+   ],
+   "clair": false,
+   "points": 1486963
+  },
+  {
+   "code": "210",
+   "nom": "Lavender Medium",
+   "rgb": [
+    195,
+    159,
+    195
+   ],
+   "clair": false,
+   "points": 780912
+  },
+  {
+   "code": "211",
+   "nom": "Lavender Light",
+   "rgb": [
+    227,
+    203,
+    227
+   ],
+   "clair": false,
+   "points": 1189318
+  },
+  {
+   "code": "3747",
+   "nom": "Blue Violet Very Light",
+   "rgb": [
+    211,
+    215,
+    237
+   ],
+   "clair": false,
+   "points": 0
+  },
+  {
+   "code": "340",
+   "nom": "Blue Violet Medium",
+   "rgb": [
+    173,
+    167,
+    199
+   ],
+   "clair": false,
+   "points": 905706
+  },
+  {
+   "code": "666",
+   "nom": "Bright Red",
+   "rgb": [
+    227,
+    29,
+    66
+   ],
+   "clair": false,
+   "points": 492328
+  },
+  {
+   "code": "946",
+   "nom": "Burnt Orange Medium",
+   "rgb": [
+    235,
+    99,
+    7
+   ],
+   "clair": false,
+   "points": 512220
+  },
+  {
+   "code": "743",
+   "nom": "Yellow Medium",
+   "rgb": [
+    254,
+    211,
+    118
+   ],
+   "clair": false,
+   "points": 886591
+  },
+  {
+   "code": "704",
+   "nom": "Chartreuse Bright",
+   "rgb": [
+    158,
+    207,
+    52
+   ],
+   "clair": false,
+   "points": 427678
+  },
+  {
+   "code": "996",
+   "nom": "Electric Blue Medium",
+   "rgb": [
+    48,
+    194,
+    236
+   ],
+   "clair": false,
+   "points": 472436
+  },
+  {
+   "code": "797",
+   "nom": "Royal Blue",
+   "rgb": [
+    19,
+    71,
+    125
+   ],
+   "clair": false,
+   "points": 452544
+  },
+  {
+   "code": "3731",
+   "nom": "Dusty Rose Very Dark",
+   "rgb": [
+    218,
+    103,
+    131
+   ],
+   "clair": false,
+   "points": 563235
+  },
+  {
+   "code": "3843",
+   "nom": "Electric Blue",
+   "rgb": [
+    20,
+    170,
+    208
+   ],
+   "clair": false,
+   "points": 0
+  },
+  {
+   "code": "552",
+   "nom": "Violet  Medium",
+   "rgb": [
+    128,
+    58,
+    107
+   ],
+   "clair": false,
+   "points": 525674
+  }
+ ]
+}

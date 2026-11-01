@@ -21,7 +21,13 @@ import "./clip.css";
 
 const BASE = import.meta.env.BASE_URL;
 /* publiés avec l’accord de Matt (1/11/2026) : les données du clip et « Amor amour 2 », sa musique */
-const DONNEES = BASE + "clip/uptown/", AUDIO = DONNEES + "amor-amour-2.m4a";
+/** un clip brodé : ses données, sa musique, ses mots ; la page est la même pour tous */
+export interface ConfigClip { id: "uptown" | "fleur"; titre: string; donnees: string; audio: string; credit: string; aria: string; confettis: number | null; /** la toile du Disque grossit le fond */ grossi: number; /** le Disque rangé au départ (on voit tout) */ replie: boolean }
+export const UPTOWN: ConfigClip = { id: "uptown", titre: "UPTOWN brodé", donnees: BASE + "clip/uptown/", audio: BASE + "clip/uptown/amor-amour-2.m4a",
+  credit: "UPTOWN (Saint-Luc) · musique « Amor amour 2 », Matt", aria: "Le clip UPTOWN brodé au point de croix", confettis: 30.309, grossi: 3, replie: false };
+/* publiée avec l'accord de Matt (1/11/2026, « tout est de moi ») : la musique et les données de la fleur */
+export const FLEUR: ConfigClip = { id: "fleur", titre: "La Fleur du Ciel", donnees: BASE + "clip/fleur-du-ciel/", audio: BASE + "clip/fleur-du-ciel/la-fleur-du-ciel.m4a",
+  credit: "« La Fleur du Ciel », musique de Matt · brodée point par point", aria: "La Fleur du Ciel brodée au point de croix", confettis: null, grossi: 1.6, replie: true };
 const reduit = () => document.documentElement.getAttribute("data-pz-motion") === "reduce" || !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 const NOM_MODE: Record<ModeClip, string> = { tissu: "Réaliste", toile: "Toile", symboles: "Symboles", mosaique: "À plat", demi: "Demi-point" };
 const AIDE_MODE: Record<ModeClip, string> = {
@@ -33,15 +39,14 @@ const AIDE_MODE: Record<ModeClip, string> = {
 };
 /** la surprise des confettis : le clip s'arrête sur le temps de 30,309 s (un temps fort mesuré à 30,299 s, force 81),
     montre ses points isolés (un point seul de sa couleur), les nettoie avec l'outil de l'atelier (lib/quantize), puis reprend */
-const T_CONFETTIS = 30.309, MONTRE = 2.2, NETTOIE = 1.0;
-/** la toile du Disque grossit le clip plein écran qui est derrière : le détail des points */
-const GROSSI = 3;
+const MONTRE = 2.2, NETTOIE = 1.0;
 const mmss = (t: number) => `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(Math.floor(t % 60)).padStart(2, "0")}`;
 
 /** une étape de la démonstration : à l'instant t, pendant d secondes, le Disque montre un outil */
 interface Etape { t: number; d: number; outil: string; titre: string; texte: string; effet?: { fil?: "premier"; arriere?: boolean; envers?: boolean; loupe?: boolean; grille?: boolean } }
 
-export default function ClipBrode() {
+export default function ClipBrode({ config = UPTOWN }: { config?: ConfigClip }) {
+  const DONNEES = config.donnees, AUDIO = config.audio, T_CONFETTIS = config.confettis ?? -1e9;
   const [clip, setClip] = useState<Clip | null>(null), [erreur, setErreur] = useState("");
   const morceaux = useRef<Morceaux | null>(null), rendu = useRef<RenduClip | null>(null);
   const toile = useRef<HTMLCanvasElement>(null), audio = useRef<HTMLAudioElement>(null);
@@ -76,6 +81,16 @@ export default function ClipBrode() {
   const etapes = useMemo<Etape[]>(() => {
     if (!clip) return [];
     const p = Object.fromEntries(clip.parties.map(([tt, m], i) => [i, { t: tt, m }]));
+    if (config.id === "fleur") return ([
+      { t: 0.5, d: 30, outil: "broder", titre: "Broder", texte: "la fleur se brode depuis son cœur : le bouton, la tige, puis le ciel" },
+      { t: 40, d: 9, outil: "broder", titre: "Le ciel du morceau", texte: "chaque anneau du ciel prend la couleur du moment où il est brodé" },
+      { t: 92, d: 9, outil: "fils", titre: "Fils", texte: "un fil choisi s’illumine, les autres s’estompent", effet: { fil: "premier" } },
+      { t: 150, d: 10, outil: "loupe", titre: "Loupe", texte: "le point vivant, au plus près ; au bord, son symbole du patron", effet: { loupe: true } },
+      { t: 196.275, d: 1.98, outil: "broder", titre: "Le silence", texte: "l’aiguille s’arrête ; une goutte de rosée tombe" },
+      { t: 198.255, d: 6, outil: "broder", titre: "L’éclosion", texte: "à l’impact, la fleur s’ouvre ; puis l’arc-en-ciel se brode" },
+      ...clip.parties.slice(1).map(([tt, m]): Etape => ({ t: tt, d: 7, outil: "affichage", titre: `Affichage › ${NOM_MODE[m as ModeClip]}`, texte: AIDE_MODE[m as ModeClip] })),
+      { t: 242.75, d: 7, outil: "broder", titre: "La Perle", texte: "le retour de la basse : le cœur de la fleur s’allume" },
+    ] as Etape[]).sort((a, b) => a.t - b.t);
     const e: Etape[] = [
       { t: 0.5, d: clip.brodeJusqua - 1, outil: "broder", titre: "Broder", texte: "le clip se brode depuis le centre : d’abord « / », puis la croix entière" },
       { t: clip.brodeJusqua, d: 8, outil: "affichage", titre: "Affichage › Toile", texte: AIDE_MODE.toile },
@@ -86,7 +101,7 @@ export default function ClipBrode() {
     e.push({ t: 122.5, d: 7.5, outil: "affichage", titre: "Affichage › L’envers", texte: "le dos de la broderie (calculé, pas photographié)", effet: { envers: true } });
     e.push({ t: 154, d: 9, outil: "loupe", titre: "Loupe", texte: "le point vivant, au plus près ; au bord, son symbole du patron", effet: { loupe: true } });
     return e.sort((a, b) => a.t - b.t);
-  }, [clip]);
+  }, [clip, config.id]);
   const etape = demo ? [...etapes].reverse().find(e => t >= e.t && t < e.t + e.d) ?? null : null;
   const effet = etape?.effet;
 
@@ -114,7 +129,7 @@ export default function ClipBrode() {
   const aller = (v: number) => { const h = horloge.current; if (audio.current) audio.current.currentTime = v; h.t0 = v; if (h.depart) h.depart = performance.now(); setT(v); };
 
   /* le rendu, à chaque image de l'écran */
-  const [replie, setReplie] = useState(false), [plein, setPlein] = useState(false);
+  const [replie, setReplie] = useState(config.replie), [plein, setPlein] = useState(false);
   /* les confettis : la surprise (une fois par passage) et l'outil, qui reste ensuite */
   const [sansConfetti, setSansConfetti] = useState(false);
   const [confettis, setConfettis] = useState<{ x: number; y: number; n: number; phase: "montre" | "nettoie" } | null>(null);
@@ -147,10 +162,10 @@ export default function ClipBrode() {
       let et = s.etats.slice();
       if (s.effet?.fil === "premier") {
         /* le fil montré : le plus présent dans l'image à ce moment, après le fond ; choisi une fois pour l'étape */
-        if (filDemo.current === null && derniereImage) { const n = new Array(c.fils.length).fill(0); for (const k of derniereImage) n[k]++; filDemo.current = n.map((p, i) => ({ p, i })).sort((a, b) => b.p - a.p)[1].i; setFilMontre(filDemo.current); }
+        if (filDemo.current === null && derniereImage) { const n = new Array(c.fils.length).fill(0); for (const k of derniereImage) { const q = k & 127; if (q < n.length) n[q]++; } filDemo.current = n.map((p, i) => ({ p, i })).sort((a, b) => b.p - a.p)[1].i; setFilMontre(filDemo.current); }
         if (filDemo.current !== null) et = et.map((_, i) => i === filDemo.current ? 1 : .4);
       } else if (filDemo.current !== null) { filDemo.current = null; setFilMontre(null); }
-      r.palette(c.fils.map((f, i) => ({ rgb: f.rgb, etat: et[i] ?? 1 })));
+      r.palette([...c.fils.map((f, i) => ({ rgb: f.rgb, etat: et[i] ?? 1 })), { rgb: [236, 231, 219], etat: 0 }]);   /* le dernier : la toile nue (un point pas encore brodé) */
       /* les rendus : ceux du clip (la démonstration) ; un choix de la personne part du centre, en une battue */
       const parties = partieEn(c.parties, CODE_MODE);
       const vue = s.mode ? [[0, s.mode.avant], [s.mode.t0, s.mode.code]] as [number, number][] : parties;
@@ -166,16 +181,16 @@ export default function ClipBrode() {
       const dpr = Math.min(1.5, window.devicePixelRatio || 1) * qualite, W = Math.round(cv.clientWidth * dpr), H = Math.round(cv.clientHeight * dpr);
       if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
       const cpp = c.grille / Math.max(W, H) / z, s0 = s.geo, cote = Math.min(W, H);
-      const tambour: [number, number, number, number] | null = s.replie ? null : [s0.cx * dpr, s0.cy * dpr, s0.r * dpr, GROSSI];
+      const tambour: [number, number, number, number] | null = s.replie ? null : [s0.cx * dpr, s0.cy * dpr, s0.r * dpr, config.grossi];
       /* le point de la grille sous un pixel : dans le tambour (grossi) ou sur le fond */
       const place = (x: number, y: number): [number, number, number] => {
-        if (tambour && Math.hypot(x - tambour[0], y - tambour[1]) < tambour[2]) { const zz = cpp / GROSSI; return [c.grille / 2 + (tambour[0] - W / 2) * cpp + (x - tambour[0]) * zz, c.grille / 2 + (tambour[1] - H / 2) * cpp + (y - tambour[1]) * zz, zz]; }
+        if (tambour && Math.hypot(x - tambour[0], y - tambour[1]) < tambour[2]) { const zz = cpp / config.grossi; return [c.grille / 2 + (tambour[0] - W / 2) * cpp + (x - tambour[0]) * zz, c.grille / 2 + (tambour[1] - H / 2) * cpp + (y - tambour[1]) * zz, zz]; }
         return [c.grille / 2 + (x - W / 2) * cpp, c.grille / 2 + (y - H / 2) * cpp, cpp];
       };
       /* la surprise : à 30,309 s (démonstration), le clip s'arrête ; les confettis battent, le mot est posé là où ils sont ; puis ils sont nettoyés */
       const franchi = tAvant < T_CONFETTIS && tt >= T_CONFETTIS && tt < T_CONFETTIS + 3;   /* on vient de passer le temps (même si l'appareil est lent) */
       const imgT = franchi ? morceaux.current!.image(Math.floor(T_CONFETTIS * c.fps)) ?? derniereImage : null;
-      if (!ev && franchi && s.demo && !s.mode && !confettiFait.current && !s.sansConfetti && imgT) {
+      if (!ev && franchi && config.confettis !== null && s.demo && !s.mode && !confettiFait.current && !s.sansConfetti && imgT) {
         tt = T_CONFETTIS;
         const image = imgT.slice(), cells = Int16Array.from(image), N = c.grille;
         const nb = removeConfetti(cells, N, N), propre = Uint8Array.from(cells), marque = new Uint8Array(N * N), change: number[] = [];
@@ -221,7 +236,7 @@ export default function ClipBrode() {
       if (lp && derniereImage) {
         const q = place(lp[0], lp[1]); let cx = Math.floor(q[0]); const cy = Math.floor(q[1]);
         if (s.retourne) cx = c.grille - 1 - cx;
-        const k = cx >= 0 && cy >= 0 && cx < c.grille && cy < c.grille ? derniereImage[cy * c.grille + cx] : null;
+        const k = cx >= 0 && cy >= 0 && cx < c.grille && cy < c.grille ? derniereImage[cy * c.grille + cx] & 127 : null;
         setSousLoupe(v => v === k ? v : k);
       } else setSousLoupe(v => v === null ? v : null);
       const b = s.brode ?? { t0: 0, d: c.brodeJusqua };
@@ -321,15 +336,15 @@ export default function ClipBrode() {
     loupePos.current = [Math.max(0, Math.min(w, p[0] + d[e.key][0])), Math.max(0, Math.min(h, p[1] + d[e.key][1]))]; if (!loupe) setLoupe(true);
   };
 
-  if (erreur) return <main className="clip-erreur"><h1>UPTOWN brodé</h1><p>{erreur}</p></main>;
+  if (erreur) return <main className="clip-erreur"><h1>{config.titre}</h1><p>{erreur}</p></main>;
   return <main className={"clip pzt pzt-ouvert pzt-etiq-" + g.etiquettes} data-demo={etape?.outil}
     style={{ ["--pzt-x" as string]: g.cx + "px", ["--pzt-y" as string]: g.cy + "px", ["--pzt-r" as string]: g.r + "px", ["--pzt-rb" as string]: g.rb + "px", ["--pzt-ri" as string]: g.ri + "px", ["--pzt-ro" as string]: g.Ro + "px",
       ["--pzt-bl" as string]: g.env.l + "px", ["--pzt-bh" as string]: g.env.h + "px", ["--pzt-bd" as string]: g.env.rond + "px" }}
     onPointerOver={viser} onPointerOut={() => setVisee(null)} onFocus={viser}>
-    <h1 className="sr-only">UPTOWN brodé : la démonstration des outils de Point Zéro</h1>
+    <h1 className="sr-only">{config.titre} : la démonstration des outils de Point Zéro</h1>
     <div className={"clip-fond" + (enversVoulu ? " clip-retourne" : "")}>
       <canvas ref={toile} className={"clip-toile" + (retourne ? " clip-dos" : "")} tabIndex={0} role="img"
-        aria-label={`Le clip UPTOWN brodé au point de croix, ${retourne ? "vu de l’envers" : "vu de l’endroit"}. Flèches : déplacer la loupe ; Espace : lecture ou pause.`}
+        aria-label={`${config.aria}, ${retourne ? "vu de l’envers" : "vu de l’endroit"}. Flèches : déplacer la loupe ; Espace : lecture ou pause.`}
         onPointerMove={surToile} onPointerDown={surToile} onPointerLeave={e => { if (e.pointerType === "mouse") loupePos.current = null; }} onKeyDown={clavier} />
     </div>
     {!replie && <div className="pzt-bois" aria-hidden="true" style={{ left: g.cx - g.rb, top: g.cy - g.rb, width: 2 * g.rb, height: 2 * g.rb }} />}
@@ -344,7 +359,7 @@ export default function ClipBrode() {
     </svg>
     <span className="pzt-vis" aria-hidden="true" />
     {clip && <div className="pzt-point">
-      <Point scene tambour={{ rayon: g.rho, cote: 2 * c, parPage: g.capacite - 3 }} contexte="clip-brode" memoire="clip-brode" modes={modes} etiquette="UPTOWN brodé" />
+      <Point scene tambour={{ rayon: g.rho, cote: 2 * c, parPage: g.capacite - 3 }} contexte="clip-brode" memoire="clip-brode" modes={modes} etiquette={config.titre} />
     </div>}
     </>}
     {confettis && <p className={"clip-confettis clip-confettis-" + confettis.phase} style={{ left: confettis.x, top: confettis.y }} aria-hidden="true">CONFETTIS</p>}
@@ -355,7 +370,7 @@ export default function ClipBrode() {
       <input type="range" min={0} max={clip.duree} step={0.1} value={t} aria-label="Avancer dans le clip" onChange={e => aller(parseFloat(e.target.value))} />
       <span>{mmss(clip.duree)}</span>
     </div>}
-    <p className="clip-credit" style={replie ? { top: "auto", bottom: 12 } : { top: g.cy + g.Ro + 96 }}>UPTOWN (Saint-Luc) · musique « Amor amour 2 », Matt · {clip ? `${clip.fils.length} fils DMC` : "…"}</p>
+    <p className="clip-credit" style={replie ? { top: "auto", bottom: 12 } : { top: g.cy + g.Ro + 96 }}>{config.credit} · {clip ? `${clip.fils.length} fils DMC` : "…"}</p>
     <audio ref={audio} src={AUDIO} preload="auto" />
     <span className="sr-only" role="status" aria-live="polite">{confettis ? (confettis.phase === "montre" ? `Le clip s’arrête : ${confettis.n} confettis, des points seuls de leur couleur.` : "Les confettis sont nettoyés ; le clip reprend.") : etape ? `${etape.titre} : ${etape.texte}` : ""}</span>
     {!clip && <p className="clip-chargement" style={{ left: g.cx, top: g.cy }}>La toile se prépare…</p>}
