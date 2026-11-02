@@ -164,13 +164,15 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     await mount();
     const before = container?.querySelector('canvas[role="application"]')?.getAttribute("aria-label");
     await brandMenu("Accueil Point Zéro");
-    expect(container?.querySelector("h1")?.textContent).toBe("Point Zéro");
+    expect(container?.querySelector("h1")?.textContent).toContain("broder aujourd’hui");
     expect(window.location.pathname).toBe("/");
-    const resume = [...(container?.querySelectorAll("button") ?? [])].find(b => b.textContent?.includes("Continuer à broder"));
+    const resume = [...(container?.querySelectorAll("button") ?? [])].find(b => b.textContent?.includes("Ouvrir la grille actuelle"));
     await click(resume);
     expect(container?.querySelector('canvas[role="application"]')?.getAttribute("aria-label")).toBe(before);
     expect(localStorage.getItem("pointzero:workspace")).toBe("embroidery");
-    expect(category("Broder")?.getAttribute("aria-pressed")).toBe("true");
+    await click(category("Broder"));
+    expect(nav()?.querySelector(".pzs-parent")?.textContent).toBe("Broder");
+    expect(category("Marquer")).toBeTruthy();
     await act(async () => window.dispatchEvent(new Event("pagehide")));
     const restored = loadStored()!;
     expect(restored.name).toBe(existing.name);
@@ -249,13 +251,16 @@ describe("POINTZERO : atelier unique sans assistant", () => {
     expect(container!.textContent).toContain("PDF");
   });
 
-  it("ouvre directement la préparation depuis l’accueil spécialisé", async () => {
+  it("l’accueil propose trois départs et garde un accès direct à la grille", async () => {
     await mount(true);
-    const prepare = [...(container?.querySelectorAll("button") ?? [])].find(b => b.textContent === "Préparer");
-    await click(prepare);
-    expect(inspector()?.hasAttribute("hidden")).toBe(false);
-    expect(inspector()?.textContent).toContain("Fils & toile");
+    expect(container?.querySelectorAll(".eb-choix button")).toHaveLength(3);
+    expect(container?.textContent).toContain("Importer un patron");
+    expect(container?.textContent).toContain("Reprendre un ouvrage");
+    await click(container?.querySelector(".eb-continuer"));
+    expect(container?.querySelector('canvas[role="application"]')).toBeTruthy();
     expect(window.location.pathname+window.location.search).toBe("/atelier");
+    await brandMenu("Accueil Point Zéro");
+    expect(container?.querySelector(".eb-entree")).toBeTruthy();
   });
 
   it("ouvre directement la grille et la bibliothèque de motifs, sans écran d'accueil", async () => {

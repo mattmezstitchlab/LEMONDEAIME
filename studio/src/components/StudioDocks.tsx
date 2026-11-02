@@ -18,7 +18,7 @@ import PointDuBloc from "./point/PointDuBloc";
 import "./blocs/broderie";
 import type { ContexteBroderie } from "./blocs/broderie";
 import { commandesDuBloc, ecrireEssaiBloc, lireEssaiBloc } from "../lib/point/registre";
-import { GALERIE } from "../lib/site";
+import { GALERIE, PROTOTYPES } from "../lib/site";
 import TambourAtelier, { ecrireCadreTambour, lireCadreTambour } from "./TambourAtelier";
 import { aVoir, Indicateurs, trier, type Indicateur } from "../lib/point/indicateurs";
 import { suggestion } from "./blocs/guideBroderie";
@@ -488,15 +488,17 @@ export default function StudioDocks(p: Props) {
           {bloc === "menu" && <>
             <div id="pzs-menu" className="pzs-bloc-corps" data-defile>
               <ul className="pzs-bloc-menu">
-                {aime && <li><a href="/">Le Monde AIME</a></li>}
+                {aime && <li><a href="/">Accueil broderie</a></li>}
                 <li><button type="button" onClick={() => { setBloc(null); p.actions.home(); }}>Accueil Point Zéro</button></li>
                 <li><button type="button" onClick={() => setBloc("inviter")}>Mes ouvrages</button></li>
                 <li><button type="button" onClick={() => setBloc("chercher")}>Chercher</button></li>
                 {GALERIE && <li><a href={import.meta.env.BASE_URL + "galerie"}>Galerie des Vivants</a></li>}
-                <li><a href={import.meta.env.BASE_URL + "tambour"}>Essai : le Tambour vivant</a></li>
+                <li><a href={import.meta.env.BASE_URL + "tambour"}>Broder avec la caméra</a></li>
+                {PROTOTYPES && <>
                 <li><button type="button" aria-pressed={essaiBloc} onClick={() => { const v = !essaiBloc; ecrireEssaiBloc(v); setEssaiBloc(v); if (v) { ecrireCadreTambour(false); setCadreTambour(false); setTambourOuvert(false); } setBloc(null); }}>{essaiBloc ? "Revenir au dock du bas" : "Essai : les outils sur le bloc"}</button></li>
                 <li><button type="button" aria-pressed={nav0} onClick={() => changerNav0(!nav0)}>{nav0 ? "Quitter la navigation intégrale .0" : "Essai : Navigation intégrale .0"}</button></li>
                 <li><button type="button" aria-pressed={cadreTambour} onClick={() => { const v = !cadreTambour; ecrireCadreTambour(v); setCadreTambour(v); setTambourOuvert(false); if (v) { ecrireEssaiBloc(false); setEssaiBloc(false); } setBloc(null); }}>{cadreTambour ? "Revenir au dock en bas de l’écran" : "Essai : le Cadre-Tambour"}</button></li>
+                </>}
                 <li><button type="button" onClick={() => { setBloc(null); p.actions.settings(); }}>Réglages et aide</button></li>
                 {p.actions.visite && <li><button type="button" onClick={() => { setBloc(null); p.actions.visite!(); }}>Revoir la visite avec Le Point</button></li>}
               </ul>

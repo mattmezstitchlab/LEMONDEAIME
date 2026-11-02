@@ -19,10 +19,9 @@ const liens = (base: string) => PROTOTYPES ? [
   { nom: "Mes préférences", chemin: base + "one/premiere-rencontre?modifier" },
   { nom: "ATLAS (site séparé) ↗", chemin: ATLAS_URL },
 ] : [
-  { nom: "Le Monde AIME — les projets", chemin: "/" },
+  { nom: "Accueil broderie", chemin: "/" },
   { nom: "L’atelier de broderie", chemin: base },
-  { nom: ".0NE — tous les univers", chemin: base + "one/univers" },
-  { nom: "Mes préférences", chemin: base + "one/premiere-rencontre?modifier" },
+  { nom: "Ma grille de broderie", chemin: base + "atelier" },
 ];
 
 /** `base` : l'adresse du studio (.0NE) ; le site AIME, servi à la racine, passe "/studio/". */
@@ -40,7 +39,7 @@ export function NavigationConvergence({ base = S }: { base?: string } = {}) {
   }, [ouvert]);
   const ici = window.location.pathname.replace(/\/+$/, "");
   /* venu du Disque (Broder, Ouvrir…) : le retour au contexte exact, en un geste */
-  const retour = /\/one(\/univers)?$/.test(ici) ? null : lireRetour();
+  const retour = !PROTOTYPES ? null : /\/one(\/univers)?$/.test(ici) ? null : lireRetour();
   return <nav className="cv-nav" aria-label={PROTOTYPES ? "Navigation de la version candidate" : "Navigation"}>
     {retour && !ouvert && <a className="cv-retour" href={retour.adresse}><span className="cv-orbe" aria-hidden="true" />Revenir à .0NE · {retour.nom}</a>}
     {ouvert && <div className="cv-nav-panneau" ref={panneau} id="cv-nav-panneau">
@@ -66,7 +65,7 @@ export class GardeExperience extends Component<{ children: ReactNode; nom?: stri
       <div className="cv-actions">
         {PROTOTYPES ? <><a className="cv-bouton cv-plein" href={S + "accueil"}>Revenir à l’accueil AIME</a>
           <a className="cv-bouton" href={S + "explorer"}>Explorer les prototypes</a></>
-          : <><a className="cv-bouton cv-plein" href={S + "one/univers"}>Revenir à .0NE</a>
+          : <><a className="cv-bouton cv-plein" href={S}>Revenir à l’atelier de broderie</a>
           <a className="cv-bouton" href="/">Le Monde AIME</a></>}
         <button type="button" className="cv-bouton" onClick={() => location.reload()}>Réessayer</button>
       </div>

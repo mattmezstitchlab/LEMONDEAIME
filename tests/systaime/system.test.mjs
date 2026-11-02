@@ -79,15 +79,20 @@ test('la démo broderie n\'exporte rien et n\'utilise aucun patron tiers', () =>
   assert.match(b, /empreinteCroix/);
 });
 
-test('la landing raconte UPTOWN et mène au clip sans dupliquer le lecteur', () => {
+test('la vitrine broderie mène directement à l’atelier sans promouvoir les autres univers', () => {
   const a = lire('src/pages/Accueil.tsx');
-  assert.match(a, /href="\/studio\/uptown"/);
-  assert.doesNotMatch(a, /webgl|getContext|<video|<audio|clip-brode|\/clip\//i, 'aucun lecteur dans la landing');
-  assert.match(a, /className="ac-hero"/, 'le hero existant est conservé');
+  assert.match(a, /href="\/studio\/"/);
+  assert.match(a, /point de croix/);
+  assert.match(a, /\/media\/grille-roses.jpg/);
+  assert.doesNotMatch(a, /href="\/(aime-wedding|projets|reseau|musique|boutique|system)|union.jpg|VerbesAccueil|<video|<audio/);
+  const liens = [...a.matchAll(/href="(#[^"]+)"/g)].map(m => m[1].slice(1));
+  for (const id of liens) assert.ok(a.includes(`id="${id}"`), `ancre ${id}`);
+  assert.match(lire('index.html'), /Atelier de broderie au point de croix/);
+  assert.doesNotMatch(lire('index.html'), /site officiel de l’union/);
 });
 
-test('une seule famille de navigation : /, /system et /systaime partagent les mêmes verbes, sans second dock', () => {
-  for (const f of ['src/pages/Accueil.tsx', 'src/pages/System.tsx', 'src/pages/Systaime.tsx']) {
+test('les pages système gardent leur navigation partagée, distincte de la vitrine broderie', () => {
+  for (const f of ['src/pages/System.tsx', 'src/pages/Systaime.tsx']) {
     const t = lire(f); assert.match(t, /VerbesAccueil/, f); assert.match(t, /<Tete /, f);
   }
   assert.doesNotMatch(lire('src/pages/System.tsx'), /position:\s*fixed|className="dock/);
@@ -98,4 +103,38 @@ test('choisir une case ne déplace pas la page : aucun défilement dans le code 
   const sel = t.slice(t.indexOf('const choisirFiche'), t.indexOf('useEffect(() => { if (!vu.current)'));
   assert.doesNotMatch(sel, /scrollIntoView|scrollTo|location\.hash|\.focus\(/);
   assert.doesNotMatch(lire('src/system/DisqueDemo.tsx'), /scrollIntoView/);
+});
+
+
+test('la vitrine met en avant les fonctions sans promettre une reconnaissance universelle', () => {
+  const a = lire('src/pages/Accueil.tsx');
+  assert.match(a, /table de montage magnétique/);
+  assert.match(a, /La reconnaissance dépend du PDF/);
+  assert.match(a, /compatibles non retouchés/);
+  assert.match(a, /Fonctionnalités expérimentales/);
+  assert.match(a, /Calage manuel/);
+  assert.match(a, /ne reconnaît pas automatiquement/);
+  assert.match(a, /href="\/studio\/tambour"/);
+  assert.doesNotMatch(a, /jamais vu|première mondiale|unique au monde/i);
+  const demo = lire('src/pages/ApercuMotif.tsx');
+  assert.match(demo, /generer\(/);
+  assert.match(demo, /aria-pressed/);
+  assert.match(demo, /role="status"/);
+  assert.doesNotMatch(demo, /localStorage|saveLibrary|fetch\(/);
+});
+
+test('l’accueil conserve la composition visuelle de la charte : image de fond et signature superposée', () => {
+  const a = lire('src/pages/Accueil.tsx');
+  const hero = a.slice(a.indexOf('<section className="ac-hero br-hero"'), a.indexOf('<nav className="br-raccourcis"'));
+  assert.match(hero, /<img src="\/media\/grille-roses.jpg" alt="" fetchPriority="high"/);
+  assert.match(hero, /className="ac-hero-contenu br-hero-contenu"/);
+  assert.match(hero, /<h1 id="br-titre" className="signature">/);
+  assert.match(hero, /className="br-hero-presentation"/);
+  assert.match(hero, /href="\/studio\/"/);
+  assert.match(hero, /href="#decouvrir"/);
+  assert.doesNotMatch(a, /br-visuel|br-intro/);
+  const css = lire('src/pages/accueil-broderie.css');
+  assert.match(css, /\.br-hero \.signature \{ color: #fff/);
+  assert.match(css, /\.br-hero\.ac-hero::after/);
+  assert.match(css, /\.br-hero a:focus-visible/);
 });
