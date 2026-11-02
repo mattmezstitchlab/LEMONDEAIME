@@ -1,3 +1,5 @@
+import EntreeBroderie from "./components/EntreeBroderie";
+import { PROTOTYPES } from "./lib/site";
 import StudioDocks, { lireNav0, type BlocDemande, type DockPath } from "./components/StudioDocks";
 import { VISIBILITY, visibilityOf, writeVisibility } from "./lib/visibility";
 import { readInterfaceLevel, INTERFACE_LEVEL_KEY, type InterfaceLevel } from "./lib/interfaceLevel";
@@ -397,7 +399,7 @@ export default function App() {
   /* l'orbe qui guide : à la première ouverture de l'atelier, elle présente les deux docks, outil par outil */
   const [visite, setVisite] = useState(false);
   /* avec le tambour (navigation .0), la visite des docks ne s'impose plus : elle décrit une autre interface ; elle reste proposée par la landing */
-  useEffect(() => { if (atelierLibre && !panel && !showWelcome && !composer && !visiteVue() && !lireRetour() && !lireNav0()) setVisite(true); }, [atelierLibre, panel, showWelcome, composer]);
+  useEffect(() => { if (atelierLibre && !blocDemande && !panel && !showWelcome && !composer && !visiteVue() && !lireRetour() && !lireNav0()) setVisite(true); }, [atelierLibre, blocDemande, panel, showWelcome, composer]);
   useEffect(() => {
     if (!atelierLibre) return;
     const utile = (e: DragEvent) => { const t = Array.from(e.dataTransfer?.types ?? []); return t.includes(OUVRAGE_DRAG_TYPE) || t.includes("Files"); };
@@ -588,7 +590,12 @@ export default function App() {
     openCategory(entry === "prepare" ? "threads" : entry === "stitch" ? "stitch" : "create");
   };
   return studioMode === "stitch-home"
-    ? <CrossStitchHome projectName={P.name} onOpen={enterStitchStudio}
+    ? !PROTOTYPES ? <EntreeBroderie projectName={P.name}
+        onCreate={() => { setVisite(false); setComposer({}); switchStudio("embroidery"); }}
+        onImport={chosen => { switchStudio("embroidery"); importAnyFile(chosen); }}
+        onLibrary={() => { setVisite(false); enterStitchStudio("library"); }}
+        onContinue={() => switchStudio("embroidery")} />
+      : <CrossStitchHome projectName={P.name} onOpen={enterStitchStudio}
         onOuvrages={() => enterStitchStudio("library")}
         onShare={() => { switchStudio("embroidery"); setPanel("share"); }}
         onImport={chosen => { switchStudio("embroidery"); importAnyFile(chosen); }}

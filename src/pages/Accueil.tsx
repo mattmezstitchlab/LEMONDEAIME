@@ -1,125 +1,101 @@
-import { useMemo, useRef, useState } from 'react';
-import { Tete, DockBas, Pied, Orbe } from '../charte/Charte';
-import VerbesAccueil from '../charte/VerbesAccueil';
-import { Lien } from '../lib/router';
-import { useSession } from '../lib/session';
-import { useProjets } from '../lib/projets';
-import { CarteProjet } from './Portfolio';
-import { CHEMINS, DESTINATIONS, ETATS, proposer } from '../lib/intention.mjs';
+import { lazy, Suspense } from 'react';
+import './accueil-broderie.css';
+const ApercuMotif = lazy(() => import('./ApercuMotif'));
 
-/* LA PREMIÈRE PAGE (/) : une seule entrée, quatre chemins. Rien n'est simulé : chaque chemin est un vrai lien vers une page existante,
-   la zone d'intention propose (elle n'exécute rien) et dit l'état de la destination : disponible, partielle, avec connexion, ou absente. */
-type Chemin = keyof typeof CHEMINS;
-const ORDRE: Chemin[] = ['organiser', 'creer', 'projets', 'decouvrir'];
-
+/* Une vitrine dédiée à la broderie. Les autres univers restent accessibles par
+   leurs adresses, sans être proposés dans ce parcours. L’atelier est une autre
+   application : conserver de vrais liens pour charger son point d’entrée. */
 export default function Accueil() {
-  const session = useSession();
-  const projets = useProjets();
-  const [texte, setTexte] = useState('');
-  const [fichier, setFichier] = useState<{ name: string; type: string } | null>(null);
-  const [depot, setDepot] = useState(false);
-  const entree = useRef<HTMLInputElement>(null);
-  const champ = useRef<HTMLInputElement>(null);
-  const p = useMemo(() => proposer(texte, fichier), [texte, fichier]);
-  const etatChemin = (c: Chemin) => {
-    const e = DESTINATIONS[c].etat as keyof typeof ETATS;
-    if (c === 'projets') return session === undefined ? 'Vérification de la connexion…' : session ? 'Connecté : votre espace s’ouvre.' : 'Connexion nécessaire';
-    return ETATS[e];
-  };
-  const etatProp = (e: string) => e === 'connexion' ? (session ? 'Connecté' : session === undefined ? 'Vérification…' : ETATS.connexion) : ETATS[e as keyof typeof ETATS];
   return (
-    <>
+    <div className="br-accueil">
       <a className="lien-evitement" href="#contenu">Aller au contenu</a>
-      <Tete courant="/" verbes={<VerbesAccueil />} />
+      <header className="br-header">
+        <a className="br-marque" href="/" aria-label="Le Monde AIME — accueil broderie">LE MONDE AIME<span>L’atelier de broderie</span></a>
+        <nav aria-label="Navigation broderie">
+          <a href="#decouvrir">Les possibilités</a>
+          <a href="#bien-demarrer">Bien démarrer</a>
+          <a className="br-action" href="/studio/">Ouvrir l’atelier <span aria-hidden="true">↗</span></a>
+        </nav>
+      </header>
       <main id="contenu">
-        <div className="ac-cadre">
-          <section className="ac-hero" id="entree" aria-labelledby="titre-entree">
-            <img src="/media/union.jpg" alt="Un couple de mariés danse la nuit dans le désert, près d’une voiture ancienne et d’un tourne-disque, sous un ciel d’étoiles." />
-            <div className="ac-hero-contenu">
-              <p className="surtitre">LE MONDE AIME®</p>
-              <h1 id="titre-entree" className="signature">Tout commence ici.</h1>
-              <p className="ac-hero-sous">Un projet, une idée, une rencontre, un souvenir.</p>
+        <div className="ac-cadre br-hero-cadre">
+          <section className="ac-hero br-hero" aria-labelledby="br-titre">
+            <img src="/media/grille-roses.jpg" alt="" fetchPriority="high" decoding="async" />
+            <div className="ac-hero-contenu br-hero-contenu">
+              <p className="surtitre">Point Zéro · L’atelier de point de croix</p>
+              <h1 id="br-titre" className="signature">Vos patrons prennent une autre dimension.</h1>
+              <p className="br-hero-presentation">Transformez votre PDF en grille modifiable. Composez un motif en cinq choix. Changez son format et voyez-le se redessiner.</p>
+              <div className="br-actions">
+                <a className="br-action br-hero-principal" href="/studio/">Ouvrir l’atelier <span aria-hidden="true">↗</span></a>
+                <a className="br-hero-secondaire" href="#decouvrir">Voir les possibilités <span aria-hidden="true">↓</span></a>
+              </div>
+              <p className="br-hero-legende">Illustration de broderie · Roses sur toile</p>
             </div>
           </section>
         </div>
-
-        <section className="section blanche" id="intention" aria-labelledby="titre-intention" style={{ marginTop: 16, borderTop: 0, paddingInline: 'var(--marge)' }}>
-          <div className="ac-question">
-            <div>
-              <p className="surtitre">Une seule entrée</p>
-              <h2 id="titre-intention" className="titre">Que souhaitez-vous faire aujourd’hui ?</h2>
-              <p className="chapeau">Une phrase, une adresse web ou un fichier. La page propose le chemin le plus proche et dit s’il existe. Elle ne lance rien.</p>
-            </div>
-            <form className={'ac-zone' + (depot ? ' depot' : '')} autoComplete="off" onSubmit={e => e.preventDefault()}
-              onDragOver={e => { e.preventDefault(); setDepot(true); }} onDragLeave={() => setDepot(false)}
-              onDrop={e => { e.preventDefault(); setDepot(false); const f = e.dataTransfer.files?.[0]; if (f) setFichier({ name: f.name, type: f.type }); }}>
-              <label htmlFor="q">Votre intention</label>
-              <div className="ac-ligne">
-                <input ref={champ} className="champ" type="text" id="q" value={texte} onChange={e => setTexte(e.target.value)} placeholder="Une phrase, une adresse web, ou déposez un fichier" aria-describedby="resultat" />
-                <input ref={entree} type="file" className="sr-only" tabIndex={-1} aria-label="Joindre un fichier" onChange={e => { const f = e.target.files?.[0]; setFichier(f ? { name: f.name, type: f.type } : null); }} />
-                <button type="button" className="bouton" onClick={() => entree.current?.click()}>Joindre un fichier</button>
-                {fichier && <span className="ac-puce"><span>{fichier.name}</span><button type="button" aria-label="Retirer le fichier" onClick={() => { if (entree.current) entree.current.value = ''; setFichier(null); champ.current?.focus(); }}>×</button></span>}
-              </div>
-              <div className="ac-resultat" id="resultat" aria-live="polite" data-testid="resultat">
-                {!p && <><p className="note">Écrivez ce que vous avez en tête, collez une adresse ou déposez un fichier.</p><p className="note">Rien n’est envoyé. Tout reste dans votre navigateur.</p></>}
-                {p && !p.chemin && <><p className="type">{p.type}</p><p className="note">Je ne reconnais pas d’intention précise. Choisissez un des quatre chemins.</p><p className="note">Rien n’est envoyé. Rien n’a été lancé.</p></>}
-                {p && p.chemin && p.destination && <>
-                  <p className="type">{p.type}</p>
-                  <p className="chemin"><Orbe taille={26} /><span>Chemin le plus proche : <b>{CHEMINS[p.chemin as Chemin].nom}</b></span></p>
-                  <p className="note"><span className="ac-etat-puce" data-etat={p.destination.etat}>{etatProp(p.destination.etat)}</span> {p.destination.cible}</p>
-                  <p className="note">{p.pourquoi} {p.destination.note}</p>
-                  <p className="note">C’est une proposition : rien n’a été exécuté, rien n’est envoyé.</p>
-                  <div className="ac-actions">
-                    {p.destination.href && <Lien className="bouton noir" href={p.destination.href}>Ouvrir : {p.destination.cible}</Lien>}
-                    {'alternative' in p.destination && p.destination.alternative && <Lien className="bouton" href={p.destination.alternative.href}>Ouvrir plutôt : {p.destination.alternative.cible}</Lien>}
-                  </div>
-                </>}
-              </div>
-            </form>
+        <nav className="br-raccourcis" aria-label="Les possibilités de l’atelier">
+          <a href="#decouvrir"><span>01</span> Du PDF à la grille ↘</a>
+          <a href="#composer"><span>02</span> Un motif à votre mesure ↘</a>
+          <a href="#camera"><span>03</span> La broderie côté caméra ↘</a>
+        </nav>
+        <section className="br-section br-fonction" id="decouvrir" aria-labelledby="br-decouvrir">
+          <div className="br-fonction-texte">
+            <p className="br-sur">01 / Votre PDF, autrement</p>
+            <h2 id="br-decouvrir">Pas seulement un patron à regarder.<br />Une grille à travailler.</h2>
+            <p className="br-chapeau">Rassemblez les pages de votre patron sur une table de montage magnétique. Vérifiez les fils reconnus, puis retrouvez le motif dans les outils de l’atelier.</p>
+            <ol className="br-liste">
+              <li><strong>Importez et calez.</strong> Repérez les grilles et ajustez leurs limites.</li>
+              <li><strong>Assemblez.</strong> Rapprochez les blocs : l’aimantage vous aide à les positionner.</li>
+              <li><strong>Travaillez votre grille.</strong> Corrigez les couleurs DMC et ouvrez le motif reconstruit dans l’atelier.</li>
+            </ol>
+            <a className="br-action" href="/studio/">Commencer avec mon PDF ↗</a>
+            <p className="br-note">Dans l’atelier, choisissez « Importer un patron ». La reconnaissance dépend du PDF : vérifiez les symboles, les couleurs estimées et les dimensions avant de broder. Utilisez des patrons que vous avez le droit d’adapter.</p>
           </div>
-
-          <ul className="ac-chemins" id="chemins" aria-label="Quatre chemins">
-            {ORDRE.map(c => (
-              <li key={c}>
-                <Lien className="ac-chemin" href={DESTINATIONS[c].href} data-chemin={c} data-conseil={String(p?.chemin === c)}>
-                  <span style={{ margin: 0 }}><b>{CHEMINS[c].nom}</b><span>{CHEMINS[c].sub}</span></span>
-                  <em>{etatChemin(c)} · {DESTINATIONS[c].cible}</em>
-                </Lien>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="section" id="decouvrir" aria-labelledby="titre-decouvrir" style={{ paddingInline: 'var(--marge)' }}>
-          <div className="ac-entete">
-            <h2 id="titre-decouvrir" className="grand-mot">Découvrir</h2>
-            <p>Des sites et des studios conçus, dessinés et construits par AIME®.</p>
+          <div className="br-pdf-schema" role="img" aria-label="Schéma du parcours : pages du PDF, montage magnétique, puis grille modifiable">
+            <span className="br-sur">Le parcours de votre patron</span>
+            <div className="br-pages" aria-hidden="true"><span>Page 01<br />＋ ＋ ＋<br />＋ × ＋</span><span>Page 02<br />＋ × ＋<br />＋ ＋ ＋</span></div>
+            <span aria-hidden="true" className="br-fleche">↓</span>
+            <div className="br-schema-bloc">Montage magnétique<small>Caler · rapprocher · assembler</small></div>
+            <span aria-hidden="true" className="br-fleche">↓</span>
+            <div className="br-schema-bloc br-schema-final">Votre grille modifiable<small>Points · couleurs DMC · outils de broderie</small></div>
+            <p className="br-note">Schéma explicatif — pas une capture de l’interface.</p>
           </div>
-          <div className="pf-grille" style={{ listStyle: 'none' }}>
-            {(projets || []).map(pr => <CarteProjet key={pr.slug} p={pr} />)}
+        </section>
+        <section className="br-section br-fonction br-composer" id="composer" aria-labelledby="br-composer">
+          <div className="br-fonction-texte">
+            <p className="br-sur">02 / Composez sans partir d’un dessin</p>
+            <h2 id="br-composer">Cinq choix.<br />Votre prochain motif.</h2>
+            <p className="br-chapeau">Une forme, un tracé, une densité, une échelle, une palette. Le compositeur transforme vos choix en motif de point de croix.</p>
+            <ul className="br-cinq" aria-label="Les cinq choix du compositeur"><li>Forme</li><li>Tracé</li><li>Densité</li><li>Échelle</li><li>Palette</li></ul>
+            <h3>Changez le format.<br />Le motif se redessine.</h3>
+            <p>Essayez ici : chaque format relance la génération depuis la même recette. Ce n’est pas simplement une image agrandie.</p>
+            <p>Gardez la recette ou partagez son lien pour retrouver le motif. Dans l’atelier, vous pouvez ensuite le préparer et le broder.</p>
+            <a className="br-action" href="/studio/">Composer mon motif ↗</a>
+            <p className="br-note">Choisissez « Créer un motif ». Le recalcul concerne les motifs générés compatibles non retouchés, pas tous les patrons importés. Le lien partage la recette, pas vos retouches ni votre progression.</p>
           </div>
-          <p style={{ marginTop: 40 }}><Lien className="bouton" href="/projets">Tous les projets</Lien> <Lien className="bouton" href="/reseau">Le réseau</Lien></p>
+          <Suspense fallback={<p role="status">Chargement du motif à essayer…</p>}><ApercuMotif /></Suspense>
         </section>
-
-        <section className="section" id="uptown" aria-labelledby="titre-uptown" style={{ paddingInline: 'var(--marge)' }}>
-          <div className="ac-entete">
-            <p className="surtitre">Une œuvre, point par point</p>
-            <h2 id="titre-uptown" className="grand-mot">UPTOWN, brodé.</h2>
-            <p>Le clip de Matt à Saint-Luc, restauré puis brodé sur « Amor amour 2 », sa musique : chaque image est dessinée en 160 × 160 points, chaque point est un fil DMC.</p>
+        <section className="br-section" id="camera" aria-labelledby="br-camera">
+          <div className="br-entete"><p className="br-sur">03 / À explorer · Fonctionnalités expérimentales</p><h2 id="br-camera">Le monde autour de vous,<br />en points de croix.</h2><p>Deux expériences du Tambour vivant pour rapprocher le motif de ce que vous voyez.</p></div>
+          <div className="br-experiences">
+            <article><span className="br-numero">Caméra → Motif</span><h3>Cadrez une fleur.<br />Voyez-la en points.</h3><p>Observez un aperçu en points de croix depuis la caméra, ajustez ses couleurs, figez l’image et ouvrez le motif dans l’atelier.</p><p className="br-note">Une photo peut remplacer la caméra. L’aperçu est une simulation : les fils réels peuvent différer des couleurs à l’écran.</p></article>
+            <article><span className="br-numero">Patron → Toile filmée</span><h3>Votre patron sur l’image de votre toile.</h3><p>Superposez le patron, réglez ses quatre coins et affichez la grille, les symboles ou une couleur. Isolez les points restant à faire d’après votre suivi enregistré.</p><p className="br-note">Calage manuel. L’outil ne reconnaît pas automatiquement les points brodés, ne détecte pas les erreurs et ne suit pas l’aiguille.</p></article>
           </div>
-          <p style={{ marginTop: 24 }}><a className="bouton" href="/studio/uptown">Voir le clip brodé<span className="sr-only"> (s’ouvre dans le Studio)</span></a></p>
+          <a className="br-action" href="/studio/tambour">Explorer le Tambour vivant ↗</a>
+          <p className="br-note">Expérience à vérifier sur votre appareil. L’accès à la caméra nécessite votre autorisation ; aucune activation depuis cette page.</p>
         </section>
-
-        <section className="ac-bande" aria-label="Une seule maison">
-          <p className="surtitre" style={{ color: 'rgba(255,255,255,.7)' }}>LE MONDE AIME®</p>
-          <p className="grand-mot">Une seule maison, plusieurs façons d’y entrer.</p>
-          <ul className="ac-ensemble">
-            <li>Une seule entrée.</li><li>Une seule identité.</li><li>Une architecture cohérente.</li><li>Plusieurs expériences adaptées.</li>
-          </ul>
+        <section className="br-section br-aide" id="bien-demarrer" aria-labelledby="br-aide-titre">
+          <div><p className="br-sur">Avant le premier point</p><h2 id="br-aide-titre">Bien démarrer.</h2><p>Quelques repères pour préparer votre premier ouvrage numérique.</p></div>
+          <div className="br-questions">
+            <details open><summary>Que puis-je importer ?</summary><p>L’atelier propose l’import d’images PNG, JPEG ou WebP, de patrons PDF et de projets JSON ou OXS. Le résultat dépend du fichier : vérifiez la grille et les couleurs avant de commencer à broder. Tous les PDF ne se convertissent pas de la même façon.</p></details>
+            <details><summary>Où retrouver mes ouvrages ?</summary><p>Ouvrez « Mes ouvrages » dans l’atelier. Les sauvegardes locales restent liées à votre navigateur et à votre appareil : elles ne constituent pas, à elles seules, une sauvegarde sur un compte.</p></details>
+            <details><summary>Comment conserver mon travail ?</summary><p>Exportez régulièrement votre projet au format JSON depuis l’atelier. Gardez cette copie avant de changer d’appareil ou d’effacer les données du navigateur.</p></details>
+            <details><summary>Et si je n’ai pas encore de patron ?</summary><p>À l’entrée de l’atelier, choisissez « Créer un motif ». Le compositeur vous guide en cinq choix, sans importer de patron.</p></details>
+          </div>
         </section>
+        <section className="br-invitation" aria-labelledby="br-commencer"><p className="br-sur">À vous de créer</p><h2 id="br-commencer">Tout commence<br />par un premier point.</h2><a className="br-action" href="/studio/">Commencer dans l’atelier <span aria-hidden="true">↗</span></a></section>
       </main>
-      <DockBas lieux={[['entree', 'Entrée'], ['intention', 'Question'], ['chemins', 'Chemins'], ['decouvrir', 'Découvrir'], ['uptown', 'UPTOWN']]} />
-      <Pied />
-    </>
+      <footer className="br-footer"><span>LE MONDE AIME · Point Zéro</span><p>Un espace consacré à la broderie au point de croix.</p><a href="#contenu">Retour en haut ↑</a></footer>
+    </div>
   );
 }

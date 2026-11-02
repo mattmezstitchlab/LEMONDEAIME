@@ -9,6 +9,8 @@ import App from "../App";
 import AccessibilityShell from "../components/AccessibilityShell";
 import { commandesDuBloc, enregistrerTypeBloc, ESSAI_BLOC_CLE, placePointDuBloc, typeBloc } from "../lib/point/registre";
 import "../components/blocs/broderie";
+// Ces commandes sont réservées aux aperçus prototypes, pas à la vitrine publique.
+vi.mock("../lib/site", () => ({ PROTOTYPES: true, GALERIE: true, SITE_BRODERIE: false }));
 
 describe("Le registre des types de blocs", () => {
   it("un type déclare ses commandes ; Confort n'y figure jamais (le Point l'apporte)", () => {

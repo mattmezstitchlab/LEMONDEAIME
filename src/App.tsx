@@ -19,7 +19,7 @@ import { APlus, Introuvable } from './pages/Simples';
 import { aller } from './lib/router';
 
 const PAGES: Record<string, [() => React.JSX.Element, string]> = {
-  '/': [Accueil, 'LE MONDE AIME — Tout commence ici'],
+  '/': [Accueil, 'LE MONDE AIME — Atelier de broderie au point de croix'],
   '/projets': [Portfolio, 'LE MONDE AIME — les projets d’AIME'],
   '/aime-wedding': [AimeWedding, 'AIME Wedding — le site officiel de l’union'],
   '/admin': [Admin, 'LE MONDE AIME — Administration'],

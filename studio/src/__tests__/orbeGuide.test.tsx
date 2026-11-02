@@ -21,8 +21,8 @@ afterAll(() => { globalThis.matchMedia = saved.matchMedia; globalThis.ResizeObse
 
 let root: Root | null = null, container: HTMLElement | null = null;
 const attendre = () => act(async () => { for (let k = 0; k < 4; k++) await new Promise(r => requestAnimationFrame(() => r(null))); });
-async function ouvrirAtelier() {
-  window.history.replaceState(null, "", "/atelier");
+async function ouvrirAtelier(path = "/atelier") {
+  window.history.replaceState(null, "", path);
   container = document.createElement("div"); document.body.appendChild(container);
   root = createRoot(container);
   await act(async () => { root!.render(<App />); });
@@ -102,5 +102,24 @@ describe("L'orbe qui guide", () => {
       expect(bulle(), chemin).toBeFalsy();
       await act(async () => root?.unmount()); container.remove(); root = null; container = null;
     }
+  });
+});
+
+describe("Entrée simplifiée vers les vrais outils", () => {
+  it("Créer ouvre le compositeur sans afficher la visite par-dessus", async () => {
+    await ouvrirAtelier("/");
+    const creer = container?.querySelector<HTMLButtonElement>(".eb-choix button");
+    await cliquer(creer);
+    expect(window.location.pathname).toBe("/atelier");
+    expect(container?.textContent).toContain("Composer une rosace");
+    expect(container?.querySelector(".eb-entree")).toBeNull();
+    expect(bulle()).toBeFalsy();
+  });
+  it("Reprendre ouvre Mes ouvrages sans la visite automatique", async () => {
+    await ouvrirAtelier("/");
+    await cliquer(container?.querySelectorAll(".eb-choix button")[2]);
+    expect(window.location.pathname).toBe("/atelier");
+    expect(container?.querySelector("#pzs-bloc")?.textContent).toContain("Mes ouvrages");
+    expect(bulle()).toBeFalsy();
   });
 });

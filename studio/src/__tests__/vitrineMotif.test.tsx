@@ -1,0 +1,22 @@
+import { afterEach, expect, it } from 'vitest';
+import { act } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import ApercuMotif from '../../../src/pages/ApercuMotif';
+(globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+let root: Root | undefined;
+let node: HTMLDivElement | undefined;
+afterEach(() => { act(() => root?.unmount()); node?.remove(); });
+it('recalcule la démonstration au format choisi et partage uniquement la recette', () => {
+  node = document.createElement('div'); document.body.append(node); root = createRoot(node);
+  act(() => root!.render(<ApercuMotif />));
+  expect(node.querySelector('svg')?.getAttribute('viewBox')).toBe('0 0 64 64');
+  const ancien = node.querySelector('path')?.getAttribute('d');
+  act(() => node!.querySelectorAll('button')[0].click());
+  expect(node.querySelector('svg')?.getAttribute('viewBox')).toBe('0 0 48 48');
+  expect(node.querySelector('path')?.getAttribute('d')).not.toBe(ancien);
+  expect(node.querySelector('[role="status"]')?.textContent).toContain('48 × 48');
+  expect(node.querySelectorAll('[aria-pressed="true"]')).toHaveLength(1);
+  const select = node.querySelector('select')!;
+  act(() => { select.value = select.options[0].value; select.dispatchEvent(new Event('change', { bubbles: true })); });
+  expect(node.querySelector('a')?.getAttribute('href')).toBe('/studio/atelier?rosace=' + encodeURIComponent(select.value));
+});
